@@ -7,7 +7,11 @@ A free pixel-art fox focus companion for Windows.
 
 <img src="docs/trailer_preview.gif" alt="Zenko, the pixel-art fox, sitting under cherry blossoms holding her clock plaque" width="640">
 
-<!-- TRAILER: replace this line with the video link GitHub gives you when you drag zenko_trailer_web.mp4 in here -->
+
+
+https://github.com/user-attachments/assets/b15d0155-3bae-49cb-b1e7-d428cfb6d355
+
+
 
 ### [Download Zenko.exe](https://github.com/AnimatedAFK/Zenko/releases/latest)
 
