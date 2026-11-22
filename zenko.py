@@ -52,7 +52,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.22-zenko16"
+APP_VERSION = "v2026.11.22-zenko16.1"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -25718,9 +25718,138 @@ STUDY_VIDEO_CUES = re.compile(r"\b(explained|explanation|lecture|lesson|tutorial
                               r"bozeman|organic chemistry tutor|ted-ed|worked example|grammar|vocab(?:ulary)?|"
                               r"conjugation|learn french|french lesson|analysis|essay|study with me|ap |a-level|gcse)\b",
                               re.I)
-STUDY_VIDEO_NOPE = re.compile(r"(#shorts|\breaction\b|\breacts?\b|\bfunny\b|\bmemes?\b|\bprank|\bvlog|\btrailer\b|"
+STUDY_VIDEO_NOPE = re.compile(r"(#shorts|\breaction (?:video|compilation|to\b)|\breacting to\b|\breacts?\b|\bfunny\b|\bmemes?\b|\bprank|\bvlog|\btrailer\b|"
                               r"official (?:music )?video|\blyrics?\b|\bgameplay\b|\blet'?s play\b|\basmr\b|\bmukbang\b|"
                               r"\bfortnite\b|\bminecraft\b|\banime\b|\bamv\b|\bepisode \d+|\bmovie\b|\bfull album\b)", re.I)
+
+# zenko16.1: a wider, plural-tolerant vocabulary just for judging YouTube video titles
+STUDY_VIDEO_VOCAB = {
+    "bio": "biology, biologist, biological, anatomy, physiology, cell, cellular, organelle, nucleus, ribosome, golgi, "
+           "mitochondria, mitochondrion, chloroplast, cell membrane, endocytosis, exocytosis, osmosis, diffusion, "
+           "active transport, mitosis, meiosis, cell cycle, cell division, dna, rna, dna replication, transcription, "
+           "protein synthesis, gene, genetic, genetics, genome, allele, chromosome, mutation, inheritance, punnett, "
+           "hardy-weinberg, natural selection, evolution, darwin, speciation, cladogram, cladistics, taxonomy, enzyme, "
+           "photosynthesis, respiration, cellular respiration, glycolysis, krebs cycle, calvin cycle, atp, "
+           "electron transport chain, ecology, ecosystem, food web, biodiversity, carbon cycle, nitrogen cycle, "
+           "immune system, immunity, antibody, antibodies, antigen, vaccine, vaccination, pathogen, bacteria, virus, "
+           "viruses, fungi, microbiology, neuron, nervous system, action potential, synapse, neurotransmitter, hormone, "
+           "endocrine system, insulin, homeostasis, thermoregulation, kidney, nephron, osmoregulation, heart, "
+           "circulatory system, blood vessel, digestion, digestive system, ventilation, gas exchange, lungs, xylem, "
+           "phloem, transpiration, plant biology, stomata, reproduction, fertilisation, fertilization, menstrual cycle, "
+           "embryo, stem cell, epigenetics, crispr, pcr, gel electrophoresis, cloning, biotechnology, prokaryote, "
+           "prokaryotic, eukaryote, eukaryotic, lipid, carbohydrate, amino acid, nucleotide, water potential, "
+           "muscle contraction, sarcomere, bioninja, amoeba sisters",
+    "chem": "chemistry, chemical, chemist, atom, atomic structure, electron configuration, orbital, periodic table, "
+            "periodicity, ionic bonding, covalent bonding, metallic bonding, lewis structure, vsepr, hybridisation, "
+            "hybridization, polarity, intermolecular forces, hydrogen bonding, van der waals, mole concept, moles, "
+            "stoichiometry, molarity, titration, acid, base, acids and bases, ph scale, buffer solution, neutralisation, "
+            "neutralization, redox, oxidation, reduction, oxidation state, electrochemistry, electrolysis, "
+            "voltaic cell, galvanic cell, equilibrium, equilibria, le chatelier, kinetics, rate of reaction, "
+            "activation energy, arrhenius, enthalpy, entropy, gibbs free energy, hess's law, born-haber, "
+            "lattice enthalpy, energetics, thermochemistry, organic chemistry, functional group, alkane, alkene, alkyne, "
+            "alcohol, aldehyde, ketone, carboxylic acid, ester, amine, amide, isomer, isomerism, stereoisomer, "
+            "nucleophilic substitution, electrophilic addition, sn1, sn2, benzene, aromatic, spectroscopy, nmr, "
+            "ir spectroscopy, mass spectrometry, chromatography, transition metal, ligand, complex ion, polymer",
+    "math": "math, maths, mathematics, calculus, derivative, differentiation, integration, integral, antiderivative, "
+            "limits, chain rule, product rule, quotient rule, optimisation, optimization, kinematics, trigonometry, "
+            "trig, trigonometric, unit circle, radians, trig identities, logarithm, exponential, quadratic, polynomial, "
+            "binomial theorem, binomial expansion, arithmetic sequence, geometric sequence, arithmetic series, "
+            "geometric series, sigma notation, probability, conditional probability, tree diagram, venn diagram, "
+            "statistics, standard deviation, normal distribution, binomial distribution, regression, correlation, "
+            "hypothesis test, vectors, inverse function, composite function, transformations of graphs, proof by "
+            "induction, mathematical induction, complex numbers, algebra, simultaneous equations, precalculus, "
+            "pre-calculus, math aa, analysis and approaches, integration by substitution, integration by parts, "
+            "u-substitution, implicit differentiation, related rates, area under a curve, volume of revolution",
+    "psych": "psychology, psychological, psychologist, cognitive psychology, cognition, behaviourism, behaviorism, "
+             "biological approach, cognitive approach, sociocultural approach, localisation of function, "
+             "localization of function, neuroplasticity, neurotransmitter, pheromones, twin studies, "
+             "multi-store model, working memory model, schema theory, decision making, dual process model, "
+             "cognitive bias, reconstructive memory, eyewitness testimony, flashbulb memory, social identity theory, "
+             "social cognitive theory, social learning theory, bandura, stereotype threat, conformity, obedience, "
+             "milgram, asch, zimbardo, stanford prison experiment, enculturation, acculturation, cultural dimensions, "
+             "research methods, attachment theory, abnormal psychology, depression, ptsd, anxiety disorder, "
+             "health psychology, developmental psychology, piaget",
+    "french": "french, français, francais, learn french, french lesson, french grammar, grammaire, french vocabulary, "
+              "vocabulaire, conjugation, conjugaison, passé composé, passe compose, imparfait, futur simple, "
+              "futur proche, conditionnel, subjonctif, subjunctive, reflexive verbs, être, avoir, direct object pronouns, "
+              "prononciation, french pronunciation, french listening, french conversation, french for beginners, delf, "
+              "ab initio",
+    "english": "english literature, english lit, lang lit, language and literature, literary devices, "
+               "literary techniques, stylistic devices, rhetoric, rhetorical devices, ethos, pathos, logos, "
+               "persuasive techniques, close reading, textual analysis, paper 1, paper 2, individual oral, "
+               "learner portfolio, hl essay, global issue, comparative essay, poem analysis, poetry, poetic devices, "
+               "poem, novel, prose, drama, play, shakespeare, hamlet, macbeth, othello, king lear, romeo and juliet, "
+               "great gatsby, orwell, animal farm, frankenstein, jane eyre, metaphor, symbolism, imagery, "
+               "narrative voice, narrator, characterisation, characterization, themes, tone, point of view, "
+               "non-literary texts, advertisement analysis, speech analysis",
+}
+# ordinary words that only count with a second hit or a study word like 'explained' or 'lesson'
+STUDY_VIDEO_WEAK = set("""heart blood plant play poem poems novel novels drama prose themes tone speech commentary analysis
+    advertisement cell cells memory virus viruses graphs graph functions series trig play proof proofs base bases acid acids
+    atom atoms emotion stress attachment culture behaviour behavior verbs articles pronouns narrator imagery metaphor
+    symbolism hormones muscle lungs kidney kidneys reproduction evolution ecology polymer polymers ethics anxiety
+    depression stereotypes obedience conformity english french math maths gene genes limits integration
+    translation classification nucleus membrane cloning embryo mutation darwin chemical chemist organic reduction buffer
+    bonding concentration alcohol equation function sequence sequences arithmetic geometric composite transformations
+    tangent vectors induction statistics regression experiment globalization stereotype bonjour lecture poetry immune
+    hormone bacteria digestion ventilation inheritance anatomy""".split())
+
+
+def _sv_terms():
+    """{subject: [(compiled pattern, strong?)]}, built once."""
+    if _SV_CACHE:
+        return _SV_CACHE
+    for sid, name, short, col, aliases, topics, sites in SUBJECT_DEFS:
+        words = set(w.strip().lower() for w in topics + aliases if len(w.strip()) > 2)
+        words |= set(w.strip() for w in STUDY_VIDEO_VOCAB.get(sid, "").split(",") if w.strip())
+        out = []
+        for w in words:
+            if not w or w in _SUBJ_STOP:
+                continue
+            strong = (" " in w and len(w) >= 8) or (len(w) >= 6 and w not in STUDY_VIDEO_WEAK) or \
+                     w in ("biology", "chemistry", "psychology", "calculus", "dna", "rna", "atp", "pcr", "nmr", "sn1",
+                           "sn2", "vsepr", "crispr", "ptsd")
+            pat = re.compile(r"(?<![a-z0-9])" + re.escape(w).replace(r"\ ", r"[\s\-]+") + r"(?:s|es|'s)?(?![a-z0-9])")
+            out.append((pat, strong, w))
+        _SV_CACHE[sid] = out
+    return _SV_CACHE
+
+
+_SV_CACHE = {}
+_SV_PHRASE_JUNK = re.compile(r"^(and|of|the|to|in|for|a)\b|\b(and|of|the|to|in|for|a)$")
+
+
+def study_video_subject(text, extra_words=()):
+    """(subject id, why) when a YouTube video title is about one of your subjects, else (None, why)."""
+    low = (text or "").lower()
+    low = re.sub(r"[|:·•\[\]()#!?,.\"“”]+", " ", low)
+    low = re.sub(r"\s+", " ", low).strip()
+    if not low:
+        return None, "empty"
+    if STUDY_VIDEO_NOPE.search(text.lower()):
+        return None, "entertainment"
+    for w in extra_words or ():
+        w = (w or "").strip().lower()
+        if w and re.search(r"(?<![a-z0-9])" + re.escape(w) + r"(?![a-z0-9])", low):
+            return "study", "your word '%s'" % w
+    best, why_best = None, ""
+    best_sc = 0.0
+    cue = bool(STUDY_VIDEO_CUES.search(low))
+    for sid, terms in _sv_terms().items():
+        strong = set()
+        weak = set()
+        for pat, st, w in terms:
+            if _SV_PHRASE_JUNK.search(w):
+                continue
+            if pat.search(low):
+                (strong if st else weak).add(w)
+        sc = 3.0 * len(strong) + 1.0 * len(weak)
+        if strong or len(weak) >= 2 or (weak and cue):
+            if sc > best_sc:
+                best, best_sc = sid, sc
+                why_best = ", ".join(sorted(strong | weak))[:60]
+    return (best, why_best) if best else (None, "no subject words")
+
 
 JMAP_LAND = {
     "hokkaido": [(140.0, 41.42), (140.12, 42.0), (139.8, 42.6), (140.4, 43.2), (141.3, 43.25), (141.4, 43.8), (141.7, 44.3),
@@ -28005,6 +28134,21 @@ class Zenko(FoxBuddy):
         yv = tk.BooleanVar(value=bool(self.cfg.get("study_videos", True)))
         check(c, "Let YouTube videos about my subjects through in focus sessions and lock-in", yv,
               lambda: cfg_set("study_videos", bool(yv.get())))
+        label(c, "Extra words that mean a video is for study (comma separated, e.g. a teacher's or channel's name)")
+        rw = tk.Frame(c, bg=bg)
+        rw.pack(fill="x", padx=14, pady=(2, 8))
+        wv = tk.StringVar(value=", ".join(self.cfg.get("study_video_words") or []))
+        we = self.tt_entry(rw, wv, 30)
+        we.pack(side="left")
+        wst = tk.Label(rw, text="", bg=bg, fg=GREY, font=(FONT_UI, 9))
+
+        def save_words(_e=None):
+            ws = [w.strip().lower() for w in re.split(r"[,;\n]", wv.get()) if w.strip()]
+            cfg_set("study_video_words", ws)
+            wst.config(text="Saved %d word%s" % (len(ws), "" if len(ws) == 1 else "s"))
+        we.bind("<Return>", save_words)
+        self.tt_btn(rw, "Save", save_words, bg=T["start"], size=9, padx=10, pady=1).pack(side="left", padx=6)
+        wst.pack(side="left")
         label(c, "First exam day (YYYY-MM-DD), for the countdown")
         r = tk.Frame(c, bg=bg)
         r.pack(fill="x", padx=14, pady=(2, 12))
@@ -29325,7 +29469,7 @@ class Zenko(FoxBuddy):
         if not res:
             return
         app, site, media = res
-        if site == "YouTube" and self.study_video(title, proc):
+        if site == "YouTube" and self.study_video(title, proc) not in (None, "browsing"):
             site = "YouTube (study)"
         if idle > (1800 if media or site == "YouTube (study)" else 120):
             return
@@ -30320,28 +30464,37 @@ class Zenko(FoxBuddy):
     #  study videos: YouTube videos about your subjects are allowed in focus sessions and lock-in
     # =================================================================================================
     def study_video(self, title, proc=""):
-        """The subject id when this window is a YouTube video about one of your subjects, else None."""
+        """The subject id when this window is a YouTube video about one of your subjects, else None.
+        YouTube's home, search and loading pages get a short grace period so you can find the video first."""
         if not self.cfg.get("study_videos", True):
             return None
         raw = (title or "").strip()
         if not re.search(r"\byoutube\b", raw, re.I):
+            self._yt_home_t0 = 0.0
             return None
-        t = re.sub(r"\s+[-–—]\s+youtube\b.*$", "", _SCREEN_BROWSER_TAIL.sub("", raw), flags=re.I)
-        t = re.sub(r"^\(\d+\)\s*", "", t).strip()
+        t = _SCREEN_BROWSER_TAIL.sub("", raw)
+        t = re.sub(r"\s+and \d+ more pages?.*$", "", t, flags=re.I)
+        t = re.sub(r"\s+[-\u2013\u2014|]\s+youtube\b.*$", "", t, flags=re.I)
+        t = re.sub(r"^youtube\s+[-\u2013\u2014|:]\s+", "", t, flags=re.I)      # the YouTube app window
+        t = re.sub(r"^\(\d+\+?\)\s*", "", t).strip()                          # "(3) " notification count
         low = t.lower()
-        if not low or low in ("youtube", "home", "subscriptions", "history", "watch later") or len(low) < 6:
-            return None
-        if STUDY_VIDEO_NOPE.search(low):
-            return None
-        try:
-            sid, sc, sc2 = classify_subject(low, self.life.get("subj_words"))
-        except Exception:
-            return None
+        if not low or low in ("youtube", "home", "subscriptions", "history", "watch later", "library", "you",
+                              "playlists", "explore", "trending"):
+            now = time.monotonic()
+            t0 = getattr(self, "_yt_home_t0", 0.0)
+            if not t0:
+                self._yt_home_t0 = t0 = now
+            return "browsing" if now - t0 < 75 else None                     # 75 s to search for your video
+        self._yt_home_t0 = 0.0
+        sid, why = study_video_subject(t, self.cfg.get("study_video_words") or ())
         if not sid:
-            return None
-        if sc >= 2 or (sc >= 1 and STUDY_VIDEO_CUES.search(low)):
-            return sid
-        return None
+            try:
+                s2, sc, sc2 = classify_subject(low, self.life.get("subj_words"))   # words she learned from your files
+                if s2 and sc >= 3 and not STUDY_VIDEO_NOPE.search(low):
+                    sid = s2
+            except Exception:
+                pass
+        return sid
 
     def is_distracting(self, title, proc):
         site = super().is_distracting(title, proc)
@@ -30370,7 +30523,10 @@ class Zenko(FoxBuddy):
         seen.append(key)
         del seen[:-40]
         sid = self.study_video(title)
-        name = subject_name(sid, self.life, short=True) if sid else "study"
+        if sid in (None, "browsing"):
+            seen.pop()
+            return
+        name = subject_name(sid, self.life, short=True) if sid not in ("study",) else "study"
         self.root.after(10, lambda: self.say(random.choice(["A %s video? That counts as studying. Allowed~",
                                                            "%s video, I'll let it through. Take notes, ne~",
                                                            "Ooh, %s. Watching is fine, just don't wander off to the "
