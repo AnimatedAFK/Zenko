@@ -48,8 +48,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           NOTES=$(awk '/^## /{if(p)exit} /^## '"${GITHUB_REF_NAME}"'/{p=1;next} p' CHANGES.md || true)
-          gh release create "${GITHUB_REF_NAME}" out/Zenko.exe out/zenko.py out/Zenko.exe.sha256 out/zenko.py.sha256 \
-            --title "Zenko ${GITHUB_REF_NAME#v}" --notes "${NOTES:-Zenko ${GITHUB_REF_NAME}}" --latest
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            # you made the release on github.com: just attach the freshly built files to it
+            gh release upload "${GITHUB_REF_NAME}" out/Zenko.exe out/zenko.py out/Zenko.exe.sha256 out/zenko.py.sha256 --clobber
+          else
+            gh release create "${GITHUB_REF_NAME}" out/Zenko.exe out/zenko.py out/Zenko.exe.sha256 out/zenko.py.sha256 \
+              --title "Zenko ${GITHUB_REF_NAME#v}" --notes "${NOTES:-Zenko ${GITHUB_REF_NAME}}" --latest
+          fi
       - uses: actions/upload-artifact@v4
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         with:
