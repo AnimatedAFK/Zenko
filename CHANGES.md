@@ -1,5 +1,9 @@
 # Zenko changes
 
+## v2026.11.23-zenko18.1
+- **Bible word lookups work with no internet**: the full Strong's Hebrew and Greek lexicon (STEPBible, CC BY 4.0, about 23,000 entries) is now built into Zenko, so clicking any word shows its complete dictionary entry even on school wifi.
+- If GitHub is blocked, the original-language text now also tries a second download source (jsDelivr).
+
 ## v2026.11.23-zenko18
 - **Reminders tab (絵馬)**: a night shrine. Each reminder is a wooden ema plaque on a shrine rack, and your planned study for today hangs above as paper lanterns. Write one at the top ("call mum at 6pm", "take vitamins every day at 8") or tap a time. Click a plaque to mark it done (it gets a red 済 stamp and moves to the fulfilled row), edit it, snooze it or take it down.
 - **Zenko tells a reminder from a plan**: "remind me to study at 9" hangs an ema; "plan bio at 9am for 45 min" or "I'll study chem at 8pm" goes on your timetable. In chat you can also say "my reminders", "move call mum to 7pm", "mark stretch as done", "rename 2 to ...", "snooze vitamins for 30 min", "delete reminder 3".
