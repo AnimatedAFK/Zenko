@@ -1,5 +1,11 @@
 # Zenko changes
 
+## v2026.11.23-zenko18
+- **Reminders tab (絵馬)**: a night shrine. Each reminder is a wooden ema plaque on a shrine rack, and your planned study for today hangs above as paper lanterns. Write one at the top ("call mum at 6pm", "take vitamins every day at 8") or tap a time. Click a plaque to mark it done (it gets a red 済 stamp and moves to the fulfilled row), edit it, snooze it or take it down.
+- **Zenko tells a reminder from a plan**: "remind me to study at 9" hangs an ema; "plan bio at 9am for 45 min" or "I'll study chem at 8pm" goes on your timetable. In chat you can also say "my reminders", "move call mum to 7pm", "mark stretch as done", "rename 2 to ...", "snooze vitamins for 30 min", "delete reminder 3".
+- **Both are said out loud** in English when it's time (the Mute button doesn't silence these; the switch on the Reminders page does).
+- Pages no longer cut off a column on smaller windows: a column that doesn't fit moves under the other one, and goes back side by side when the window is wide again.
+
 ## v2026.11.23-zenko17.2
 - **Mute in Chat only mutes her spoken lines** (the Japanese VOICEVOX sentences and read-out replies). Her little voice sounds when you pet or boop her keep playing.
 - **She always walks back to the far right** of the screen after wandering, chasing the mouse or napping on a window.
