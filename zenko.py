@@ -52,7 +52,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.22-zenko16.1"
+APP_VERSION = "v2026.11.23-zenko17"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -3659,15 +3659,23 @@ MED_PROMPT = ("Pathology, histology, glomerulonephritis, nephrotic, nephritic, c
               "renal, hepatic, neoplasia, timetable, Zenko, Spotify, reMarkable.")
 
 
+_WHISPER_OK = {"t": 0.0, "ok": False}
+
+
 def whisper_ready():
+    """Is the Python Whisper engine (faster-whisper) installed? Checked at most every 10 minutes (it's slow)."""
+    if time.monotonic() - _WHISPER_OK["t"] < 600 and _WHISPER_OK["t"]:
+        return _WHISPER_OK["ok"]
     py = system_python()
-    if not py:
-        return False
-    try:
-        r = run_hidden([py, "-c", "import faster_whisper, sounddevice, numpy"], timeout=40)
-        return r.returncode == 0
-    except Exception:
-        return False
+    ok = False
+    if py:
+        try:
+            r = run_hidden([py, "-c", "import faster_whisper, sounddevice, numpy"], timeout=40)
+            ok = r.returncode == 0
+        except Exception:
+            ok = False
+    _WHISPER_OK.update(t=time.monotonic(), ok=ok)
+    return ok
 
 
 class VoiceEngine:
@@ -7810,6 +7818,10 @@ class ZenkoExtras:
         vv_status.pack(fill="x", padx=14, pady=(2, 2))
         check(c, "Open VOICEVOX by itself when Zenko starts (hidden)",
               "voicevox_autostart", True, after=lambda: self.vv_autostart())
+        check(c, "With VOICEVOX, she says each speech bubble out loud in Japanese (the bubble stays in English)",
+              "jp_voice", True)
+        label(c, "Her sounds are only her voice now: no drums, bells or plucks. Without VOICEVOX she uses her little "
+                 "built-in voice clips; pick Off above for silence.")
         eng_row = tk.Frame(c, bg=bg)
         eng_row.pack(fill="x", padx=14, pady=(2, 0))
         eng_lbl = tk.Label(c, text="", bg=bg, fg=GREY, font=(FONT_UI, 8), anchor="w", justify="left", wraplength=330)
@@ -9021,9 +9033,13 @@ class ZenkoLife:
         return "winter" if m in (12, 1, 2) else ("spring" if m in (3, 4, 5) else ("summer" if m in (6, 7, 8) else "autumn"))
 
     def haiku(self):
+        """A haiku she hasn't said lately (she remembers the last 40)."""
         pool = HAIKU[self.season()] + HAIKU["any"]
-        h = random.choice(pool)
-        self.life.setdefault("haiku", [])
+        seen = self.life.setdefault("haiku", [])
+        fresh = [h for h in pool if h[:24] not in seen] or pool
+        h = random.choice(fresh)
+        seen.append(h[:24])
+        del seen[:-40]
         return h
 
     def random_event(self, kind=None):
@@ -13348,6 +13364,7 @@ BOOKS = [
     ("english", "英語", "eigo", "English Lang & Lit HL", "ember", None),
     ("diary", "日記", "nikki", "Study diary", "snow", "#c9a24a"),
     ("grades", "成績", "seiseki", "Grades", "classic", "#b0122b"),
+    ("bible", "聖書", "seisho", "Bible", "snow", "#6b2a1e"),           # zenko17: opens in its own window
 ]
 BOOK_KEYS = [b[0] for b in BOOKS]
 
@@ -13360,6 +13377,7 @@ BOOK_PRACTICE = {
     "english": "書き方の巻物 · Answer-writing scroll",
     "diary": "早寝 · Sleep and rest guard",
     "grades": "成績表 · Add a result",
+    "bible": "原語 · Hebrew, Aramaic and Greek, word by word",
 }
 
 # Free Ollama models that are trained for a subject. The first one installed wins; otherwise the normal smart brain.
@@ -15851,7 +15869,7 @@ class ZenkoBooks:
         return img
 
     def shelf_layout(self, W, H):
-        n_row = 4
+        n_row = (len(BOOKS) + 1) // 2
         bw = int(max(84, min(132, (W - 300) / n_row - 30)))
         bw = int(max(72, min(bw, (H - 262) / 2 / 1.42)))
         bw -= bw % 2
@@ -15992,6 +16010,8 @@ class ZenkoBooks:
             elif key == "grades":
                 n_ = len(self.life["grades"])
                 sub = "%d result%s" % (n_, "" if n_ == 1 else "s")
+            elif key == "bible":
+                sub = "Hebrew · Greek · notes"
             else:
                 sub = "time · goals · sleep"
             cv.create_text(x + w / 2, y + h + 21, text=sub, fill="#bfae8a", font=(serif, 8, "italic"))
@@ -19359,6 +19379,9 @@ SOUND_POOLS = {
     "food": ["v_nom", "munch", "v_ureshii", "v_waai", "i_mokugyo", "i_bubble", "v_hehe", "i_suzu_one"],
     "sleepy": ["yawn", "v_fuwa", "i_flute", "i_furin2", "i_purr"],
 }
+# zenko17 (the user asked for voice lines only, no drums or chimes when you play with her): keep just her voice
+SOUND_POOLS = {g: [k for k in ks if k.startswith("v_")] for g, ks in SOUND_POOLS.items()}
+SOUND_POOLS["sleepy"] += ["v_uu"]
 _SOUND_GROUP = {"pet": "soft", "brush": "soft", "praise": "soft", "forgive": "soft", "boop": "silly", "giggle": "silly",
                 "belly": "silly", "tickle": "silly", "tail": "silly", "hide": "silly", "found": "silly", "munch": "food",
                 "treat": "food", "happy": "play", "gift": "play", "yarn": "play", "highfive": "play", "yawn": "sleepy"}
@@ -19388,36 +19411,45 @@ def varied_sound(kind):
         return None
     grp = _SOUND_GROUP.get(kind, "play")
     pool = list(SOUND_POOLS.get(grp, SOUND_POOLS["play"]))
-    if SOUND.get("clips", "synth") == "off":
-        pool = [k for k in pool if not k.startswith("v_")] or list(SYNTH_POOL)
-    fresh = [k for k in pool if k not in V["recent"][-3:]] or [k for k in pool if k != V["last"]]
+    if SOUND.get("clips", "synth") == "off" or not pool:
+        return None
+    fresh = [k for k in pool if k not in V["recent"][-3:]] or [k for k in pool if k != V["last"]] or pool
     pick = random.choice(fresh)
     V["last"], V["t"] = pick, now
     V["recent"] = (V["recent"] + [pick])[-6:]
     return pick
 
 
-def beep(kind="nag"):
-    """Zenko's own sounds. During play, a varied sound from the pool plays instead of the fixed one."""
-    if SOUND_VARIETY["on"] and kind in _SOUND_GROUP and kind not in ("song",):
-        if not (IS_WIN and SOUND["on"]):
-            varied_sound(kind)                               # still keeps the no-repeat order honest
-            return
-        pick = varied_sound(kind)
-        if not pick:
-            return
+# which voice line goes with a sound that has no voice of its own
+_VOICE_EXTRA = {"ding": "v_hai", "eyes_done": "v_hai", "omikuji": "v_waai", "found": "v_sugoi", "praise": "v_ureshii",
+                "brush": "v_nade", "tickle": "v_kusugu", "belly": "v_kusugu", "tail": "v_kya", "highfive": "v_yatta",
+                "treat": "v_nom", "yarn": "v_waai", "hide": "v_fufu", "forgive": "v_ureshii"}
+JPV = {"said": 0.0}                       # when she last started saying a real line out loud (see zenko17 below)
 
-        def run():
-            try:
-                import winsound
-                p = _pool_sound_file(pick)
-                if p:
-                    winsound.PlaySound(p, winsound.SND_FILENAME | winsound.SND_ASYNC | winsound.SND_NODEFAULT)
-            except Exception:
-                pass
-        threading.Thread(target=run, daemon=True).start()
+
+def beep(kind="nag"):
+    """zenko17: Zenko's own sounds are ONLY her voice (kon kon~, ehehe~, yatta!...), never drums, bells or plucks.
+    When she is about to say the actual line out loud (VOICEVOX, in Japanese) the little clip stays quiet."""
+    if SOUND_VARIETY["on"] and kind in _SOUND_GROUP and kind not in ("song",):
+        pick = varied_sound(kind)
+    else:
+        pick = VOICE_FOR.get(kind) or _VOICE_EXTRA.get(kind)
+    if not pick or not (IS_WIN and SOUND["on"]) or SOUND.get("clips", "synth") == "off":
         return
-    return _beep_base(kind)
+    t0 = time.monotonic()
+
+    def run():
+        time.sleep(0.3)                                       # give a matching speech bubble a moment to start talking
+        if JPV["said"] > t0 - 0.8 or JPV.get("busy"):
+            return
+        try:
+            import winsound
+            p = _pool_sound_file(pick)
+            if p:
+                winsound.PlaySound(p, winsound.SND_FILENAME | winsound.SND_ASYNC | winsound.SND_NODEFAULT)
+        except Exception:
+            pass
+    threading.Thread(target=run, daemon=True).start()
 
 
 # ---- IA / EE / TOK ------------------------------------------------------------------------------------------
@@ -26696,6 +26728,7 @@ def _bundle_hint():
     import wave, xml.dom.minidom, zipfile, zlib, socket, select, selectors, secrets, shlex, fnmatch, getpass  # noqa
     import concurrent.futures, asyncio, json.decoder, html.parser, urllib.robotparser, ctypes.wintypes  # noqa
     import winreg, winsound, msvcrt  # noqa
+    import ast, cmath, faulthandler, gc, html, unicodedata, webbrowser  # noqa
 
 
 def update_apply(newfile):
@@ -27156,6 +27189,7 @@ class MicRecorder:
                     data = ctypes.string_at(bufs[i], hd.dwBytesRecorded)
                     self.chunks.append(data)
                     hd.dwBytesRecorded = 0
+                    hd.dwFlags &= ~1                          # clear WHDR_DONE ourselves before handing it back
                     wm.waveInAddBuffer(h, byref(hd), sizeof(WAVEHDR))
                     i = (i + 1) % n_buf
                     if self._vad(data, st):
@@ -27202,6 +27236,14 @@ class MicRecorder:
         finally:
             p.terminate()
         return False
+
+
+def mic_peak(pcm):
+    """The loudest sample in 16-bit PCM (checks every 7th sample, quick)."""
+    import array
+    a = array.array("h")
+    a.frombytes(pcm[:len(pcm) - (len(pcm) % 2)])
+    return max((abs(v) for v in a[::7]), default=0)
 
 
 def pcm_to_wav(pcm, path, rate=16000):
@@ -27336,11 +27378,25 @@ def stt_transcribe(wav, model_key="fast", extra_dir=""):
     if not (cli and model):
         raise WebError("My offline ears aren't set up yet (Settings > Talk with Zenko).")
     threads = max(1, min(4, (os.cpu_count() or 2) - 1))
-    args = [cli, "-m", model, "-f", wav, "-l", "en", "-nt", "-np", "-t", str(threads), "--prompt", STT_PROMPT]
+    out_base = os.path.splitext(wav)[0] + "_text"
+    try:
+        os.remove(out_base + ".txt")
+    except OSError:
+        pass
+    # zenko17: newer whisper.cpp builds print nothing to the console with -np, so the words also go to a .txt file
+    args = [cli, "-m", model, "-f", wav, "-l", "en", "-nt", "-np", "-t", str(threads), "--prompt", STT_PROMPT,
+            "-otxt", "-of", out_base]
     if os.environ.get("FOX_FAKE_WHISPER"):
         args = [sys.executable, cli, wav]
     r = run_hidden(args, timeout=240, cwd=os.path.dirname(os.path.abspath(cli)))
     out = (r.stdout or b"").decode("utf-8", "replace")
+    try:
+        with open(out_base + ".txt", encoding="utf-8", errors="replace") as f:
+            txt_file = f.read()
+        if txt_file.strip():
+            out = txt_file
+    except OSError:
+        pass
     text = " ".join(ln.strip() for ln in out.splitlines() if ln.strip() and not ln.startswith(("whisper_", "main:", "system_info")))
     text = re.sub(r"\[[^\]]*\]|\((?:music|noise|silence|inaudible|blank_audio|laughs?|applause)[^)]*\)", " ", text, flags=re.I)
     text = re.sub(r"\s+", " ", text).strip()
@@ -27410,6 +27466,11 @@ class LocalVoice(VoiceEngine):
         self.listening = False
         if rec.err:
             self.q.put(("error", rec.err))
+            return
+        if len(pcm) >= 16000 and mic_peak(pcm) < 24:
+            self.q.put(("error", "I only heard total silence. Is the microphone muted? Check Windows Settings > Privacy & "
+                                 "security > Microphone > 'Let desktop apps access your microphone', and the input device "
+                                 "in Settings > System > Sound."))
             return
         if len(pcm) < 16000 * 2 * 0.4 or (rec.auto_stop and not rec.heard):
             self.q.put(("text", ""))
@@ -27524,6 +27585,3319 @@ def vv_hush():
             pass
 
 
+# =====================================================================================================================
+#  zenko17: her voice says the real line (in Japanese, with VOICEVOX), your own close/keep rules, themed scrollbars,
+#  scrollable book chats, study tool windows (periodic table, French dictionary, fx-CG50-style calculator), the Bible
+#  book with Hebrew / Aramaic / Greek word studies, more haiku, and a steadier window when maximised.
+# =====================================================================================================================
+import gc as _gc
+
+
+# ---- a scrollbar that matches the theme (Windows' own one is a white slab that ignores colours) -----------------
+class ZkScrollbar(tk.Canvas if tk else object):
+    """Drop-in for tk.Scrollbar: a slim rounded gold thumb on a barely-there track. Supports command, set, get."""
+    _SKIP = ("troughcolor", "activebackground", "elementborderwidth", "jump", "repeatdelay", "repeatinterval",
+             "activerelief", "relief", "borderwidth", "bd", "highlightcolor", "highlightbackground", "takefocus",
+             "width", "cursor")
+
+    def __init__(self, master=None, cnf=None, **kw):
+        kw = dict(cnf or {}, **kw)
+        self._cmd = kw.pop("command", None)
+        self._orient = str(kw.pop("orient", "vertical"))
+        size = int(kw.pop("width", 10) or 10)
+        bg = kw.pop("bg", None) or kw.pop("background", None)
+        for k in self._SKIP:
+            kw.pop(k, None)
+        if not bg:
+            try:
+                bg = master.cget("bg")
+            except Exception:
+                bg = PAPER or "#202020"
+        vert = not self._orient.startswith("h")
+        tk.Canvas.__init__(self, master, width=size if vert else 40, height=40 if vert else size, bg=bg,
+                           highlightthickness=0, bd=0, cursor="arrow")
+        self._vert = vert
+        self._lo, self._hi = 0.0, 1.0
+        self._hover = False
+        self._drag = None
+        self.bind("<Configure>", lambda e: self._draw())
+        self.bind("<Enter>", lambda e: self._hov(True))
+        self.bind("<Leave>", lambda e: self._hov(False))
+        self.bind("<ButtonPress-1>", self._press)
+        self.bind("<B1-Motion>", self._motion)
+        self.bind("<ButtonRelease-1>", lambda e: setattr(self, "_drag", None))
+
+    def configure(self, cnf=None, **kw):
+        kw = dict(cnf or {}, **kw)
+        if "command" in kw:
+            self._cmd = kw.pop("command")
+        for k in self._SKIP + ("orient",):
+            kw.pop(k, None)
+        if kw:
+            return tk.Canvas.configure(self, **kw)
+        return None
+    config = configure
+
+    def cget(self, key):
+        if key == "command":
+            return self._cmd
+        if key == "orient":
+            return self._orient
+        return tk.Canvas.cget(self, key)
+
+    def set(self, lo, hi):
+        try:
+            self._lo, self._hi = max(0.0, float(lo)), min(1.0, float(hi))
+        except (TypeError, ValueError):
+            return
+        self._draw()
+
+    def get(self):
+        return self._lo, self._hi
+
+    def _hov(self, on):
+        self._hover = on
+        self._draw()
+
+    def _len(self):
+        return max(1, self.winfo_height() if self._vert else self.winfo_width())
+
+    def _draw(self):
+        try:
+            self.delete("all")
+            W, H = self.winfo_width(), self.winfo_height()
+        except tk.TclError:
+            return
+        if W < 3 or H < 3 or self._hi - self._lo >= 0.999:
+            return
+        bg = self.cget("bg")
+        try:
+            track = _mixhex(bg, INK, 0.07)
+            thumb = _mixhex(GOLD, bg, 0.05 if (self._hover or self._drag) else 0.4)
+        except Exception:
+            track, thumb = "#333333", "#c9a24a"
+        L = self._len()
+        a, b = int(self._lo * L), int(self._hi * L)
+        if b - a < 18:
+            m = (a + b) // 2
+            a, b = max(0, m - 9), min(L, m + 9)
+        if self._vert:
+            x1, x2 = 2, W - 2
+            self.create_line(W // 2, 3, W // 2, H - 3, fill=track, width=max(1, W - 6), capstyle="round")
+            r = (x2 - x1)
+            self.create_oval(x1, a + 1, x2, a + 1 + r, fill=thumb, outline="")
+            self.create_oval(x1, b - 1 - r, x2, b - 1, fill=thumb, outline="")
+            self.create_rectangle(x1, a + 1 + r // 2, x2, b - 1 - r // 2, fill=thumb, outline="")
+        else:
+            y1, y2 = 2, H - 2
+            self.create_line(3, H // 2, W - 3, H // 2, fill=track, width=max(1, H - 6), capstyle="round")
+            r = (y2 - y1)
+            self.create_oval(a + 1, y1, a + 1 + r, y2, fill=thumb, outline="")
+            self.create_oval(b - 1 - r, y1, b - 1, y2, fill=thumb, outline="")
+            self.create_rectangle(a + 1 + r // 2, y1, b - 1 - r // 2, y2, fill=thumb, outline="")
+
+    def _call(self, *args):
+        if self._cmd:
+            try:
+                self._cmd(*args)
+            except tk.TclError:
+                pass
+
+    def _press(self, e):
+        pos = (e.y if self._vert else e.x) / float(self._len())
+        if self._lo <= pos <= self._hi:
+            self._drag = (pos, self._lo)
+        else:
+            self._call("scroll", -1 if pos < self._lo else 1, "pages")
+        self._draw()
+
+    def _motion(self, e):
+        if not self._drag:
+            return
+        pos = (e.y if self._vert else e.x) / float(self._len())
+        p0, lo0 = self._drag
+        self._call("moveto", max(0.0, min(1.0, lo0 + pos - p0)))
+
+
+if tk:
+    _TkScrollbar = tk.Scrollbar
+    tk.Scrollbar = ZkScrollbar                              # every scrollbar in Zenko is now the themed one
+
+
+def zk_text_scroll(text):
+    """Give a Text box its own slim themed scrollbar (inside its right edge) so long answers can be scrolled."""
+    if text is None or getattr(text, "_zk_sb", None) is not None:
+        return
+    try:
+        sb = ZkScrollbar(text, command=text.yview, bg=text.cget("bg"), width=9)
+        text.configure(yscrollcommand=sb.set)
+        sb.place(relx=1.0, x=-1, rely=0.0, y=2, relheight=1.0, height=-4, anchor="ne")
+        text._zk_sb = sb
+    except tk.TclError:
+        pass
+
+
+# ---- crash safety: Tk images and variables must only ever be freed on the main thread -----------------------------
+# When Python's cycle collector happens to run on a helper thread (web lookups, voice, downloads) and frees a Tk
+# PhotoImage there, Tcl can abort the whole program. That's most likely on maximise/fullscreen, when every big page
+# picture is redrawn at the new size at once. So: automatic collection is off, and Zenko collects on the UI thread.
+_FAULT = {"f": None}
+
+
+def zk_crash_guards(root):
+    try:
+        _gc.disable()
+    except Exception:
+        pass
+    try:
+        import faulthandler
+        os.makedirs(DATA_DIR, exist_ok=True)
+        _FAULT["f"] = open(os.path.join(DATA_DIR, "fault_log.txt"), "a", encoding="utf-8")
+        faulthandler.enable(_FAULT["f"])
+    except Exception:
+        pass
+    n = {"i": 0}
+
+    def tick():
+        n["i"] += 1
+        try:
+            _gc.collect(2 if n["i"] % 30 == 0 else 1)
+        except Exception:
+            pass
+        try:
+            root.after(2500, tick)
+        except tk.TclError:
+            pass
+    root.after(2500, tick)
+
+
+def zk_log_error(text):
+    try:
+        p = os.path.join(DATA_DIR, "error_log.txt")
+        if os.path.exists(p) and os.path.getsize(p) > 400000:
+            os.replace(p, p + ".old")
+        with open(p, "a", encoding="utf-8") as f:
+            f.write("\n[%s %s]\n%s\n" % (datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), APP_VERSION, text))
+    except Exception:
+        pass
+
+
+# ---- her voice says what the bubble says (in Japanese, spoken by VOICEVOX; the bubble stays English) -----------------
+JP_FILE = os.path.join(DATA_DIR, "jp_lines.json")
+_JPS = {"cache": None, "alive": False, "net_bad": 0.0, "gen": 0, "lock": threading.Lock()}
+JPV.update({"until": 0.0})
+JP_TICS = [(r"\bkon[ -]kon\b", "こんこん"), (r"\bkon\b", "こん"), (r"\behehe+\b", "えへへ"), (r"\behe\b", "えへ"),
+           (r"\bfufu+\b", "ふふっ"), (r"\byatta+\b", "やったぁ"), (r"\bwaa+i\b", "わーい"), (r"\bmou\b", "もう"),
+           (r"\bhmph\b", "ふん"), (r"\bmata ne\b", "またね"), (r"\boyasumi\b", "おやすみ"), (r"\bganbatte\b", "がんばって"),
+           (r"\bganbare\b", "がんばれ"), (r"\bsugoi\b", "すごい"), (r"\bkawaii\b", "かわいい"), (r"\bfumu\b", "ふむ"),
+           (r"\bgyu+\b", "ぎゅっ"), (r"\bauu+\b", "あうう"), (r"\buu+\b", "うぅ"), (r"\bkyuu+n?\b", "きゅーん"),
+           (r"\bnee?~", "ねぇ"), (r"\bfuaa+\b", "ふわぁ"), (r"\bnom\b", "はむ"), (r"\bitadakimasu\b", "いただきます"),
+           (r"\barigatou?\b", "ありがとう"), (r"\bkonnichiwa\b", "こんにちは"), (r"\bohayou?\b", "おはよう")]
+
+
+def _jp_cache():
+    if _JPS["cache"] is None:
+        try:
+            with open(JP_FILE, encoding="utf-8") as f:
+                _JPS["cache"] = json.load(f)
+        except Exception:
+            _JPS["cache"] = {}
+    return _JPS["cache"]
+
+
+def _jp_save():
+    c = _jp_cache()
+    try:
+        if len(c) > 4000:
+            for k in list(c)[:len(c) - 3000]:
+                c.pop(k, None)
+        tmp = JP_FILE + ".part"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(c, f, ensure_ascii=False)
+        os.replace(tmp, JP_FILE)
+    except Exception:
+        pass
+
+
+def jp_clean(text):
+    """The part of a bubble worth saying: no actions in *stars*, links, emoji or maths; one or two sentences."""
+    t = re.sub(r"(?<!\*)\*[^*\n]{1,60}\*(?!\*)", " ", text or "")      # *wags tail* actions aren't said
+    t = md_plain(t) if "md_plain" in globals() else t
+    t = re.sub(r"https?://\S+|\$[^$]*\$", " ", t)
+    t = "".join(ch for ch in t if ord(ch) < 0x2600 or 0x3000 <= ord(ch) <= 0x9fff)
+    t = re.sub(r"[~_#>|`]+", " ", t.replace("\n", " "))
+    t = re.sub(r"\s+", " ", t).strip(" .,-")
+    parts = re.split(r"(?<=[.!?])\s+", t)
+    out = ""
+    for p in parts:
+        if out and len(out) + len(p) > 150:
+            break
+        out = (out + " " + p).strip()
+    return out[:220]
+
+
+def jp_tics_only(t):
+    """'Kon kon~ ehehe!' style lines made only of her fox sounds: say them straight in kana (no translator needed)."""
+    low = t.lower()
+    rest = low
+    for pat, _kana in JP_TICS:
+        rest = re.sub(pat, " ", rest)
+    if re.sub(r"[\s!?.,~\-…]+", "", rest):
+        return ""
+    out = low
+    for pat, kana in JP_TICS:
+        out = re.sub(pat, kana, out)
+    out = re.sub(r"\s+", "", out).replace("~", "〜").replace("!", "！").replace("?", "？")
+    return out
+
+
+def jp_fallback(t):
+    """Offline and no brain: a short Japanese reaction that fits the line (her own sounds when she used them)."""
+    low = t.lower()
+    for pat, kana in JP_TICS[:24]:
+        if re.search(pat, low):
+            return kana + "！"
+    if re.search(r"\b(well done|great|amazing|proud|yay|congrat|nice|you did it|finished|done)\b", low):
+        return random.choice(["やったぁ！すごいね！", "えへへ、えらいえらい！"])
+    if re.search(r"\b(sorry|sad|miss|tired|rough|hungry)\b", low):
+        return random.choice(["うぅ…", "だいじょうぶ？"])
+    if re.search(r"\b(focus|study|back to work|distract|close)\b", low):
+        return random.choice(["集中しよう！", "がんばって！", "もう〜！勉強しよう？"])
+    if "?" in t:
+        return "ねぇねぇ？"
+    return random.choice(["こんこん！", "ふふっ", "はーい！"])
+
+
+def jp_translate(text, allow_net=True, llm_model=None):
+    """English bubble -> natural, cute Japanese for her voice. Cache first, then the free online translator, then a
+    local Ollama model, then a fitting short reaction. Never raises."""
+    t = jp_clean(text)
+    if not t:
+        return ""
+    key = t.lower()
+    c = _jp_cache()
+    if key in c:
+        return c[key]
+    tic = jp_tics_only(t)
+    if tic:
+        return tic
+    pre = t
+    for pat, kana in JP_TICS:
+        pre = re.sub(pat, kana, pre, flags=re.I)
+    out = ""
+    if allow_net and time.monotonic() > _JPS["net_bad"]:
+        try:
+            out = translate_text(pre, "ja", "en")[0]
+        except Exception:
+            _JPS["net_bad"] = time.monotonic() + 600              # offline (or blocked): don't keep waiting on it
+    if not out:
+        try:
+            names = [n for n in (ollama_models() or []) if "cloud" not in n]
+            if names:
+                m = pick_model(names, llm_model or "llama3.2:3b")
+                j = _ollama_json("/api/chat", {
+                    "model": m, "stream": False, "options": {"temperature": 0.2, "num_predict": 160},
+                    "messages": [{"role": "system", "content": "Terminology rule: not needed here. Translate the user's line "
+                                  "into natural, casual spoken Japanese, the way a cute, cheerful anime fox girl would say it. "
+                                  "Reply with the Japanese only: no romaji, no English, no notes."},
+                                 {"role": "user", "content": pre}]}, 25)
+                out = ((j.get("message") or {}).get("content") or "").strip().splitlines()[0] if j else ""
+                if not re.search(r"[぀-ヿ一-鿿]", out):
+                    out = ""
+        except Exception:
+            out = ""
+    if out:
+        out = re.sub(r"[A-Za-z]{3,}", "", out).strip() or out     # names in latin letters read badly: drop them
+        with _JPS["lock"]:
+            c[key] = out
+            _jp_save()
+        return out
+    return jp_fallback(t)
+
+
+def jp_speak(text, speaker, done=None, llm_model=None, already_jp=False):
+    """Translate (in a thread) and speak with VOICEVOX. done(seconds) like vv_speak; done(-1) if VOICEVOX is down."""
+    if not IS_WIN:
+        return False
+    _JPS["gen"] += 1
+    gen = _JPS["gen"]
+    JPV["said"] = time.monotonic()
+    JPV["until"] = time.monotonic() + 4.0
+
+    def run():
+        jp = text if already_jp else jp_translate(text, llm_model=llm_model)
+        if not jp or gen != _JPS["gen"]:
+            return
+
+        def got(secs):
+            if secs >= 0:
+                JPV["until"] = time.monotonic() + secs + 0.4
+            if done:
+                done(secs)
+        vv_speak(jp, speaker, got)
+    threading.Thread(target=run, daemon=True).start()
+    return True
+
+
+_ui_sound_z16 = ui_sound
+
+
+def ui_sound(kind):
+    """Interface sounds stay quiet while she is talking (one sound channel: a click would cut her off)."""
+    if time.monotonic() < JPV.get("until", 0.0):
+        return
+    return _ui_sound_z16(kind)
+
+
+# ---- your own close / keep rules ----------------------------------------------------------------------------------
+RULE_SITES = [("YouTube", ["youtube"]), ("Reddit", ["reddit"]), ("Instagram", ["instagram"]), ("TikTok", ["tiktok"]),
+              ("X / Twitter", ["twitter", " / x", "x.com"]), ("Netflix", ["netflix"]), ("Discord", ["discord"]),
+              ("Twitch", ["twitch"]), ("Facebook", ["facebook"]), ("Spotify", ["spotify"]), ("Pinterest", ["pinterest"]),
+              ("Steam", ["steam"]), ("Roblox", ["roblox"]), ("WhatsApp", ["whatsapp"]), ("ChatGPT", ["chatgpt"]),
+              ("Any site or app", ["*"])]
+_RULE_ALIASES = dict((n.lower(), a) for n, a in RULE_SITES)
+
+
+def rule_words(s):
+    return [w.strip().lower() for w in re.split(r"[,;\n]+", s or "") if w.strip()]
+
+
+def rule_verdict(rules, title, proc=""):
+    """First matching rule wins: ('keep' | 'close', rule) or (None, None)."""
+    t = (title or "").lower()
+    p = (proc or "").lower()
+    pn = p[:-4] if p.endswith(".exe") else p
+    for r in rules or []:
+        if not isinstance(r, dict) or not r.get("on", True):
+            continue
+        site = (r.get("site") or "").strip().lower()
+        if site and site not in ("*", "any", "any site or app"):
+            pats = _RULE_ALIASES.get(site, [site])
+            if not any(x in t or x == p or x == pn for x in pats):
+                continue
+        words = rule_words(r.get("words"))
+        if words and not any(re.search(r"(?<![a-z0-9])" + re.escape(w), t) for w in words):
+            continue
+        if not site and not words:
+            continue
+        return ("keep" if r.get("do") == "keep" else "close"), r
+    return None, None
+
+
+def rule_text(r):
+    site = r.get("site") or "Any site or app"
+    words = rule_words(r.get("words"))
+    w = (" whose title has “%s”" % "”, “".join(words)) if words else ""
+    if site.lower().startswith("any"):
+        what = ("anything" + w) if w else "everything"
+    else:
+        what = site + w
+    return ("Keep %s open" if r.get("do") == "keep" else "Close %s") % what
+
+
+# ---- more haiku (she was repeating herself) ----------------------------------------------------------------------
+HAIKU["winter"] += [
+    "Breath clouds by the lamp.\nThe radiator hums low.\nOne more problem, done.",
+    "Frost on the torii.\nInside, warm hands round a cup\nand a page of notes.",
+    "Long night, short candle.\nThe owl studies the dark sky.\nYou study the stars.",
+    "Snow hides every path.\nStill, the stone lanterns know where\nthe shrine steps begin.",
+    "Mikan on the desk,\npeel curling like a small moon.\nSweet break, then back in.",
+    "Winter-bare branches\nhold the sky up all the same.\nRest is not failing.",
+    "The year's last sunrise.\nWhat you learned this year stays put,\nquiet as deep snow.",
+    "Icicles drip slow.\nDrop by drop, the stone gives way.\nPage by page, you too.",
+    "My tails curl around\nyour cold feet under the desk.\nKotatsu fox, kon.",
+    "Hatsumode crowds wait.\nI already made a wish:\nyour exams go well.",
+]
+HAIKU["spring"] += [
+    "Green tea, first harvest.\nThe leaves were patient all year.\nPatient leaves taste sweet.",
+    "A swallow returns\nto the same eave as last spring.\nYou'll remember this.",
+    "Petals in the moat.\nFocus is a narrow stream:\nlet the blossoms pass.",
+    "Rain on new leaves, hush.\nThe frogs practise their one song\nuntil it is right.",
+    "Hanami is soon.\nFinish the chapter first, ne,\nthen we'll find a tree.",
+    "Spring wind lifts my ears.\nThe exam hall feels less scary\nwhen you've done the work.",
+    "Bamboo shoots break through\nthe hard ground in a single night.\nYears of roots came first.",
+    "Plum blossom, cold air.\nThe bravest flower blooms first.\nStart before you're ready.",
+    "Butterflies drift by.\nI chased one, then came straight back\nto watch you revise.",
+    "Morning mist lifting.\nYesterday's confusing notes\nmake sense now. Kon kon.",
+]
+HAIKU["summer"] += [
+    "Wind chime on the porch:\nonly when the breeze arrives.\nIdeas come like that.",
+    "Shaved ice melting fast.\nSo is this hour, so let's use it:\nthen a cool, sweet break.",
+    "Morning glory vines\nclimb the string one turn a day.\nThat's enough. Keep going.",
+    "Sudden summer storm.\nWe wait it out with flashcards.\nThe sun always comes.",
+    "Long light, open window.\nA cicada shell clings on:\nwhat you were, outgrown.",
+    "Sparkler at the end\nof a long day of study.\nSmall, bright, and well earned.",
+    "Paper fan, slow strokes.\nThe hottest days teach the most\nabout steady pace.",
+    "Watermelon seeds\nspat into the evening grass.\nRest is part of it.",
+    "Lanterns on the river\ncarry wishes out to sea.\nMine has your name on.",
+    "Sunflowers turn east\nbefore the sun shows its face.\nGet up and begin.",
+]
+HAIKU["autumn"] += [
+    "Persimmons ripen\nslowly on the bare branches.\nSweetness takes its time.",
+    "Moon-viewing tonight.\nI saved you the round dango\nfor after your notes.",
+    "Chestnuts crackle, pop.\nOne hard question cracked open:\nwarm, and worth the wait.",
+    "Geese in a long V.\nNo one flies the whole way first.\nTake turns, rest, then lead.",
+    "Rice fields gold and bowed.\nThe heaviest heads bend low.\nLearn, and stay humble.",
+    "Leaves fall, roots go deep.\nWhat looks like slowing down is\nstrength being stored up.",
+    "Cold rain, warm library.\nThe smell of old paper books.\nI could stay all night.",
+    "Sweet potato cart\ncalling down the evening lane.\nOne more page, then snack.",
+    "Pampas grass silver,\nbending but never breaking.\nBe like that this week.",
+    "The year is ripening.\nSo are you, a little more\nwith each quiet day.",
+]
+HAIKU["any"] += [
+    "Nine tails, one small fox,\nand all of them are cheering\nfor you right now. Kon!",
+    "A tidy desk, clear.\nThe mind follows where hands lead.\nBegin with one thing.",
+    "The timer begins.\nThe world can wait twenty-five.\nIt always does, ne.",
+    "Ink on the fingers,\nproof of a day spent well.\nWear it like a badge.",
+    "Mistakes in red pen\nare footprints on the right path.\nFollow them, not fear.",
+    "Shrine steps, one by one.\nNobody climbs them all at once.\nNeither should you try.",
+    "Stone garden, raked lines.\nThe monk redraws them each day.\nRevision is that.",
+    "Quiet room, warm lamp,\nthe soft scratch of your pencil:\nmy favourite song.",
+    "You looked away? Fine.\nLook back. The page is still here.\nSo am I. Kon kon.",
+    "Small steps, many days.\nThe mountain doesn't notice.\nThen one day: the top.",
+    "A koi in the pond\nswims against the waterfall.\nOne day it's a dragon.",
+    "The kettle whistles.\nBreak time is part of the plan.\nThen back to the work.",
+    "Your phone face-down, dark.\nSuddenly the hours are long\nand full and all yours.",
+    "Paper crane, folded\nwith a hundred careful creases.\nCare is the whole trick.",
+    "When the page goes blank,\nbreathe in four, hold four, out four.\nThe words will come back.",
+    "Daruma, one eye.\nI'll paint the other in when\nyou reach your goal, ne.",
+    "Moonlight on my fur.\nEvery fox who serves Inari\nonce began small too.",
+    "The bell at the shrine\nrings once and the whole hill hears.\nOne good hour is loud.",
+    "Read it, then close it,\nthen say it back from memory.\nThat's where it sticks, kon.",
+    "Sleep is study too:\nthe brain files away the day.\nGo to bed on time.",
+    "Hard question? Good sign.\nEasy ones don't make you grow.\nLet's chew on it, ne.",
+    "Footprints in the sand\nwash away, but the walk stays\nin your legs. Like this.",
+    "Steam from miso soup,\ngood rice, a calm, full belly.\nBrains run on breakfast.",
+    "Today you were tired\nand you still showed up for us.\nThat counts most of all.",
+    "Thunder far away.\nThe exam is far as well.\nWe have time. Let's start.",
+    "Fox ears hear it all:\nthe page turn, the deep, slow breath.\nYou're doing so well.",
+    "A spider rebuilds\nthe web the wind tore last night.\nTry again, softly.",
+    "Lantern in the fog.\nYou don't need to see the road,\njust the next few steps.",
+    "Mochi pounding drums,\nthump, thump, the rhythm of work.\nThen: something sweet. Kon!",
+    "Origami fox,\nfolded from your scrap of notes.\nNow I'm made of maths.",
+]
+
+
+# ---- the periodic table (IB data-booklet style values: relative atomic mass to 2 d.p., Pauling electronegativity) ----
+_PT_RAW = """H Hydrogen 1.01 nm 2.2|He Helium 4.00 ng -|Li Lithium 6.94 ak 1.0|Be Beryllium 9.01 ae 1.6|B Boron 10.81 md 2.0|
+C Carbon 12.01 nm 2.6|N Nitrogen 14.01 nm 3.0|O Oxygen 16.00 nm 3.4|F Fluorine 19.00 hl 4.0|Ne Neon 20.18 ng -|
+Na Sodium 22.99 ak 0.9|Mg Magnesium 24.31 ae 1.3|Al Aluminium 26.98 pt 1.6|Si Silicon 28.09 md 1.9|P Phosphorus 30.97 nm 2.2|
+S Sulfur 32.07 nm 2.6|Cl Chlorine 35.45 hl 3.2|Ar Argon 39.95 ng -|K Potassium 39.10 ak 0.8|Ca Calcium 40.08 ae 1.0|
+Sc Scandium 44.96 tm 1.4|Ti Titanium 47.87 tm 1.5|V Vanadium 50.94 tm 1.6|Cr Chromium 52.00 tm 1.7|Mn Manganese 54.94 tm 1.6|
+Fe Iron 55.85 tm 1.8|Co Cobalt 58.93 tm 1.9|Ni Nickel 58.69 tm 1.9|Cu Copper 63.55 tm 1.9|Zn Zinc 65.38 tm 1.6|
+Ga Gallium 69.72 pt 1.8|Ge Germanium 72.63 md 2.0|As Arsenic 74.92 md 2.2|Se Selenium 78.97 nm 2.6|Br Bromine 79.90 hl 3.0|
+Kr Krypton 83.80 ng 3.0|Rb Rubidium 85.47 ak 0.8|Sr Strontium 87.62 ae 1.0|Y Yttrium 88.91 tm 1.2|Zr Zirconium 91.22 tm 1.3|
+Nb Niobium 92.91 tm 1.6|Mo Molybdenum 95.95 tm 2.2|Tc Technetium [98] tm 1.9|Ru Ruthenium 101.07 tm 2.2|
+Rh Rhodium 102.91 tm 2.3|Pd Palladium 106.42 tm 2.2|Ag Silver 107.87 tm 1.9|Cd Cadmium 112.41 tm 1.7|In Indium 114.82 pt 1.8|
+Sn Tin 118.71 pt 2.0|Sb Antimony 121.76 md 2.1|Te Tellurium 127.60 md 2.1|I Iodine 126.90 hl 2.7|Xe Xenon 131.29 ng 2.6|
+Cs Caesium 132.91 ak 0.8|Ba Barium 137.33 ae 0.9|La Lanthanum 138.91 ln 1.1|Ce Cerium 140.12 ln 1.1|
+Pr Praseodymium 140.91 ln 1.1|Nd Neodymium 144.24 ln 1.1|Pm Promethium [145] ln 1.1|Sm Samarium 150.36 ln 1.2|
+Eu Europium 151.96 ln 1.2|Gd Gadolinium 157.25 ln 1.2|Tb Terbium 158.93 ln 1.1|Dy Dysprosium 162.50 ln 1.2|
+Ho Holmium 164.93 ln 1.2|Er Erbium 167.26 ln 1.2|Tm Thulium 168.93 ln 1.3|Yb Ytterbium 173.05 ln 1.1|Lu Lutetium 174.97 ln 1.3|
+Hf Hafnium 178.49 tm 1.3|Ta Tantalum 180.95 tm 1.5|W Tungsten 183.84 tm 2.4|Re Rhenium 186.21 tm 1.9|Os Osmium 190.23 tm 2.2|
+Ir Iridium 192.22 tm 2.2|Pt Platinum 195.08 tm 2.3|Au Gold 196.97 tm 2.5|Hg Mercury 200.59 tm 2.0|Tl Thallium 204.38 pt 1.6|
+Pb Lead 207.20 pt 1.9|Bi Bismuth 208.98 pt 2.0|Po Polonium [209] md 2.0|At Astatine [210] hl 2.2|Rn Radon [222] ng -|
+Fr Francium [223] ak 0.7|Ra Radium [226] ae 0.9|Ac Actinium [227] ac 1.1|Th Thorium 232.04 ac 1.3|Pa Protactinium 231.04 ac 1.5|
+U Uranium 238.03 ac 1.4|Np Neptunium [237] ac 1.4|Pu Plutonium [244] ac 1.3|Am Americium [243] ac 1.3|Cm Curium [247] ac 1.3|
+Bk Berkelium [247] ac 1.3|Cf Californium [251] ac 1.3|Es Einsteinium [252] ac 1.3|Fm Fermium [257] ac 1.3|
+Md Mendelevium [258] ac 1.3|No Nobelium [259] ac 1.3|Lr Lawrencium [266] ac -|Rf Rutherfordium [267] tm -|Db Dubnium [268] tm -|
+Sg Seaborgium [269] tm -|Bh Bohrium [270] tm -|Hs Hassium [269] tm -|Mt Meitnerium [278] tm -|Ds Darmstadtium [281] tm -|
+Rg Roentgenium [282] tm -|Cn Copernicium [285] tm -|Nh Nihonium [286] pt -|Fl Flerovium [289] pt -|Mc Moscovium [290] pt -|
+Lv Livermorium [293] pt -|Ts Tennessine [294] hl -|Og Oganesson [294] ng -"""
+PT_CATS = {"ak": ("Alkali metal", "#e0705a"), "ae": ("Alkaline earth metal", "#e3a05a"), "tm": ("Transition metal", "#c9a24a"),
+           "pt": ("Post-transition metal", "#7fa88a"), "md": ("Metalloid", "#5fae9e"), "nm": ("Reactive non-metal", "#5f9ed1"),
+           "hl": ("Halogen", "#8f86d6"), "ng": ("Noble gas", "#b07cc6"), "ln": ("Lanthanoid", "#d4789a"),
+           "ac": ("Actinoid", "#c76b7e")}
+PT = []
+for _pt_i, _pt_row in enumerate(x.strip() for x in _PT_RAW.replace("\n", "").split("|")):
+    _pt_f = _pt_row.split()
+    PT.append({"z": _pt_i + 1, "sym": _pt_f[0], "name": _pt_f[1], "mass": _pt_f[2], "cat": _pt_f[3],
+               "en": None if _pt_f[4] == "-" else float(_pt_f[4])})
+PT_BY_SYM = dict((e["sym"], e) for e in PT)
+_AUFBAU = ["1s", "2s", "2p", "3s", "3p", "4s", "3d", "4p", "5s", "4d", "5p", "6s", "4f", "5d", "6p", "7s", "5f", "6d", "7p"]
+_PT_EXC = {24: "[Ar] 3d5 4s1", 29: "[Ar] 3d10 4s1", 41: "[Kr] 4d4 5s1", 42: "[Kr] 4d5 5s1", 44: "[Kr] 4d7 5s1",
+           45: "[Kr] 4d8 5s1", 46: "[Kr] 4d10", 47: "[Kr] 4d10 5s1", 57: "[Xe] 5d1 6s2", 58: "[Xe] 4f1 5d1 6s2",
+           64: "[Xe] 4f7 5d1 6s2", 78: "[Xe] 4f14 5d9 6s1", 79: "[Xe] 4f14 5d10 6s1", 89: "[Rn] 6d1 7s2",
+           90: "[Rn] 6d2 7s2", 91: "[Rn] 5f2 6d1 7s2", 92: "[Rn] 5f3 6d1 7s2", 93: "[Rn] 5f4 6d1 7s2", 96: "[Rn] 5f7 6d1 7s2",
+           103: "[Rn] 5f14 7s2 7p1"}
+_NOBLE = [(86, "Rn"), (54, "Xe"), (36, "Kr"), (18, "Ar"), (10, "Ne"), (2, "He")]
+
+
+def pt_config(z):
+    """Ground-state electron configuration, condensed ('[Ar] 3d6 4s2', orbitals in shell order like the IB writes it)."""
+    if z in _PT_EXC:
+        return _PT_EXC[z]
+    cap = {"s": 2, "p": 6, "d": 10, "f": 14}
+    fill, left = [], z
+    for orb in _AUFBAU:
+        if left <= 0:
+            break
+        n = min(cap[orb[1]], left)
+        fill.append((orb, n))
+        left -= n
+    core = ""
+    for nz, sym in _NOBLE:
+        if z > nz:
+            core = "[%s]" % sym
+            k = nz
+            kept = []
+            for orb, n in fill:
+                if k >= n:
+                    k -= n
+                    continue
+                kept.append((orb, n - k))
+                k = 0
+            fill = kept
+            break
+    fill.sort(key=lambda o: (int(o[0][0]), "spdf".index(o[0][1])))
+    return (core + " " + " ".join("%s%d" % (o, n) for o, n in fill)).strip()
+
+
+def pt_full_config(z):
+    c = pt_config(z)
+    m = re.match(r"\[(\w+)\]\s*(.*)", c)
+    if not m:
+        return c
+    core = next(nz for nz, s in _NOBLE if s == m.group(1))
+    return (pt_full_config(core) + " " + m.group(2)).strip() if core > 2 else ("1s2 " + m.group(2)).strip()
+
+
+def pt_place(z):
+    """(row, column) on the 18-column table; lanthanoids/actinoids sit in rows 8 and 9."""
+    if 57 <= z <= 71:
+        return 8, z - 57 + 3
+    if 89 <= z <= 103:
+        return 9, z - 89 + 3
+    starts = [(1, 1), (3, 2), (11, 3), (19, 4), (37, 5), (55, 6), (87, 7)]
+    period = max(p for s, p in starts if z >= s)
+    first = dict((p, s) for s, p in starts)[period]
+    i = z - first
+    if period == 1:
+        return 1, 1 if z == 1 else 18
+    if period in (2, 3):
+        return period, i + 1 if i < 2 else i + 11
+    if period in (4, 5):
+        return period, i + 1
+    if i < 2:
+        return period, i + 1
+    return period, i - 14 + 1 if i >= 17 else 3                # i >= 17: Hf/Rf onwards (after the f-block)
+
+
+def molar_mass(formula):
+    """'H2SO4', 'Ca(OH)2', 'CuSO4·5H2O', '[Cu(NH3)4]SO4' -> (g/mol, {element: count}). Raises ValueError."""
+    f = (formula or "").strip().replace(" ", "")
+    f = re.sub(r"[\^]?\d*[+\-]$", "", f) if re.search(r"[+\-]$", f) else f
+    total = {}
+    for part in re.split(r"[·.*•]", f):
+        if not part:
+            continue
+        mult = 1
+        m = re.match(r"^(\d+)(.*)$", part)
+        if m:
+            mult, part = int(m.group(1)), m.group(2)
+        stack = [{}]
+        i = 0
+        while i < len(part):
+            ch = part[i]
+            if ch in "([{":
+                stack.append({})
+                i += 1
+            elif ch in ")]}":
+                if len(stack) < 2:
+                    raise ValueError("A bracket doesn't match.")
+                grp = stack.pop()
+                i += 1
+                m = re.match(r"\d+", part[i:])
+                n = int(m.group(0)) if m else 1
+                i += len(m.group(0)) if m else 0
+                for k, v in grp.items():
+                    stack[-1][k] = stack[-1].get(k, 0) + v * n
+            else:
+                m = re.match(r"([A-Z][a-z]?)(\d*)", part[i:])
+                if not m:
+                    raise ValueError("I can't read “%s” (element symbols start with a capital letter)." % part[i:])
+                el = m.group(1)
+                if el not in PT_BY_SYM:
+                    raise ValueError("“%s” isn't an element symbol." % el)
+                stack[-1][el] = stack[-1].get(el, 0) + int(m.group(2) or 1)
+                i += len(m.group(0))
+        if len(stack) != 1:
+            raise ValueError("A bracket is left open.")
+        for k, v in stack[0].items():
+            total[k] = total.get(k, 0) + v * mult
+    if not total:
+        raise ValueError("Type a formula like H2SO4.")
+    mm = 0.0
+    for k, v in total.items():
+        mm += float(PT_BY_SYM[k]["mass"].strip("[]")) * v
+    return mm, total
+
+
+# ---- the calculator's maths (an fx-CG50-style graphing calculator, made from scratch) --------------------------------
+import ast as _ast
+import cmath as _cmath
+from fractions import Fraction as _Frac
+
+
+class CalcError(Exception):
+    pass
+
+
+_CALC_FUNCS = ("sin", "cos", "tan", "asin", "acos", "atan", "sinh", "cosh", "tanh", "log", "ln", "sqrt", "cbrt", "abs",
+               "exp", "nCr", "nPr", "fact", "logab", "Int", "Frac", "root")
+
+
+def calc_prepare(expr):
+    """Calculator keys -> a Python expression: ×÷^√π, Ans, x10^, implicit multiplication (2π, 3(4), 2sin(30))."""
+    s = expr
+    for a, b in (("sin⁻¹(", "asin("), ("cos⁻¹(", "acos("), ("tan⁻¹(", "atan("), ("³√(", "cbrt("), ("√(", "sqrt("),
+                 ("×10^", "*10**"), ("ᴇ", "*10**"), ("e^(", "exp("), ("10^(", "10**("), ("×", "*"), ("÷", "/"),
+                 ("−", "-"), ("⁻¹", "**(-1)"), ("²", "**2"), ("³", "**3"), ("π", "pi"), ("^", "**"), ("θ", "x"),
+                 ("Ans", "ans")):
+        s = s.replace(a, b)
+    s = re.sub(r"(\d+(?:\.\d*)?)!", r"fact(\1)", s)
+    toks = re.findall(r"\d+\.?\d*(?:[eE][+-]?\d+)?|\.\d+|[A-Za-z_]+|\*\*|[-+*/(),]|\S", s)
+    out = []
+    for t in toks:
+        if out:
+            p = out[-1]
+            p_val = re.match(r"^(\d|\.)", p) or p == ")" or (re.match(r"^[A-Za-z_]+$", p) and p not in _CALC_FUNCS)
+            t_val = re.match(r"^(\d|\.)", t) or t == "(" or re.match(r"^[A-Za-z_]+$", t)
+            if p_val and t_val and not (p in _CALC_FUNCS) and not (re.match(r"^(\d|\.)", p) and re.match(r"^(\d|\.)", t)):
+                out.append("*")
+        out.append(t)
+    return "".join(out)
+
+
+def cg_eval(expr, ans=0.0, deg=True, x=None, mem=None):
+    """Evaluate safely (no Python builtins). deg: trig in degrees. Returns a float or complex."""
+    src = calc_prepare(expr)
+    if not src.strip():
+        raise CalcError("Syntax ERROR")
+    try:
+        tree = _ast.parse(src, mode="eval")
+    except SyntaxError:
+        raise CalcError("Syntax ERROR")
+    k = math.pi / 180.0 if deg else 1.0
+
+    def tr(f, inv=False):
+        if inv:
+            return lambda v: f(v) / k
+        return lambda v: f(v * k)
+
+    def fact(n):
+        if n < 0 or n != int(n) or n > 170:
+            raise CalcError("Math ERROR")
+        return float(math.factorial(int(n)))
+
+    def ncr(n, r):
+        if min(n, r) < 0 or n != int(n) or r != int(r) or r > n:
+            raise CalcError("Math ERROR")
+        return float(math.comb(int(n), int(r)))
+
+    def npr(n, r):
+        if min(n, r) < 0 or n != int(n) or r != int(r) or r > n:
+            raise CalcError("Math ERROR")
+        return float(math.perm(int(n), int(r)))
+    env = {"pi": math.pi, "e": math.e, "ans": ans, "x": x if x is not None else (mem or {}).get("X", 0.0),
+           "sin": tr(math.sin), "cos": tr(math.cos), "tan": tr(math.tan),
+           "asin": tr(math.asin, True), "acos": tr(math.acos, True), "atan": tr(math.atan, True),
+           "sinh": math.sinh, "cosh": math.cosh, "tanh": math.tanh,
+           "log": lambda v, b=None: math.log10(v) if b is None else math.log(b) / math.log(v),
+           "logab": lambda a, b: math.log(b) / math.log(a), "ln": math.log, "sqrt": math.sqrt,
+           "cbrt": lambda v: math.copysign(abs(v) ** (1.0 / 3), v), "root": lambda n, v: math.copysign(abs(v) ** (1.0 / n), v),
+           "abs": abs, "exp": math.exp, "fact": fact, "nCr": ncr, "nPr": npr, "Int": lambda v: float(int(v)),
+           "Frac": lambda v: v - int(v)}
+    for kk, vv in (mem or {}).items():
+        if len(kk) == 1 and kk.isalpha() and kk.isupper():
+            env[kk] = vv
+
+    def ev(n):
+        if isinstance(n, _ast.Expression):
+            return ev(n.body)
+        if isinstance(n, _ast.Constant) and isinstance(n.value, (int, float)):
+            return float(n.value)
+        if isinstance(n, _ast.Name):
+            if n.id in env and not callable(env[n.id]):
+                return env[n.id]
+            raise CalcError("Syntax ERROR")
+        if isinstance(n, _ast.UnaryOp) and isinstance(n.op, (_ast.USub, _ast.UAdd)):
+            v = ev(n.operand)
+            return -v if isinstance(n.op, _ast.USub) else v
+        if isinstance(n, _ast.BinOp):
+            a, b = ev(n.left), ev(n.right)
+            op = type(n.op)
+            if op is _ast.Add:
+                return a + b
+            if op is _ast.Sub:
+                return a - b
+            if op is _ast.Mult:
+                return a * b
+            if op is _ast.Div:
+                if b == 0:
+                    raise CalcError("Math ERROR")
+                return a / b
+            if op is _ast.Pow:
+                if abs(b) > 1e4 and abs(a) > 1:
+                    raise CalcError("Math ERROR")
+                if a < 0 and b != int(b):
+                    fr = _Frac(b).limit_denominator(50)
+                    if abs(float(fr) - b) < 1e-12 and fr.denominator % 2 == 1:
+                        r = abs(a) ** b
+                        return -r if fr.numerator % 2 else r
+                    raise CalcError("Non-Real ERROR")
+                return a ** b
+            raise CalcError("Syntax ERROR")
+        if isinstance(n, _ast.Call) and isinstance(n.func, _ast.Name) and callable(env.get(n.func.id)):
+            args = [ev(a) for a in n.args]
+            try:
+                return env[n.func.id](*args)
+            except CalcError:
+                raise
+            except (ValueError, OverflowError, ZeroDivisionError, TypeError):
+                raise CalcError("Math ERROR")
+        raise CalcError("Syntax ERROR")
+    try:
+        v = ev(tree)
+    except (OverflowError, ZeroDivisionError):
+        raise CalcError("Math ERROR")
+    except RecursionError:
+        raise CalcError("Stack ERROR")
+    if isinstance(v, complex):
+        raise CalcError("Non-Real ERROR")
+    if v != v or v in (float("inf"), float("-inf")):
+        raise CalcError("Math ERROR")
+    return v
+
+
+def calc_fmt(v, exact=True):
+    """Like the calculator's natural display: a tidy fraction (or π-multiple) when it's exact, else 10 significant figures."""
+    if exact:
+        for mult, tag in ((1.0, ""), (math.pi, "π")):
+            q = v / mult
+            fr = _Frac(q).limit_denominator(1000)
+            if abs(float(fr) - q) < 1e-11 * max(1.0, abs(q)) and (fr.denominator != 1 or tag) and abs(fr.numerator) < 10 ** 7:
+                if tag and fr == 0:
+                    continue
+                num = fr.numerator
+                if tag:
+                    n_s = ("" if abs(num) == 1 else str(abs(num))) + "π"
+                    n_s = ("-" if num < 0 else "") + n_s
+                else:
+                    n_s = str(num)
+                return n_s if fr.denominator == 1 else "%s/%d" % (n_s, fr.denominator)
+            if not tag:
+                r = _Frac(q * q).limit_denominator(1000)                     # √ forms: 2√3, √2/2
+                if q and abs(float(r) - q * q) < 1e-10 * max(1.0, q * q) and r.denominator <= 100:
+                    for d in range(1, 101):
+                        rad = r * d * d
+                        if rad.denominator == 1:
+                            n_int = rad.numerator
+                            if n_int >= 10 ** 6:
+                                break
+                            out_c, rest = 1, n_int
+                            p = 2
+                            while p * p <= rest:
+                                while rest % (p * p) == 0:
+                                    rest //= p * p
+                                    out_c *= p
+                                p += 1
+                            if rest > 1 and n_int < 10 ** 6:
+                                c = ("" if out_c == 1 else str(out_c)) + "√" + str(rest)
+                                c = ("-" if q < 0 else "") + c
+                                return c if d == 1 else "%s/%d" % (c, d)
+                            break
+    if v == int(v) and abs(v) < 1e10:
+        return str(int(v))
+    a = abs(v)
+    if a >= 1e10 or a < 1e-9:
+        m, ex = ("%.9e" % v).split("e")
+        m = m.rstrip("0").rstrip(".")
+        return "%s×10^%d" % (m, int(ex))
+    s = "%.10g" % v
+    return s
+
+
+def calc_roots_poly(coefs):
+    """All roots (complex allowed) of a polynomial with real coefficients, highest power first."""
+    c = [complex(x) for x in coefs]
+    while c and abs(c[0]) < 1e-15:
+        c.pop(0)
+    n = len(c) - 1
+    if n < 1:
+        raise CalcError("Math ERROR")
+    if n == 1:
+        return [-c[1] / c[0]]
+    if n == 2:
+        a, b, cc = c
+        d = _cmath.sqrt(b * b - 4 * a * cc)
+        return [(-b + d) / (2 * a), (-b - d) / (2 * a)]
+    a0 = c[0]
+    c = [x / a0 for x in c]
+    roots = [complex(0.4, 0.9) ** k for k in range(n)]
+    for _ in range(500):
+        new = []
+        for i, r in enumerate(roots):
+            num = 0j
+            for x in c:
+                num = num * r + x
+            den = 1 + 0j
+            for j, s in enumerate(roots):
+                if j != i:
+                    den *= (r - s)
+            new.append(r - num / den if den != 0 else r)
+        done = max(abs(a - b) for a, b in zip(new, roots)) < 1e-14
+        roots = new
+        if done:
+            break
+    return [complex(round(r.real, 12), round(r.imag, 12)) for r in roots]
+
+
+def calc_solve_linear(rows):
+    """rows: [[a, b, (c,) = d], ...] -> solution list (Gaussian elimination with partial pivoting)."""
+    n = len(rows)
+    m = [list(map(float, r)) for r in rows]
+    for i in range(n):
+        p = max(range(i, n), key=lambda r: abs(m[r][i]))
+        if abs(m[p][i]) < 1e-13:
+            raise CalcError("No Solution / Infinitely Many")
+        m[i], m[p] = m[p], m[i]
+        for r in range(n):
+            if r != i:
+                f = m[r][i] / m[i][i]
+                for c in range(i, n + 1):
+                    m[r][c] -= f * m[i][c]
+    return [m[i][n] / m[i][i] for i in range(n)]
+
+
+def calc_stats1(xs):
+    n = len(xs)
+    if not n:
+        raise CalcError("Dimension ERROR")
+    s = sorted(xs)
+    mean = sum(xs) / n
+    sx2 = sum(v * v for v in xs)
+    var = sum((v - mean) ** 2 for v in xs) / n
+
+    def med(a):
+        k = len(a)
+        return (a[k // 2] if k % 2 else (a[k // 2 - 1] + a[k // 2]) / 2.0) if k else float("nan")
+    half = n // 2
+    q1 = med(s[:half])
+    q3 = med(s[half + (n % 2):])
+    return [("x̄", mean), ("Σx", sum(xs)), ("Σx²", sx2), ("σx", math.sqrt(var)),
+            ("sx", math.sqrt(var * n / (n - 1)) if n > 1 else float("nan")), ("n", n), ("minX", s[0]), ("Q1", q1),
+            ("Med", med(s)), ("Q3", q3), ("maxX", s[-1])]
+
+
+def calc_linreg(xs, ys):
+    n = len(xs)
+    if n < 2 or n != len(ys):
+        raise CalcError("Dimension ERROR")
+    mx, my = sum(xs) / n, sum(ys) / n
+    sxx = sum((x - mx) ** 2 for x in xs)
+    syy = sum((y - my) ** 2 for y in ys)
+    sxy = sum((x - mx) * (y - my) for x, y in zip(xs, ys))
+    if sxx == 0:
+        raise CalcError("Math ERROR")
+    b = sxy / sxx
+    a = my - b * mx
+    r = sxy / math.sqrt(sxx * syy) if syy else float("nan")
+    return [("a", a), ("b", b), ("r", r), ("r²", r * r), ("y=", "a+bx")]
+
+
+def norm_cdf(z):
+    return 0.5 * (1.0 + math.erf(z / math.sqrt(2.0)))
+
+
+def calc_normcd(lo, hi, sd, mu):
+    if sd <= 0:
+        raise CalcError("Math ERROR")
+    return norm_cdf((hi - mu) / sd) - norm_cdf((lo - mu) / sd)
+
+
+def calc_invnorm(area, sd, mu, tail="left"):
+    if not 0 < area < 1 or sd <= 0:
+        raise CalcError("Math ERROR")
+    target = {"left": area, "right": 1 - area}.get(tail, area)
+    if tail == "center":
+        target = 0.5 + area / 2.0
+    lo, hi = -40.0, 40.0
+    for _ in range(200):
+        mid = (lo + hi) / 2
+        if norm_cdf(mid) < target:
+            lo = mid
+        else:
+            hi = mid
+    z = (lo + hi) / 2
+    if tail == "center":
+        return mu - z * sd, mu + z * sd
+    return mu + z * sd
+
+
+def calc_binpd(x, n, p):
+    if not (0 <= p <= 1) or n != int(n) or n < 0:
+        raise CalcError("Math ERROR")
+    if x != int(x) or x < 0 or x > n:
+        return 0.0
+    return math.comb(int(n), int(x)) * p ** x * (1 - p) ** (n - x)
+
+
+def calc_bincd(x, n, p, lo=0):
+    return sum(calc_binpd(k, n, p) for k in range(int(max(0, lo)), int(min(x, n)) + 1))
+
+
+# ---- French: a little dictionary / translator ------------------------------------------------------------------
+def fr_vocab_search(q, limit=12):
+    """Matches in the built-in ab initio vocab (both directions), best first: [(french, english, theme)]."""
+    ql = (q or "").strip().lower()
+    if not ql:
+        return []
+
+    def strip_acc(s):
+        import unicodedata
+        return "".join(ch for ch in unicodedata.normalize("NFD", s) if unicodedata.category(ch) != "Mn")
+    qa = strip_acc(ql)
+    hits = []
+    for theme, pairs in FR_VOCAB.items():
+        for fr, en in pairs:
+            fa, ea = strip_acc(fr.lower()), en.lower()
+            base = re.sub(r"^(?:le |la |les |l'|un |une |se |s')", "", fa)
+            sc = 0
+            if qa in (fa, base) or ql == ea or qa in [w.strip() for w in ea.split(",")]:
+                sc = 3
+            elif re.search(r"(?<![a-z])" + re.escape(qa), fa) or re.search(r"(?<![a-z])" + re.escape(ql), ea):
+                sc = 2
+            elif len(qa) > 3 and (qa in fa or ql in ea):
+                sc = 1
+            if sc:
+                hits.append((sc, fr, en, theme))
+    hits.sort(key=lambda h: -h[0])
+    return [(h[1], h[2], h[3]) for h in hits[:limit]]
+
+
+def looks_french(q):
+    t = (q or "").lower()
+    if re.search(r"[àâçéèêëîïôûùüÿœæ]", t):
+        return True
+    fr_words = set("le la les un une des du de et est je tu il elle nous vous ils elles suis sont avec pour dans sur "
+                   "pas ne que qui mon ma mes ton ta tes son sa ses au aux ce cette être avoir faire aller bonjour merci "
+                   "oui non très bien".split())
+    words = re.findall(r"[a-z']+", t)
+    if words and sum(1 for w in words if w in fr_words) / float(len(words)) >= 0.34:
+        return True
+    if len(words) == 1:
+        w = words[0]
+        if w in FR_IRREG:
+            return True
+        for fr, en, th in fr_vocab_search(w, 30):
+            if re.search(r"(?<![a-zà-ÿ])%s(?![a-zà-ÿ])" % re.escape(w), fr.lower()):
+                return True
+    return False
+
+
+# ---- the Bible: English text on demand, Hebrew / Aramaic / Greek word by word (STEPBible data, CC BY 4.0) ----------
+# The NKJV is copyrighted (Thomas Nelson), so it can't be packed inside Zenko. Each chapter you open is fetched from a
+# free Bible website the way a browser would, then kept on this PC so it opens offline next time. KJV, WEB, ASV and
+# YLT are public domain. The original-language data is STEPBible's Translators Amalgamated Hebrew OT and Greek NT,
+# with Strong's numbers, grammar and English glosses, plus their brief lexicons (free under CC BY 4.0).
+BIBLE_BOOKS = [  # (STEP code, name, chapters, Bible Hub slug, group)
+    ("Gen", "Genesis", 50, "genesis", "Law"), ("Exo", "Exodus", 40, "exodus", "Law"), ("Lev", "Leviticus", 27, "leviticus", "Law"),
+    ("Num", "Numbers", 36, "numbers", "Law"), ("Deu", "Deuteronomy", 34, "deuteronomy", "Law"),
+    ("Jos", "Joshua", 24, "joshua", "History"), ("Jdg", "Judges", 21, "judges", "History"), ("Rut", "Ruth", 4, "ruth", "History"),
+    ("1Sa", "1 Samuel", 31, "1_samuel", "History"), ("2Sa", "2 Samuel", 24, "2_samuel", "History"),
+    ("1Ki", "1 Kings", 22, "1_kings", "History"), ("2Ki", "2 Kings", 25, "2_kings", "History"),
+    ("1Ch", "1 Chronicles", 29, "1_chronicles", "History"), ("2Ch", "2 Chronicles", 36, "2_chronicles", "History"),
+    ("Ezr", "Ezra", 10, "ezra", "History"), ("Neh", "Nehemiah", 13, "nehemiah", "History"), ("Est", "Esther", 10, "esther", "History"),
+    ("Job", "Job", 42, "job", "Wisdom & Psalms"), ("Psa", "Psalms", 150, "psalms", "Wisdom & Psalms"),
+    ("Pro", "Proverbs", 31, "proverbs", "Wisdom & Psalms"), ("Ecc", "Ecclesiastes", 12, "ecclesiastes", "Wisdom & Psalms"),
+    ("Sng", "Song of Solomon", 8, "songs", "Wisdom & Psalms"), ("Isa", "Isaiah", 66, "isaiah", "Major prophets"),
+    ("Jer", "Jeremiah", 52, "jeremiah", "Major prophets"), ("Lam", "Lamentations", 5, "lamentations", "Major prophets"),
+    ("Ezk", "Ezekiel", 48, "ezekiel", "Major prophets"), ("Dan", "Daniel", 12, "daniel", "Major prophets"),
+    ("Hos", "Hosea", 14, "hosea", "Minor prophets"), ("Jol", "Joel", 3, "joel", "Minor prophets"), ("Amo", "Amos", 9, "amos", "Minor prophets"),
+    ("Oba", "Obadiah", 1, "obadiah", "Minor prophets"), ("Jon", "Jonah", 4, "jonah", "Minor prophets"), ("Mic", "Micah", 7, "micah", "Minor prophets"),
+    ("Nam", "Nahum", 3, "nahum", "Minor prophets"), ("Hab", "Habakkuk", 3, "habakkuk", "Minor prophets"),
+    ("Zep", "Zephaniah", 3, "zephaniah", "Minor prophets"), ("Hag", "Haggai", 2, "haggai", "Minor prophets"),
+    ("Zec", "Zechariah", 14, "zechariah", "Minor prophets"), ("Mal", "Malachi", 4, "malachi", "Minor prophets"),
+    ("Mat", "Matthew", 28, "matthew", "Gospels & Acts"), ("Mrk", "Mark", 16, "mark", "Gospels & Acts"),
+    ("Luk", "Luke", 24, "luke", "Gospels & Acts"), ("Jhn", "John", 21, "john", "Gospels & Acts"), ("Act", "Acts", 28, "acts", "Gospels & Acts"),
+    ("Rom", "Romans", 16, "romans", "Paul's letters"), ("1Co", "1 Corinthians", 16, "1_corinthians", "Paul's letters"),
+    ("2Co", "2 Corinthians", 13, "2_corinthians", "Paul's letters"), ("Gal", "Galatians", 6, "galatians", "Paul's letters"),
+    ("Eph", "Ephesians", 6, "ephesians", "Paul's letters"), ("Php", "Philippians", 4, "philippians", "Paul's letters"),
+    ("Col", "Colossians", 4, "colossians", "Paul's letters"), ("1Th", "1 Thessalonians", 5, "1_thessalonians", "Paul's letters"),
+    ("2Th", "2 Thessalonians", 3, "2_thessalonians", "Paul's letters"), ("1Ti", "1 Timothy", 6, "1_timothy", "Paul's letters"),
+    ("2Ti", "2 Timothy", 4, "2_timothy", "Paul's letters"), ("Tit", "Titus", 3, "titus", "Paul's letters"),
+    ("Phm", "Philemon", 1, "philemon", "Paul's letters"), ("Heb", "Hebrews", 13, "hebrews", "Other letters & Revelation"),
+    ("Jas", "James", 5, "james", "Other letters & Revelation"), ("1Pe", "1 Peter", 5, "1_peter", "Other letters & Revelation"),
+    ("2Pe", "2 Peter", 3, "2_peter", "Other letters & Revelation"), ("1Jn", "1 John", 5, "1_john", "Other letters & Revelation"),
+    ("2Jn", "2 John", 1, "2_john", "Other letters & Revelation"), ("3Jn", "3 John", 1, "3_john", "Other letters & Revelation"),
+    ("Jud", "Jude", 1, "jude", "Other letters & Revelation"), ("Rev", "Revelation", 22, "revelation", "Other letters & Revelation"),
+]
+_BIBLE_ALIAS = {"eze": "Ezk", "ezek": "Ezk", "joe": "Jol", "nah": "Nam", "mar": "Mrk", "mk": "Mrk", "joh": "Jhn", "jn": "Jhn",
+                "phi": "Php", "phil": "Php", "jde": "Jud", "son": "Sng", "sos": "Sng", "song": "Sng", "songs": "Sng",
+                "song of songs": "Sng", "canticles": "Sng", "ps": "Psa", "psalm": "Psa", "pss": "Psa", "prov": "Pro",
+                "qoh": "Ecc", "qoheleth": "Ecc", "matt": "Mat", "mt": "Mat", "lk": "Luk", "rv": "Rev", "apocalypse": "Rev",
+                "jdg": "Jdg", "judg": "Jdg", "ruth": "Rut", "1sam": "1Sa", "2sam": "2Sa", "1kgs": "1Ki", "2kgs": "2Ki",
+                "1chr": "1Ch", "2chr": "2Ch", "neh": "Neh", "esth": "Est", "isa": "Isa", "jer": "Jer", "lam": "Lam",
+                "dan": "Dan", "hos": "Hos", "obad": "Oba", "jonah": "Jon", "mic": "Mic", "hab": "Hab", "zeph": "Zep",
+                "hag": "Hag", "zech": "Zec", "mal": "Mal", "rom": "Rom", "gal": "Gal", "eph": "Eph", "col": "Col",
+                "titus": "Tit", "philem": "Phm", "heb": "Heb", "jas": "Jas", "jude": "Jud", "rev": "Rev", "acts": "Act"}
+BIBLE_TRANS = [("NKJV", "New King James Version (online, © Thomas Nelson)"), ("KJV", "King James Version (public domain)"),
+               ("WEB", "World English Bible (public domain)"), ("ASV", "American Standard Version 1901 (public domain)"),
+               ("YLT", "Young's Literal Translation (public domain, very literal)")]
+BIBLE_NOTICE = {"NKJV": "Scripture taken from the New King James Version®. Copyright © 1982 by Thomas Nelson. Used by "
+                        "permission. All rights reserved. (Fetched chapter by chapter for your personal reading.)",
+                "KJV": "King James Version (public domain).", "WEB": "World English Bible (public domain).",
+                "ASV": "American Standard Version (public domain).", "YLT": "Young's Literal Translation (public domain)."}
+BIBLE_DIR = os.path.join(DATA_DIR, "bible")
+BIBLE_SRC = {"bolls": os.environ.get("FOX_BOLLS", "https://bolls.life"),
+             "bibleapi": os.environ.get("FOX_BIBLEAPI", "https://bible-api.com"),
+             "gh_api": os.environ.get("FOX_STEP_API", "https://api.github.com/repos/STEPBible/STEPBible-Data/contents"),
+             "gh_raw": os.environ.get("FOX_STEP_RAW", "https://raw.githubusercontent.com/STEPBible/STEPBible-Data/master")}
+STEP_GUESS = {  # file names as published (used if GitHub's listing can't be reached)
+    "TAHOT": ["Translators Amalgamated OT+NT/TAHOT Gen-Deu - Translators Amalgamated Hebrew OT - STEPBible.org CC BY.txt",
+              "Translators Amalgamated OT+NT/TAHOT Jos-Est - Translators Amalgamated Hebrew OT - STEPBible.org CC BY.txt",
+              "Translators Amalgamated OT+NT/TAHOT Job-Sng - Translators Amalgamated Hebrew OT - STEPBible.org CC BY.txt",
+              "Translators Amalgamated OT+NT/TAHOT Isa-Mal - Translators Amalgamated Hebrew OT - STEPBible.org CC BY.txt"],
+    "TAGNT": ["Translators Amalgamated OT+NT/TAGNT Mat-Jhn - Translators Amalgamated Greek NT - STEPBible.org CC-BY.txt",
+              "Translators Amalgamated OT+NT/TAGNT Act-Rev - Translators Amalgamated Greek NT - STEPBible.org CC-BY.txt"],
+    "TBESH": ["Lexicons/TBESH - Translators Brief lexicon of Extended Strongs for Hebrew - STEPBible.org CC BY.txt"],
+    "TBESG": ["Lexicons/TBESG - Translators Brief lexicon of Extended Strongs for Greek - STEPBible.org CC BY.txt"],
+}
+
+
+def bible_book(code_or_name):
+    """Index into BIBLE_BOOKS for 'Psa', 'psalms', 'Ps', '1 John', '1jn'... or None."""
+    s = (code_or_name or "").strip().lower().replace(".", "")
+    if not s:
+        return None
+    s2 = re.sub(r"^(1|2|3|i{1,3})\s*", lambda m: {"i": "1", "ii": "2", "iii": "3"}.get(m.group(1), m.group(1)), s)
+    s2n = s2.replace(" ", "")
+    for i, b in enumerate(BIBLE_BOOKS):
+        if s2n in (b[0].lower(), b[1].lower().replace(" ", ""), b[3].replace("_", "")):
+            return i
+    a = _BIBLE_ALIAS.get(s2) or _BIBLE_ALIAS.get(s2n)
+    if a:
+        return next(i for i, b in enumerate(BIBLE_BOOKS) if b[0] == a)
+    for i, b in enumerate(BIBLE_BOOKS):                       # a prefix: 'gen', 'deut', '1 cor', 'rev'
+        nm = b[1].lower().replace(" ", "")
+        if len(s2n) >= 2 and nm.startswith(s2n):
+            return i
+    return None
+
+
+def bible_parse_ref(text):
+    """'Psalm 119:105', 'ps 23', 'John 3:16-18', '1 Cor 13' -> (book index, chapter, verse or None)."""
+    m = re.match(r"^\s*((?:[1-3]|i{1,3})?\s*[A-Za-z][A-Za-z .]*?)\s*(\d+)(?:\s*[:.]\s*(\d+))?", text or "")
+    if not m:
+        return None
+    bi = bible_book(m.group(1))
+    if bi is None:
+        return None
+    ch = max(1, min(BIBLE_BOOKS[bi][2], int(m.group(2))))
+    return bi, ch, int(m.group(3)) if m.group(3) else None
+
+
+def _bible_strip(t):
+    t = re.sub(r"<S>\s*\d+\s*</S>", "", t or "")
+    t = re.sub(r"<sup>.*?</sup>", "", t, flags=re.S)
+    t = re.sub(r"<br\s*/?>", " ", t)
+    t = re.sub(r"<[^>]+>", "", t)
+    t = html.unescape(t) if "html" in globals() else t
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def bible_chapter(bi, ch, trans="NKJV", allow_net=True):
+    """[(verse, text)] for a chapter, and the translation actually used. Cached on disk after the first read."""
+    code = BIBLE_BOOKS[bi][0]
+    path = os.path.join(BIBLE_DIR, "text", trans, code, "%d.json" % ch)
+    try:
+        with open(path, encoding="utf-8") as f:
+            d = json.load(f)
+        if d.get("verses"):
+            return [tuple(v) for v in d["verses"]], trans
+    except Exception:
+        pass
+    if not allow_net:
+        raise WebError("This chapter isn't saved on this PC yet, and I'm offline.")
+    verses, err = None, None
+    for url in ("%s/get-text/%s/%d/%d/" % (BIBLE_SRC["bolls"], trans, bi + 1, ch),
+                "%s/get-chapter/%s/%d/%d/" % (BIBLE_SRC["bolls"], trans, bi + 1, ch)):
+        try:
+            j = http_json(url, 15)
+            if isinstance(j, list) and j:
+                verses = [(int(v.get("verse")), _bible_strip(v.get("text", ""))) for v in j if v.get("verse")]
+                break
+        except Exception as e:
+            err = e
+    if not verses and trans in ("KJV", "WEB"):
+        try:
+            name = BIBLE_BOOKS[bi][1]
+            j = http_json("%s/%s+%d?translation=%s" % (BIBLE_SRC["bibleapi"], _q(name), ch, trans.lower()), 15)
+            verses = [(int(v["verse"]), _bible_strip(v.get("text", ""))) for v in j.get("verses") or []]
+        except Exception as e:
+            err = e
+    if not verses:
+        if trans != "KJV":
+            vs, used = bible_chapter(bi, ch, "KJV", allow_net)
+            return vs, used
+        raise WebError("I couldn't fetch %s %d (%s). The Bible sites may be blocked on this network." %
+                       (BIBLE_BOOKS[bi][1], ch, err.__class__.__name__ if err else "no answer"))
+    verses.sort()
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump({"verses": verses, "t": time.time()}, f, ensure_ascii=False)
+    except Exception:
+        pass
+    return verses, trans
+
+
+# ---- originals --------------------------------------------------------------------------------------------------
+_STEP = {"index": None, "busy": set(), "lex": {}}
+
+
+def _step_index():
+    """{'TAHOT': [path...], 'TAGNT': [...], 'TBESH': [...], 'TBESG': [...]} from GitHub's listing (cached), or the
+    published names as a fallback."""
+    if _STEP["index"]:
+        return _STEP["index"]
+    p = os.path.join(BIBLE_DIR, "step_index.json")
+    try:
+        with open(p, encoding="utf-8") as f:
+            ix = json.load(f)
+        if time.time() - ix.get("t", 0) < 30 * 86400 and ix.get("TAHOT"):
+            _STEP["index"] = ix
+            return ix
+    except Exception:
+        pass
+    ix = {"t": time.time()}
+    try:
+        root = http_json(BIBLE_SRC["gh_api"], 15)
+        dirs = [d["path"] for d in root if d.get("type") == "dir" and re.search(r"amalgamated|lexicon", d.get("name", ""), re.I)]
+        for d in dirs:
+            for f in http_json(BIBLE_SRC["gh_api"] + "/" + urllib.parse.quote(d), 15):
+                nm = f.get("name", "")
+                for key in ("TAHOT", "TAGNT", "TBESH", "TBESG"):
+                    if nm.startswith(key) and nm.lower().endswith(".txt"):
+                        ix.setdefault(key, []).append(f["path"])
+    except Exception:
+        pass
+    for k, v in STEP_GUESS.items():
+        if not ix.get(k):
+            ix[k] = list(v)
+            ix["guessed"] = True
+    if not ix.get("guessed"):
+        try:
+            os.makedirs(BIBLE_DIR, exist_ok=True)
+            with open(p, "w", encoding="utf-8") as f:
+                json.dump(ix, f)
+        except Exception:
+            pass
+    _STEP["index"] = ix
+    return ix
+
+
+def _step_file_for(bi):
+    """The STEPBible file (path) that holds this book."""
+    kind = "TAHOT" if bi < 39 else "TAGNT"
+    for path in _step_index().get(kind, []):
+        m = re.search(r"TA[HG][A-Z]T\s+([1-3]?[A-Za-z]{2,3})-([1-3]?[A-Za-z]{2,3})", os.path.basename(path))
+        if not m:
+            continue
+        a, b = bible_book(m.group(1)), bible_book(m.group(2))
+        if a is not None and b is not None and a <= bi <= b:
+            return path
+    return None
+
+
+def step_parse_line(line):
+    """One word row of TAHOT/TAGNT -> (book index, chapter, verse, word dict) or None."""
+    cols = line.rstrip("\r\n").split("\t")
+    if len(cols) < 4:
+        return None
+    m = re.match(r"^([1-3]?[A-Za-z]{2,3})\.(\d+)\.(\d+)(?:\([^)]*\))?#(\d+)(?:=(\w+))?", cols[0].strip())
+    if not m:
+        return None
+    bi = bible_book(m.group(1))
+    if bi is None:
+        return None
+    ch, vs = int(m.group(2)), int(m.group(3))
+    kind = m.group(5) or ""
+    if bi < 39:                                               # Hebrew / Aramaic OT
+        word = cols[1].replace("/", "").replace("\\", "").strip()
+        translit = cols[2].replace("/", "").strip() if len(cols) > 2 else ""
+        gloss = re.sub(r"\s*/\s*", " ", cols[3]).strip() if len(cols) > 3 else ""
+        ds = cols[4].strip() if len(cols) > 4 else ""
+        gram = cols[5].strip() if len(cols) > 5 else ""
+        mb = re.search(r"\{([HAG]\d{4}[A-Za-z]?)\}", ds) or re.findall(r"[HAG]\d{4}[A-Za-z]?", ds)
+        strong = mb.group(1) if hasattr(mb, "group") else (mb[-1] if mb else "")
+        lang = "Aramaic" if gram.startswith("A") else "Hebrew"
+        lemma = ""
+        for c in cols[6:]:
+            mm = re.search(r"%s=([^=]+)=" % re.escape(strong), c) if strong else None
+            if mm:
+                lemma = mm.group(1)
+                break
+        return bi, ch, vs, {"w": word, "t": translit, "g": gloss, "s": strong, "m": gram, "l": lemma, "lang": lang}
+    gk = cols[1].strip()
+    mm = re.match(r"^(.*?)\s*\(([^)]*)\)\s*$", gk)
+    word, translit = (mm.group(1), mm.group(2)) if mm else (gk, "")
+    gloss = cols[2].strip() if len(cols) > 2 else ""
+    sg = cols[3].strip() if len(cols) > 3 else ""
+    strong, gram = (sg.split("=", 1) + [""])[:2] if "=" in sg else (sg, "")
+    lemma, lg = (cols[4].split("=", 1) + [""])[:2] if len(cols) > 4 and "=" in cols[4] else ("", "")
+    variant = bool(kind) and "N" not in kind and "K" not in kind
+    return bi, ch, vs, {"w": word, "t": translit, "g": gloss, "s": strong.strip(), "m": gram.strip(), "l": lemma.strip(),
+                        "lg": lg.strip(), "lang": "Greek", "var": variant}
+
+
+def _orig_path(bi, ch):
+    return os.path.join(BIBLE_DIR, "orig", BIBLE_BOOKS[bi][0], "%d.json" % ch)
+
+
+def step_download_section(bi, progress=None):
+    """Download the STEPBible file holding this book and split it into small per-chapter files on disk."""
+    path = _step_file_for(bi)
+    if not path:
+        raise WebError("I couldn't find the original-language file for %s." % BIBLE_BOOKS[bi][1])
+    if path in _STEP["busy"]:
+        raise WebError("Already downloading, one moment~")
+    _STEP["busy"].add(path)
+    try:
+        os.makedirs(os.path.join(BIBLE_DIR, "orig"), exist_ok=True)
+        tmp = os.path.join(BIBLE_DIR, "orig", "section.txt")
+        url = BIBLE_SRC["gh_raw"] + "/" + urllib.parse.quote(path)
+        _download(url, tmp, "", 100000, progress, "the original-language text")
+        cur, buf = None, {}
+
+        def flush():
+            if cur and buf:
+                p = _orig_path(cur[0], cur[1])
+                os.makedirs(os.path.dirname(p), exist_ok=True)
+                with open(p, "w", encoding="utf-8") as f:
+                    json.dump({"v": buf}, f, ensure_ascii=False, separators=(",", ":"))
+        n = 0
+        with open(tmp, encoding="utf-8", errors="replace") as f:
+            for line in f:
+                r = step_parse_line(line)
+                if not r:
+                    continue
+                b, c, v, w = r
+                if (b, c) != cur:
+                    flush()
+                    cur, buf = (b, c), {}
+                buf.setdefault(str(v), []).append(w)
+                n += 1
+        flush()
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+        if not n:
+            raise WebError("The original-language file came back empty (the network may have blocked it).")
+        return n
+    finally:
+        _STEP["busy"].discard(path)
+
+
+def bible_original(bi, ch, vs, allow_net=True, progress=None):
+    """[word dict...] for one verse in the original language; downloads that part of the Bible once if needed."""
+    p = _orig_path(bi, ch)
+    if not os.path.exists(p):
+        if not allow_net:
+            raise WebError("The original text for this book isn't on this PC yet.")
+        step_download_section(bi, progress)
+    with open(p, encoding="utf-8") as f:
+        d = json.load(f).get("v", {})
+    return d.get(str(vs)) or []
+
+
+def step_lexicon(lang):
+    """{strong: (lemma, translit, gloss, meaning)} for 'Hebrew' (also used for Aramaic) or 'Greek'."""
+    key = "TBESG" if lang == "Greek" else "TBESH"
+    if key in _STEP["lex"]:
+        return _STEP["lex"][key]
+    p = os.path.join(BIBLE_DIR, key + ".json")
+    if not os.path.exists(p):
+        paths = _step_index().get(key) or []
+        if not paths:
+            raise WebError("I couldn't find the lexicon.")
+        tmp = p + ".txt"
+        _download(BIBLE_SRC["gh_raw"] + "/" + urllib.parse.quote(paths[0]), tmp, "", 100000, None, "the lexicon")
+        lex = {}
+        with open(tmp, encoding="utf-8", errors="replace") as f:
+            for line in f:
+                cols = line.rstrip("\r\n").split("\t")
+                if len(cols) < 7 or not re.match(r"^[HAG]\d{4}", cols[0].strip()):
+                    continue
+                txt = [c.strip() for c in cols]
+                lemma = next((c for c in txt[2:5] if re.search(r"[Ͱ-Ͽἀ-῿֐-׿]", c)), "")
+                li = txt.index(lemma) if lemma in txt else 3
+                translit = txt[li + 1] if li + 1 < len(txt) else ""
+                gloss = txt[li + 3] if li + 3 < len(txt) else ""
+                meaning = max(txt[li + 3:], key=len) if len(txt) > li + 3 else ""
+                meaning = re.sub(r"<br\s*/?>", "\n", meaning)
+                meaning = re.sub(r"<[^>]+>", "", meaning)
+                meaning = html.unescape(meaning) if "html" in globals() else meaning
+                entry = [lemma, translit, gloss, meaning[:1500]]
+                for k in {txt[0], txt[1].split("=")[0].strip()}:
+                    if re.match(r"^[HAG]\d{4}[A-Za-z]?$", k):
+                        lex.setdefault(k, entry)
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+        with open(p, "w", encoding="utf-8") as f:
+            json.dump(lex, f, ensure_ascii=False, separators=(",", ":"))
+    with open(p, encoding="utf-8") as f:
+        _STEP["lex"][key] = json.load(f)
+    return _STEP["lex"][key]
+
+
+def step_lookup(lex, strong):
+    if not strong:
+        return None
+    for k in (strong, re.sub(r"[A-Za-z]$", "", strong), strong[:5]):
+        if k in lex:
+            return lex[k]
+    return None
+
+
+def hebrew_visual(s):
+    """Tk draws Hebrew in reading order on Windows; elsewhere letters come out backwards, so flip them for display."""
+    if IS_WIN or not s:
+        return s
+    import unicodedata
+    clusters = []
+    for ch in s:
+        if clusters and unicodedata.combining(ch):
+            clusters[-1] += ch
+        else:
+            clusters.append(ch)
+    return "".join(reversed(clusters))
+
+
+BIBLE_STUDY_PROMPT = (
+    "Terminology rule: this is Bible study, not IB work; use normal theological and biblical-studies terms. "
+    "You are a careful, reverent Bible teacher helping a young Christian who wants to understand Scripture deeply "
+    "and faithfully. Work from the original-language data given (Hebrew, Aramaic or Greek words with Strong's numbers "
+    "and grammar). Be accurate: never invent word meanings, and say when scholars are unsure. Answer in Markdown with "
+    "these headings: '### The words' (the key original words: script, transliteration, Strong's number, root meaning, "
+    "and what the grammar adds, especially nuance an English translation hides), '### Context' (author, audience, "
+    "literary setting and genre, where it sits in the book), '### Meaning' (the plain sense, then the theological "
+    "meaning), '### How Christians have read it' (the main readings across church history and traditions, early "
+    "church fathers or reformers when relevant, noting where they agree and differ, fairly), '### Cross-references' "
+    "(4-8 references with one line each), '### Living it' (two or three short, practical, humble applications). "
+    "Keep the whole answer under about 650 words.")
+
+
+import html
+
+
+def z17_llm(system, user, model=None, max_tokens=1100, timeout=240, temperature=0.35):
+    """One answer from whichever free brain is available (online brain first if it's switched on, then Ollama)."""
+    names = brain_names()
+    if not names:
+        raise WebError("For this I need a brain: open Ollama (free, on this PC) or switch on the online brain in "
+                       "Settings > Online brain.")
+    m = "online" if names == ["online"] else pick_model(names, model or "llama3.2:3b")
+    j = _ollama_json("/api/chat", {"model": m, "stream": False, "online": True,
+                                   "options": {"temperature": temperature, "num_predict": max_tokens},
+                                   "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]},
+                     timeout)
+    return ((j.get("message") or {}).get("content") or "").strip()
+
+
+def _font_pick(root, names, fallback):
+    try:
+        import tkinter.font as tkf
+        fams = set(tkf.families(root))
+    except Exception:
+        return fallback
+    for n in names:
+        if n in fams:
+            return n
+    return fallback
+
+
+class ZkToolWindow:
+    """A separate, themed window for a study tool (one of each at a time)."""
+    KEY = "tool"
+    TITLE = "Zenko"
+    SIZE = (900, 640)
+
+    def __init__(self, app):
+        self.app = app
+        wins = app.__dict__.setdefault("_z17_wins", {})
+        old = wins.get(self.KEY)
+        if old is not None:
+            try:
+                if old.win.winfo_exists():
+                    old.win.deiconify()
+                    old.win.lift()
+                    old.win.focus_force()
+                    self.dup = True
+                    return
+            except tk.TclError:
+                pass
+        self.dup = False
+        wins[self.KEY] = self
+        w = self.win = tk.Toplevel(app.root)
+        w.title("%s · %s" % (self.TITLE, APP_NAME))
+        w.configure(bg=PAPER)
+        sw, sh = w.winfo_screenwidth(), w.winfo_screenheight()
+        W, H = min(self.SIZE[0], sw - 60), min(self.SIZE[1], sh - 90)
+        w.geometry("%dx%d+%d+%d" % (W, H, max(0, (sw - W) // 2 + 40), max(0, (sh - H) // 3)))
+        w.minsize(min(560, W), min(420, H))
+        try:
+            if getattr(app, "app_icon", None) is not None:
+                w.iconphoto(False, app.app_icon)
+        except tk.TclError:
+            pass
+        w.protocol("WM_DELETE_WINDOW", self.close)
+        self.serif = _serif_font(app.root)
+        self.jp = _mincho_font(app.root)
+        self.build()
+
+    def close(self):
+        try:
+            self.win.destroy()
+        except tk.TclError:
+            pass
+        if self.app.__dict__.get("_z17_wins", {}).get(self.KEY) is self:
+            self.app._z17_wins.pop(self.KEY, None)
+
+    def alive(self):
+        try:
+            return bool(self.win.winfo_exists())
+        except Exception:
+            return False
+
+    def header(self, kanji, title, sub=""):
+        hdr = tk.Frame(self.win, bg=NIGHT)
+        hdr.pack(fill="x")
+        tk.Label(hdr, text=kanji, bg=NIGHT, fg=GOLD, font=(self.jp, 20)).pack(side="left", padx=(18, 10), pady=8)
+        col = tk.Frame(hdr, bg=NIGHT)
+        col.pack(side="left", pady=6)
+        tk.Label(col, text=title, bg=NIGHT, fg="#f3ead6", font=(self.serif, 15)).pack(anchor="w")
+        if sub:
+            tk.Label(col, text=sub, bg=NIGHT, fg=_mixhex(NIGHT, INK, 0.6), font=(self.serif, 9, "italic")).pack(anchor="w")
+        tk.Frame(self.win, bg=GOLD, height=1).pack(fill="x")
+        return hdr
+
+    def btn(self, parent, text, cmd, accent=False, size=9):
+        return self.app.tt_btn(parent, text, cmd, bg=T["start"] if accent else FIELD, size=size, padx=10, pady=2)
+
+    def text_box(self, parent, height=10, size=10):
+        t = tk.Text(parent, height=height, wrap="word", font=(FONT_UI, size), bg=_mixhex(T["card"], FIELD, 0.5), fg=INK,
+                    relief="flat", highlightthickness=0, padx=12, pady=10, insertbackground=INK)
+        zk_text_scroll(t)
+        return t
+
+    def show_md(self, t, text, size=10):
+        try:
+            t.config(state="normal")
+            t.delete("1.0", "end")
+            md_insert(t, text or "", size=size)
+            t.config(state="disabled")
+            t.yview_moveto(0)
+        except tk.TclError:
+            pass
+
+    def safe(self, fn):
+        def run(res, err):
+            if not self.alive():
+                return
+            try:
+                fn(res, err)
+            except tk.TclError:
+                pass
+            except Exception as e:
+                zk_log_error("tool window callback: %r" % e)
+        return run
+
+
+def zk_scroll_frame(parent, bg):
+    """(outer frame, inner frame, canvas): a vertically scrollable area with the themed scrollbar."""
+    outer = tk.Frame(parent, bg=bg)
+    outer.grid_rowconfigure(0, weight=1)
+    outer.grid_columnconfigure(0, weight=1)
+    cv = tk.Canvas(outer, bg=bg, highlightthickness=0, bd=0)
+    sb = ZkScrollbar(outer, command=cv.yview, bg=bg, width=10)
+    cv.configure(yscrollcommand=sb.set)
+    cv.grid(row=0, column=0, sticky="nsew")
+    sb.grid(row=0, column=1, sticky="ns")
+    inner = tk.Frame(cv, bg=bg)
+    wid = cv.create_window((0, 0), window=inner, anchor="nw")
+    inner.bind("<Configure>", lambda e: cv.configure(scrollregion=cv.bbox("all")))
+    cv.bind("<Configure>", lambda e: cv.itemconfigure(wid, width=e.width))
+    return outer, inner, cv
+
+
+# ---- 元素 · periodic table --------------------------------------------------------------------------------------
+class PeriodicWindow(ZkToolWindow):
+    KEY = "ptable"
+    TITLE = "Periodic table"
+    SIZE = (1240, 760)
+
+    def build(self):
+        self.sel = PT_BY_SYM.get(self.app.life.get("pt_last", "C"), PT[5])
+        self.mode = "cat"
+        self.hover = None
+        self.header("元素", "The periodic table", "Click an element. Values as in your IB data booklet (Ar to 2 d.p., "
+                                                  "Pauling electronegativity).")
+        body = tk.Frame(self.win, bg=PAPER)
+        body.pack(fill="both", expand=True)
+        left = tk.Frame(body, bg=PAPER)
+        left.pack(side="left", fill="both", expand=True, padx=(14, 6), pady=10)
+        tools = tk.Frame(left, bg=PAPER)
+        tools.pack(fill="x")
+        tk.Label(tools, text="Find", bg=PAPER, fg=GREY, font=(FONT_UI, 9)).pack(side="left")
+        self.find_v = tk.StringVar()
+        fe = self.app.tt_entry(tools, self.find_v, 14)
+        fe.pack(side="left", padx=(6, 14))
+        fe.bind("<KeyRelease>", lambda e: self.find())
+        tk.Label(tools, text="Molar mass", bg=PAPER, fg=GREY, font=(FONT_UI, 9)).pack(side="left")
+        self.mm_v = tk.StringVar(value="H2SO4")
+        me = self.app.tt_entry(tools, self.mm_v, 16)
+        me.pack(side="left", padx=6)
+        me.bind("<KeyRelease>", lambda e: self.molar())
+        self.mm_out = tk.Label(tools, text="", bg=PAPER, fg=INK, font=(FONT_UI, 10, "bold"))
+        self.mm_out.pack(side="left", padx=6)
+        self.mode_btn = self.btn(tools, "Colour: electronegativity", self.toggle_mode)
+        self.mode_btn.pack(side="right")
+        self.cv = tk.Canvas(left, bg=PAPER, highlightthickness=0)
+        self.cv.pack(fill="both", expand=True, pady=(8, 0))
+        self.cv.bind("<Configure>", lambda e: self.draw_later())
+        self.cv.bind("<Motion>", self.motion)
+        self.cv.bind("<Leave>", lambda e: self.set_hover(None))
+        self.cv.bind("<Button-1>", self.click)
+        right = tk.Frame(body, bg=T["card"], width=330)
+        right.pack(side="right", fill="y", padx=(6, 14), pady=10)
+        right.pack_propagate(False)
+        self.det = right
+        self.ans = None
+        self._job = None
+        self.molar()
+        self.show_detail()
+
+    def draw_later(self):
+        if self._job:
+            try:
+                self.win.after_cancel(self._job)
+            except tk.TclError:
+                pass
+        self._job = self.win.after(60, self.draw)
+
+    def geom(self):
+        W, H = self.cv.winfo_width(), self.cv.winfo_height()
+        cw = max(26, min(70, (W - 8) / 18.0))
+        ch = max(28, min(cw * 1.12, (H - 10) / 10.1))
+        return cw, ch
+
+    def cell_xy(self, z):
+        r, c = pt_place(z)
+        cw, ch = self.geom()
+        y = (r - 1) * ch + (0.95 * ch if r >= 8 else 0)
+        return 4 + (c - 1) * cw, 4 + y, cw, ch
+
+    def color(self, e):
+        if self.mode == "en":
+            if e["en"] is None:
+                return _mixhex(T["card"], INK, 0.12)
+            t = (e["en"] - 0.7) / 3.3
+            return _mixhex("#3d6fb8", "#e0705a", max(0.0, min(1.0, t)))
+        return PT_CATS[e["cat"]][1]
+
+    def draw(self):
+        self._job = None
+        cv = self.cv
+        try:
+            cv.delete("all")
+        except tk.TclError:
+            return
+        cw, ch = self.geom()
+        big = cw >= 44
+        card = T["card"]
+        for e in PT:
+            x, y, w, h = self.cell_xy(e["z"])
+            col = self.color(e)
+            sel = e is self.sel
+            hov = e is self.hover
+            fill = _mixhex(card, col, 0.55 if (sel or hov) else 0.30)
+            cv.create_rectangle(x + 1, y + 1, x + w - 2, y + h - 2, fill=fill, outline=GOLD if sel else _mixhex(card, col, 0.8),
+                                width=2 if sel else 1, tags=("el", "z%d" % e["z"]))
+            cv.create_text(x + 4, y + 3, text=str(e["z"]), anchor="nw", fill=_mixhex(INK, fill, 0.35),
+                           font=(FONT_UI, max(6, int(cw / 7.5))))
+            cv.create_text(x + w / 2, y + h * (0.5 if big else 0.56), text=e["sym"], fill=INK,
+                           font=(self.serif, max(8, int(cw / 3.3)), "bold"))
+            if big:
+                cv.create_text(x + w / 2, y + h - 4, text=e["mass"], anchor="s", fill=_mixhex(INK, fill, 0.3),
+                               font=(FONT_UI, max(6, int(cw / 8.5))))
+        for r, lab in ((6, "57–71"), (7, "89–103")):            # the f-block placeholders in group 3
+            x, y = 4 + 2 * cw, 4 + (r - 1) * ch
+            cv.create_rectangle(x + 1, y + 1, x + cw - 2, y + ch - 2, fill=_mixhex(card, PAPER, 0.5),
+                                outline=_mixhex(card, INK, 0.15), dash=(2, 2))
+            cv.create_text(x + cw / 2, y + ch / 2, text=lab, fill=GREY, font=(FONT_UI, max(6, int(cw / 7))))
+        # legend
+        ly = 4 + 7 * ch + 0.18 * ch
+        lx = 4 + 2.6 * cw
+        if self.mode == "cat":
+            items = list(PT_CATS.values())
+            per = 5
+            for i, (name, col) in enumerate(items):
+                xx = lx + (i % per) * cw * 2.9
+                yy = ly + (i // per) * 15 - 2
+                cv.create_rectangle(xx, yy, xx + 10, yy + 10, fill=col, outline="")
+                cv.create_text(xx + 14, yy + 5, text=name, anchor="w", fill=GREY, font=(FONT_UI, 8))
+        else:
+            for i in range(40):
+                cv.create_rectangle(lx + i * 6, ly, lx + i * 6 + 6, ly + 10, outline="",
+                                    fill=_mixhex("#3d6fb8", "#e0705a", i / 39.0))
+            cv.create_text(lx, ly + 18, text="0.7", anchor="w", fill=GREY, font=(FONT_UI, 8))
+            cv.create_text(lx + 240, ly + 18, text="4.0  (Pauling electronegativity)", anchor="e", fill=GREY, font=(FONT_UI, 8))
+        # the selected element large, in the gap above the transition metals
+        e = self.hover or self.sel
+        x0, y0 = 4 + 3 * cw, 4
+        cv.create_text(x0 + 4, y0 + 4, text="%d" % e["z"], anchor="nw", fill=GREY, font=(FONT_UI, max(8, int(cw / 5))))
+        cv.create_text(x0 + 4, y0 + ch * 0.35, text=e["sym"], anchor="nw", fill=self.color(e),
+                       font=(self.serif, max(16, int(cw * 0.9)), "bold"))
+        cv.create_text(x0 + cw * 2.2, y0 + ch * 0.5, text="%s\nAr %s   ·   %s" % (e["name"], e["mass"], PT_CATS[e["cat"]][0]),
+                       anchor="w", fill=INK, font=(self.serif, max(9, int(cw / 4))))
+
+    def at(self, x, y):
+        cw, ch = self.geom()
+        for e in PT:
+            ex, ey, w, h = self.cell_xy(e["z"])
+            if ex <= x < ex + w and ey <= y < ey + h:
+                return e
+        return None
+
+    def motion(self, ev):
+        self.set_hover(self.at(ev.x, ev.y))
+
+    def set_hover(self, e):
+        if e is not self.hover:
+            self.hover = e
+            self.draw_later()
+
+    def click(self, ev):
+        e = self.at(ev.x, ev.y)
+        if e:
+            self.sel = e
+            self.app.life["pt_last"] = e["sym"]
+            self.draw_later()
+            self.show_detail()
+
+    def find(self):
+        q = self.find_v.get().strip().lower()
+        if not q:
+            return
+        hit = next((e for e in PT if q in (e["sym"].lower(), str(e["z"]))), None) or \
+            next((e for e in PT if e["name"].lower().startswith(q)), None)
+        if hit:
+            self.sel = hit
+            self.draw_later()
+            self.show_detail()
+
+    def molar(self):
+        f = self.mm_v.get().strip()
+        if not f:
+            self.mm_out.config(text="")
+            return
+        try:
+            mm, parts = molar_mass(f)
+            self.mm_out.config(text="= %.2f g mol⁻¹" % mm, fg=INK)
+        except ValueError as e:
+            self.mm_out.config(text=str(e)[:60], fg=GREY)
+
+    def toggle_mode(self):
+        self.mode = "en" if self.mode == "cat" else "cat"
+        self.mode_btn.config(text="Colour: categories" if self.mode == "en" else "Colour: electronegativity")
+        self.draw_later()
+
+    def show_detail(self):
+        for ch_ in self.det.winfo_children():
+            ch_.destroy()
+        e = self.sel
+        d = self.det
+        bg = T["card"]
+        col = PT_CATS[e["cat"]][1]
+        top = tk.Frame(d, bg=bg)
+        top.pack(fill="x", padx=16, pady=(14, 4))
+        tk.Label(top, text=e["sym"], bg=bg, fg=col, font=(self.serif, 34, "bold")).pack(side="left")
+        c2 = tk.Frame(top, bg=bg)
+        c2.pack(side="left", padx=12)
+        tk.Label(c2, text=e["name"], bg=bg, fg=INK, font=(self.serif, 16)).pack(anchor="w")
+        tk.Label(c2, text=PT_CATS[e["cat"]][0], bg=bg, fg=GREY, font=(FONT_UI, 9, "italic")).pack(anchor="w")
+        r, c = pt_place(e["z"])
+        period = {8: 6, 9: 7}.get(r, r)
+        block = "f" if r >= 8 else ("s" if c <= 2 or e["z"] == 2 else ("p" if c >= 13 else "d"))
+        rows = [("Atomic number", str(e["z"])), ("Relative atomic mass", e["mass"] + ("  (mass number of the most stable "
+                                                                                         "isotope)" if "[" in e["mass"] else "")),
+                ("Period · group · block", "%d · %s · %s" % (period, "—" if r >= 8 else str(c), block)),
+                ("Electronegativity", "%.1f" % e["en"] if e["en"] is not None else "—"),
+                ("Electron configuration", pt_config(e["z"])), ("Full configuration", pt_full_config(e["z"]))]
+        for k, v in rows:
+            tk.Label(d, text=k.upper(), bg=bg, fg=GREY, font=(FONT_UI, 7, "bold"), anchor="w").pack(fill="x", padx=16, pady=(6, 0))
+            tk.Label(d, text=v, bg=bg, fg=INK, font=(FONT_UI, 10), anchor="w", justify="left",
+                     wraplength=290).pack(fill="x", padx=16)
+        if e["z"] in _PT_EXC and e["z"] <= 79:
+            tk.Label(d, text="An exception to the Aufbau order (a half-full or full sub-level is more stable).", bg=bg,
+                     fg=GOLD, font=(FONT_UI, 8, "italic"), anchor="w", justify="left", wraplength=290).pack(fill="x", padx=16, pady=(4, 0))
+        br = tk.Frame(d, bg=bg)
+        br.pack(fill="x", padx=16, pady=(12, 6))
+        self.btn(br, "Ask Zenko about %s" % e["name"], self.ask, accent=True).pack(side="left")
+        self.ans = self.text_box(d, height=8, size=9)
+        self.ans.pack(fill="both", expand=True, padx=12, pady=(0, 12))
+        self.show_md(self.ans, "Ask me about its reactions, trends, ions or uses (IB Chemistry level).", 9)
+
+    def ask(self):
+        e = self.sel
+        q = ("Give the IB DP Chemistry facts about %s (%s, Z=%d): its electron configuration and what it explains, typical "
+             "ions/oxidation states, key reactions or uses that come up in IB Chemistry, and where it sits in periodic "
+             "trends (atomic radius, ionisation energy, electronegativity). Short sections." % (e["name"], e["sym"], e["z"]))
+        self.show_md(self.ans, "Thinking~ kon...", 9)
+        try:
+            self.app.nb_ask("chem", q, "explain", done=lambda txt: self.alive() and self.show_md(self.ans, txt, 9))
+        except Exception as ex:
+            self.show_md(self.ans, "I couldn't ask right now (%s)." % ex, 9)
+
+
+# ---- 辞書 · French dictionary and translator -------------------------------------------------------------------
+class FrenchWindow(ZkToolWindow):
+    KEY = "french"
+    TITLE = "French dictionary"
+    SIZE = (820, 680)
+
+    def build(self):
+        self.header("辞書", "Dictionnaire · French ⇄ English", "Your ab initio vocab, conjugations and a free online "
+                                                               "translator. Zenko explains the grammar.")
+        bg = PAPER
+        top = tk.Frame(self.win, bg=bg)
+        top.pack(fill="x", padx=16, pady=(12, 4))
+        self.q = tk.StringVar()
+        e = self.app.tt_entry(top, self.q, 34)
+        e.pack(side="left", fill="x", expand=True)
+        e.bind("<Return>", lambda ev: self.look())
+        e.focus_set()
+        self.btn(top, "Look up", self.look, accent=True).pack(side="left", padx=(8, 0))
+        dr = tk.Frame(self.win, bg=bg)
+        dr.pack(fill="x", padx=16)
+        self.dir = tk.StringVar(value="auto")
+        for val, lab in (("auto", "Guess"), ("en", "English → French"), ("fr", "French → English")):
+            tk.Radiobutton(dr, text=lab, value=val, variable=self.dir, indicatoron=False, bg=FIELD, fg=INK,
+                           selectcolor=_mixhex(FIELD, GOLD, 0.35), activebackground=FIELD, relief="flat", bd=0, padx=10,
+                           pady=3, font=(FONT_UI, 9, "bold")).pack(side="left", padx=(0, 6), pady=4)
+        self.status = tk.Label(self.win, text="", bg=bg, fg=GREY, font=(FONT_UI, 8), anchor="w")
+        self.status.pack(fill="x", padx=16)
+        self.out = self.text_box(self.win, height=14, size=10)
+        self.out.pack(fill="both", expand=True, padx=16, pady=(4, 6))
+        br = tk.Frame(self.win, bg=bg)
+        br.pack(fill="x", padx=16, pady=(0, 6))
+        self.btn(br, "Explain the grammar", self.explain).pack(side="left")
+        self.btn(br, "Example sentences", lambda: self.explain(examples=True)).pack(side="left", padx=6)
+        self.btn(br, "Add to my flashcards", self.add_card).pack(side="left")
+        self.hist_row = tk.Frame(self.win, bg=bg)
+        self.hist_row.pack(fill="x", padx=16, pady=(0, 12))
+        self.last = None
+        self.show_md(self.out, "Type a word or a whole sentence, in French or English.\n\n"
+                               "- **manger** shows its meaning, conjugation and your vocab matches\n"
+                               "- **I would like a coffee** translates it\n"
+                               "- *Explain the grammar* asks Zenko (gender, agreement, tenses) at ab initio level")
+        self.draw_hist()
+
+    def draw_hist(self):
+        for c in self.hist_row.winfo_children():
+            c.destroy()
+        hist = self.app.life.get("fr_hist") or []
+        if hist:
+            tk.Label(self.hist_row, text="Recent:", bg=PAPER, fg=GREY, font=(FONT_UI, 8)).pack(side="left")
+        for h in hist[-8:][::-1]:
+            lab = tk.Label(self.hist_row, text=clip(h, 18), bg=FIELD, fg=INK, font=(FONT_UI, 8), padx=6, cursor="hand2")
+            lab.pack(side="left", padx=2)
+            lab.bind("<Button-1>", lambda ev, h=h: (self.q.set(h), self.look()))
+
+    def look(self):
+        q = self.q.get().strip()
+        if not q:
+            return
+        H = self.app.life.setdefault("fr_hist", [])
+        if q in H:
+            H.remove(q)
+        H.append(q)
+        del H[:-30]
+        self.draw_hist()
+        d = self.dir.get()
+        fr_in = (d == "fr") or (d == "auto" and looks_french(q))
+        parts = []
+        hits = fr_vocab_search(q)
+        word = len(q.split()) <= 3
+        if hits:
+            parts.append("### In your vocab list\n" + "\n".join("- **%s**: %s  *(%s)*" % (fr, en, th) for fr, en, th in hits[:8]))
+        conj = ""
+        if word:
+            v = q.lower().strip()
+            cand = ([v] if d != "en" else []) + [fr.lower() for fr, en, th in hits if re.search(r"(?:er|ir|re)$", fr.lower())][:1]
+            for c in cand:
+                try:
+                    if re.search(r"(?:er|ir|re)$", c) or c in FR_IRREG:
+                        conj = conjugate_fr(c) or ""
+                except Exception:
+                    conj = ""
+                if conj:
+                    break
+        if conj:
+            lines = conj.split("\n")
+            parts.append("### Conjugation\n**%s**\n" % lines[0] + "\n".join("- " + ln for ln in lines[1:]))
+        self.last = {"q": q, "fr_in": fr_in, "parts": parts, "tr": ""}
+        self.show_md(self.out, "\n\n".join(parts) or "Translating...")
+        self.status.config(text="Translating online...")
+        src, tgt = ("fr", "en") if fr_in else ("en", "fr")
+
+        def job():
+            if d == "auto" and not fr_in:                     # not sure: let the translator guess the language
+                r = translate_text(q, "en", "auto")
+                if r[0].strip().lower().strip(".!?") != q.lower().strip(".!?"):
+                    self.last["fr_in"] = True
+                    return r
+            return translate_text(q, tgt, src)
+
+        def done(res, err):
+            if err:
+                self.status.config(text="The online translator isn't reachable (offline, or blocked here). Your vocab and "
+                                        "conjugations still work, and 'Explain' uses Zenko's brain.")
+                if not parts:
+                    self.show_md(self.out, "I couldn't translate that offline. Try *Explain the grammar* (uses your brain).")
+                return
+            tr = res[0]
+            self.last["tr"] = tr
+            self.status.config(text="Translated with %s" % res[2])
+            self.show_md(self.out, "### %s\n**%s**\n\n*%s*" % ("French → English" if self.last["fr_in"] else "English → French", tr, q) +
+                         ("\n\n" + "\n\n".join(parts) if parts else ""))
+        self.app.bg(job, self.safe(done))
+
+    def explain(self, examples=False):
+        q = self.q.get().strip()
+        if not q:
+            return
+        if examples:
+            ask = ("Give 4 short example sentences using '%s' at IB French ab initio level, each with its English "
+                   "translation. Mark the gender of nouns (le/la) and point out any agreement." % q)
+        else:
+            ask = ("Explain '%s' for an IB French ab initio student: what it means, its gender and plural if it's a noun, "
+                   "which tense/mood and why if it's a verb form or sentence, any agreement, and one common mistake to avoid. "
+                   "Keep it short." % q)
+        self.status.config(text="Asking Zenko...")
+        try:
+            self.app.nb_ask("french", ask, "explain", done=lambda txt: self.alive() and (
+                self.status.config(text=""), self.show_md(self.out, txt)))
+        except Exception as ex:
+            self.status.config(text="Couldn't ask (%s)." % ex)
+
+    def add_card(self):
+        L = self.last
+        if not L or not L.get("tr"):
+            self.status.config(text="Look a word up first (with the translator), then add it.")
+            return
+        fr, en = (L["q"], L["tr"]) if L["fr_in"] else (L["tr"], L["q"])
+        try:
+            msg = self.app.card_add(en + " (in French)", fr)
+            self.status.config(text=clip(md_plain(msg) if isinstance(msg, str) else "Saved to your flashcards~", 120))
+        except Exception as ex:
+            self.status.config(text="Couldn't save the card (%s)." % ex)
+
+
+# ---- 電卓 · an fx-CG50-style graphing calculator ----------------------------------------------------------------
+_CG_KEYS = [  # (key id, label, shift label, alpha letter, style)
+    [("F1", "F1", "", "", "f"), ("F2", "F2", "", "", "f"), ("F3", "F3", "", "", "f"), ("F4", "F4", "", "", "f"),
+     ("F5", "F5", "", "", "f"), ("F6", "F6", "", "", "f")],
+    [("SHIFT", "SHIFT", "", "", "shift"), ("ALPHA", "ALPHA", "", "", "alpha"), ("MENU", "MENU", "SET UP", "", "k"),
+     ("EXIT", "EXIT", "QUIT", "", "k"), ("LEFT", "◀", "", "", "arrow"), ("RIGHT", "▶", "", "", "arrow")],
+    [("SQ", "x²", "√", "", "k"), ("POW", "^", "ˣ√", "", "k"), ("XT", "X,θ,T", "", "A", "k"), ("LOG", "log", "10ˣ", "B", "k"),
+     ("UP", "▲", "", "", "arrow"), ("DOWN", "▼", "", "", "arrow")],
+    [("LN", "ln", "eˣ", "C", "k"), ("SIN", "sin", "sin⁻¹", "D", "k"), ("COS", "cos", "cos⁻¹", "E", "k"),
+     ("TAN", "tan", "tan⁻¹", "F", "k"), ("FRAC", "a b/c", "nCr", "G", "k"), ("SD", "S⇔D", "nPr", "H", "k")],
+    [("ROOT", "√", "³√", "", "k"), ("INV", "x⁻¹", "x!", "", "k"), ("LP", "(", "", "I", "k"), ("RP", ")", "", "J", "k"),
+     ("COMMA", ",", "", "K", "k"), ("STO", "→", "", "L", "k")],
+    [("7", "7", "", "M", "n"), ("8", "8", "", "N", "n"), ("9", "9", "", "O", "n"), ("DEL", "DEL", "INS", "", "del"),
+     ("AC", "AC", "OFF", "", "del")],
+    [("4", "4", "", "P", "n"), ("5", "5", "", "Q", "n"), ("6", "6", "", "R", "n"), ("MUL", "×", "", "S", "n"),
+     ("DIV", "÷", "", "T", "n")],
+    [("1", "1", "", "U", "n"), ("2", "2", "", "V", "n"), ("3", "3", "", "W", "n"), ("ADD", "+", "", "X", "n"),
+     ("SUB", "−", "", "Y", "n")],
+    [("0", "0", "", "Z", "n"), ("DOT", ".", "", "", "n"), ("EXP", "×10ˣ", "π", "", "n"), ("NEG", "(−)", "Ans", "", "n"),
+     ("EXE", "EXE", "", "", "exe")],
+]
+_CG_INS = {"SQ": "²", "POW": "^", "XT": "x", "LOG": "log(", "LN": "ln(", "SIN": "sin(", "COS": "cos(", "TAN": "tan(",
+           "FRAC": "/", "ROOT": "√(", "INV": "⁻¹", "LP": "(", "RP": ")", "COMMA": ",", "STO": "→", "DOT": ".",
+           "EXP": "ᴇ", "NEG": "-", "MUL": "×", "DIV": "÷", "ADD": "+", "SUB": "−"}
+_CG_SHIFT = {"SQ": "√(", "POW": "root(", "LOG": "10^(", "LN": "e^(", "SIN": "sin⁻¹(", "COS": "cos⁻¹(", "TAN": "tan⁻¹(",
+             "FRAC": "nCr(", "SD": "nPr(", "ROOT": "³√(", "INV": "!", "EXP": "π", "NEG": "Ans"}
+_CG_ALPHA = dict((k[0], k[3]) for row in _CG_KEYS for k in row if k[3])
+CG_VIEWS = [("Initial", -6.3, 6.3, -3.1, 3.1), ("Standard", -10, 10, -10, 10), ("Trig", -2 * math.pi, 2 * math.pi, -1.6, 1.6),
+            ("Wide", -50, 50, -50, 50)]
+
+
+class CasioWindow(ZkToolWindow):
+    KEY = "casio"
+    TITLE = "Graphing calculator"
+    SIZE = (470, 800)
+    SW, SH = 384, 216
+
+    def build(self):
+        st = self.app.life.setdefault("cg", {})
+        self.deg = bool(st.get("deg", True))
+        self.mem = dict(st.get("mem") or {})
+        self.ans = float(st.get("ans", 0.0) or 0.0)
+        self.hist = list(st.get("hist") or [])[-12:]
+        self.ys = list(st.get("ys") or ["", "", ""])
+        self.mode = "run"
+        self.inp, self.cur = [], 0
+        self.shift = self.alpha = False
+        self.exact = True
+        self.ysel = 0
+        self.view = list(CG_VIEWS[0][1:])
+        self.trace = None
+        self.gmsg = ""
+        self.grid = None
+        self.result = None
+        self.res_top = 0
+        self.lists = [list(map(float, st.get("L1") or [])), list(map(float, st.get("L2") or []))]
+        body = "#1c1f27"
+        self.win.configure(bg=body)
+        top = tk.Frame(self.win, bg=body)
+        top.pack(fill="x", padx=18, pady=(12, 2))
+        tk.Label(top, text="ZENKO", bg=body, fg="#d9d4c7", font=(self.serif, 11, "bold")).pack(side="left")
+        tk.Label(top, text="  colour graphing  ·  fx-CG50 style", bg=body, fg="#7d8496", font=(FONT_UI, 8)).pack(side="left")
+        tk.Label(top, text="狐", bg=body, fg=GOLD, font=(self.jp, 13)).pack(side="right")
+        bez = tk.Frame(self.win, bg="#0d0f14", padx=8, pady=8)
+        bez.pack(padx=18, pady=(4, 8))
+        self.cv = tk.Canvas(bez, width=self.SW, height=self.SH, bg="#f6f7f2", highlightthickness=0)
+        self.cv.pack()
+        pad = tk.Frame(self.win, bg=body)
+        pad.pack(fill="both", expand=True, padx=12, pady=(0, 10))
+        self.keys = {}
+        for r, row in enumerate(_CG_KEYS):
+            fr = tk.Frame(pad, bg=body)
+            fr.pack(fill="x", pady=(0, 3) if r else (0, 8))
+            for i, (kid, lab, sl, al, sty) in enumerate(row):
+                fr.grid_columnconfigure(i, weight=1, uniform="key")
+                self.make_key(fr, kid, lab, sl, al, sty, i)
+        w = self.win
+        w.bind("<Key>", self.on_key)
+        w.focus_set()
+        self.blink = True
+        self.tick()
+        self.draw()
+
+    # ---- keys -------------------------------------------------------------------------------------------------
+    def make_key(self, parent, kid, lab, sl, al, sty, n):
+        body = "#1c1f27"
+        cell = tk.Frame(parent, bg=body)
+        cell.grid(row=0, column=n, sticky="ew", padx=2)
+        top = tk.Frame(cell, bg=body)
+        top.pack(fill="x")
+        tk.Label(top, text=sl, bg=body, fg="#e8c547", font=(FONT_UI, 6, "bold")).pack(side="left", padx=(2, 0))
+        tk.Label(top, text=al, bg=body, fg="#e2645a", font=(FONT_UI, 6, "bold")).pack(side="right", padx=(0, 2))
+        col = {"f": ("#3a4050", "#f0f0f0"), "shift": ("#3a4050", "#e8c547"), "alpha": ("#3a4050", "#e2645a"),
+               "k": ("#2c313d", "#f2f2f2"), "arrow": ("#454c5d", "#f2f2f2"), "n": ("#e4e1d9", "#1b1d24"),
+               "del": ("#c8743a", "#ffffff"), "exe": ("#3b6ea8", "#ffffff")}[sty]
+        big = sty in ("n", "del", "exe")
+        k = tk.Label(cell, text=lab, bg=col[0], fg=col[1], font=(FONT_UI, 11 if big else 8, "bold"),
+                     pady=7 if big else 4, cursor="hand2")
+        k.pack(fill="x")
+        k.bind("<ButtonPress-1>", lambda e: k.config(bg=_mixhex(col[0], "#000000", 0.25)))
+        k.bind("<ButtonRelease-1>", lambda e: (k.config(bg=col[0]), self.press(kid)))
+        self.keys[kid] = k
+
+    def on_key(self, e):
+        ks, ch = e.keysym, e.char
+        m = {"Return": "EXE", "KP_Enter": "EXE", "BackSpace": "DEL", "Delete": "AC", "Escape": "EXIT", "Left": "LEFT",
+             "Right": "RIGHT", "Up": "UP", "Down": "DOWN"}
+        if ks in m:
+            return self.press(m[ks])
+        if ks in ("F1", "F2", "F3", "F4", "F5", "F6"):
+            return self.press(ks)
+        cm = {"+": "ADD", "-": "SUB", "*": "MUL", "/": "DIV", "^": "POW", "(": "LP", ")": "RP", ",": "COMMA", ".": "DOT",
+              "x": "XT", "!": None}
+        if ch and ch.isdigit():
+            return self.press(ch)
+        if ch == "!":
+            self.shift = True
+            return self.press("INV")
+        if ch in cm and cm[ch]:
+            return self.press(cm[ch])
+        if ch == "p":
+            self.shift = True
+            return self.press("EXP")
+        if ch and ch.isalpha() and ch.upper() in "ABCDEFGHIJKLMNOPQRSTUVWYZ" and self.mode == "run":
+            self.insert(ch.upper())
+            self.draw()
+
+    def insert(self, s):
+        self.inp[self.cur:self.cur] = [s]
+        self.cur += 1
+
+    def press(self, kid):
+        try:
+            self._press(kid)
+        except Exception as ex:
+            zk_log_error("calculator key %s: %r" % (kid, ex))
+        self.draw()
+        return "break"
+
+    def _press(self, kid):
+        sh, al = self.shift, self.alpha
+        if kid == "SHIFT":
+            self.shift = not self.shift
+            self.alpha = False
+            return
+        if kid == "ALPHA":
+            self.alpha = not self.alpha
+            self.shift = False
+            return
+        self.shift = self.alpha = False
+        if sh and kid == "AC":
+            return self.close()
+        if sh and kid == "MENU":
+            self.deg = not self.deg
+            return self.save()
+        if kid == "MENU":
+            self.mode = "menu"
+            return
+        if self.mode == "menu":
+            pick = {"1": "run", "2": "stat", "3": "graph", "4": "eqn", "5": "dist", "F1": "run", "F2": "stat", "F3": "graph",
+                    "F4": "eqn", "F5": "dist"}.get(kid)
+            if pick:
+                self.open_mode(pick)
+            elif kid in ("EXIT", "EXE"):
+                self.mode = "run"
+            return
+        text = None
+        if al and kid in _CG_ALPHA:
+            text = _CG_ALPHA[kid]
+        elif sh and kid in _CG_SHIFT:
+            text = _CG_SHIFT[kid]
+        elif kid in _CG_INS:
+            text = _CG_INS[kid]
+        elif kid.isdigit():
+            text = kid
+        getattr(self, "key_" + self.mode)(kid, text)
+
+    def open_mode(self, m):
+        self.mode = m
+        self.result = None
+        self.res_top = 0
+        if m == "graph":
+            self.edit_line(self.ys[self.ysel])
+        elif m == "run":
+            self.inp, self.cur = [], 0
+        elif m == "eqn":
+            self.grid = None
+        elif m == "stat":
+            self.grid_stat()
+        elif m == "dist":
+            self.grid = None
+
+    def edit_line(self, s):
+        self.inp = self.tokens(s)
+        self.cur = len(self.inp)
+
+    @staticmethod
+    def tokens(s):
+        out, i = [], 0
+        multi = sorted(set(list(_CG_INS.values()) + list(_CG_SHIFT.values())), key=len, reverse=True)
+        while i < len(s):
+            for m in multi:
+                if len(m) > 1 and s.startswith(m, i):
+                    out.append(m)
+                    i += len(m)
+                    break
+            else:
+                out.append(s[i])
+                i += 1
+        return out
+
+    def edit_keys(self, kid, text):
+        """Shared editing: insert / delete / move inside self.inp. True if the key was used."""
+        if text is not None:
+            self.insert(text)
+            return True
+        if kid == "DEL":
+            if self.cur > 0:
+                del self.inp[self.cur - 1]
+                self.cur -= 1
+            return True
+        if kid == "LEFT":
+            self.cur = max(0, self.cur - 1)
+            return True
+        if kid == "RIGHT":
+            self.cur = min(len(self.inp), self.cur + 1)
+            return True
+        return False
+
+    # ---- RUN · MAT ----------------------------------------------------------------------------------------
+    def key_run(self, kid, text):
+        if kid == "AC":
+            self.inp, self.cur = [], 0
+            return
+        if kid == "F1":
+            self.deg = not self.deg
+            return self.save()
+        if kid == "SD" and text is None:
+            if self.hist and not self.inp:
+                self.exact = not self.exact
+            return
+        if kid in ("F2",):
+            self.exact = not self.exact
+            return
+        if kid in ("F3", "F4", "F5", "F6"):
+            return self.open_mode({"F3": "graph", "F4": "eqn", "F5": "stat", "F6": "dist"}[kid])
+        if kid == "UP" and self.hist and not self.inp:
+            self.edit_line(self.hist[-1][0])
+            return
+        if kid == "EXE":
+            s = "".join(self.inp).strip()
+            if not s:
+                if self.hist:
+                    s = self.hist[-1][0]
+                else:
+                    return
+            target = None
+            if "→" in s:
+                s, target = s.split("→", 1)
+                target = target.strip().upper()[:1]
+            try:
+                v = cg_eval(s, self.ans, self.deg, mem=self.mem)
+                self.ans = v
+                if target and target.isalpha():
+                    self.mem[target] = v
+                self.hist.append((s + ("→" + target if target else ""), v))
+            except CalcError as ex:
+                self.hist.append((s, str(ex)))
+            self.hist = self.hist[-12:]
+            self.inp, self.cur = [], 0
+            self.exact = True
+            self.save()
+            return
+        if not self.inp and text in ("+", "−", "×", "÷", "^", "²", "⁻¹", "!") and self.hist:
+            self.inp, self.cur = ["Ans"], 1                       # an operator first means "Ans ..."
+        self.edit_keys(kid, text)
+
+    # ---- GRAPH -----------------------------------------------------------------------------------------------
+    def key_graph(self, kid, text):
+        if kid in ("UP", "DOWN"):
+            self.ys[self.ysel] = "".join(self.inp)
+            self.ysel = (self.ysel + (1 if kid == "DOWN" else -1)) % 3
+            self.edit_line(self.ys[self.ysel])
+            return
+        if kid == "EXE":
+            self.ys[self.ysel] = "".join(self.inp)
+            self.ysel = (self.ysel + 1) % 3
+            self.edit_line(self.ys[self.ysel])
+            return self.save()
+        if kid == "AC":
+            self.inp, self.cur = [], 0
+            return
+        if kid == "F2":
+            self.inp, self.cur = [], 0
+            self.ys[self.ysel] = ""
+            return self.save()
+        if kid == "F3":
+            names = [v[0] for v in CG_VIEWS]
+            cur = next((i for i, v in enumerate(CG_VIEWS) if list(v[1:]) == self.view), -1)
+            self.view = list(CG_VIEWS[(cur + 1) % len(CG_VIEWS)][1:])
+            self.gmsg = "V-Window: " + names[(cur + 1) % len(CG_VIEWS)]
+            return
+        if kid == "F6":
+            self.ys[self.ysel] = "".join(self.inp)
+            self.save()
+            self.mode = "gview"
+            self.trace, self.gmsg = None, ""
+            return
+        if kid == "EXIT":
+            return self.open_mode("run")
+        self.edit_keys(kid, text)
+
+    def fy(self, i, x):
+        try:
+            return cg_eval(self.ys[i], self.ans, False, x=x, mem=self.mem)     # graphs always use radians
+        except CalcError:
+            return None
+
+    def key_gview(self, kid, text):
+        xmin, xmax, ymin, ymax = self.view
+        if kid == "EXIT":
+            self.mode = "graph"
+            return
+        if kid in ("ADD", "SUB"):
+            f = 0.5 if kid == "ADD" else 2.0
+            cx, cy = (xmin + xmax) / 2, (ymin + ymax) / 2
+            self.view = [cx - (cx - xmin) * f, cx + (xmax - cx) * f, cy - (cy - ymin) * f, cy + (ymax - cy) * f]
+            return
+        active = [i for i in range(3) if self.ys[i].strip()]
+        if not active:
+            self.gmsg = "Type a function in Y1 first"
+            return
+        if kid in ("LEFT", "RIGHT"):
+            if self.trace is None:
+                self.trace = [active[0], (xmin + xmax) / 2]
+            step = (xmax - xmin) / 94.0
+            self.trace[1] += step if kid == "RIGHT" else -step
+            return
+        if kid in ("UP", "DOWN") and self.trace is not None:
+            k = active.index(self.trace[0]) if self.trace[0] in active else 0
+            self.trace[0] = active[(k + (1 if kid == "DOWN" else -1)) % len(active)]
+            return
+        if kid == "F6":
+            self.trace = None if self.trace else [active[0], (xmin + xmax) / 2]
+            return
+        i = self.trace[0] if self.trace else active[0]
+        f = lambda x: self.fy(i, x)                                        # noqa: E731
+        pts = self.solve_points(kid, i, active)
+        if pts is None:
+            return
+        if not pts:
+            self.gmsg = "Not found in this window"
+            return
+        x, y = pts[0] if not hasattr(self, "_gs") or self._gs[0] != kid else pts[(self._gs[1] + 1) % len(pts)]
+        k = pts.index((x, y))
+        self._gs = (kid, k)
+        self.trace = [i, x]
+        name = {"F1": "ROOT", "F2": "MAX", "F3": "MIN", "F4": "Y-ICEPT", "F5": "ISCT"}[kid]
+        self.gmsg = "%s  x=%s  y=%s   (%d/%d)" % (name, calc_fmt(round(x, 10), False), calc_fmt(round(y, 10), False), k + 1, len(pts))
+        _ = f
+
+    def solve_points(self, kid, i, active):
+        xmin, xmax = self.view[0], self.view[1]
+        n = 600
+        xs = [xmin + (xmax - xmin) * k / n for k in range(n + 1)]
+        f = lambda x: self.fy(i, x)                                        # noqa: E731
+        if kid == "F4":
+            y = f(0.0)
+            return [(0.0, y)] if y is not None and xmin <= 0 <= xmax else []
+        if kid == "F5":
+            if len(active) < 2:
+                self.gmsg = "ISCT needs two graphs"
+                return None
+            j = next(a for a in active if a != i)
+            g = lambda x: (lambda a, b: None if a is None or b is None else a - b)(self.fy(i, x), self.fy(j, x))  # noqa: E731
+            return [(x, f(x)) for x in self.roots(g, xs)]
+        if kid == "F1":
+            return [(x, 0.0) for x in self.roots(f, xs)]
+        if kid in ("F2", "F3"):
+            sgn = 1 if kid == "F2" else -1
+            out = []
+            ys = [f(x) for x in xs]
+            for k in range(1, n):
+                a, b, c = ys[k - 1], ys[k], ys[k + 1]
+                if None in (a, b, c):
+                    continue
+                if sgn * b >= sgn * a and sgn * b > sgn * c:
+                    lo, hi = xs[k - 1], xs[k + 1]
+                    for _ in range(80):
+                        m1, m2 = lo + (hi - lo) / 3, hi - (hi - lo) / 3
+                        f1, f2 = f(m1), f(m2)
+                        if f1 is None or f2 is None:
+                            break
+                        if sgn * f1 < sgn * f2:
+                            lo = m1
+                        else:
+                            hi = m2
+                    x = (lo + hi) / 2
+                    y = f(x)
+                    if y is not None:
+                        out.append((x, y))
+            return out
+        return None
+
+    @staticmethod
+    def roots(g, xs):
+        out = []
+        prev = None
+        for k, x in enumerate(xs):
+            v = g(x)
+            if v is None:
+                prev = None
+                continue
+            if v == 0:
+                out.append(x)
+            elif prev is not None and prev[1] * v < 0:
+                lo, hi, flo = prev[0], x, prev[1]
+                for _ in range(100):
+                    mid = (lo + hi) / 2
+                    fm = g(mid)
+                    if fm is None:
+                        break
+                    if flo * fm <= 0:
+                        hi = mid
+                    else:
+                        lo, flo = mid, fm
+                xr = (lo + hi) / 2
+                fr = g(xr)
+                if fr is not None and abs(fr) < 1e-6 * max(1.0, abs(prev[1]) + abs(v)):
+                    out.append(xr)
+            prev = (x, v)
+        clean = []
+        for r in out:
+            if not clean or abs(r - clean[-1]) > 1e-7:
+                clean.append(round(r, 12) if abs(r) > 1e-12 else 0.0)
+        return clean
+
+    # ---- grids (EQUATION, STAT, DIST) ------------------------------------------------------------------------
+    def make_grid(self, kind, labels, rows, title):
+        self.grid = {"kind": kind, "labels": labels, "rows": rows, "r": 0, "c": 0, "title": title, "top": 0}
+        self.inp, self.cur = [], 0
+        self.result = None
+
+    def grid_commit(self):
+        G = self.grid
+        s = "".join(self.inp).strip()
+        if s:
+            try:
+                G["rows"][G["r"]][G["c"]] = cg_eval(s, self.ans, self.deg, mem=self.mem)
+            except CalcError as ex:
+                self.gmsg = str(ex)
+        self.inp, self.cur = [], 0
+
+    def grid_keys(self, kid, text):
+        """Moving around and typing into the grid. True if handled."""
+        G = self.grid
+        if kid in ("UP", "DOWN", "LEFT", "RIGHT", "EXE") and self.inp:
+            self.grid_commit()
+            if kid == "EXE":
+                kid = "RIGHT" if G["c"] < len(G["labels"]) - 1 else "NEXT"
+        if kid == "EXE":
+            kid = "RIGHT" if G["c"] < len(G["labels"]) - 1 else "NEXT"
+        if kid == "LEFT":
+            G["c"] = max(0, G["c"] - 1)
+        elif kid == "RIGHT":
+            G["c"] = min(len(G["labels"]) - 1, G["c"] + 1)
+        elif kid in ("DOWN", "NEXT"):
+            if kid == "NEXT":
+                G["c"] = 0
+            if G["r"] < len(G["rows"]) - 1:
+                G["r"] += 1
+            elif G["kind"] == "stat":
+                G["rows"].append([None, None])
+                G["r"] += 1
+        elif kid == "UP":
+            G["r"] = max(0, G["r"] - 1)
+        elif kid == "DEL" and not self.inp:
+            G["rows"][G["r"]][G["c"]] = None
+        elif kid == "AC":
+            self.inp, self.cur = [], 0
+        elif text is not None or kid == "DEL":
+            self.edit_keys(kid, text)
+        else:
+            return False
+        G["top"] = max(0, min(G["top"], G["r"]), G["r"] - 5)
+        return True
+
+    def key_eqn(self, kid, text):
+        if self.result is not None:
+            if kid in ("EXIT", "EXE", "AC"):
+                self.result = None
+            elif kid in ("UP", "DOWN"):
+                self.res_top = max(0, self.res_top + (1 if kid == "DOWN" else -1))
+            return
+        if self.grid is None:
+            spec = {"F1": ("simul", 2), "F2": ("simul", 3), "F3": ("poly", 2), "F4": ("poly", 3)}.get(kid)
+            if kid in ("1", "2", "3", "4"):
+                spec = {"1": ("simul", 2), "2": ("simul", 3), "3": ("poly", 2), "4": ("poly", 3)}[kid]
+            if kid == "EXIT":
+                return self.open_mode("run")
+            if spec:
+                k, n = spec
+                if k == "simul":
+                    labels = ["a", "b", "c", "d"][:n + 1]
+                    self.make_grid("simul", labels, [[None] * (n + 1) for _ in range(n)],
+                                   "SIMUL  %d unknowns" % n)
+                else:
+                    labels = ["a", "b", "c", "d"][:n + 1]
+                    self.make_grid("poly", labels, [[None] * (n + 1)], "POLY  degree %d" % n)
+            return
+        if kid == "EXIT":
+            self.grid = None
+            return
+        if kid == "F1":
+            if self.inp:
+                self.grid_commit()
+            return self.solve_eqn()
+        if kid == "F3":
+            for row in self.grid["rows"]:
+                row[:] = [None] * len(row)
+            return
+        self.grid_keys(kid, text)
+
+    def solve_eqn(self):
+        G = self.grid
+        vals = [[v if v is not None else 0.0 for v in row] for row in G["rows"]]
+        try:
+            if G["kind"] == "simul":
+                sol = calc_solve_linear(vals)
+                self.result = [("%s =" % "xyz"[i], calc_fmt(v, self.exact)) for i, v in enumerate(sol)]
+            else:
+                co = vals[0]
+                rts = calc_roots_poly(co)
+                res = []
+                for i, r in enumerate(rts):
+                    if abs(r.imag) < 1e-10:
+                        res.append(("x%d =" % (i + 1), calc_fmt(r.real, True)))
+                    else:
+                        res.append(("x%d =" % (i + 1), "%s %s %si" % (calc_fmt(round(r.real, 10), False), "+" if r.imag > 0 else "−",
+                                                                   calc_fmt(round(abs(r.imag), 10), False))))
+                if len(co) == 3 and co[0]:
+                    a, b, c = co
+                    res.append(("Δ =", calc_fmt(b * b - 4 * a * c, True)))
+                    xv = -b / (2 * a)
+                    res.append(("vertex", "(%s, %s)" % (calc_fmt(xv, True), calc_fmt(a * xv * xv + b * xv + c, True))))
+                self.result = res
+        except CalcError as ex:
+            self.result = [(str(ex), "")]
+        self.res_top = 0
+
+    def grid_stat(self):
+        L1, L2 = self.lists
+        n = max(len(L1), len(L2), 1)
+        rows = [[L1[i] if i < len(L1) else None, L2[i] if i < len(L2) else None] for i in range(n)]
+        self.make_grid("stat", ["List 1", "List 2"], rows, "STAT")
+
+    def stat_lists(self):
+        L1 = [r[0] for r in self.grid["rows"] if r[0] is not None]
+        L2 = [r[1] for r in self.grid["rows"] if r[1] is not None]
+        pairs = [(r[0], r[1]) for r in self.grid["rows"] if r[0] is not None and r[1] is not None]
+        self.lists = [L1, L2]
+        self.save()
+        return L1, L2, pairs
+
+    def key_stat(self, kid, text):
+        if self.result is not None:
+            if kid in ("EXIT", "EXE", "AC"):
+                self.result = None
+            elif kid in ("UP", "DOWN"):
+                self.res_top = max(0, min(len(self.result) - 1, self.res_top + (1 if kid == "DOWN" else -1)))
+            return
+        if kid == "EXIT":
+            self.stat_lists()
+            return self.open_mode("run")
+        if kid in ("F1", "F2"):
+            if self.inp:
+                self.grid_commit()
+            L1, L2, pairs = self.stat_lists()
+            try:
+                if kid == "F1":
+                    self.result = [(k, calc_fmt(v, False) if isinstance(v, float) else str(v)) for k, v in calc_stats1(L1)]
+                else:
+                    reg = calc_linreg([p[0] for p in pairs], [p[1] for p in pairs])
+                    self.result = [(k, calc_fmt(v, False) if isinstance(v, float) else str(v)) for k, v in reg]
+            except CalcError as ex:
+                self.result = [(str(ex), "")]
+            self.res_top = 0
+            return
+        if kid == "F3":
+            G = self.grid
+            if len(G["rows"]) > 1:
+                del G["rows"][G["r"]]
+                G["r"] = min(G["r"], len(G["rows"]) - 1)
+            else:
+                G["rows"][0] = [None, None]
+            return
+        if kid == "F4":
+            self.grid["rows"] = [[None, None]]
+            self.grid["r"] = self.grid["c"] = 0
+            return
+        self.grid_keys(kid, text)
+
+    DISTS = {"F1": ("Normal C.D", ["Lower", "Upper", "σ", "μ"], [-1e99, 0.0, 1.0, 0.0]),
+             "F2": ("Inverse Normal (left tail)", ["Area", "σ", "μ"], [0.5, 1.0, 0.0]),
+             "F3": ("Binomial P.D", ["x", "Numtrial", "p"], [0.0, 10.0, 0.5]),
+             "F4": ("Binomial C.D", ["Lower", "Upper", "Numtrial", "p"], [0.0, 5.0, 10.0, 0.5])}
+
+    def key_dist(self, kid, text):
+        if self.result is not None:
+            if kid in ("EXIT", "EXE", "AC"):
+                self.result = None
+            return
+        if self.grid is None:
+            if kid in ("1", "2", "3", "4"):
+                kid = "F" + kid
+            if kid in self.DISTS:
+                name, labels, defaults = self.DISTS[kid]
+                self.make_grid("dist", ["value"], [[v] for v in defaults], name)
+                self.grid["labels"] = ["value"]
+                self.grid["names"] = labels
+                self.grid["which"] = kid
+            elif kid == "EXIT":
+                self.open_mode("run")
+            return
+        if kid == "EXIT":
+            self.grid = None
+            return
+        if kid == "F1" or (kid == "EXE" and not self.inp and self.grid["r"] == len(self.grid["rows"]) - 1):
+            if self.inp:
+                self.grid_commit()
+            v = [r[0] if r[0] is not None else 0.0 for r in self.grid["rows"]]
+            w = self.grid["which"]
+            try:
+                if w == "F1":
+                    p = calc_normcd(v[0], v[1], v[2], v[3])
+                    zl = (v[0] - v[3]) / v[2] if v[0] > -1e98 else float("-inf")
+                    zu = (v[1] - v[3]) / v[2] if v[1] < 1e98 else float("inf")
+                    self.result = [("p =", calc_fmt(p, False)), ("z:Low =", "-∞" if zl == float("-inf") else calc_fmt(zl, False)),
+                                   ("z:Up =", "∞" if zu == float("inf") else calc_fmt(zu, False))]
+                elif w == "F2":
+                    x = calc_invnorm(v[0], v[1], v[2])
+                    self.result = [("x =", calc_fmt(x, False))]
+                elif w == "F3":
+                    self.result = [("p =", calc_fmt(calc_binpd(v[0], v[2] if len(v) > 3 else v[1], v[-1]), False))]
+                else:
+                    self.result = [("p =", calc_fmt(calc_bincd(v[1], v[2], v[3], v[0]), False))]
+            except CalcError as ex:
+                self.result = [(str(ex), "")]
+            return
+        self.grid_keys(kid, text)
+
+    # ---- drawing --------------------------------------------------------------------------------------------
+    def tick(self):
+        if not self.alive():
+            return
+        self.blink = not self.blink
+        if self.mode in ("run", "graph") or (self.grid and self.mode in ("eqn", "stat", "dist")):
+            self.draw()
+        self.win.after(530, self.tick)
+
+    def save(self):
+        st = self.app.life.setdefault("cg", {})
+        st.update({"deg": self.deg, "mem": self.mem, "ans": self.ans, "hist": [[a, b] for a, b in self.hist[-12:]],
+                   "ys": self.ys, "L1": self.lists[0], "L2": self.lists[1]})
+
+    def draw(self):
+        cv = self.cv
+        try:
+            cv.delete("all")
+        except tk.TclError:
+            return
+        W, H = self.SW, self.SH
+        ink, dim = "#15171c", "#6b7080"
+        cv.create_rectangle(0, 0, W, 16, fill="#dfe3ea", outline="")
+        mode_name = {"run": "Run-Matrix", "graph": "Graph", "gview": "Graph", "eqn": "Equation", "stat": "Statistics",
+                     "dist": "Distribution", "menu": "Main Menu"}[self.mode]
+        cv.create_text(4, 8, text=mode_name, anchor="w", fill=ink, font=(FONT_UI, 8, "bold"))
+        flags = ("Deg" if self.deg and self.mode not in ("graph", "gview") else "Rad") + "  Math  " + \
+            ("d/c" if self.exact else "Dec")
+        if self.shift:
+            flags = "S  " + flags
+        if self.alpha:
+            flags = "A  " + flags
+        cv.create_text(W - 4, 8, text=flags, anchor="e", fill="#3b6ea8" if not (self.shift or self.alpha) else "#c8743a",
+                       font=(FONT_UI, 8, "bold"))
+        getattr(self, "draw_" + ("grid" if self.mode in ("eqn", "stat", "dist") else self.mode))(cv, W, H, ink, dim)
+
+    def softkeys(self, cv, labels):
+        W, H = self.SW, self.SH
+        w = W / 6.0
+        for i, lab in enumerate(labels):
+            if not lab:
+                continue
+            x = i * w
+            cv.create_rectangle(x + 2, H - 15, x + w - 2, H - 1, fill="#2b4f7f", outline="")
+            cv.create_text(x + w / 2, H - 8, text=lab, fill="#ffffff", font=(FONT_UI, 7, "bold"))
+
+    def input_line(self, cv, y, prefix=""):
+        W = self.SW
+        s = "".join(self.inp[:self.cur])
+        rest = "".join(self.inp[self.cur:])
+        txt = prefix + s + ("|" if self.blink else " ") + rest
+        if len(txt) > 46:
+            txt = "…" + txt[-45:]
+        cv.create_text(6, y, text=txt, anchor="w", fill="#15171c", font=("Consolas", 12))
+
+    def draw_menu(self, cv, W, H, ink, dim):
+        apps = [("1", "Run-Matrix", "#e0705a", "1+2"), ("2", "Statistics", "#5fae9e", "x̄ σ"), ("3", "Graph", "#3b6ea8", "y=x²"),
+                ("4", "Equation", "#c9a24a", "ax+b"), ("5", "Distribution", "#8f86d6", "N(μ,σ)")]
+        for i, (k, name, col, ic) in enumerate(apps):
+            x, y = 14 + (i % 3) * 124, 26 + (i // 3) * 92
+            cv.create_rectangle(x, y, x + 110, y + 62, fill=col, outline="")
+            cv.create_text(x + 55, y + 31, text=ic, fill="#ffffff", font=(self.serif, 15, "bold"))
+            cv.create_text(x + 4, y + 4, text=k, anchor="nw", fill="#ffffff", font=(FONT_UI, 8, "bold"))
+            cv.create_text(x + 55, y + 72, text=name, fill=ink, font=(FONT_UI, 8))
+        cv.create_text(W - 6, H - 6, text="press 1-5", anchor="se", fill=dim, font=(FONT_UI, 7))
+
+    def draw_run(self, cv, W, H, ink, dim):
+        y = H - 34
+        self.input_line(cv, y)
+        y -= 22
+        for s, v in reversed(self.hist):
+            if y < 26:
+                break
+            out = v if isinstance(v, str) else calc_fmt(v, self.exact if (s, v) == tuple(self.hist[-1]) else True)
+            cv.create_text(W - 6, y, text=out, anchor="e", fill="#c0392b" if isinstance(v, str) else ink,
+                           font=("Consolas", 12, "bold"))
+            y -= 16
+            cv.create_text(6, y, text=clip(s, 44), anchor="w", fill=dim, font=("Consolas", 10))
+            y -= 18
+        self.softkeys(cv, ["Deg/Rad", "S⇔D", "GRAPH", "EQUA", "STAT", "DIST"])
+
+    def draw_graph(self, cv, W, H, ink, dim):
+        cols = ("#3b6ea8", "#c0392b", "#2e8b57")
+        for i in range(3):
+            y = 30 + i * 30
+            sel = i == self.ysel
+            if sel:
+                cv.create_rectangle(2, y - 12, W - 2, y + 12, fill="#e3ebf6", outline="")
+            cv.create_text(8, y, text="Y%d=" % (i + 1), anchor="w", fill=cols[i], font=("Consolas", 12, "bold"))
+            if sel:
+                self.input_line(cv, y, "    ")
+            else:
+                cv.create_text(48, y, text=clip(self.ys[i], 40), anchor="w", fill=ink, font=("Consolas", 12))
+        cv.create_text(6, H - 26, text=self.gmsg or "Type with x (X,θ,T key). ▲▼ choose, F6 draws.", anchor="w",
+                       fill=dim, font=(FONT_UI, 8))
+        self.softkeys(cv, ["", "DELETE", "V-WIN", "", "", "DRAW"])
+
+    def draw_gview(self, cv, W, H, ink, dim):
+        xmin, xmax, ymin, ymax = self.view
+        top, bot = 17, H - 17
+        gh = bot - top
+
+        def sx(x):
+            return (x - xmin) / (xmax - xmin) * W
+
+        def sy(y):
+            return top + (ymax - y) / (ymax - ymin) * gh
+        if xmin < 0 < xmax:
+            cv.create_line(sx(0), top, sx(0), bot, fill="#9aa0ad")
+        if ymin < 0 < ymax:
+            cv.create_line(0, sy(0), W, sy(0), fill="#9aa0ad")
+        step = 10 ** math.floor(math.log10(max(1e-9, (xmax - xmin) / 8)))
+        x = math.ceil(xmin / step) * step
+        while x <= xmax and ymin < 0 < ymax:
+            cv.create_line(sx(x), sy(0) - 2, sx(x), sy(0) + 2, fill="#9aa0ad")
+            x += step
+        cols = ("#3b6ea8", "#c0392b", "#2e8b57")
+        for i in range(3):
+            if not self.ys[i].strip():
+                continue
+            pts, prev = [], None
+            for px in range(0, W + 1, 2):
+                xv = xmin + (xmax - xmin) * px / float(W)
+                yv = self.fy(i, xv)
+                if yv is None or abs(yv) > 1e6:
+                    if len(pts) >= 4:
+                        cv.create_line(*pts, fill=cols[i], width=2)
+                    pts, prev = [], None
+                    continue
+                Y = sy(yv)
+                if prev is not None and abs(Y - prev) > gh * 1.5:
+                    if len(pts) >= 4:
+                        cv.create_line(*pts, fill=cols[i], width=2)
+                    pts = []
+                pts += [px, max(-gh, min(2 * H, Y))]
+                prev = Y
+            if len(pts) >= 4:
+                cv.create_line(*pts, fill=cols[i], width=2)
+        if self.trace:
+            i, xv = self.trace
+            yv = self.fy(i, xv)
+            if yv is not None:
+                X, Y = sx(xv), sy(yv)
+                cv.create_line(X - 6, Y, X + 6, Y, fill="#c8743a", width=2)
+                cv.create_line(X, Y - 6, X, Y + 6, fill="#c8743a", width=2)
+                if not self.gmsg:
+                    cv.create_text(4, top + 2, text="Y%d  x=%s  y=%s" % (i + 1, calc_fmt(round(xv, 8), False), calc_fmt(round(yv, 8), False)),
+                                   anchor="nw", fill=ink, font=("Consolas", 9))
+        if self.gmsg:
+            cv.create_rectangle(0, top, W, top + 14, fill="#f6f7f2", outline="")
+            cv.create_text(4, top + 1, text=self.gmsg, anchor="nw", fill=ink, font=("Consolas", 9))
+        self.softkeys(cv, ["ROOT", "MAX", "MIN", "Y-ICEPT", "ISCT", "TRACE"])
+
+    def draw_grid(self, cv, W, H, ink, dim):
+        G = self.grid
+        if self.result is not None:
+            title = G["title"] if G else ""
+            cv.create_text(6, 26, text=title, anchor="w", fill=dim, font=(FONT_UI, 8, "bold"))
+            y = 46
+            for k, v in self.result[self.res_top:self.res_top + 9]:
+                cv.create_text(10, y, text=k, anchor="w", fill=ink, font=("Consolas", 12, "bold"))
+                cv.create_text(W - 10, y, text=v, anchor="e", fill=ink, font=("Consolas", 12))
+                y += 19
+            self.softkeys(cv, ["", "", "", "", "", ""])
+            cv.create_text(W - 6, H - 24, text="EXE / EXIT to go back", anchor="e", fill=dim, font=(FONT_UI, 7))
+            return
+        if G is None:
+            menus = {"eqn": ["SIMUL 2", "SIMUL 3", "POLY 2", "POLY 3", "", ""],
+                     "dist": ["NORM-CD", "INV-N", "BIN-PD", "BIN-CD", "", ""]}[self.mode]
+            lines = {"eqn": ["F1  Simultaneous, 2 unknowns  (ax+by=c)", "F2  Simultaneous, 3 unknowns",
+                             "F3  Polynomial, degree 2  (ax²+bx+c=0)", "F4  Polynomial, degree 3"],
+                     "dist": ["F1  Normal C.D  P(a < X < b)", "F2  Inverse Normal  (left tail)",
+                              "F3  Binomial P.D  P(X = x)", "F4  Binomial C.D  P(a ≤ X ≤ b)"]}[self.mode]
+            for k, ln in enumerate(lines):
+                cv.create_text(10, 34 + k * 24, text=ln, anchor="w", fill=ink, font=(FONT_UI, 10))
+            self.softkeys(cv, menus)
+            return
+        cv.create_text(6, 26, text=G["title"], anchor="w", fill=dim, font=(FONT_UI, 8, "bold"))
+        names = G.get("names")
+        ncol = len(G["labels"])
+        x0 = 120 if names else 34
+        cw = (W - x0 - 6) / float(ncol)
+        for c, lab in enumerate(G["labels"]):
+            if not names:
+                cv.create_text(x0 + c * cw + cw / 2, 40, text=lab, fill="#3b6ea8", font=(FONT_UI, 9, "bold"))
+        for k, r in enumerate(range(G["top"], min(len(G["rows"]), G["top"] + 6))):
+            y = 58 + k * 22
+            lab = names[r] if names else str(r + 1)
+            cv.create_text(6 if names else 24, y, text=lab, anchor="w" if names else "e", fill=dim, font=(FONT_UI, 9))
+            for c in range(ncol):
+                x = x0 + c * cw
+                sel = (r == G["r"] and c == G["c"])
+                cv.create_rectangle(x + 1, y - 10, x + cw - 1, y + 10, fill="#e3ebf6" if sel else "#ffffff",
+                                    outline="#3b6ea8" if sel else "#d3d7df")
+                v = G["rows"][r][c]
+                if sel and self.inp:
+                    s = "".join(self.inp) + ("|" if self.blink else "")
+                else:
+                    s = "" if v is None else ("-∞" if v <= -1e98 else ("∞" if v >= 1e98 else calc_fmt(v, False)))
+                cv.create_text(x + cw - 4, y, text=clip(s, 14), anchor="e", fill=ink, font=("Consolas", 11))
+        if self.mode == "eqn":
+            self.softkeys(cv, ["SOLVE", "", "CLEAR", "", "", ""])
+        elif self.mode == "stat":
+            self.softkeys(cv, ["1-VAR", "2-VAR", "DEL", "DEL-ALL", "", ""])
+        else:
+            self.softkeys(cv, ["CALC", "", "", "", "", ""])
+
+
+# ---- 聖書 · the Bible ----------------------------------------------------------------------------------------------
+class BibleWindow(ZkToolWindow):
+    KEY = "bible"
+    TITLE = "Bible"
+    SIZE = (1280, 820)
+
+    def build(self):
+        L = self.app.life
+        pos = L.get("bible_pos") or [18, 119, 1, "NKJV"]
+        self.bi, self.ch, self.vs = int(pos[0]), int(pos[1]), int(pos[2] or 1)
+        self.trans = pos[3] if len(pos) > 3 and pos[3] in dict(BIBLE_TRANS) else "NKJV"
+        self.used = self.trans
+        self.verses = []
+        self.words = []
+        self.prog = None
+        self.heb = _font_pick(self.app.root, ["SBL Hebrew", "Ezra SIL", "Taamey Frank CLM", "Times New Roman", "David",
+                                              "Arial", "Segoe UI"], FONT_UI)
+        self.grk = _font_pick(self.app.root, ["SBL Greek", "Gentium Plus", "Gentium", "Cambria", "Times New Roman",
+                                              "Palatino Linotype", "Segoe UI"], FONT_UI)
+        parch, ink = "#efe3c8", "#2b1d14"                       # always a warm paper page, like a printed Bible
+        self.parch, self.pink = parch, ink
+        hdr = self.header("聖書", "The Holy Bible", "Click any verse to see it in the original Hebrew, Aramaic or Greek, "
+                                                  "word by word, with notes for study.")
+        nav = tk.Frame(hdr, bg=NIGHT)
+        nav.pack(side="right", padx=14)
+        self.book_btn = tk.Menubutton(nav, text="", bg=FIELD, fg=INK, activebackground=T["hover"], relief="flat",
+                                      font=(FONT_UI, 10, "bold"), padx=10, pady=3, indicatoron=False, cursor="hand2")
+        self.book_btn.pack(side="left", padx=(0, 6))
+        self.book_menu()
+        self.btn(nav, "◀", lambda: self.go_chapter(-1)).pack(side="left")
+        self.ch_v = tk.StringVar()
+        ce = tk.Entry(nav, textvariable=self.ch_v, width=4, relief="flat", bg=FIELD, fg=INK, insertbackground=INK,
+                      font=(FONT_UI, 11), justify="center")
+        ce.pack(side="left", padx=4, ipady=2)
+        ce.bind("<Return>", lambda e: self.jump_chapter())
+        self.btn(nav, "▶", lambda: self.go_chapter(1)).pack(side="left")
+        self.tr_v = tk.StringVar(value=self.trans)
+        om = tk.OptionMenu(nav, self.tr_v, *[t for t, _d in BIBLE_TRANS], command=lambda v: self.set_trans(v))
+        om.config(bg=FIELD, fg=INK, activebackground=T["hover"], activeforeground=INK, highlightthickness=0, relief="flat",
+                  font=(FONT_UI, 9, "bold"), width=6)
+        om.pack(side="left", padx=(10, 6))
+        self.ref_v = tk.StringVar()
+        re_ = tk.Entry(nav, textvariable=self.ref_v, width=16, relief="flat", bg=FIELD, fg=GREY, insertbackground=INK,
+                       font=(FONT_UI, 10))
+        re_.insert(0, "Go to… John 3:16")
+        re_.bind("<FocusIn>", lambda e: (re_.delete(0, "end"), re_.config(fg=INK)) if re_.get().startswith("Go to") else None)
+        re_.bind("<Return>", lambda e: self.goto_ref(re_.get()))
+        re_.pack(side="left", ipady=2)
+        pw = tk.PanedWindow(self.win, orient="horizontal", bg=_mixhex(PAPER, GOLD, 0.25), sashwidth=5, bd=0,
+                            sashrelief="flat")
+        pw.pack(fill="both", expand=True)
+        left = tk.Frame(pw, bg=parch)
+        right = tk.Frame(pw, bg=T["card"])
+        pw.add(left, minsize=360, stretch="always")
+        pw.add(right, minsize=380, stretch="always")
+        self.win.after(80, lambda: self._sash(pw))
+        self.title_lbl = tk.Label(left, text="", bg=parch, fg=ink, font=(self.serif, 20), anchor="w")
+        self.title_lbl.pack(fill="x", padx=30, pady=(16, 0))
+        self.sub_lbl = tk.Label(left, text="", bg=parch, fg=_mixhex(ink, parch, 0.45), font=(self.serif, 9, "italic"),
+                                anchor="w")
+        self.sub_lbl.pack(fill="x", padx=30)
+        self.read = tk.Text(left, wrap="word", bg=parch, fg=ink, relief="flat", highlightthickness=0, padx=30, pady=12,
+                            font=(self.serif, 13), spacing1=3, spacing3=7, cursor="arrow", insertwidth=0)
+        self.read.pack(fill="both", expand=True)
+        zk_text_scroll(self.read)
+        self.read.tag_configure("vn", foreground=_mixhex(GOLD, ink, 0.25), font=(FONT_UI, 8, "bold"), offset=5)
+        self.read.tag_configure("sel_v", background=_mixhex(parch, GOLD, 0.28))
+        self.read.tag_configure("hov_v", background=_mixhex(parch, GOLD, 0.12))
+        self.read.tag_configure("note", foreground=GOLD, font=(FONT_UI, 8))
+        self.read.tag_configure("msg", foreground=_mixhex(ink, parch, 0.35), font=(self.serif, 12, "italic"))
+        self.foot = tk.Label(left, text="", bg=parch, fg=_mixhex(ink, parch, 0.5), font=(FONT_UI, 7), anchor="w",
+                             justify="left", wraplength=560)
+        self.foot.pack(fill="x", padx=30, pady=(0, 8))
+        left.bind("<Configure>", lambda e: self.foot.config(wraplength=max(200, e.width - 60)))
+        # the study side
+        bg = T["card"]
+        self.st_title = tk.Label(right, text="", bg=bg, fg=INK, font=(self.serif, 15), anchor="w")
+        self.st_title.pack(fill="x", padx=18, pady=(14, 0))
+        self.st_sub = tk.Label(right, text="", bg=bg, fg=GREY, font=(FONT_UI, 9), anchor="w", justify="left", wraplength=420)
+        self.st_sub.pack(fill="x", padx=18)
+        outer, self.inner, self.st_cv = zk_scroll_frame(right, bg)
+        outer.pack(fill="both", expand=True, padx=(12, 4), pady=(6, 0))
+        self.inner.bind("<Configure>", lambda e: self.flow_later(), add="+")
+        self.status = tk.Label(right, text="", bg=bg, fg=GOLD, font=(FONT_UI, 8, "bold"), anchor="w", justify="left",
+                               wraplength=420)
+        self.status.pack(fill="x", padx=18, pady=(2, 0))
+        right.bind("<Configure>", lambda e: (self.st_sub.config(wraplength=max(200, e.width - 40)),
+                                             self.status.config(wraplength=max(200, e.width - 40))))
+        br = tk.Frame(right, bg=bg)
+        br.pack(fill="x", padx=16, pady=(6, 12))
+        self.btn(br, "Explain this verse", self.explain, accent=True).pack(side="left")
+        self.btn(br, "Interlinear ↗", lambda: self.open_web("interlinear")).pack(side="left", padx=6)
+        self.btn(br, "Commentaries ↗", lambda: self.open_web("commentaries")).pack(side="left")
+        self.btn(br, "My note", self.edit_note).pack(side="left", padx=6)
+        self._flow_job = None
+        self.cards = []
+        self.load_chapter()
+        self.poll()
+
+    def _sash(self, pw):
+        try:
+            pw.sash_place(0, int(self.win.winfo_width() * 0.5), 0)
+        except tk.TclError:
+            pass
+
+    def book_menu(self):
+        m = tk.Menu(self.book_btn, tearoff=False, bg=FIELD, fg=INK, activebackground=GOLD, activeforeground=NIGHT)
+        groups = []
+        for i, b in enumerate(BIBLE_BOOKS):
+            testament = "Old Testament" if i < 39 else "New Testament"
+            if not groups or groups[-1][0] != (testament, b[4]):
+                groups.append(((testament, b[4]), []))
+            groups[-1][1].append(i)
+        tms = {}
+        for (testament, grp), idx in groups:
+            if testament not in tms:
+                tms[testament] = tk.Menu(m, tearoff=False, bg=FIELD, fg=INK, activebackground=GOLD, activeforeground=NIGHT)
+                m.add_cascade(label=testament, menu=tms[testament])
+            sub = tk.Menu(tms[testament], tearoff=False, bg=FIELD, fg=INK, activebackground=GOLD, activeforeground=NIGHT)
+            for i in idx:
+                sub.add_command(label=BIBLE_BOOKS[i][1], command=lambda i=i: self.go(i, 1, 1))
+            tms[testament].add_cascade(label=grp, menu=sub)
+        self.book_btn.config(menu=m)
+
+    # ---- moving around -----------------------------------------------------------------------------------
+    def go(self, bi, ch, vs=1):
+        self.bi, self.ch, self.vs = bi, max(1, min(BIBLE_BOOKS[bi][2], ch)), vs or 1
+        self.load_chapter()
+
+    def go_chapter(self, d):
+        bi, ch = self.bi, self.ch + d
+        if ch < 1:
+            if bi == 0:
+                return
+            bi -= 1
+            ch = BIBLE_BOOKS[bi][2]
+        elif ch > BIBLE_BOOKS[bi][2]:
+            if bi == len(BIBLE_BOOKS) - 1:
+                return
+            bi, ch = bi + 1, 1
+        self.go(bi, ch, 1)
+
+    def jump_chapter(self):
+        try:
+            self.go(self.bi, int(self.ch_v.get()), 1)
+        except ValueError:
+            pass
+
+    def goto_ref(self, text):
+        r = bible_parse_ref(text)
+        if not r:
+            self.status.config(text="I didn't understand that reference. Try 'Psalm 119:105' or 'Rom 8'.")
+            return
+        self.go(r[0], r[1], r[2] or 1)
+
+    def set_trans(self, v):
+        self.trans = v
+        self.load_chapter()
+
+    def save_pos(self):
+        self.app.life["bible_pos"] = [self.bi, self.ch, self.vs, self.trans]
+
+    def ref(self, vs=None):
+        return "%s %d:%d" % (BIBLE_BOOKS[self.bi][1] if self.bi != 18 else "Psalm", self.ch, vs or self.vs)
+
+    def key(self, vs=None):
+        return "%s.%d.%d" % (BIBLE_BOOKS[self.bi][0], self.ch, vs or self.vs)
+
+    # ---- the English text ----------------------------------------------------------------------------------
+    def load_chapter(self):
+        self.save_pos()
+        b = BIBLE_BOOKS[self.bi]
+        self.book_btn.config(text="%s  ▾" % b[1])
+        self.ch_v.set(str(self.ch))
+        self.title_lbl.config(text="%s %d" % ("Psalm" if self.bi == 18 else b[1], self.ch))
+        self.sub_lbl.config(text="%s  ·  %s" % ("Old Testament" if self.bi < 39 else "New Testament", b[4]))
+        t = self.read
+        t.config(state="normal")
+        t.delete("1.0", "end")
+        t.insert("end", "Opening %s %d..." % (b[1], self.ch), "msg")
+        t.config(state="disabled")
+        want = (self.bi, self.ch, self.trans)
+
+        def job():
+            try:
+                return bible_chapter(self.bi, self.ch, self.trans)
+            except WebError:
+                for alt in [x for x, _d in BIBLE_TRANS if x != self.trans]:       # anything saved on this PC
+                    try:
+                        return bible_chapter(want[0], want[1], alt, allow_net=False)
+                    except Exception:
+                        continue
+                raise
+
+        def done(res, err):
+            if (self.bi, self.ch, self.trans) != want:
+                return
+            t.config(state="normal")
+            t.delete("1.0", "end")
+            if err:
+                t.insert("end", "%s\n\nChapters you've opened before are saved and work offline. On a network that blocks "
+                                "Bible sites, try at home once and this chapter will be here next time." % err, "msg")
+                t.config(state="disabled")
+                self.verses = []
+                self.load_original()                          # the Hebrew/Greek may still be saved on this PC
+                return
+            verses, used = res
+            self.verses, self.used = verses, used
+            notes = self.app.life.get("bible_notes") or {}
+            for n, txt in verses:
+                tag = "v%d" % n
+                t.insert("end", "%d " % n, ("vn", tag))
+                t.insert("end", txt, (tag,))
+                if notes.get(self.key(n)):
+                    t.insert("end", "  ✎", ("note", tag))
+                t.insert("end", "\n", (tag,))
+                t.tag_bind(tag, "<Button-1>", lambda e, n=n: self.pick(n))
+                t.tag_bind(tag, "<Enter>", lambda e, tag=tag: (t.tag_remove("hov_v", "1.0", "end"),
+                                                               t.tag_add("hov_v", tag + ".first", tag + ".last")))
+                t.tag_bind(tag, "<Leave>", lambda e: t.tag_remove("hov_v", "1.0", "end"))
+            t.config(state="disabled")
+            note = BIBLE_NOTICE.get(used, "")
+            if used != self.trans:
+                note = "%s couldn't be fetched here, so this is the %s. " % (self.trans, used) + note
+            self.foot.config(text=note)
+            vs = self.vs if any(n == self.vs for n, _ in verses) else (verses[0][0] if verses else 1)
+            self.pick(vs, scroll=True)
+        self.app.bg(job, self.safe(done))
+
+    def pick(self, n, scroll=False):
+        self.vs = n
+        self.save_pos()
+        t = self.read
+        t.tag_remove("sel_v", "1.0", "end")
+        try:
+            t.tag_add("sel_v", "v%d.first" % n, "v%d.last" % n)
+            if scroll:
+                t.see("v%d.first" % n)
+        except tk.TclError:
+            pass
+        self.load_original()
+
+    # ---- the original language -----------------------------------------------------------------------------
+    def poll(self):
+        if not self.alive():
+            return
+        P = self.prog
+        if P:
+            self.status.config(text="Downloading %s... %d%%  (one time, then it works offline)" % (P[0], int(P[1] * 100)))
+        self.win.after(400, self.poll)
+
+    def load_original(self):
+        bi, ch, vs = self.bi, self.ch, self.vs
+        lang = "Greek" if bi >= 39 else "Hebrew"
+        eng = dict(self.verses).get(vs, "")
+        self.st_title.config(text=self.ref())
+        self.st_sub.config(text=eng)
+        self.clear_cards()
+        self.status.config(text="Looking up the %s..." % lang)
+
+        def prog(label, f):
+            self.prog = (label, f)
+
+        def job():
+            return bible_original(bi, ch, vs, True, prog)
+
+        def done(res, err):
+            self.prog = None
+            if (self.bi, self.ch, self.vs) != (bi, ch, vs):
+                return
+            if err:
+                self.status.config(text="%s  The 'Interlinear ↗' button opens this verse on Bible Hub instead." % err)
+                self.words = []
+                self.show_empty()
+                return
+            self.words = res or []
+            langs = sorted(set(w.get("lang", lang) for w in self.words))
+            kind = " and ".join(langs) or lang
+            self.status.config(text="%d words in %s. Click a word for its full dictionary entry." % (len(self.words), kind)
+                               if self.words else "No original words found for this verse (the numbering may differ).")
+            self.show_cards()
+        self.app.bg(job, self.safe(done))
+
+    def clear_cards(self):
+        for c in self.inner.winfo_children():
+            c.destroy()
+        self.cards = []
+
+    def show_empty(self):
+        self.clear_cards()
+        tk.Label(self.inner, text="The original text will appear here.", bg=T["card"], fg=GREY,
+                 font=(self.serif, 11, "italic")).pack(anchor="w", padx=8, pady=8)
+
+    def show_cards(self):
+        self.clear_cards()
+        bg = T["card"]
+        heb = self.bi < 39
+        line = " ".join(w["w"] for w in self.words if not w.get("var"))
+        tk.Label(self.inner, text=hebrew_visual(line) if heb else line, bg=bg, fg=INK,
+                 font=(self.heb if heb else self.grk, 17), justify="right" if heb else "left",
+                 anchor="e" if heb else "w", wraplength=460).pack(fill="x", padx=8, pady=(6, 10))
+        self.flow = tk.Frame(self.inner, bg=bg)
+        self.flow.pack(fill="x", padx=4)
+        for i, w in enumerate(self.words):
+            c = tk.Frame(self.flow, bg=_mixhex(bg, FIELD, 0.55), padx=8, pady=5, cursor="hand2",
+                         highlightthickness=1, highlightbackground=_mixhex(bg, GOLD, 0.25))
+            fam = self.heb if heb else self.grk
+            col = "#9a6a2a" if w.get("lang") == "Aramaic" else INK
+            labs = [tk.Label(c, text=hebrew_visual(w["w"]) if heb else w["w"], bg=c.cget("bg"), fg=col, font=(fam, 16)),
+                    tk.Label(c, text=w.get("t", ""), bg=c.cget("bg"), fg=GREY, font=(FONT_UI, 8, "italic")),
+                    tk.Label(c, text=clip(w.get("g", ""), 26), bg=c.cget("bg"), fg=INK, font=(FONT_UI, 9, "bold")),
+                    tk.Label(c, text=("%s · %s" % (w.get("s", ""), w.get("m", ""))).strip(" ·") +
+                             ("  variant" if w.get("var") else ""), bg=c.cget("bg"), fg=_mixhex(GREY, bg, 0.2),
+                             font=(FONT_UI, 7))]
+            for lb in labs:
+                lb.pack()
+            for wd in [c] + labs:
+                wd.bind("<Button-1>", lambda e, i=i: self.word(i))
+            self.cards.append(c)
+        self.lex_box = tk.Frame(self.inner, bg=bg)
+        self.lex_box.pack(fill="x", padx=8, pady=(12, 8))
+        n = self.app.life.get("bible_notes", {}).get(self.key())
+        if n:
+            tk.Label(self.lex_box, text="✎ My note", bg=bg, fg=GOLD, font=(FONT_UI, 8, "bold"), anchor="w").pack(fill="x")
+            tk.Label(self.lex_box, text=n, bg=bg, fg=INK, font=(self.serif, 10, "italic"), anchor="w", justify="left",
+                     wraplength=440).pack(fill="x")
+        self.win.after(30, self.flow_now)
+
+    def flow_later(self):
+        if self._flow_job:
+            try:
+                self.win.after_cancel(self._flow_job)
+            except tk.TclError:
+                pass
+        self._flow_job = self.win.after(120, self.flow_now)
+
+    def flow_now(self):
+        """Lay the word cards out in lines: right to left for Hebrew/Aramaic, left to right for Greek."""
+        self._flow_job = None
+        if not self.cards:
+            return
+        try:
+            W = max(200, self.st_cv.winfo_width() - 24)
+        except tk.TclError:
+            return
+        rtl = self.bi < 39
+        for c in self.cards:
+            c.grid_forget()
+        row, col, used = 0, 0, 0
+        for c in self.cards:
+            w = c.winfo_reqwidth() + 6
+            if col and used + w > W:
+                row, col, used = row + 1, 0, 0
+            c._zk_rc = (row, col)
+            used += w
+            col += 1
+        per_row = {}
+        for c in self.cards:
+            per_row.setdefault(c._zk_rc[0], []).append(c)
+        maxc = max(len(v) for v in per_row.values())
+        for r, cs in per_row.items():
+            for k, c in enumerate(cs):
+                gc = (maxc - k) if rtl else k                     # column 0 is an empty spacer on the left
+                c.grid(row=r, column=gc, padx=3, pady=3, sticky="ne" if rtl else "nw")
+        for k in range(maxc + 1):
+            self.flow.grid_columnconfigure(k, weight=1 if (rtl and k == 0) else 0)
+        for c in self.lex_box.winfo_children():
+            if isinstance(c, tk.Label):
+                c.config(wraplength=max(200, W - 20))
+
+    def word(self, i):
+        w = self.words[i]
+        for k, c in enumerate(self.cards):
+            c.config(highlightbackground=GOLD if k == i else _mixhex(T["card"], GOLD, 0.25), highlightthickness=2 if k == i else 1)
+        box = self.lex_box
+        for c in box.winfo_children():
+            c.destroy()
+        bg = T["card"]
+        heb = self.bi < 39
+        tk.Label(box, text="%s   %s" % (hebrew_visual(w.get("l") or w["w"]) if heb else (w.get("l") or w["w"]), w.get("t", "")),
+                 bg=bg, fg=INK, font=(self.heb if heb else self.grk, 15), anchor="w").pack(fill="x")
+        meta = "%s  ·  %s  ·  %s" % (w.get("s", ""), w.get("lang", ""), self.morph_text(w.get("m", ""), w.get("lang", "")))
+        tk.Label(box, text=meta, bg=bg, fg=GREY, font=(FONT_UI, 8), anchor="w", justify="left", wraplength=440).pack(fill="x")
+        body = tk.Label(box, text="Opening the lexicon...", bg=bg, fg=INK, font=(FONT_UI, 9), anchor="w", justify="left",
+                        wraplength=440)
+        body.pack(fill="x", pady=(4, 0))
+        lang = w.get("lang", "Hebrew")
+
+        def job():
+            lex = step_lexicon("Greek" if lang == "Greek" else "Hebrew")
+            return step_lookup(lex, w.get("s"))
+
+        def done(res, err):
+            if err:
+                body.config(text="Gloss: %s\n(The full lexicon couldn't be downloaded here: %s)" % (w.get("g") or w.get("lg"), err))
+                return
+            if not res:
+                body.config(text="Gloss: %s" % (w.get("g") or w.get("lg")))
+                return
+            lemma, tr, gloss, meaning = res
+            body.config(text="%s\n\n%s" % (gloss, meaning.strip()))
+            self.flow_later()
+        self.app.bg(job, self.safe(done))
+
+    @staticmethod
+    def morph_text(m, lang):
+        """A plain-English hint for the commonest grammar codes (the full code stays visible)."""
+        if not m:
+            return ""
+        out = []
+        if lang == "Greek":
+            pos = {"N": "noun", "V": "verb", "A": "adjective", "T": "article", "P": "personal pronoun", "C": "conjunction",
+                   "ADV": "adverb", "PREP": "preposition", "CONJ": "conjunction", "R": "relative pronoun", "D": "demonstrative",
+                   "PRT": "particle", "I": "interrogative"}.get(m.split("-")[0], "")
+            if pos:
+                out.append(pos)
+            if m.startswith("V-"):
+                p = m.split("-")[1] if len(m.split("-")) > 1 else ""
+                tense = {"P": "present", "I": "imperfect", "F": "future", "A": "aorist", "R": "perfect", "L": "pluperfect"}.get(p[:1], "")
+                voice = {"A": "active", "M": "middle", "P": "passive", "E": "middle/passive", "D": "middle deponent",
+                         "N": "middle/passive deponent", "O": "passive deponent"}.get(p[1:2], "")
+                mood = {"I": "indicative", "S": "subjunctive", "O": "optative", "M": "imperative", "N": "infinitive",
+                        "P": "participle"}.get(p[2:3], "")
+                out += [x for x in (tense, voice, mood) if x]
+        else:
+            parts = m.split("/")
+            main = max(parts, key=len) if parts else m
+            core = main[1:] if main[:1] in "HA" else main
+            pos = {"N": "noun", "V": "verb", "A": "adjective", "R": "preposition", "C": "conjunction", "D": "adverb",
+                   "P": "pronoun", "T": "particle", "S": "suffix"}.get(core[:1], "")
+            if pos:
+                out.append(pos)
+            if core[:1] == "V" and len(core) > 2:
+                stem = {"q": "Qal", "N": "Niphal", "p": "Piel", "P": "Pual", "h": "Hiphil", "H": "Hophal", "t": "Hithpael"}.get(core[1:2], "")
+                form = {"p": "perfect", "q": "sequential perfect", "i": "imperfect", "w": "wayyiqtol (past narrative)",
+                        "v": "imperative", "r": "participle", "s": "passive participle", "c": "infinitive construct",
+                        "a": "infinitive absolute", "j": "jussive", "h": "cohortative"}.get(core[2:3], "")
+                out += [x for x in (stem, form) if x]
+        return ", ".join(out) + ("  (%s)" % m if out else m)
+
+    # ---- study tools ----------------------------------------------------------------------------------------
+    def open_web(self, kind):
+        slug = BIBLE_BOOKS[self.bi][3]
+        url = "https://biblehub.com/%s/%s/%d-%d.htm" % (kind, slug, self.ch, self.vs)
+        try:
+            import webbrowser
+            webbrowser.open(url)
+        except Exception:
+            pass
+
+    def explain(self):
+        ref = self.ref()
+        eng = dict(self.verses).get(self.vs, "")
+        words = "\n".join("- %s (%s) %s · %s · %s" % (w["w"], w.get("t", ""), w.get("s", ""), w.get("m", ""), w.get("g", ""))
+                          for w in self.words[:60] if not w.get("var"))
+        ctx = " ".join("%d %s" % (n, t) for n, t in self.verses if abs(n - self.vs) <= 3 and n != self.vs)
+        user = ("Verse: %s (%s)\n\"%s\"\n\nOriginal words (%s):\n%s\n\nNearby verses for context: %s" %
+                (ref, self.used, eng, "Greek" if self.bi >= 39 else "Hebrew/Aramaic", words or "(not downloaded)", clip(ctx, 900)))
+        top = tk.Toplevel(self.win)
+        top.title("%s · study notes" % ref)
+        top.configure(bg=PAPER)
+        top.geometry("720x700+%d+%d" % (self.win.winfo_rootx() + 80, self.win.winfo_rooty() + 40))
+        tk.Label(top, text="%s  ·  study notes" % ref, bg=PAPER, fg=INK, font=(self.serif, 15), anchor="w").pack(fill="x", padx=16, pady=(12, 0))
+        tk.Label(top, text="Written by an AI from the original-language data. Test it against Scripture and good "
+                           "commentaries (Acts 17:11).", bg=PAPER, fg=GREY, font=(FONT_UI, 8, "italic"), anchor="w").pack(fill="x", padx=16)
+        out = self.text_box(top, height=20, size=10)
+        out.pack(fill="both", expand=True, padx=12, pady=10)
+        self.show_md(out, "Studying %s... (a local brain can take a minute)" % ref)
+        cache = self.app.life.setdefault("bible_study", {})
+        k = self.key() + "|" + self.used
+        if cache.get(k):
+            self.show_md(out, cache[k])
+            return
+
+        def job():
+            return z17_llm(BIBLE_STUDY_PROMPT, user, self.app.cfg.get("llm_model"), 1400, 300)
+
+        def done(res, err):
+            try:
+                if not top.winfo_exists():
+                    return
+            except tk.TclError:
+                return
+            if err or not res:
+                self.show_md(out, "I couldn't write study notes right now (%s).\n\nYou can still click each word for its "
+                                  "lexicon entry, or open **Commentaries ↗** for Matthew Henry, Barnes, Ellicott, "
+                                  "Pulpit and more on this verse." % (err or "no answer"))
+                return
+            cache[k] = res
+            if len(cache) > 300:
+                for kk in list(cache)[:50]:
+                    cache.pop(kk, None)
+            self.show_md(out, res)
+        self.app.bg(job, self.safe(done))
+
+    def edit_note(self):
+        notes = self.app.life.setdefault("bible_notes", {})
+        k = self.key()
+        top = tk.Toplevel(self.win)
+        top.title("Note on %s" % self.ref())
+        top.configure(bg=PAPER)
+        top.geometry("440x300+%d+%d" % (self.win.winfo_rootx() + 140, self.win.winfo_rooty() + 120))
+        tk.Label(top, text="My note on %s" % self.ref(), bg=PAPER, fg=INK, font=(self.serif, 13), anchor="w").pack(fill="x", padx=14, pady=(12, 4))
+        t = tk.Text(top, height=8, wrap="word", font=(FONT_UI, 10), bg=FIELD, fg=INK, insertbackground=INK, relief="flat",
+                    padx=8, pady=6)
+        t.pack(fill="both", expand=True, padx=14)
+        t.insert("1.0", notes.get(k, ""))
+        t.focus_set()
+
+        def save():
+            v = t.get("1.0", "end").strip()
+            if v:
+                notes[k] = v
+            else:
+                notes.pop(k, None)
+            try:
+                self.app.life_save()
+            except Exception:
+                pass
+            top.destroy()
+            keep = self.vs
+            self.load_chapter()
+            self.vs = keep
+        br = tk.Frame(top, bg=PAPER)
+        br.pack(fill="x", padx=14, pady=10)
+        self.btn(br, "Save", save, accent=True).pack(side="left")
+        self.btn(br, "Cancel", top.destroy).pack(side="left", padx=6)
+
+
+
 class Zenko(FoxBuddy):
     """zenko14 on top of everything else (a subclass, so it can build on FoxBuddy's own methods with super())."""
 
@@ -27573,6 +30947,10 @@ class Zenko(FoxBuddy):
         except tk.TclError:
             pass
         self.root.after(40000, self.zk_slow_tick)
+        try:
+            self.z17_init()
+        except Exception as e:
+            zk_log_error("z17_init: %r" % e)
 
     def zk_slow_tick(self):
         """Every minute: idle pop quiz, IA/EE/TOK nudges, garden health."""
@@ -27853,6 +31231,10 @@ class Zenko(FoxBuddy):
         if self.cfg.get("ui_border", True):
             self.zk_border(h["win"])
         self.root.after(120, self.zk_fit)
+        try:
+            self.root.bind_all("<MouseWheel>", self.z17_wheel)          # zenko17: answer boxes scroll too
+        except (tk.TclError, AttributeError):
+            pass
 
     BORDER = 11
 
@@ -28113,6 +31495,10 @@ class Zenko(FoxBuddy):
         except Exception:
             pass
         bg = T["card"]
+        try:
+            self.rules_card(right, label)
+        except Exception as e:
+            zk_log_error("rules card: %r" % e)
         c = self.hub_card(right, "Study helpers and screen")
         c.pack(fill="x", pady=(12, 0))
         label(c, "Text size (it also grows and shrinks with the window)")
@@ -29390,6 +32776,12 @@ class Zenko(FoxBuddy):
     # =================================================================================================
     def gym_route(self, text):
         try:
+            r = self.z17_route(text or "")
+        except Exception:
+            r = None
+        if r:
+            return r
+        try:
             r = self.z16_route(text or "")
         except Exception:
             r = None
@@ -30497,6 +33889,11 @@ class Zenko(FoxBuddy):
         return sid
 
     def is_distracting(self, title, proc):
+        do, rsite = self.rule_check(title, proc)                  # zenko17: your own rules come first
+        if do == "keep":
+            return None
+        if do == "close":
+            return rsite
         site = super().is_distracting(title, proc)
         if site and self.study_video(title, proc):
             self.study_video_noted(title)
@@ -30504,6 +33901,11 @@ class Zenko(FoxBuddy):
         return site
 
     def lockin_distracting(self, title, proc):
+        do, rsite = self.rule_check(title, proc)
+        if do == "keep":
+            return None
+        if do == "close":
+            return rsite
         site = super().lockin_distracting(title, proc)
         if site and self.study_video(title, proc):
             self.study_video_noted(title)
@@ -30873,6 +34275,14 @@ class Zenko(FoxBuddy):
 
     def on_voice_event(self, kind, val):
         C = getattr(self, "conv", None)
+        if kind == "status" and val == "stopped" and self.voice_pending:
+            # zenko17: the helper died before it was ready (e.g. PowerShell is blocked on a school PC): say so
+            self.voice_pending = False
+            self.voice_ui(False)
+            self.say("My ears didn't start: this PC blocked the speech helper. Set up my offline ears instead? "
+                     "(one-time download, about 60 MB, no PowerShell needed)", 20,
+                     [("Set them up", lambda: self.stt_setup()), ("Later", lambda: None)])
+            return
         if kind == "status" and val == "transcribing":
             self.say("Mm-hm... *ears twitch*", 8)
             return
@@ -30918,7 +34328,10 @@ class Zenko(FoxBuddy):
                 else:
                     self._speak_end = time.monotonic() + secs + 0.3
             self._speak_end = time.monotonic() + 3.0 + words / 2.4
-            if vv_speak(text, sid, got):
+            if self.cfg.get("jp_voice", True):                  # zenko17: she says the Japanese version out loud
+                if jp_speak(text, sid, got, llm_model=self.cfg.get("llm_model")):
+                    return
+            elif vv_speak(text, sid, got):
                 return
         self._speak_fallback(text)
 
@@ -31056,11 +34469,358 @@ class Zenko(FoxBuddy):
         tv = tk.StringVar(value=self.cfg.get("talk_voice", "english"))
         radios(c, (("Clear English voice", "english"), ("Anime voice (VOICEVOX)", "voicevox")), tv,
                lambda: cfg_set("talk_voice", tv.get()))
-        label(c, "The anime voice needs the free VOICEVOX app running (Customize > Her voice). It reads English with a "
-                 "cute Japanese accent; newer VOICEVOX versions say English words much better. The English voice is "
-                 "picked in 'Fox's voice' below.")
+        label(c, "The anime voice needs the free VOICEVOX app running (Customize > Her voice). She says the Japanese "
+                 "version of her answer out loud while the chat stays in English (switch that off in Customize > Her "
+                 "voice). The English voice is picked in 'Fox's voice' below.")
         tk.Frame(c, bg=bg, height=8).pack()
         refresh()
+
+    # =================================================================================================
+    #  zenko17: steadier window, voice that matches her words, rules, tool windows, the Bible
+    # =================================================================================================
+    def z17_init(self):
+        c = self.cfg
+        c.setdefault("jp_voice", True)
+        c.setdefault("zk_rules", [])
+        if not c.get("z17_quiet_ui"):
+            # the user asked for voice lines only: the plucks/chimes on buttons go off once (Settings > General
+            # > Interface sounds turns them back on)
+            c["z17_quiet_ui"] = True
+            c["ui_sounds"] = False
+            SOUND["ui"] = False
+            try:
+                save_config(c)
+            except Exception:
+                pass
+        try:
+            zk_crash_guards(self.root)
+        except Exception:
+            pass
+        self.root.report_callback_exception = self.z17_report
+        try:
+            self.root.bind_all("<MouseWheel>", self.z17_wheel)
+            self.root.bind_class("Text", "<MouseWheel>", lambda e: None)
+        except tk.TclError:
+            pass
+        self.root.after(2500, self.z17_vv_check)
+
+    def z17_report(self, exc, val, tb):
+        import traceback
+        txt = "".join(traceback.format_exception(exc, val, tb))
+        zk_log_error(txt)
+        try:
+            sys.stderr.write(txt)
+        except Exception:
+            pass
+
+    def z17_wheel(self, e):
+        """The mouse wheel scrolls whatever is under the pointer: an answer box first, then the page around it."""
+        try:
+            w = self.root.winfo_containing(e.x_root, e.y_root)
+        except Exception:
+            return
+        d = -1 if e.delta > 0 else 1
+        n = max(1, abs(int(e.delta)) // 120) if e.delta else 1
+        while w is not None:
+            try:
+                cls = w.winfo_class()
+                if cls in ("Text", "Listbox") or (cls == "Canvas" and w.cget("yscrollcommand")):
+                    a, b = w.yview()
+                    if (a > 0.0005 or b < 0.9995) and not ((d < 0 and a <= 0.0005) or (d > 0 and b >= 0.9995)):
+                        w.yview_scroll(d * n * (3 if cls in ("Text", "Listbox") else 1), "units")
+                        return "break"
+            except (tk.TclError, AttributeError, ValueError):
+                pass
+            w = getattr(w, "master", None)
+        return "break"
+
+    # ---- her voice: the bubble in English, spoken in Japanese --------------------------------------------------
+    def z17_vv_check(self):
+        """Every 30 s (in the background): is VOICEVOX up? Only then does she speak her lines."""
+        if self.cfg.get("voice_clips") == "voicevox" and self.cfg.get("jp_voice", True) and IS_WIN:
+            def job():
+                return voicevox_alive(1.0)
+
+            def done(res, err):
+                _JPS["alive"] = bool(res) and not err
+            self.bg(job, done)
+        else:
+            _JPS["alive"] = False
+        self.root.after(30000, self.z17_vv_check)
+
+    def jp_voice_on(self):
+        return bool(IS_WIN and SOUND.get("on") and self.cfg.get("jp_voice", True) and
+                    self.cfg.get("voice_clips") == "voicevox" and _JPS.get("alive"))
+
+    def say(self, text, secs=9, choices=None):
+        r = super().say(text, secs, choices)
+        try:
+            self.jp_line(text)
+        except Exception:
+            pass
+        return r
+
+    def jp_line(self, text):
+        if not self.jp_voice_on() or getattr(self, "conv", None) is not None:
+            return
+        t = (text or "").strip()
+        if len(t) < 2 or t.startswith(("Listening", "(thinking", "Mm-hm", "Reading", "~ ", "Downloading", "Looking", "Checking")):
+            return
+        if self.voice_reply_until > time.monotonic() or (self.cfg.get("speak_mode") == "always"):
+            return                                       # her full reply is about to be read out anyway
+        sid = int(self.cfg.get("voicevox_speaker", 8) or 8)
+        jp_speak(t, sid, llm_model=self.cfg.get("llm_model"))
+
+    # ---- close / keep rules -------------------------------------------------------------------------------------
+    def rule_check(self, title, proc):
+        do, r = rule_verdict(self.cfg.get("zk_rules") or [], title, proc)
+        if do == "keep":
+            return "keep", None
+        if do == "close":
+            site = (r.get("site") or "").strip()
+            if not site or site.lower().startswith("any"):
+                site = (rule_words(r.get("words")) or ["that"])[0].title()
+            return "close", site
+        return None, None
+
+    def rules_card(self, parent, label):
+        bg = T["card"]
+        c = self.hub_card(parent, "Close or keep · your rules")
+        c.pack(fill="x", pady=(12, 0))
+        label(c, "Tell her exactly what to close and what to leave open in focus sessions and lock-in. Your rules come "
+                 "first, top to bottom. Example: YouTube + “bio, cell, khan” → Keep open.")
+        lst = tk.Frame(c, bg=bg)
+        lst.pack(fill="x", padx=14, pady=(4, 2))
+
+        def redraw():
+            for ch in lst.winfo_children():
+                ch.destroy()
+            rules = self.cfg.get("zk_rules") or []
+            if not rules:
+                tk.Label(lst, text="No rules yet.", bg=bg, fg=GREY, font=(FONT_UI, 9, "italic"), anchor="w").pack(fill="x")
+            for i, r in enumerate(rules):
+                row = tk.Frame(lst, bg=_mixhex(bg, FIELD, 0.6))
+                row.pack(fill="x", pady=2)
+                keep = r.get("do") == "keep"
+                tk.Label(row, text="✓" if keep else "✕", bg=row.cget("bg"), fg="#5fae7e" if keep else "#e5484d",
+                         font=(FONT_UI, 11, "bold"), width=2).pack(side="left", padx=(6, 2))
+                on = tk.BooleanVar(value=r.get("on", True))
+                tk.Checkbutton(row, variable=on, bg=row.cget("bg"), activebackground=row.cget("bg"), selectcolor=FIELD,
+                               command=lambda i=i, on=on: toggle(i, on.get())).pack(side="left")
+                tk.Label(row, text=rule_text(r), bg=row.cget("bg"), fg=INK if r.get("on", True) else GREY,
+                         font=(FONT_UI, 9), anchor="w", justify="left", wraplength=300).pack(side="left", fill="x", expand=True, pady=4)
+                for sym, d in (("▲", -1), ("▼", 1)):
+                    b = tk.Label(row, text=sym, bg=row.cget("bg"), fg=GREY, font=(FONT_UI, 8), cursor="hand2", padx=3)
+                    b.pack(side="left")
+                    b.bind("<Button-1>", lambda e, i=i, d=d: move(i, d))
+                x = tk.Label(row, text="Remove", bg=row.cget("bg"), fg=GREY, font=(FONT_UI, 8, "underline"), cursor="hand2", padx=6)
+                x.pack(side="left")
+                x.bind("<Button-1>", lambda e, i=i: remove(i))
+
+        def save(rules):
+            self.cfg_set("zk_rules", rules) if hasattr(self, "cfg_set") else self.cfg.__setitem__("zk_rules", rules)
+            save_config(self.cfg)
+            redraw()
+
+        def toggle(i, v):
+            rules = list(self.cfg.get("zk_rules") or [])
+            rules[i] = dict(rules[i], on=bool(v))
+            save(rules)
+
+        def move(i, d):
+            rules = list(self.cfg.get("zk_rules") or [])
+            j = i + d
+            if 0 <= j < len(rules):
+                rules[i], rules[j] = rules[j], rules[i]
+                save(rules)
+
+        def remove(i):
+            rules = list(self.cfg.get("zk_rules") or [])
+            if 0 <= i < len(rules):
+                rules.pop(i)
+                save(rules)
+        redraw()
+        # the "new rule" row reads like a sentence
+        add = tk.Frame(c, bg=bg)
+        add.pack(fill="x", padx=14, pady=(8, 2))
+        tk.Label(add, text="On", bg=bg, fg=INK, font=(FONT_UI, 9)).pack(side="left")
+        site_v = tk.StringVar(value="YouTube")
+        names = [n for n, _a in RULE_SITES] + ["Other…"]
+        om = tk.OptionMenu(add, site_v, *names, command=lambda v: other.pack(side="left", padx=(0, 4)) if v == "Other…" else other.pack_forget())
+        om.config(bg=FIELD, fg=INK, activebackground=T["hover"], activeforeground=INK, highlightthickness=0, relief="flat",
+                  font=(FONT_UI, 9), width=12)
+        om.pack(side="left", padx=4)
+        other_v = tk.StringVar()
+        other = self.tt_entry(add, other_v, 12)
+        add2 = tk.Frame(c, bg=bg)
+        add2.pack(fill="x", padx=14, pady=(4, 2))
+        tk.Label(add2, text="if the title has", bg=bg, fg=INK, font=(FONT_UI, 9)).pack(side="left")
+        words_v = tk.StringVar()
+        we = self.tt_entry(add2, words_v, 22)
+        we.pack(side="left", padx=4)
+        tk.Label(add2, text="(optional, commas)", bg=bg, fg=GREY, font=(FONT_UI, 8)).pack(side="left")
+        add3 = tk.Frame(c, bg=bg)
+        add3.pack(fill="x", padx=14, pady=(4, 2))
+        do_v = tk.StringVar(value="keep")
+        for val, lab in (("keep", "✓ Keep it open"), ("close", "✕ Close it")):
+            tk.Radiobutton(add3, text=lab, value=val, variable=do_v, indicatoron=False, bg=FIELD, fg=INK,
+                           selectcolor=_mixhex(FIELD, GOLD, 0.35), activebackground=FIELD, relief="flat", bd=0, padx=10,
+                           pady=3, font=(FONT_UI, 9, "bold")).pack(side="left", padx=(0, 6))
+        msg = tk.Label(c, text="", bg=bg, fg=GREY, font=(FONT_UI, 8), anchor="w", justify="left", wraplength=360)
+
+        def add_rule():
+            site = site_v.get()
+            if site == "Other…":
+                site = other_v.get().strip()
+            words = ", ".join(rule_words(words_v.get()))
+            if (not site or site.lower().startswith("any")) and not words:
+                msg.config(text="Pick a site, or type some words for 'Any site or app'.")
+                return
+            rules = list(self.cfg.get("zk_rules") or [])
+            rules.append({"site": site, "words": words, "do": do_v.get(), "on": True})
+            save(rules)
+            words_v.set("")
+            msg.config(text="Added: " + rule_text(rules[-1]))
+        self.tt_btn(add3, "Add rule", add_rule, bg=T["start"], size=9, padx=10, pady=1).pack(side="left", padx=(8, 0))
+        msg.pack(fill="x", padx=14, pady=(4, 2))
+        # try a window title against the rules
+        tr = tk.Frame(c, bg=bg)
+        tr.pack(fill="x", padx=14, pady=(6, 12))
+        tk.Label(tr, text="Try a title", bg=bg, fg=GREY, font=(FONT_UI, 8)).pack(side="left")
+        tv = tk.StringVar(value="Cell biology: mitosis explained - YouTube")
+        te = self.tt_entry(tr, tv, 26)
+        te.pack(side="left", padx=4)
+        res = tk.Label(tr, text="", bg=bg, fg=INK, font=(FONT_UI, 8, "bold"))
+
+        def test(_e=None):
+            title = tv.get()
+            do, site = self.rule_check(title, "")
+            if do == "keep":
+                res.config(text="✓ kept open (your rule)", fg="#5fae7e")
+            elif do == "close":
+                res.config(text="✕ closed (your rule)", fg="#e5484d")
+            else:
+                try:
+                    d = self.is_distracting(title, "")
+                except Exception:
+                    d = None
+                res.config(text=("✕ closed (built-in list: %s)" % d) if d else "✓ allowed (no rule needed)",
+                           fg="#e5484d" if d else GREY)
+        te.bind("<KeyRelease>", test)
+        res.pack(side="left", padx=4)
+        test()
+
+    # ---- tool windows ------------------------------------------------------------------------------------------
+    def open_ptable(self):
+        PeriodicWindow(self)
+
+    def open_french_dict(self):
+        FrenchWindow(self)
+
+    def open_calc(self):
+        CasioWindow(self)
+
+    def open_bible(self, ref=None):
+        w = BibleWindow(self)
+        if ref:
+            r = bible_parse_ref(ref)
+            target = self._z17_wins.get("bible")
+            if r and target:
+                target.root_after = target.win.after(300, lambda: target.go(r[0], r[1], r[2] or 1))
+        return w
+
+    BOOK_TOOLS = {"chem": [("元素  Periodic table ↗", "open_ptable")],
+                  "math": [("電卓  Graphing calculator ↗", "open_calc")],
+                  "french": [("辞書  Dictionary & translator ↗", "open_french_dict")]}
+
+    def book_open(self, key, anim=True):
+        if key == "bible":
+            ui_sound("open")
+            self.root.after(10, self.open_bible)
+            return
+        return super().book_open(key, anim)
+
+    def book_build(self, host, key):
+        super().book_build(host, key)
+        tools = self.BOOK_TOOLS.get(key)
+        kids = host.winfo_children()
+        if tools and len(kids) > 1:
+            bar = tk.Frame(host, bg=PAPER)
+            try:
+                bar.pack(fill="x", padx=28, pady=(0, 6), before=kids[1])
+            except tk.TclError:
+                bar.pack(fill="x", padx=28, pady=(0, 6))
+            tk.Label(bar, text="Opens in its own window:", bg=PAPER, fg=GREY, font=(FONT_UI, 8, "italic")).pack(side="left")
+            for lab, meth in tools:
+                self.tt_btn(bar, lab, getattr(self, meth), bg=T["start"], size=9, padx=10, pady=1).pack(side="left", padx=(8, 0))
+        self.root.after(200, lambda: self.z17_scroll_texts(host))
+
+    def z17_scroll_texts(self, host):
+        """Every tall answer box (tutor, sources...) gets a themed scrollbar."""
+        try:
+            if not host.winfo_exists():
+                return
+            for w in self.zk_walk(host):
+                if isinstance(w, tk.Text) and int(w.cget("height")) >= 5:
+                    zk_text_scroll(w)
+        except Exception:
+            pass
+
+    def nb_render(self):
+        super().nb_render()
+        nb = self.nb
+        if nb and nb.get("host") is not None:
+            self.root.after(250, lambda: self.z17_scroll_texts(nb["host"]))
+
+    def open_chat(self, parent=None):
+        r = super().open_chat(parent)
+        try:
+            zk_text_scroll(self.chat["txt"])
+        except Exception:
+            pass
+        return r
+
+    # ---- chat -----------------------------------------------------------------------------------------------
+    def z17_route(self, text):
+        raw = (text or "").strip()
+        lw = raw.lower().strip(" .!?~")
+        if re.match(r"^(?:open |show )?(?:the |my )?(?:periodic table|ptable|元素)$", lw):
+            self.root.after(100, self.open_ptable)
+            return "Here's the periodic table~ click an element for its details."
+        if re.match(r"^(?:open |show )?(?:the |my )?(?:graphing )?(?:calculator|calc|gdc|cg ?50|fx-?cg ?50|電卓)$", lw):
+            self.root.after(100, self.open_calc)
+            return "Calculator's open! MENU for Graph, Equation, Statistics and Distribution~"
+        if re.match(r"^(?:open |show )?(?:the |my )?(?:french )?(?:dictionary|dictionnaire|dico|translator)$", lw):
+            self.root.after(100, self.open_french_dict)
+            return "Dictionnaire ouvert~ type a word in French or English."
+        m = re.match(r"^(?:open |read |show )?(?:my |the )?(?:holy )?bible(?: (?:at|to))?(?: (.+))?$|^(?:read|open) ((?:[1-3] ?)?[a-z]+ \d+(?:[:.]\d+)?)$", lw)
+        if m:
+            ref = (m.group(1) or m.group(2) or "").strip()
+            if ref and not bible_parse_ref(ref):
+                if m.group(2):
+                    return None
+                ref = ""
+            self.root.after(100, lambda: self.open_bible(ref or None))
+            return ("Opening %s~" % ref.title()) if ref else "Your Bible is open~ click a verse for the Hebrew or Greek."
+        m = re.match(r"^(keep|allow|don'?t close|never close|always close|close|block)\s+(.+?)(?:\s+(?:if|when)\s+(?:it|the title)?\s*"
+                     r"(?:has|contains|says|is about)\s+(.+))?$", lw)
+        if m and (m.group(3) or m.group(1) in ("always close", "never close")):
+            do = "close" if m.group(1) in ("always close", "close", "block") else "keep"
+            site = m.group(2).strip()
+            site = next((n for n, al in RULE_SITES if site in (n.lower(),) + tuple(a.strip(" /") for a in al)), site.title())
+            rules = list(self.cfg.get("zk_rules") or [])
+            rules.append({"site": site, "words": ", ".join(rule_words(m.group(3) or "")), "do": do, "on": True})
+            self.cfg["zk_rules"] = rules
+            save_config(self.cfg)
+            return "Got it~ new rule: %s. (All rules: Settings > Close or keep.)" % rule_text(rules[-1])
+        if re.match(r"^(?:my |show (?:me )?my |what are my )?(?:close|keep|focus|lock-?in) rules$|^my rules$", lw):
+            rules = self.cfg.get("zk_rules") or []
+            if not rules:
+                return "No rules yet~ say 'keep youtube if it has bio' or add them in Settings > Close or keep."
+            return "Your rules (first match wins):\n" + "\n".join("%d. %s%s" % (i + 1, rule_text(r), "" if r.get("on", True) else " (off)")
+                                                                for i, r in enumerate(rules))
+        return None
+
 
 
 def main():
