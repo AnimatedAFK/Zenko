@@ -1,5 +1,19 @@
 # Zenko changes
 
+## v2026.11.23-zenko19
+- **A brand-new walk**: she now walks on all four paws like a real fox, built from a proper skeleton (shoulder, elbow, wrist and paw in front; hip, knee, hock and paw behind), using the real four-beat fox/dog walk (left hind, left front, right hind, right front). The black "stockings" on her legs, small paws and a long brush of tails are kept, and there's a little hop in her step.
+- **Real fox poses**, all on the same skeleton: front stretch (forearms flat, rump up, big yawn), back-leg stretch, play bow with a swishing tail, lying down like a sphinx and dozing off, sniffing the ground, a shake-off, and the mousing pounce (crouch, rear up on the hind legs, leap, dive front paws first, pinned!). She does them by herself now and then when you're not focusing, or ask in chat: "stretch", "play bow", "pounce", "lie down", "sniff". Customize has buttons for each and an on/off switch.
+- **Wardrobe** (earned with study hours): seasonal kimono (sakura in spring, ro silk in summer, momiji in autumn, snow in winter), a festival yukata, and a sailor uniform for exam season. "Dress for the season" switches by itself: uniform when an exam is within 3 weeks, yukata in late summer, otherwise the season's kimono. Chat: "wear the yukata", "dress for the season".
+- **The sky follows the clock, gently**: the sidebar and Zen garden take on a soft dawn, a deep jade-blue day and a plum-and-ember dusk; night is the same shrine night as before. The moon rests while a hazy sun is up.
+- **Seasons and weather**: sakura petals, fireflies, falling momiji or snow in the sidebar; a sakura or maple branch in the corner; snow on the torii and hills in winter; petals, leaves or a dusting of snow in the Zen garden; rain when it's raining where you live (needs your city in Settings).
+- **Pixel-art menu icons** in her gold style (torii, scroll, hourglass, ema, book, dumbbell, bonsai, compass...).
+- **The little fox at the top acts out the page**: reads a book in Study books, lifts dumbbells in Exercise, meditates in the Zen garden, trots on the World map, lies down in Settings, talks in Chat.
+- **Page transitions**: a thin foxfire wisp sweeps across with the slide when you switch pages.
+- **Focus glow**: during a focus session a dim foxfire line fills the window's wooden frame as a progress bar (only in the frame, so it never covers anything), and petals run round the frame when you finish.
+- **Settings navigation bar**: a quiet row (Look, Focus, Voice, Life, Brain, Apps, Data) under the title jumps to each section and follows you as you scroll.
+- **Study alerts use her voice**: "Heads up: ... in 5 min" and reminders are now said in her VOICEVOX voice (in Japanese, the bubble stays English) instead of the Windows voice. If VOICEVOX isn't running she does her little "kon kon~" clip. Settings > Sky, seasons and motion lets you pick the Windows voice again or silence.
+- Every new effect has its own switch in Settings > Sky, seasons and motion.
+
 ## v2026.11.23-zenko18.1
 - **Bible word lookups work with no internet**: the full Strong's Hebrew and Greek lexicon (STEPBible, CC BY 4.0, about 23,000 entries) is now built into Zenko, so clicking any word shows its complete dictionary entry even on school wifi.
 - If GitHub is blocked, the original-language text now also tries a second download source (jsDelivr).

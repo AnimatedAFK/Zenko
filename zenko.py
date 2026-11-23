@@ -52,7 +52,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.23-zenko18.1"
+APP_VERSION = "v2026.11.23-zenko19"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -681,6 +681,7 @@ def build_frame(state, tail="up", frame=0, look=None, acc=(), hx=0, ear=0):
     five = state == "highfive"
     walk = state if state in WALK_FEET else None
     g = [row[:] for row in _body("lick" if (lick or five) else (walk or "sit"), "scarf" in acc)]
+    robe_sit(g, acc)                                # zenko19: kimono / yukata / uniform
     _over(g, _head(hx, ear))
     eyes(g, eyes_k, 0 if lick else lx, 0 if lick else ly, hx)
     blush(g, hx, strong=eyes_k == "happy")
@@ -926,6 +927,605 @@ def build_walk34(frame=0, n=3, frames=8, blink=False, left=False, look="open"):
     return rows
 
 
+# ---- zenko19: an anatomical fox rig (side view) -------------------------------------------------------------------
+# Every full-body pose (walk, stretches, play bow, lying down, the mousing pounce...) is built from one skeleton:
+# a spine from hip joint to shoulder joint with the torso outline hung on real landmarks (croup, loin, withers,
+# breast, deep chest, sternum, belly tuck, stifle fold, buttock), and legs made of real bones:
+#   foreleg  = scapula/shoulder -> humerus -> elbow -> radius/ulna -> carpus (wrist) -> metacarpus -> small paw
+#   hind leg = hip -> femur (big thigh) -> stifle (knee, points forward) -> tibia (gaskin) -> hock (points back)
+#              -> long metatarsus -> small paw.  Foxes are digitigrade: they stand on their toes.
+# Joints are solved with two-bone IK, so the paws can be planted on the ground while the body moves over them.
+# The walk is the canine 4-beat lateral-sequence walk (LH, LF, RH, RF, a quarter cycle apart; two or three paws
+# down at once). Her own chibi head (the same face as everywhere else) sits on top, turned a little to you.
+
+RIG_GROUND = 75.6
+
+
+def _ik2(ax, ay, bx, by, l1, l2, bend):
+    """Two-bone IK: joint position between (ax, ay) and (bx, by). bend=+1 puts the joint on the left of the
+    a->b line (forward-pointing knee when walking right), -1 on the right (backward-pointing elbow/hock)."""
+    dx, dy = bx - ax, by - ay
+    d = _m.hypot(dx, dy) or 0.001
+    if d > l1 + l2 - 0.05:                       # out of reach: straighten (and shorten the target)
+        k = (l1 + l2 - 0.05) / d
+        dx, dy, d = dx * k, dy * k, l1 + l2 - 0.05
+    if d < abs(l1 - l2) + 0.05:
+        d = abs(l1 - l2) + 0.05
+    a = (l1 * l1 + d * d - l2 * l2) / (2 * d)
+    h = _m.sqrt(max(0.0, l1 * l1 - a * a))
+    ux, uy = dx / d, dy / d
+    return ax + ux * a + uy * h * bend, ay + uy * a - ux * h * bend
+
+
+def _capsule(p, q, r1, r2):
+    """Cells of a tapered limb segment from p (radius r1) to q (radius r2)."""
+    out = set()
+    x0 = int(min(p[0] - r1, q[0] - r2)) - 1
+    x1 = int(max(p[0] + r1, q[0] + r2)) + 2
+    y0 = int(min(p[1] - r1, q[1] - r2)) - 1
+    y1 = int(max(p[1] + r1, q[1] + r2)) + 2
+    vx, vy = q[0] - p[0], q[1] - p[1]
+    L2 = vx * vx + vy * vy or 0.001
+    for y in range(max(0, y0), min(H_, y1)):
+        for x in range(max(0, x0), min(W_, x1)):
+            px, py = x + 0.5 - p[0], y + 0.5 - p[1]
+            t = max(0.0, min(1.0, (px * vx + py * vy) / L2))
+            r = r1 + (r2 - r1) * t
+            ex, ey = px - vx * t, py - vy * t
+            if ex * ex + ey * ey <= r * r:
+                out.add((x, y))
+    return out
+
+
+def _bez_pts(pts, n=10):
+    """A smooth closed outline through landmark points (Catmull-Rom), as a polygon."""
+    out = []
+    N = len(pts)
+    for i in range(N):
+        p0, p1, p2, p3 = pts[i - 1], pts[i], pts[(i + 1) % N], pts[(i + 2) % N]
+        for k in range(n):
+            t = k / float(n)
+            t2, t3 = t * t, t * t * t
+            x = 0.5 * ((2 * p1[0]) + (-p0[0] + p2[0]) * t + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 +
+                       (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3)
+            y = 0.5 * ((2 * p1[1]) + (-p0[1] + p2[1]) * t + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 +
+                       (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3)
+            out.append((x, y))
+    return out
+
+
+# torso landmarks in spine space: u = 0 at the hip joint, 1 at the shoulder joint; v = px below the spine line
+_TORSO = [(-0.20, -3.2),   # tail root
+          (-0.05, -6.0),   # croup
+          (0.25, -6.6),    # loin
+          (0.55, -6.4),    # back
+          (0.86, -8.0),    # withers
+          (1.10, -9.5),    # top of the neck (goes up under her head)
+          (1.30, -5.0),    # throat
+          (1.22, 1.8),     # point of the breast (manubrium)
+          (1.06, 8.4),     # deep chest behind the elbow
+          (0.78, 9.0),     # sternum
+          (0.52, 6.6),     # belly
+          (0.32, 2.4),     # flank tuck (waist)
+          (0.12, 2.6),     # stifle fold
+          (-0.12, 2.2),    # back of the thigh
+          (-0.22, 0.2)]    # buttock
+
+
+def _spine_xy(H, S, u, v):
+    ux, uy = S[0] - H[0], S[1] - H[1]
+    L = _m.hypot(ux, uy) or 1.0
+    nx, ny = -uy / L, ux / L                       # 'down' normal for a fox facing right
+    if ny < 0:
+        nx, ny = -nx, -ny
+    return H[0] + ux * u + nx * v, H[1] + uy * u + ny * v
+
+
+# bone lengths (fine pixels): the legs are long and slim, the paws small, as in a real red fox
+FORE = (8.4, 10.0, 4.0)       # humerus, radius, metacarpus
+HIND = (9.4, 10.4, 6.8)       # femur, tibia, metatarsus
+
+
+def _leg_cells(top, paw, meta_ang, bones, kind, near):
+    """Solve and return (cells_by_part, joints). meta_ang: angle (deg) of the metapodial bone from vertical,
+    positive = paw ahead of the wrist/hock (normal standing pastern), negative = flexed back (in the swing)."""
+    l1, l2, l3 = bones
+    a = _m.radians(meta_ang)
+    # the joint above the paw (carpus or hock)
+    jx, jy = paw[0] - _m.sin(a) * l3, paw[1] - _m.cos(a) * l3
+    bend = -1 if kind == "fore" else 1             # elbow points back, stifle points forward
+    kx, ky = _ik2(top[0], top[1], jx, jy, l1, l2, bend)
+    parts = {}
+    if kind == "fore":
+        parts["upper"] = _capsule(top, (kx, ky), 3.6 if near else 3.2, 2.5)
+        parts["lower"] = _capsule((kx, ky), (jx, jy), 2.2, 1.7)
+        parts["meta"] = _capsule((jx, jy), paw, 1.7, 1.6)
+    else:
+        parts["upper"] = _capsule(top, (kx, ky), 5.4 if near else 4.8, 3.0)       # the big thigh
+        parts["lower"] = _capsule((kx, ky), (jx, jy), 2.8, 1.5)                   # gaskin tapering to the hock
+        parts["meta"] = _capsule((jx, jy), paw, 1.5, 1.5)
+    return parts, {"top": top, "knee": (kx, ky), "joint": (jx, jy), "paw": paw, "kind": kind}
+
+
+def _draw_leg(g, parts, J, near, toe_dir=1, paw_flat=True, robe=None):
+    """Fur on the upper leg, dark 'stockings' from the elbow/hock down (red fox socks), a small oval-free paw."""
+    up = parts["upper"]
+    low = parts["lower"] | parts["meta"]
+    kx, ky = J["knee"]
+    jy0 = J["joint"][1]
+    fore = parts["upper"] and len(parts["upper"]) < 150 and J.get("kind") == "fore"
+    sock_y = (ky + 2.5) if fore else (jy0 - 1.5)   # black stockings: from the elbow on the forelegs, the hock behind
+    if near:
+        upc = lambda x, y: _dither(x, y, 0.35 + (y - J["top"][1]) / 22.0, ["L", "O", "O", "D"])
+        # the stocking fades in over a few pixels (dithered), so it reads as fur, not a boot
+        sock = lambda x, y: "n" if y > sock_y + 1.5 else (_dither(x, y, 0.5 + (y - sock_y) / 3.0, ["O", "D", "n"])
+                                                          if y > sock_y - 1.5 else _dither(x, y, 0.62, ["O", "D"]))
+    else:
+        upc = lambda x, y: _dither(x, y, 0.7, ["D", "d"])
+        sock = lambda x, y: "N" if y > sock_y else "d"
+    if robe:                                       # sleeves / the skirt of the robe over the upper legs
+        sl = "h" if ROBES[robe]["motif"] == "sailor" and J.get("kind") == "fore" else "a"
+        upc = (lambda x, y: sl if near else "c")
+    _paint(g, low, sock, "K", over=".g")
+    if near:                                       # the near thigh/shoulder sits on the body: soft fur line inside
+        _paint(g, up, upc, None)
+        for (x, y) in up:
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                n2 = (x + dx, y + dy)
+                if n2 not in up and 0 <= n2[0] < W_ and 0 <= n2[1] < H_:
+                    c = g[n2[1]][n2[0]]
+                    if c in ".g":
+                        g[n2[1]][n2[0]] = "K"
+                    elif c in "lLOWC" and dx >= 0 and (dy >= 0 or dx > 0) and y > J["top"][1] + 2:
+                        g[n2[1]][n2[0]] = "D"
+    else:
+        _paint(g, up, upc, "K", over=".gnNKd")
+    # paw: a compact foot of toes (digitigrade), heel pad behind, toes pointing where she faces
+    px, py = J["paw"]
+    jx, jy = J["joint"]
+    if paw_flat:
+        cells = {(int(px + toe_dir * dx), int(py + dy)) for dx in (-1, 0, 1, 2) for dy in (-1, 0)}
+        cells |= {(int(px + toe_dir * 3), int(py))}
+    else:                                          # lifted: the paw folds back under the wrist
+        cells = {(int(px + dx), int(py + dy)) for dx in (-1, 0, 1) for dy in (-1, 0, 1)}
+    _paint(g, cells, "n" if near else "N", "K", over=".gnNdDK")
+    if paw_flat:
+        put(g, int(px + toe_dir * 2), int(py), "K")              # toe split
+
+
+def _rig_tails(g, base, ang, n, frame, frames, sway, length=24.0, lift=0.0, r=6.6):
+    """Her tails as one fluffy plume from the tail root. ang = direction in degrees (180 = straight back)."""
+    nn = max(1, min(9, int(n)))
+    T = 2 * _m.pi * (frame % frames) / float(frames)
+    lo, hi = (ang - 26.0, ang + 26.0) if nn > 1 else (ang, ang)
+    bx, by = base
+
+    def d(deg):
+        rr = _m.radians(deg)
+        return _m.cos(rr), -_m.sin(rr)
+    lay = []
+    for i in range(nn):
+        a = lo + (hi - lo) * i / max(1, nn - 1) + sway * _m.sin(T + i * 0.9)
+        L = length - 3.0 * abs(a - ang) / 30.0 + (1.5 if i % 2 else 0.0)
+        tip = (bx + d(a)[0] * L, by + d(a)[1] * L - lift)
+        c1, c2 = d(a + 14.0), d(a - 12.0 - 5.0 * _m.sin(T + i))
+        lay.append((a, ((bx, by), (bx + c1[0] * L * 0.45, by + c1[1] * L * 0.45),
+                        (tip[0] - c2[0] * L * 0.35, tip[1] - c2[1] * L * 0.35), tip)))
+    for i, (a, pts) in enumerate(sorted(lay, key=lambda p: -abs(p[0] - 180.0))):
+        _tail(g, pts, r if nn <= 3 else r - 0.6, i * 3 + 1, flame=(frame + i) % 3, base_r=2.6)
+    for row in g:
+        for x, ch in enumerate(row):
+            if ch == "k":
+                row[x] = "D"
+
+
+def _rig_head(g, ox, oy, look="open", mouth_k="flat", hx=2, ear=0, acc=(), frame=0, ly=0):
+    hg = blank()
+    _over(hg, _head(hx, ear))
+    eyes(hg, look, 1, ly, hx)
+    blush(hg, hx, strong=look == "happy")
+    mouth(hg, mouth_k, 1, 0, hx)
+    if "glasses" in acc:
+        glasses(hg, 1, ly, hx)
+    draw_outfit(hg, tuple(a for a in acc if a not in OUTFIT_BODY), hx, frame)
+    ox, oy = int(round(ox)), int(round(oy))
+    for y in range(H_):
+        sy = y - oy
+        if not 0 <= sy < H_:
+            continue
+        src = hg[sy]
+        row = g[y]
+        for x in range(W_):
+            sx = x - ox
+            if 0 <= sx < W_ and src[sx] != ".":
+                row[x] = src[sx]
+
+
+def build_rig(P, n=3, frame=0, frames=8, acc=(), left=False):
+    """Render a full-body pose. P is a dict:
+      H, S       hip and shoulder joints (x, y)
+      legs       {"lh"/"rh"/"lf"/"rf": (paw_x, paw_y, meta_angle, flat)}   (l = far side, r = near side)
+      head       (dx, dy) offset of her head from its standard spot, plus optional look/mouth/ear/ly
+      tail       (angle, sway, length, lift)
+      shadow     ground shadow on/off"""
+    g = blank()
+    H, S = P["H"], P["S"]
+    rb = _robe_of(acc)
+    if P.get("shadow", True):
+        cx = (H[0] + S[0]) / 2.0
+        for (x, y) in _ell(cx + 2, 76.4, 26.0, 1.6):
+            if (x + y) % 2 == 0:
+                g[y][x] = "g"
+    root = _spine_xy(H, S, -0.16, -3.6)
+    ta, sway, tl, tlift = P.get("tail", (172.0, 4.0, 24.0, 0.0))
+    _rig_tails(g, root, ta, n, frame, frames, sway, tl, tlift)
+    legs = P["legs"]
+    sh = _spine_xy(H, S, 1.0, 0.0)
+    hip = H
+    order = [("lh", "hind", False), ("lf", "fore", False)]
+    drawn = {}
+    for key, kind, near in order:
+        top = hip if kind == "hind" else sh
+        top = (top[0] + (0.8 if kind == "hind" else -0.6), top[1] - 0.6)
+        px, py, ma, flat = legs[key]
+        parts, J = _leg_cells(top, (px, py), ma, HIND if kind == "hind" else FORE, kind, near)
+        _draw_leg(g, parts, J, near, 1, flat, rb)
+        drawn[key] = J
+    # torso
+    pts = [_spine_xy(H, S, u, v) for (u, v) in P.get("torso", _TORSO)]
+    body = _poly(_bez_pts(pts, 6))
+    ang = _m.atan2(S[1] - H[1], S[0] - H[0])
+    top_y = min(y for (x, y) in body) if body else 50
+
+    def fur(x, y):
+        # distance below the back line along the body normal decides fur vs white underside
+        bx = x + 0.5 - H[0]
+        by_ = y + 0.5 - H[1]
+        L = _m.hypot(S[0] - H[0], S[1] - H[1]) or 1.0
+        u = (bx * (S[0] - H[0]) + by_ * (S[1] - H[1])) / (L * L)
+        v = (-bx * (S[1] - H[1]) + by_ * (S[0] - H[0])) / L
+        under = 4.0 - 3.5 * max(0.0, u - 0.55)            # the white reaches up the chest towards the throat
+        if v > under and u > 0.25:
+            return _dither(x, y, 0.2 + (v - under) / 10.0, ["W", "W", "C"])
+        return _dither(x, y, 0.20 + (v + 7.0) / 15.0, ["l", "L", "O", "O", "D"])
+    _paint(g, body, fur, "K")
+    # a soft line where the thigh muscle meets the flank, and the shoulder blade line (anatomy hints, not outlines)
+    for t in range(6):
+        x, y = _spine_xy(H, S, 0.14 + t * 0.012, -1.0 + t * 0.9)
+        if (int(x), int(y)) in body:
+            put(g, int(x), int(y), "D")
+    for t in range(6):
+        x, y = _spine_xy(H, S, 0.88 - t * 0.02, -6.0 + t * 1.3)
+        if (int(x), int(y)) in body:
+            put(g, int(x), int(y), "D")
+    # near legs over the body (with paws_front the forelegs come after the head: forearms out under her chin)
+    front = P.get("paws_front")
+    for key, kind, near in (("rh", "hind", True), ("rf", "fore", True)):
+        if front and kind == "fore":
+            continue
+        top = hip if kind == "hind" else sh
+        top = (top[0] + (-0.5 if kind == "hind" else 0.8), top[1] + 0.4)
+        px, py, ma, flat = legs[key]
+        parts, J = _leg_cells(top, (px, py), ma, HIND if kind == "hind" else FORE, kind, near)
+        _draw_leg(g, parts, J, near, 1, flat, rb)
+        drawn[key] = J
+    if rb:
+        robe_rig(g, body, H, S, rb)
+    # neck: from the withers up into her head, so the head never floats
+    hd = P.get("head", {})
+    hx_, hy_ = _spine_xy(H, S, 1.18, -6.5)
+    ox = hx_ - 38.0 + hd.get("dx", 0.0) - 1
+    oy = hy_ - 40.0 + hd.get("dy", 0.0)
+    nb = _spine_xy(H, S, 0.95, -2.0)
+    neck = _capsule(nb, (ox + 38.0, oy + 38.0), 6.0, 7.0)
+    _paint(g, neck, lambda x, y: _dither(x, y, 0.25 + (y - oy - 30) / 30.0, ["L", "O", "O", "D"]), "K", over=".gD")
+    _rig_head(g, ox, oy, hd.get("look", "open"), hd.get("mouth", "flat"), 2, hd.get("ear", 0), acc, frame, hd.get("ly", 0))
+    # collar + bell under her chin
+    cx_, cy_ = ox + 38.0, oy + 44.0
+    for k in range(-6, 7):
+        x = int(cx_ + k)
+        y = int(cy_ + round((k / 6.0) ** 2 * 1.5))
+        if 0 <= y < H_ - 1 and 0 <= x < W_ and g[y][x] not in ".g":
+            put(g, x, y, "M")
+            put(g, x, y + 1, "m")
+    _stamp(g, int(cx_) - 2, int(cy_) + 1, [".KK.", "KXxK", "KJXK", ".KK."])
+    if front:
+        for key in ("lf", "rf"):
+            near = key == "rf"
+            top = (sh[0] + (0.8 if near else -0.6), sh[1] + (0.4 if near else -0.6))
+            px, py, ma, flat = legs[key]
+            parts, J = _leg_cells(top, (px, py), ma, FORE, "fore", near)
+            parts["upper"] = {c for c in parts["upper"] if g[c[1]][c[0]] in ".gKnNdD"} if near else set()
+            _draw_leg(g, parts, J, True, 1, flat)
+    fx = P.get("fx")
+    if fx:
+        effects(g, fx, frame)
+    _seal(g)
+    rows = ["".join(r) for r in g]
+    if left:
+        rows = [r[::-1] for r in rows]
+    return rows
+
+
+# ---- zenko19 wardrobe: seasonal kimono, festival yukata, exam-season sailor uniform ------------------------------
+# Palette keys used only by clothes: a (cloth), c (cloth shade), f (motif), u (second motif), h (collar / blouse),
+# i (obi / scarf), r (obi cord).
+ROBES = {
+    "kimono_spring": {"name": "Spring kimono (sakura)", "hours": 3, "motif": "sakura",
+                      "a": "#e3a3bd", "c": "#bf7896", "f": "#fff3f7", "u": "#f7cddd", "h": "#fff8ee", "i": "#b8323f", "r": "#e0b43a"},
+    "kimono_summer": {"name": "Summer kimono (ro silk)", "hours": 3, "motif": "water",
+                      "a": "#86b9c8", "c": "#5a8ea2", "f": "#eef8fb", "u": "#bfe2ea", "h": "#fff8ee", "i": "#2d4f7a", "r": "#e0b43a"},
+    "kimono_autumn": {"name": "Autumn kimono (momiji)", "hours": 3, "motif": "maple",
+                      "a": "#b04a33", "c": "#7c2e21", "f": "#f2b13a", "u": "#e6763a", "h": "#f5e6cf", "i": "#2f5e4a", "r": "#e0b43a"},
+    "kimono_winter": {"name": "Winter kimono (yuki)", "hours": 3, "motif": "snow",
+                      "a": "#3d4280", "c": "#282b58", "f": "#f4f7ff", "u": "#a9bbec", "h": "#ffffff", "i": "#a83250", "r": "#e0b43a"},
+    "yukata": {"name": "Festival yukata", "hours": 10, "motif": "asagao",
+               "a": "#2e4288", "c": "#1e2c62", "f": "#ffffff", "u": "#ff9cc0", "h": "#fff8ee", "i": "#f2c94c", "r": "#e2583a"},
+    "uniform": {"name": "Exam-season sailor uniform", "hours": 20, "motif": "sailor",
+                "a": "#26324f", "c": "#18203a", "f": "#ffffff", "u": "#dfe3f0", "h": "#f6f6fb", "i": "#c8283c", "r": "#8e1a2a"},
+}
+OUTFIT_BODY = tuple(ROBES)
+_ROBE_FUR = set("lLOODdWCSsk")
+
+
+def _robe_of(acc):
+    for a in acc:
+        if a in ROBES:
+            return a
+    return None
+
+
+def _motif(x, y, motif):
+    """Small repeating pattern on the cloth: returns a palette key or None."""
+    if motif == "sailor":
+        return None
+    a, b = (x * 7 + y * 13) % 23, (x + 2 * y) % 9
+    if motif == "sakura":                         # five-dot blossoms
+        return "f" if a == 0 else ("u" if a in (1, 22) else None)
+    if motif == "maple":
+        return "f" if a == 0 else ("u" if a in (5, 11) and b < 3 else None)
+    if motif == "snow":
+        return "f" if a in (0, 12) and b % 2 == 0 else None
+    if motif == "water":                          # flowing lines
+        return "f" if (x + int(2.5 * _m.sin(y * 0.7))) % 7 == 0 else None
+    if motif == "asagao":                         # morning glories in white and pink
+        return "f" if a == 0 else ("u" if a == 11 else None)
+    return None
+
+
+def robe_sit(g, acc):
+    """Dress the sitting (front-facing) body. The ema plaque hides the middle, so what shows is the collar,
+    the shoulders and chest, the sleeves on her front legs and the skirt at her hips."""
+    rb = _robe_of(acc)
+    if not rb:
+        return
+    motif = ROBES[rb]["motif"]
+    for y in range(40, 76):
+        row = g[y]
+        for x in range(8, 64):
+            ch = row[x]
+            if ch not in _ROBE_FUR or ch == "k":
+                continue
+            if motif == "sailor":
+                row[x] = "h" if y < 56 else ("a" if (y + x) % 9 else "c")      # white blouse, navy pleated skirt
+                continue
+            side = abs(x + 0.5 - CX) / 16.0
+            row[x] = _motif(x, y, motif) or ("c" if side > 0.78 or y > 72 else "a")
+    # sleeves hanging on both sides of the plaque (long furisode-style for the robes, short white ones for the uniform)
+    long_ = motif != "sailor"
+    pts = [(23.0, 45.0), (16.5, 47.0), (12.5, 53.0), (12.0, 66.5 if long_ else 57.5), (14.5, 69.0 if long_ else 60.0),
+           (19.5, 69.0 if long_ else 60.0), (21.0, 52.0)]
+    for sgn in (-1, 1):
+        P = pts if sgn < 0 else [(2 * CX - x, y) for (x, y) in pts]
+        cells = {c for c in _poly(P) if g[c[1]][c[0]] not in "wojnN"}
+        if long_:
+            col = lambda x, y: _motif(x, y, motif) or ("c" if y >= 67 or abs(x + 0.5 - CX) > 21.5 else "a")
+        else:
+            col = lambda x, y: "a" if y >= 58 else ("f" if y == 57 else "h")
+        _paint(g, cells, col, "K", over=".gLODdlWCk")
+    if motif == "sailor":
+        # the big square sailor collar over her shoulders, two white stripes, and a red scarf knot under the bell
+        for x in range(22, 51):
+            for y in range(44, 50):
+                d = abs(x + 0.5 - CX)
+                if y - 44 > (d - 8) * 0.9 and g[y][x] in "hK":
+                    edge = y == 49 or d > 13.2
+                    g[y][x] = "f" if (y == 46 and d > 3) or (abs(d - 12.0) < 0.6) else ("K" if edge and g[y][x] == "K" else "a")
+        _stamp(g, 32, 50, ["KiiiiiiK", ".KiriiK.", "..KiiK..", ".KiK.iK.", "Kii..iiK", "KK....KK"])
+    else:
+        # the eri: two collar bands crossing left over right into a V, the under-collar showing inside
+        for t in range(0, 12):
+            for w in range(3):
+                put(g, int(27 + t * 0.75) + w, 44 + t, "h" if w < 2 else "K")
+                put(g, int(45 - t * 0.75) - w, 44 + t, "h" if w < 2 else "c")
+        # a little obi knot peeking out above the plaque's roof
+        _stamp(g, 33, 51, ["KiiiiK", "KirriK"])
+
+
+def robe_rig(g, body, H, S, rb):
+    """Dress the side-view body: cloth over the torso, an obi round the waist, collar at the neck."""
+    motif = ROBES[rb]["motif"]
+    L = _m.hypot(S[0] - H[0], S[1] - H[1]) or 1.0
+    for (x, y) in body:
+        if g[y][x] not in _ROBE_FUR:
+            continue
+        bx, by_ = x + 0.5 - H[0], y + 0.5 - H[1]
+        u = (bx * (S[0] - H[0]) + by_ * (S[1] - H[1])) / (L * L)
+        v = (-bx * (S[1] - H[1]) + by_ * (S[0] - H[0])) / L
+        if motif == "sailor":
+            if u > 0.70 and v < -1.0:
+                ch = "f" if abs(v + 3.0) < 0.5 else "a"              # the collar flap on her back
+            elif u < 0.36:
+                ch = "a" if (x + y) % 9 else "c"                      # pleated skirt over the haunch
+            else:
+                ch = "h"
+            if u > 1.0 and -1.5 < v < 3.5:
+                ch = "i"                                              # red scarf at the chest
+        else:
+            if 0.40 < u < 0.60:
+                ch = "r" if abs(u - 0.50) < 0.025 else "i"            # obi with its cord
+            elif u > 1.05 and v < 2.5:
+                ch = "h" if v > -1.5 else "a"                         # collar at the front of the neck
+            else:
+                ch = _motif(x, y, motif) or ("c" if v > 5.5 else "a")
+        g[y][x] = ch
+
+
+# ---- the walk ------------------------------------------------------------------------------------------------------
+def _walk_leg(ph, offset, base_x, stride, duty, lift_h, kind):
+    """Paw (x, y, metapodial angle, flat) for one leg at gait phase ph."""
+    s = (ph - offset) % 1.0
+    if s < duty:                                   # stance: the paw is planted and the body passes over it
+        u = s / duty
+        x = base_x + stride * (0.5 - u)
+        ang = (14.0 if kind == "fore" else 8.0) - (28.0 if kind == "fore" else 24.0) * u * u   # rolls onto the toes
+        return x, RIG_GROUND - 0.6, ang, True
+    u = (s - duty) / (1.0 - duty)                  # swing: lift, fold the paw back, reach forward
+    x = base_x + stride * (-0.5 + u * u * (3 - 2 * u))
+    lift = lift_h * _m.sin(_m.pi * u) ** 0.8
+    if kind == "fore":
+        ang = -70.0 * _m.sin(_m.pi * min(1.0, u * 1.25))           # carpus flexes: the paw flips back under
+    else:
+        ang = -45.0 * _m.sin(_m.pi * min(1.0, u * 1.15))          # hock flexes as the hind paw comes forward
+    return x, RIG_GROUND - 0.6 - lift, ang, u > 0.88
+
+
+def walk_rig_pose(frame, frames=8, hop=1.0, look="open", XO=0.0):
+    """The canine lateral-sequence walk (LH, LF, RH, RF), with a little extra spring - 'pep in her step'."""
+    ph = (frame % frames) / float(frames)
+    duty = 0.62
+    # a small hop twice per cycle, timed with each hind push-off (her bouncy, happy walk)
+    bounce = hop * 1.6 * max(0.0, _m.sin(2 * _m.pi * (2 * ph - 0.10)))
+    roll = 0.6 * _m.sin(2 * _m.pi * 2 * ph + 1.2)
+    H = (44.0 + XO, 50.2 - bounce + roll * 0.4)
+    S = (71.0 + XO, 50.8 - bounce - roll * 0.4)
+    legs = {
+        "lh": _walk_leg(ph, 0.00, 45.5 + XO, 12.0, duty, 3.6 + hop, "hind"),
+        "lf": _walk_leg(ph, 0.25, 72.5 + XO, 12.0, duty, 3.6 + hop, "fore"),
+        "rh": _walk_leg(ph, 0.50, 44.0 + XO, 12.0, duty, 3.6 + hop, "hind"),
+        "rf": _walk_leg(ph, 0.75, 71.0 + XO, 12.0, duty, 3.6 + hop, "fore"),
+    }
+    nod = 0.8 * _m.sin(2 * _m.pi * 2 * ph + 2.2)
+    return {"H": H, "S": S, "legs": legs, "tail": (166.0 + 5 * _m.sin(2 * _m.pi * ph), 4.0, 32.0, 0.0),
+            "head": {"dx": 0, "dy": nod - bounce * 0.3, "look": look, "mouth": "grin" if look == "happy" else "flat"}}
+
+
+
+
+# ---- poses (all built on the same skeleton) --------------------------------------------------------------------------
+def _pl(x, y=None, ang=8.0, flat=True):
+    return (x, RIG_GROUND - 0.6 if y is None else y, ang, flat)
+
+
+def rig_pose(name, frame=0, frames=8):
+    """Named poses. Researched from red-fox reference: the play bow and the front stretch put the elbows and
+    forearms on the ground with the rump high; the back stretch reaches one hind leg straight out behind; lying
+    'sphinx' folds the hind legs under the haunch with the metatarsals flat; the mousing pounce is a crouch,
+    a rear onto the hind legs, a ~40 degree leap, and a front-paws-first landing."""
+    ph = (frame % frames) / float(frames)
+    w = _m.sin(2 * _m.pi * ph)
+    X = 0.0
+    if name == "stand":
+        return {"H": (44.0, 50.2), "S": (71.0, 50.8),
+                "legs": {"lh": _pl(46.5), "lf": _pl(74.0, ang=10), "rh": _pl(43.0), "rf": _pl(71.0, ang=10)},
+                "tail": (170.0, 3.0, 31.0, 0.0), "head": {"look": "open"}}
+    if name == "stretch_front":                 # 'downward dog': forearms flat out in front, rump up, a big yawn
+        return {"H": (42.0, 47.0), "S": (70.0, 62.0),
+                "legs": {"lh": _pl(45.0, ang=4), "rh": _pl(42.5, ang=4),
+                         "lf": _pl(92.0, ang=88.0), "rf": _pl(86.0, ang=88.0)}, "paws_front": True,
+                "tail": (138.0, 2.0, 30.0, 0.0),
+                "head": {"dy": 3.0, "dx": 9.0, "look": "blink", "mouth": "open", "ear": 1}}
+    if name == "playbow":                       # the play invitation: same bow, head up, tail swishing
+        return {"H": (42.0, 47.0 - 0.5 * w), "S": (70.0, 61.0),
+                "legs": {"lh": _pl(45.0, ang=4), "rh": _pl(42.5, ang=4),
+                         "lf": _pl(92.0, ang=88.0), "rf": _pl(86.0, ang=88.0)}, "paws_front": True,
+                "tail": (128.0, 14.0, 30.0, 0.0), "fx": "spark" if frame % 4 < 2 else None,
+                "head": {"dy": 0.0, "dx": 8.0, "look": "happy", "mouth": "grin"}}
+    if name == "stretch_back":                  # leaning forward on straight forelegs, one hind leg stretched back
+        return {"H": (42.0, 53.0), "S": (70.0, 49.0),
+                "legs": {"lh": _pl(41.0, ang=2), "rh": (22.0, 71.5, -78.0, False),
+                         "lf": _pl(70.0, ang=-6), "rf": _pl(67.5, ang=-6)},
+                "tail": (176.0, 2.0, 31.0, 0.0),
+                "head": {"dy": 1.0, "look": "blink", "mouth": "flat"}}
+    if name == "lie":                           # sphinx: hind legs folded under, forearms out in front
+        b = 0.4 * w                             # slow breathing
+        return {"H": (40.0, 63.5 - b), "S": (68.0, 62.0 - b), "torso": _TORSO_LIE, "shadow": True,
+                "legs": {"lh": _pl(53.0, ang=84.0), "rh": _pl(51.0, ang=84.0),
+                         "lf": _pl(92.0, ang=88.0), "rf": _pl(86.0, ang=88.0)}, "paws_front": True,
+                "tail": (186.0, 2.0, 30.0, -3.0),
+                "head": {"dy": 2.0, "dx": 9.0, "look": "open" if frame % 8 else "blink"}}
+    if name == "doze":                          # lying, eyes closed
+        P = rig_pose("lie", frame, frames)
+        P["head"]["look"] = "sleep"
+        return P
+    if name == "crouch":                        # mousing: low, still, ears forward, staring at the spot
+        k = 0.6 * w
+        return {"H": (42.0, 55.5 + k * 0.3), "S": (70.0, 57.5),
+                "legs": {"lh": _pl(47.0, ang=40), "rh": _pl(45.0, ang=40), "lf": _pl(76.0, ang=30), "rf": _pl(74.0, ang=30)},
+                "tail": (182.0 + 4 * w, 1.0, 31.0, -2.0),
+                "head": {"dy": 2.0, "dx": 2.0, "look": "focus", "ly": 1}}
+    if name == "rear":                          # rearing onto the hind legs, knees bent, about to spring
+        return {"H": (44.0, 54.0), "S": (66.0, 43.0),
+                "legs": {"lh": _pl(46.0, ang=30), "rh": _pl(44.0, ang=30),
+                         "lf": (70.0, 58.0, -60.0, False), "rf": (68.0, 59.0, -60.0, False)},
+                "tail": (196.0, 2.0, 31.0, 0.0),
+                "head": {"dy": 2.0, "dx": -2.0, "look": "focus", "ly": 1}}
+    if name == "leap":                          # mid-air at the top of the arc: legs tucked, nose starting to dip
+        return {"H": (42.0, 47.0), "S": (70.0, 50.0), "shadow": False,
+                "legs": {"lh": (37.0, 66.0, -50.0, False), "rh": (35.0, 66.0, -50.0, False),
+                         "lf": (78.0, 63.0, -40.0, False), "rf": (76.0, 64.0, -40.0, False)},
+                "tail": (172.0, 2.0, 31.0, 4.0),
+                "head": {"dy": 2.0, "look": "focus", "ly": 1}}
+    if name == "dive":                          # coming down front paws first
+        return {"H": (40.0, 44.0), "S": (66.0, 56.0), "shadow": False,
+                "legs": {"lh": (28.0, 52.0, -70.0, False), "rh": (26.0, 53.0, -70.0, False),
+                         "lf": _pl(80.0, 72.0, 30.0), "rf": _pl(78.0, 72.0, 30.0)},
+                "tail": (150.0, 2.0, 31.0, 0.0),
+                "head": {"dy": 2.0, "dx": 7.0, "look": "angry", "mouth": "open"}, "paws_front": True}
+    if name == "land":                          # front paws pinned together, nose down, rump up
+        return {"H": (42.0, 48.0), "S": (70.0, 61.0),
+                "legs": {"lh": _pl(46.0, ang=6), "rh": _pl(44.0, ang=6), "lf": _pl(90.0, ang=60), "rf": _pl(85.0, ang=60)},
+                "tail": (140.0, 6.0, 30.0, 0.0), "paws_front": True,
+                "head": {"dy": 3.0, "dx": 8.0, "look": "happy", "mouth": "grin"}}
+    if name == "sniff":                         # nose to the ground, slow walk
+        P = walk_rig_pose(frame, frames, hop=0.0)
+        P["head"].update(dy=P["head"]["dy"] + 4.0, dx=2.0, ly=1, look="open")
+        P["tail"] = (182.0, 3.0, 31.0, -2.0)
+        return P
+    if name == "shake":                         # a whole-body shake-off after the nap
+        P = rig_pose("stand")
+        s = 1 if frame % 2 else -1
+        P["head"] = {"dx": 1.5 * s, "look": "happy", "mouth": "flat"}
+        P["tail"] = (165.0 + 12 * s, 0.0, 31.0, 0.0)
+        P["fx"] = "spark"
+        return P
+    return rig_pose("stand")
+
+
+_TORSO_LIE = [(u, v + (1.6 if v > 0 else 0.0)) for (u, v) in _TORSO]
+
+
+def rig_rows(state, n=3, acc=()):
+    """'qwalkR3' (walking, frame 3) or 'rigL:stretch_front:0' (a pose, facing left, frame 0) -> sprite rows."""
+    acc = tuple(a for a in acc if a in OUTFIT_BODY or a in ("flower", "bow", "crown", "headband", "mask", "glasses"))
+    if state.startswith("qwalk"):
+        left = state[5] == "L"
+        try:
+            fr = int(state[6:])
+        except ValueError:
+            fr = 0
+        return build_rig(walk_rig_pose(fr), n, fr, 8, acc, left)
+    try:
+        head, name, fr = state.split(":")
+        fr = int(fr)
+    except ValueError:
+        head, name, fr = "rigR", "stand", 0
+    left = head.endswith("L")
+    if name == "walk":
+        return build_rig(walk_rig_pose(fr), n, fr, 8, acc, left)
+    return build_rig(rig_pose(name, fr), n, fr, 8, acc, left)
+
+
 def build_curl(frame=0, acc=(), n=3):
     """Curled up asleep (when you're away): round body, head on her paws, tails wrapped round like a blanket."""
     g = blank()
@@ -1081,7 +1681,9 @@ _PAL_BASE = {".": None, "H": "#ffffff", "Y": "#ffe58a", "T": "#8fd8ff", "V": "#f
              "X": "#f2c94c", "J": "#a8781a", "x": "#fff3b8", "g": "#1b1626", "R": "#8e2f3b",
              "w": "#f6e2b8", "o": "#dcb27a", "j": "#9c6b3c", "b": "#3a2214",
              "1": "#ffb7cf", "2": "#e85a8a", "5": "#fbfbff", "6": "#d6283c",
-             "7": "#2b3f86", "8": "#4a6cc4", "9": "#dfe8ff"}             # gym towel: an indigo tenugui
+             "7": "#2b3f86", "8": "#4a6cc4", "9": "#dfe8ff",            # gym towel: an indigo tenugui
+             # zenko19 clothes (replaced by the robe she wears, see ROBES)
+             "a": "#e3a3bd", "c": "#bf7896", "f": "#fff3f7", "u": "#f7cddd", "h": "#fff8ee", "i": "#b8323f", "r": "#e0b43a"}
 
 
 def _fur(**kw):
@@ -7945,6 +8547,11 @@ class ZenkoExtras:
         label(c, "Liveliness")
         radios(c, (("Calm", "calm"), ("Normal", "normal"), ("Lively", "lively")), "idle_lively", "normal")
         tk.Frame(c, bg=bg, height=6).pack()
+        if hasattr(self, "z19_customize"):
+            try:
+                self.z19_customize(rcol2)
+            except Exception as ex:
+                zk_log_error("wardrobe card: %r" % (ex,))
         c = self.hub_card(rcol2, "Start over")
         c.pack(fill="x", pady=(12, 0))
 
@@ -8014,7 +8621,7 @@ class ZenkoExtras:
             return
         if h.get("page") == "customize" and self._pose:
             p = self._pose
-            if str(p.get("state", "")).startswith("qwalk"):
+            if str(p.get("state", "")).startswith(("qwalk", "rig")):
                 p = dict(p, state="idle", dyf=0, dxf=0)          # the preview shows her sitting while she walks about
             z = self.cz_zoom
             cache = self.cz_cache
@@ -20325,8 +20932,17 @@ class FoxBuddy(ZenkoGym, ZenkoBooks, ZenkoStudy, ZenkoLife, ZenkoExtras):
         return n
 
     def get_image(self, state, tail, frame, look=(0, 0, 0, 0), acc=(), hx=0, ear=0):
-        if state.startswith("qwalk"):
-            key = (state, self.tail_count())
+        if state.startswith(("qwalk", "rig")):
+            key = (state, self.tail_count(), acc)
+            img = self.images.get(key)
+            if img is None:
+                if len(self.images) > 360:
+                    self.images = {}
+                img = sprite_photo([rig_rows(state, self.tail_count(), acc)], self.pal, self.Z)
+                self.images[key] = img
+            return img
+        if False:
+            pass
         else:
             key = ("curl", frame, acc, self.tail_count()) if state == "curl" else (state, frame, look, acc, hx, ear)
         img = self.images.get(key)
@@ -20502,10 +21118,11 @@ class FoxBuddy(ZenkoGym, ZenkoBooks, ZenkoStudy, ZenkoLife, ZenkoExtras):
         dx += st.get("dxf", 0) * Z
         dy += st.get("dyf", 0) * Z
         c = self.canvas
-        walking = state.startswith("qwalk")
+        walking = state.startswith(("qwalk", "rig"))
         if walking:
-            c.itemconfigure(self.tail_item, state="hidden")      # her tails are part of the walking picture
-            c.itemconfigure(self.fox_item, image=self.get_image(state, "up", 0))
+            c.itemconfigure(self.tail_item, state="hidden",      # her tails are part of the walking picture
+                            image=self.get_tails(self.tail_count(), 0))  # (always a live image, even after a look change)
+            c.itemconfigure(self.fox_item, image=self.get_image(state, "up", 0, acc=acc))
             c.coords(self.fox_item, self.COLW + dx, self.fox_y + dy)
             if self._belly_key is not None:                      # the ema timer is set down while she walks
                 c.delete("belly")
@@ -22821,7 +23438,7 @@ class FoxBuddy(ZenkoGym, ZenkoBooks, ZenkoStudy, ZenkoLife, ZenkoExtras):
         # --- drifting particles: snow, sakura petals, fireflies, embers or star-dust
         style = PARTICLES.get(self.cfg.get("theme", "snow"), "snow")
         col = {"snow": "#e6eeff", "petals": "#ffb8d6", "stars": GOLD, "fireflies": _mixhex(GOLD, GLOW, 0.3),
-               "embers": ORANGE}[style]
+               "embers": ORANGE, "leaves": "#d9703a", "rain": "#9fb8e8"}.get(style, "#e6eeff")
         if h.get("pstyle") != style:
             cv.delete("flake")
             h["flakes"], h["pstyle"] = [], style
@@ -22846,16 +23463,21 @@ class FoxBuddy(ZenkoGym, ZenkoBooks, ZenkoStudy, ZenkoLife, ZenkoExtras):
                     if style == "fireflies":
                         x += 0.35 * math.sin(ph * 0.7)
                         y -= 0.18 * v
+                elif style == "rain":
+                    y += 5.5 + 2.5 * v
                 else:
-                    y += v * (1 if style in ("snow", "petals") else -1) * (0.55 if style == "petals" else 0.9)
-                    x += (0.45 if style == "petals" else 0.2) * math.sin(ph)
+                    y += v * (1 if style in ("snow", "petals", "leaves") else -1) * (0.55 if style in ("petals", "leaves") else 0.9)
+                    x += (0.45 if style in ("petals", "leaves") else 0.2) * math.sin(ph)
                 if y > Hh + 6:
                     y, x = -6, random.uniform(0, W)
                 elif y < -6:
                     y, x = Hh + 6, random.uniform(0, W)
                 f[1], f[2], f[4] = x, y, ph
-                w_ = sz + (1 if style == "petals" and int(ph * 2) % 2 else 0)
-                cv.coords(it, x, y, x + w_, y + sz)
+                w_ = sz + (1 if style in ("petals", "leaves") and int(ph * 2) % 2 else 0)
+                if style == "rain":
+                    cv.coords(it, x, y, x + 1, y + 3 * sz)
+                else:
+                    cv.coords(it, x, y, x + w_, y + sz)
             cv.tag_raise("flake")
         # --- the menu pill glides to the chosen item
         if h.get("pill_to") is not None and h.get("pill_y") is not None and abs(h["pill_to"] - h["pill_y"]) > 0.5:
@@ -36527,6 +37149,1092 @@ class Zenko(FoxBuddy):
 
 
 
+
+# =====================================================================================================================
+#  zenko19: a living shrine. Real fox poses + a new four-legged walk, outfits for the seasons, a sky that follows the
+#  clock (very gently), seasonal touches, pixel-art menu icons, a living sidebar fox, soft page transitions, a dim
+#  foxfire focus glow in the window frame, a quiet Settings navigation bar, and her own voice for study alerts.
+# =====================================================================================================================
+def z19_daypart(dt=None):
+    """('dawn' | 'day' | 'dusk' | 'night', how far into it 0..1)."""
+    dt = dt or datetime.datetime.now()
+    h = dt.hour + dt.minute / 60.0
+    if 5.0 <= h < 7.5:
+        return "dawn", (h - 5.0) / 2.5
+    if 7.5 <= h < 17.0:
+        return "day", (h - 7.5) / 9.5
+    if 17.0 <= h < 19.5:
+        return "dusk", (h - 17.0) / 2.5
+    return "night", 0.0
+
+
+# Sky tints: always a deep, dusky colour, never a bright daytime blue. (top colour, horizon colour, strength)
+Z19_SKY = {
+    "dawn": ("#3a3466", "#a8707a", 0.30),     # violet with a rose horizon
+    "day": ("#2c4a74", "#5f8a8c", 0.30),      # deep twilight blue with a muted jade horizon: vivid but soft
+    "dusk": ("#3d2e5c", "#b8704a", 0.32),     # plum with an ember horizon
+    "night": (None, None, 0.0),
+}
+
+
+def z19_sky(top, bot, part=None):
+    part = part or z19_daypart()[0]
+    t, b, k = Z19_SKY.get(part, Z19_SKY["night"])
+    if not t:
+        return top, bot
+    return _mixhex(top, t, k), _mixhex(bot, b, k * 1.1)
+
+
+def z19_season(d=None):
+    m = (d or datetime.date.today()).month
+    return "winter" if m in (12, 1, 2) else ("spring" if m in (3, 4, 5) else ("summer" if m in (6, 7, 8) else "autumn"))
+
+
+# ---- pixel-art menu icons (11 x 11). # gold, + gold shade, * gold light, r vermilion, w cream, g moss, b indigo -----
+Z19_ICONS = {
+    "home": ["rrrrrrrrrrr", ".*rrrrrrr*.", "..r.....r..", ".rrrrrrrrr.", "..r..#..r..", "..r.....r..", "..r.....r..",
+             "..r.....r..", "..r.....r..", ".+++...+++.", "..........."],
+    "timetable": ["..+++++++..", ".+*#####*+.", "..wwwwwww..", "..w+w+w+w..", "..wwwwwww..", "..w+w+w+w..", "..wwwwwww..",
+                  "..w+w+r+w..", "..wwwwwww..", ".+*#####*+.", "..+++++++.."],
+    "deadlines": ["###########", ".+*******+.", "..+wwwww+..", "...+www+...", "....+w+....", "....+r+....", "...+.r.+...",
+                  "..+..r..+..", ".+.rrrrr.+.", "###########", "..........."],
+    "reminders": [".....r.....", "....r.r....", "...+###+...", "..+#***#+..", ".+#wwwww#+.", ".#wwwwwww#.", ".#ww+++ww#.",
+                  ".#wwwwwww#.", ".#ww++www#.", ".#########.", "....r.r...."],
+    "notebook": ["...........", ".###...###.", "#*ww#.#ww*#", "#ww+w#w+ww#", "#wwww#wwww#", "#ww+w#w+ww#", "#wwww#wwww#",
+                 "#ww+w#w+ww#", "#####+#####", ".....r.....", ".....r....."],
+    "daily": [".....#.....", ".#...#...#.", "..#.***.#..", "...*###*...", "##*##r##*##", "...*###*...", "..#.***.#..",
+              ".#...#...#.", ".....#.....", "...........", "..........."],
+    "exercise": ["...........", "...........", ".++.....++.", "+##+...+##+", "+#*+###+*#+", "+##+###+##+", "+##+...+##+",
+                 ".++.....++.", "...........", "...........", "..........."],
+    "garden": ["....ggg....", "..ggggggg..", ".ggg*ggggg.", "..ggg.ggg..", ".....#.....", "....##.....", ".....##....",
+               "..rrrrrrr..", "..+rrrrr+..", "...+++++...", "..........."],
+    "map": ["....###....", "..#+...+#..", ".#...r...#.", ".+...r...+.", "#...r*r...#", "#....*....#", "#...w*w...#",
+            ".+...w...+.", ".#...w...#.", "..#+...+#..", "....###...."],
+    "screen": ["###########", "#bbbbbbbbb#", "#b*bbbbbbb#", "#bb*bbbbbb#", "#bbbbbbbbb#", "#bbbbbbbbb#", "###########",
+               "....+#+....", "...+###+...", "..+++++++..", "..........."],
+    "chat": ["..#######..", ".#wwwwwww#.", "#wwwwwwwww#", "#ww+w+w+ww#", "#wwwwwwwww#", ".#wwwwwww#.", "..##w####..",
+             "...#w#.....", "...##......", "...........", "..........."],
+    "notes": [".........##", "........#*#", ".......#*#.", "......#*#..", ".....#*#...", "....+#+....", "...+++.....",
+              "..rrr......", ".rrr.......", ".rr........", "r.........."],
+    "you": ["#.........#", "##.......##", "#r#.....#r#", "#ww#####ww#", "#wwwwwwwww#", "#wrrwwwrrw#", "#wwwwwwwww#",
+            ".#www+www#.", "..#wwrww#..", "...#####...", "..........."],
+    "customize": ["...........", "..+#####+..", ".+#*#*#*#+.", "+#r#r#r#r#+", "+#w#w#w#w#+", ".+#w#w#w#+.", "..+#w#w#+..",
+                  "...+#w#+...", "....+#+....", ".....#.....", "..........."],
+    "settings": ["....#.#....", "..#.###.#..", "...#####...", ".####+####.", "..##+++##..", "###++*++###", "..##+++##..",
+                 ".####+####.", "...#####...", "..#.###.#..", "....#.#...."],
+}
+
+
+def z19_icon_pal(state, base):
+    """Palette for the icons: full gold when the page is open, softly faded into the night otherwise."""
+    pal = {"#": GOLD, "+": _mixhex(GOLD, "#000000", 0.42), "*": _mixhex(GOLD, "#ffffff", 0.5), "r": "#d9483c",
+           "w": "#f3e6cc", "g": "#5fae7a", "b": "#3b5a8a", ".": None}
+    fade = {"on": 0.0, "hover": 0.22, "off": 0.48}[state]
+    return dict((k, (_mixhex(v, base, fade) if v else None)) for k, v in pal.items())
+
+
+# ---- small props for the sitting fox in the sidebar (a book, dumbbells) ----------------------------------------------
+_Z19_BOOK = ["..KKKKKKKKK..KKKKKKKKK..", ".KwwwwwwwwwKKwwwwwwwwwK.", "KwwbbbbbwwwKwwbbbbbwwwwK",
+             "KwwwwwwwwwwKwwwwwwwwwwwK", "KwwbbbbwwwwKwwbbbbbbwwwK", "KwwwwwwwwwwKwwwwwwwwwwwK",
+             "KwwbbbbbbwwKwwbbbwwwwwwK", "KwwwwwwwwwwKwwwwwwwwwwwK", "KoooooooooooKoooooooooooK", ".KKKKKKKKKKK.KKKKKKKKKKK."]
+_Z19_BOOK2 = ["..KKKKKKKKK..KKKKKK.....", ".KwwwwwwwwwKKwwwwwwKK...", "KwwbbbbbwwwKwwbbbwwwwK..",
+              "KwwwwwwwwwwKwwwwwwwwwwK.", "KwwbbbbwwwwKwwbbbbbwwwwK", "KwwwwwwwwwwKwwwwwwwwwwwK",
+              "KwwbbbbbbwwKwwbbbwwwwwwK", "KwwwwwwwwwwKwwwwwwwwwwwK", "KoooooooooooKoooooooooooK", ".KKKKKKKKKKK.KKKKKKKKKKK."]
+_Z19_BELL = ["KKK.....KKK", "KGK.....KGK", "KEKKKKKKKEK", "KEGGGGGGGEK", "KGK.....KGK", "KKK.....KKK"]
+
+
+def z19_sit_extra(rows, kind, frame=0):
+    g = [list(r) for r in rows]
+    if kind == "read":
+        _stamp(g, 24, 50 + (frame % 2 == 0), _Z19_BOOK if frame % 4 else _Z19_BOOK2)
+    elif kind == "lift":
+        up = frame % 2
+        _stamp(g, 25, 49 - 5 * up, _Z19_BELL)
+        _stamp(g, 36, 49 - 5 * (1 - up), _Z19_BELL)
+    elif kind == "zen":                                      # calm sparkles drifting up while she meditates
+        for i, (x, y) in enumerate(((10, 30), (62, 26), (66, 44), (6, 46))):
+            yy = y - (frame + i * 3) % 8
+            if (frame + i) % 3:
+                put(g, x, yy, "A")
+                put(g, x + 1, yy, "I")
+    return ["".join(r) for r in g]
+
+
+# ---- the garden follows the seasons and the time of day -----------------------------------------------------------
+_garden_scene_z18 = garden_scene
+
+
+def garden_scene(w, h, stage, growth, health, grove=0, seed=7, lit=False):
+    R, lay = _garden_scene_z18(w, h, stage, growth, health, grove, seed, lit)
+    try:
+        z19_garden_season(R, lay, w, h, seed)
+    except Exception as ex:
+        zk_log_error("garden season: %r" % (ex,))
+    return R, lay
+
+
+Z19_LOOK = {"season": True, "sky": True, "season_name": None, "part": None, "weather": None}
+
+
+def z19_garden_season(R, lay, w, h, seed):
+    if not (Z19_LOOK.get("season") or Z19_LOOK.get("sky")):
+        return
+    rnd = random.Random(seed + 19)
+    hy = int(lay.get("horizon", h // 2))
+    wall = int(lay.get("wall", hy * 0.7))
+    part = Z19_LOOK.get("part") or z19_daypart()[0]
+    season = Z19_LOOK.get("season_name") or z19_season()
+    # the sky above the wall takes the time of day, gently
+    if Z19_LOOK.get("sky") and part != "night":
+        top, bot, k = Z19_SKY[part]
+        t3, b3 = _hex_rgb(top), _hex_rgb(bot)
+        for y in range(0, max(1, wall)):
+            f = y / float(max(1, wall))
+            col = _lerp3(t3, b3, f)
+            for x in range(w):
+                r_, g_, b_ = R.get(x, y)
+                if b_ >= r_ and r_ + g_ + b_ < 430:                 # only the sky and the far hills, never the tree
+                    R.put(x, y, col, k * 0.9)
+    if not Z19_LOOK.get("season"):
+        return
+    wet = Z19_LOOK.get("weather") == "rain"
+    if season == "winter" or Z19_LOOK.get("weather") == "snow":
+        # snow on every upper edge (roof, wall top, rocks, lantern caps) and a light dusting on the gravel
+        snow = (232, 238, 255)
+        for x in range(w):
+            for y in range(hy, h):
+                if rnd.random() < 0.035:
+                    R.put(x, y, snow, 0.55)
+        for x in range(w):                                   # the wall's tiled roof gets a soft white cap
+            for yy, a in ((wall - 1, 0.65), (wall - 2, 0.35)):
+                r_, g_, b_ = R.get(x, yy)
+                if abs(r_ - b_) < 40 and abs(g_ - b_) < 40:          # grey roof tiles only (not the tree)
+                    R.put(x, yy, snow, a)
+    elif season == "spring":
+        for _ in range(int(w * h / 900)):
+            x, y = rnd.uniform(0, w), rnd.uniform(hy + 2, h - 2)
+            R.put(x, y, (255, 183, 213), 0.85)
+            if rnd.random() < 0.5:
+                R.put(x + 1, y, (255, 143, 191), 0.7)
+    elif season == "autumn":
+        for _ in range(int(w * h / 1300)):
+            x, y = rnd.uniform(0, w), rnd.uniform(hy + 2, h - 2)
+            c = rnd.choice(((214, 82, 44), (232, 132, 52), (190, 54, 40), (222, 160, 60)))
+            R.put(x, y, c, 0.9)
+            R.put(x + 1, y, c, 0.7)
+            R.put(x, y + 1, c, 0.6)
+    elif season == "summer":
+        for y in range(hy, h):                               # a deeper green in the moss
+            for x in range(0, w, 1):
+                r_, g_, b_ = R.get(x, y)
+                if g_ > r_ + 12 and g_ > b_:
+                    R.put(x, y, (r_, min(255, g_ + 10), b_), 1.0)
+    if wet:
+        for y in range(hy, h):
+            if y % 3:
+                continue
+            for x in range(w):
+                if rnd.random() < 0.02:
+                    R.put(x, y, (150, 180, 230), 0.5)
+
+
+class Zenko19(Zenko):
+    """zenko19 sits on top of everything else (main() runs Zenko19)."""
+    NAV_ICONS = {}                                           # the old one-colour icons are replaced by Z19_ICONS
+
+    POSE_DYF = {"rear": -2, "leap": -12, "dive": -5}
+    ROUTINES = {
+        "stretch": [("stand", 0.5), ("stretch_front", 1.9), ("stand", 0.35), ("stretch_back", 1.6), ("shake", 0.7)],
+        "playbow": [("stand", 0.3), ("playbow", 2.8), ("stand", 0.3)],
+        "pounce": [("stand", 0.3), ("crouch", 2.0), ("rear", 0.22), ("leap", 0.30), ("dive", 0.24), ("land", 1.4),
+                   ("shake", 0.6)],
+        "rest": [("stand", 0.4), ("lie", 6.0), ("doze", 14.0), ("lie", 2.0), ("stretch_front", 1.5), ("shake", 0.6)],
+        "sniff": [("sniff", 3.2), ("stand", 0.5)],
+    }
+    ROUTINE_WEIGHTS = (("stretch", 3), ("playbow", 2), ("pounce", 2), ("rest", 2), ("sniff", 1))
+
+    # ------------------------------------------------------------------------------------------------------------
+    #  fox poses on the desktop
+    # ------------------------------------------------------------------------------------------------------------
+    def z19_pose_start(self, name, say=True):
+        if name not in self.ROUTINES:
+            return False
+        try:
+            x = self.root.winfo_x() + self.COLW + self.FW // 2
+            left = x > self.root.winfo_screenwidth() * 0.5
+        except tk.TclError:
+            left = True
+        seq, t = [], time.monotonic()
+        for (p, d) in self.ROUTINES[name]:
+            if p == "doze":
+                d = random.uniform(10.0, 22.0)
+            seq.append((p, t, t + d))
+            t += d
+        self._z19_seq = {"name": name, "seq": seq, "left": left, "t0": time.monotonic()}
+        if say and name in ("stretch", "playbow") and random.random() < 0.5:
+            self.say(random.choice({"stretch": ["Nnnnh~ *big stretch*", "Fuwaa~ stretchy stretch~"],
+                                    "playbow": ["*play bow* Play with me~?", "Kon! *wiggles* Wanna play?"]}[name]), 3)
+        return True
+
+    def z19_pose_stop(self):
+        self._z19_seq = None
+
+    def z19_can_pose(self):
+        return bool(self.cfg.get("fox_poses", True) and not self.session and not self.brk and not self.lockin
+                    and not self.play and not self.sulk_until and not getattr(self, "roam", None) and not self.drag
+                    and not self.sleeping and self.current_mood() == "idle")
+
+    def z19_pose(self, now, st):
+        seq = getattr(self, "_z19_seq", None)
+        if seq is None:
+            nxt = getattr(self, "_z19_next", None)
+            if nxt is None:
+                self._z19_next = now + random.uniform(90, 200)
+                return st
+            if now >= nxt and self.z19_can_pose() and not str(st.get("state", "")).startswith(("qwalk", "rig")):
+                live = {"calm": 0.6, "lively": 1.6}.get(self.cfg.get("idle_lively", "normal"), 1.0)
+                self._z19_next = now + random.uniform(170, 420) / live
+                pool = [k for k, wgt in self.ROUTINE_WEIGHTS for _ in range(wgt)]
+                self.z19_pose_start(random.choice(pool))
+                seq = self._z19_seq
+            else:
+                return st
+        if (self.session or self.brk or self.lockin or self.play or self.drag or getattr(self, "roam", None)
+                or (self.mood_override and now < self.mood_until and self.mood_override not in ("idle", "happy"))):
+            self._z19_seq = None
+            return st
+        cur = None
+        for (p, a, b) in seq["seq"]:
+            if a <= now < b:
+                cur = (p, a, b)
+                break
+        if cur is None:
+            self._z19_seq = None
+            return st
+        p, a, b = cur
+        if p in ("playbow", "lie", "doze", "crouch", "sniff"):
+            fr = int((now - a) / (0.16 if p in ("playbow", "sniff", "crouch") else 0.5)) % 8
+        elif p == "shake":
+            fr = int((now - a) / 0.09) % 2
+        else:
+            fr = 0
+        dyf = self.POSE_DYF.get(p, 0)
+        try:
+            dyf = max(dyf, -int(self.fox_y / max(1, self.Z)))         # never leave the window
+        except Exception:
+            pass
+        st.update(state="rig%s:%s:%d" % ("L" if seq["left"] else "R", p, fr), hx=0, ear=0, look=(0, 0, 0, 0), dyf=dyf)
+        return st
+
+    def life_pose(self, now, st):
+        st = super().life_pose(now, st)
+        try:
+            st = self.z19_pose(now, st)
+        except Exception as ex:
+            self._z19_seq = None
+            zk_log_error("pose: %r" % (ex,))
+        return st
+
+    def walk_pose(self, now, d, fast=False):
+        """The new walk: a proper four-legged lateral-sequence walk with a little spring in her step."""
+        frame = int(now / (0.075 if fast else 0.10)) % 8
+        return {"state": "qwalk%s%d" % ("L" if d < 0 else "R", frame), "hx": 0, "ear": 0, "dyf": 0, "look": (0, 0, 0, 0)}
+
+    # ------------------------------------------------------------------------------------------------------------
+    #  wardrobe
+    # ------------------------------------------------------------------------------------------------------------
+    def z19_hours(self):
+        t, v = getattr(self, "_z19_hrs", (0.0, 0.0))
+        if time.monotonic() - t > 120:
+            try:
+                v = float(self.total_hours())
+            except Exception:
+                v = 0.0
+            self._z19_hrs = (time.monotonic(), v)
+        return v
+
+    def z19_exam_soon(self):
+        t, v = getattr(self, "_z19_exam", (0.0, False))
+        if time.monotonic() - t < 600:
+            return v
+        v = False
+        try:
+            now = datetime.datetime.now()
+            for d in load_deadlines():
+                if d.get("done"):
+                    continue
+                title = (d.get("title") or "").lower()
+                if d.get("kind") in ("Exam", "Quiz") or re.search(r"\b(exam|mya|mock|test|paper)\b", title):
+                    try:
+                        due = deadline_due(d)
+                    except Exception:
+                        continue
+                    if 0 <= (due - now).days <= 21:
+                        v = True
+                        break
+            if not v:
+                ed = datetime.date.fromisoformat(self.cfg.get("exam_date") or EXAM_DATE_DEFAULT)
+                v = 0 <= (ed - now.date()).days <= 30
+        except Exception:
+            pass
+        self._z19_exam = (time.monotonic(), v)
+        return v
+
+    def z19_robe_auto(self):
+        d = datetime.date.today()
+        if self.z19_exam_soon():
+            return "uniform"
+        if (7, 15) <= (d.month, d.day) <= (8, 31):
+            return "yukata"
+        return "kimono_" + z19_season(d)
+
+    def z19_robe(self):
+        mode = self.cfg.get("robe", "auto")
+        if mode in ("", "none", None):
+            return None
+        try:
+            if self.gym_look_on():
+                return None
+        except Exception:
+            pass
+        want = self.z19_robe_auto() if mode == "auto" else ("kimono_" + z19_season() if mode == "kimono" else mode)
+        if want not in ROBES:
+            return None
+        hrs = self.z19_hours()
+        if hrs < ROBES[want]["hours"]:
+            if mode == "auto":
+                k = "kimono_" + z19_season()
+                return k if hrs >= ROBES[k]["hours"] else None
+            return None
+        return want
+
+    def accessories(self):
+        acc = super().accessories()
+        try:
+            rb = self.z19_robe()
+        except Exception:
+            rb = None
+        if rb != getattr(self, "_robe_cur", None):
+            self._robe_cur = rb
+            self.apply_look()
+        return acc + (rb,) if rb else acc
+
+    def make_pal(self):
+        pal = super().make_pal()
+        rb = getattr(self, "_robe_cur", None)
+        if rb in ROBES:
+            pal.update((k, v) for k, v in ROBES[rb].items() if len(k) == 1)
+        return pal
+
+    # ------------------------------------------------------------------------------------------------------------
+    #  her own voice for study alerts and reminders
+    # ------------------------------------------------------------------------------------------------------------
+    def remind_aloud(self, text):
+        """zenko19: alerts like 'Heads up: Chemistry at 16:00 (in 5 min)' are said in her VOICEVOX voice. If VOICEVOX
+        isn't running she does her little recorded 'kon kon~' instead. The old Windows voice is only used when you pick
+        it in Settings."""
+        if not self.cfg.get("remind_aloud", True) or not IS_WIN or not SOUND.get("on", True):
+            return
+        mode = self.cfg.get("remind_voice", "zenko")
+        if mode == "english":
+            return super().remind_aloud(text)
+        if mode == "off":
+            return
+        t = md_plain(text or "")
+        t = re.sub(r"[“”\"*~_#]|Kon kon!?\s*", "", t).strip()
+        if not t:
+            return
+        sid = int(self.cfg.get("voicevox_speaker", 8) or 8)
+        model = self.cfg.get("llm_model")
+        vv = self.cfg.get("voice_clips") == "voicevox" or _JPS.get("alive")
+        if not vv or self.cfg.get("voice_muted"):
+            beep("hello")
+            return
+
+        def run():
+            ok = False
+            try:
+                jp = jp_translate(t, llm_model=model)
+                if jp:
+                    res = {"s": None}
+
+                    def got(secs):
+                        res["s"] = secs
+                        if secs >= 0:
+                            JPV["until"] = time.monotonic() + secs + 0.4
+                    JPV["said"] = time.monotonic()
+                    ok = bool(vv_speak(jp, sid, got))
+                    t0 = time.monotonic()
+                    while ok and res["s"] is None and time.monotonic() - t0 < 20:
+                        time.sleep(0.1)
+                    ok = ok and (res["s"] or -1) >= 0
+            except Exception as ex:
+                zk_log_error("remind voice: %r" % (ex,))
+                ok = False
+            if not ok:
+                JPV["said"] = 0.0
+                beep("hello")                                    # VOICEVOX is off: her own little voice clip
+        threading.Thread(target=run, daemon=True).start()
+
+    # ------------------------------------------------------------------------------------------------------------
+    #  hub: loop for sky changes and the focus glow
+    # ------------------------------------------------------------------------------------------------------------
+    def open_hub(self, page=None):
+        fresh = not (getattr(self, "hub", None) and self.hub["win"].winfo_exists())
+        super().open_hub(page)
+        if fresh and self.hub:
+            self._z19_part = z19_daypart()[0]
+            self.root.after(400, self.z19_hub_loop)
+
+    def z19_look_sync(self):
+        Z19_LOOK["sky"] = bool(self.cfg.get("sky_daynight", True))
+        Z19_LOOK["season"] = bool(self.cfg.get("sky_seasons", True))
+        try:
+            Z19_LOOK["weather"] = self.wx_kind() if self.wx.get("code") is not None else None
+        except Exception:
+            Z19_LOOK["weather"] = None
+
+    def z19_hub_loop(self):
+        h = getattr(self, "hub", None)
+        if not h or not h["win"].winfo_exists():
+            return
+        try:
+            self.z19_look_sync()
+            part = z19_daypart()[0]
+            sig = (part, z19_season(), Z19_LOOK["sky"], Z19_LOOK["season"], Z19_LOOK["weather"])
+            if sig != getattr(self, "_z19_sig", None):
+                first = getattr(self, "_z19_sig", None) is None
+                self._z19_sig = sig
+                if not first:
+                    self.hub_side_draw()
+                    ui = getattr(self, "garden_ui", None)
+                    if ui:
+                        ui["key"] = None
+                        self.garden_draw_later()
+            self.z19_glow()
+        except Exception as ex:
+            zk_log_error("z19 loop: %r" % (ex,))
+        h["win"].after(120, self.z19_hub_loop)
+
+    # ---- the focus glow lives only in the window's frame (the 11 px border), so it never covers anything ----------
+    def z19_glow(self):
+        h = self.hub
+        cv = h.get("border")
+        if cv is None:
+            return
+        try:
+            if not cv.winfo_exists():
+                return
+        except tk.TclError:
+            return
+        now = time.monotonic()
+        s = self.session
+        burst = getattr(self, "_z19_burst", None)
+        if not (s and self.cfg.get("focus_glow", True)) and not burst:
+            if cv.find_withtag("z19glow"):
+                cv.delete("z19glow")
+            return
+        W, H = cv.winfo_width(), cv.winfo_height()
+        B = self.BORDER
+        m = B / 2.0
+        L = [(W / 2.0, m), (W - m, m), (W - m, H - m), (m, H - m), (m, m), (W / 2.0, m)]
+        per = 2 * (W - 2 * m) + 2 * (H - 2 * m)
+        cv.delete("z19glow")
+        if s and self.cfg.get("focus_glow", True):
+            p = max(0.0, min(1.0, s["elapsed"] / max(1.0, float(s["planned"]))))
+            base = _mixhex(self.SHU, NIGHT, 0.35)
+            pulse = 0.5 + 0.5 * math.sin(now * 1.6)
+            col = _mixhex(base, GLOW, 0.30 + 0.06 * pulse) if not s.get("paused") else _mixhex(base, GREY, 0.25)
+            head = _mixhex(base, GLOW, 0.52 + 0.10 * pulse)
+            want = per * p
+            pts, run = [L[0]], 0.0
+            for a, b in zip(L, L[1:]):
+                seg = math.hypot(b[0] - a[0], b[1] - a[1])
+                if run + seg >= want:
+                    f = (want - run) / max(1e-6, seg)
+                    pts.append((a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f))
+                    break
+                pts.append(b)
+                run += seg
+            if len(pts) >= 2 and want > 1:
+                flat = [c for xy in pts for c in xy]
+                cv.create_line(*flat, fill=col, width=3, capstyle="round", joinstyle="round", tags="z19glow")
+                hx, hy = pts[-1]
+                cv.create_oval(hx - 2.5, hy - 2.5, hx + 2.5, hy + 2.5, fill=head, outline="", tags="z19glow")
+        if burst:
+            t = now - burst["t0"]
+            if t > 2.6:
+                self._z19_burst = None
+            else:
+                for (pos, sp, col, sz) in burst["petals"]:
+                    d = (pos + sp * t) % per
+                    run = 0.0
+                    for a, b in zip(L, L[1:]):
+                        seg = math.hypot(b[0] - a[0], b[1] - a[1])
+                        if run + seg >= d:
+                            f = (d - run) / max(1e-6, seg)
+                            x, y = a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f
+                            break
+                        run += seg
+                    else:
+                        x, y = L[0]
+                    fade = max(0.0, 1.0 - t / 2.6)
+                    c = _mixhex(_mixhex(self.SHU, NIGHT, 0.35), col, 0.85 * fade)
+                    j = 1.5 * math.sin(t * 9 + pos)
+                    cv.create_rectangle(x - sz + j, y - sz / 2, x + sz + j, y + sz / 2, fill=c, outline="", tags="z19glow")
+
+    def end_session(self, completed):
+        r = super().end_session(completed)
+        if completed and self.cfg.get("focus_glow", True):
+            try:
+                h = self.hub
+                cv = h.get("border") if h else None
+                if cv is not None:
+                    W, H = cv.winfo_width(), cv.winfo_height()
+                    per = 2 * (W + H)
+                    rnd = random.Random()
+                    self._z19_burst = {"t0": time.monotonic(), "petals": [
+                        (rnd.uniform(0, per), rnd.uniform(-160, 160), rnd.choice(("#ffb7d5", "#ff8fbf", "#fff0f6", GOLD)),
+                         rnd.choice((1.5, 2.0, 2.5))) for _ in range(46)]}
+            except Exception:
+                pass
+        return r
+
+    # ---- page transitions: a soft foxfire wisp sweeps across with the slide ------------------------------------
+    def hub_show(self, name):
+        h = getattr(self, "hub", None)
+        old = h.get("page") if h else None
+        r = super().hub_show(name)
+        if h and old and old != name and self.cfg.get("page_fx", True):
+            try:
+                order = [k for k, _ in h["navkeys"]]
+                d = 1 if (name in order and old in order and order.index(name) > order.index(old)) else -1
+                self.z19_wisp(d)
+            except Exception:
+                pass
+        return r
+
+    def z19_wisp(self, direction):
+        h = self.hub
+        main = h["main"]
+        W, H = main.winfo_width(), main.winfo_height()
+        if W < 100 or H < 100:
+            return
+        old = h.get("wisp")
+        if old is not None:
+            try:
+                old.destroy()
+            except tk.TclError:
+                pass
+        wd = 7
+        cv = tk.Canvas(main, width=wd, height=H, bg=PAPER, highlightthickness=0, bd=0)
+        h["wisp"] = cv
+        for x in range(wd):
+            f = 1.0 - abs(x - (wd - 1) / 2.0) / (wd / 2.0)
+            cv.create_rectangle(x, 0, x + 1, H, fill=_mixhex(PAPER, GLOW, 0.10 + 0.40 * f * f), outline="")
+        for k in range(10):                                  # a few sparks along the wisp
+            y = random.uniform(0, H)
+            cv.create_rectangle(2, y, 5, y + 3, fill=_mixhex(GLOW, "#ffffff", 0.4), outline="")
+        steps = 16
+        token = h["anim"]
+
+        def step(i):
+            if not self.hub or self.hub.get("wisp") is not cv:
+                return
+            if i > steps or self.hub["anim"] != token:
+                try:
+                    cv.destroy()
+                except tk.TclError:
+                    pass
+                return
+            t = i / float(steps)
+            e = 1 - (1 - t) ** 2
+            x = (e * (W + wd)) - wd if direction > 0 else W - e * (W + wd)
+            cv.place(x=int(x), y=0)
+            tk.Misc.lift(cv)
+            cv.after(16, lambda: step(i + 1))
+        step(0)
+
+    # ------------------------------------------------------------------------------------------------------------
+    #  sidebar: sky by the clock, seasons, pixel icons, living fox
+    # ------------------------------------------------------------------------------------------------------------
+    def hub_side_draw(self):
+        super().hub_side_draw()
+        h = getattr(self, "hub", None)
+        if not h:
+            return
+        try:
+            self.z19_side_sky()
+        except Exception as ex:
+            zk_log_error("side sky: %r" % (ex,))
+
+    def z19_side_sky(self):
+        h = self.hub
+        cv = h["snow"]
+        W, Hh = cv.winfo_width(), cv.winfo_height()
+        if W < 50 or Hh < 50:
+            return
+        self.z19_look_sync()
+        part = z19_daypart()[0] if Z19_LOOK["sky"] else "night"
+        weather = Z19_LOOK.get("weather")
+        top, bot = z19_sky(T["night"], T["night2"], part)
+        if weather == "rain":
+            top, bot = _mixhex(top, "#2a3040", 0.25), _mixhex(bot, "#3a4256", 0.25)
+        if (top, bot) != (T["night"], T["night2"]):
+            for it in cv.find_withtag("bg"):
+                if cv.type(it) != "rectangle":
+                    continue
+                x0, y0, x1, y1 = cv.coords(it)
+                if x0 == 0 and y1 - y0 == 2 and x1 >= W - 1:
+                    cv.itemconfigure(it, fill=_mixhex(top, bot, y0 / float(Hh)))
+        cv.delete("z19sky")
+        if part in ("day", "dawn", "dusk"):
+            for it, _ph, _sp in h.get("stars", []):
+                cv.itemconfigure(it, state="hidden" if part == "day" else "normal")
+            key = ("sun", part, GOLD)
+            if h.get("z19_sun_key") != key:
+                sun = {"day": _mixhex(GOLD, "#fff6dc", 0.35), "dawn": _mixhex(GOLD, "#ffb08a", 0.45),
+                       "dusk": _mixhex(GOLD, "#ff8a5a", 0.45)}[part]
+                sun = _mixhex(sun, top, 0.30)                       # a soft, hazy sun: never a bright spot
+                h["z19_sun"] = aa_photo(72, 72, [("circle", 36, 36, 33, (sun, 0.05)), ("circle", 36, 36, 25, (sun, 0.08)),
+                                                 ("circle", 36, 36, 17, _mixhex(top, sun, 0.55)), ("circle", 36, 36, 14, sun)])
+                h["z19_sun_key"] = key
+            mx_, my_ = W - 46, 46 + (18 if part in ("dawn", "dusk") else 0)
+            self.z19_moon(cv, h, False)                                     # the moon rests while the sun is up
+            cv.create_image(mx_ - 36, my_ - 36, image=h["z19_sun"], anchor="nw", tags=("z19sky", "bg"))
+        else:
+            self.z19_moon(cv, h, True)
+            for it, _ph, _sp in h.get("stars", []):
+                cv.itemconfigure(it, state="normal")
+        season = z19_season()
+        if Z19_LOOK["season"]:
+            near = _mixhex(T["night2"], "#000000", 0.45)
+            if season == "winter" or weather == "snow":
+                snow = _mixhex("#e8eeff", top, 0.25)
+                pts = []
+                for x in range(0, W + 12, 12):
+                    pts += [x, Hh - 36 - 10 * math.sin(x / 27.0 + 1.3)]
+                cv.create_line(*pts, fill=snow, width=2, tags=("z19sky", "bg"))
+                tx, ty = 40, Hh - 40
+                cv.create_rectangle(tx - 2, ty - 33, tx + 39, ty - 31, fill=snow, outline="", tags=("z19sky", "bg"))
+                for lx in (W - 60, W - 30):
+                    cv.create_rectangle(lx - 1, Hh - 46, lx + 7, Hh - 44, fill=snow, outline="", tags=("z19sky", "bg"))
+            elif season in ("spring", "autumn"):
+                # a branch reaching in from the top-left corner: sakura in spring, momiji in autumn (muted)
+                wood = _mixhex("#6a4430", top, 0.30)
+                wood2 = _mixhex(wood, "#000000", 0.35)
+                for (pts, wd_) in (([(-4, 14), (14, 19), (30, 27), (46, 31), (60, 40)], 4), ([(14, 19), (21, 8)], 2),
+                                   ([(30, 27), (35, 43)], 2), ([(46, 31), (54, 24)], 2)):
+                    flat = [c for p in pts for c in p]
+                    cv.create_line(*flat, fill=wood2, width=wd_ + 1, smooth=True, capstyle="round", tags=("z19sky", "bg"))
+                    cv.create_line(*flat, fill=wood, width=wd_, smooth=True, capstyle="round", tags=("z19sky", "bg"))
+                rnd = random.Random(19)
+                cols = (("#f7b3cf", "#ee8db5", "#fde8f1") if season == "spring" else ("#c9552e", "#d9803a", "#a8402c"))
+                shape = ([(0, -2), (-2, 0), (0, 0), (2, 0), (0, 2)] if season == "spring" else
+                         [(0, -2), (-2, -1), (2, -1), (-1, 0), (0, 0), (1, 0), (0, 1), (0, 2)])
+                for (x, y) in ((10, 13), (18, 21), (21, 9), (25, 25), (31, 29), (35, 43), (41, 32), (47, 29), (54, 24),
+                               (58, 40), (63, 43), (8, 20), (38, 36), (51, 36)):
+                    c = _mixhex(rnd.choice(cols), top, 0.30)
+                    for (dx, dy) in shape:
+                        cv.create_rectangle(x + dx * 1.5, y + dy * 1.5, x + dx * 1.5 + 2, y + dy * 1.5 + 2, fill=c,
+                                            outline="", tags=("z19sky", "bg"))
+                    cv.create_rectangle(x, y, x + 2, y + 2, fill=_mixhex(c, "#fff3c0" if season == "spring" else "#000000",
+                                                                         0.35), outline="", tags=("z19sky", "bg"))
+        for tg in ("logo", "nav", "deco", "flake", "status"):
+            cv.tag_raise(tg)
+
+    def z19_moon(self, cv, h, show):
+        names = set(str(i) for i in (h.get("moon") or ()))
+        for it in cv.find_withtag("bg"):
+            try:
+                if cv.type(it) == "image" and cv.itemcget(it, "image") in names:
+                    cv.itemconfigure(it, state="normal" if show else "hidden")
+            except tk.TclError:
+                pass
+
+    def hub_side_nav(self):
+        super().hub_side_nav()
+        h = getattr(self, "hub", None)
+        if not h:
+            return
+        try:
+            cv = h["snow"]
+            z, top_, title_y, nav_y, rowh = self.hub_side_layout()
+            base = T["night"]
+            page, hv = h.get("page"), h.get("hover")
+            cache = h.setdefault("z19_icons", {})
+            zoom = 2 if rowh >= 24 else 1
+            for i, (key, _label) in enumerate(h["navkeys"]):
+                rows = Z19_ICONS.get(key)
+                if not rows:
+                    continue
+                stt = "on" if key == page else ("hover" if key == hv else "off")
+                ck = (key, stt, zoom, GOLD, base)
+                if ck not in cache:
+                    cache[ck] = sprite_photo([rows], z19_icon_pal(stt, base), zoom)
+                y = nav_y + i * rowh + rowh // 2 - (11 * zoom) // 2
+                cv.create_image(28 if zoom == 2 else 36, y, image=cache[ck], anchor="nw", tags="nav")
+        except Exception as ex:
+            zk_log_error("nav icons: %r" % (ex,))
+
+    PAGE_POSE = {"notebook": ("sit", "read"), "exercise": ("sit", "lift"), "garden": ("sit", "zen"), "map": ("rig", "walk"),
+                 "settings": ("rig", "lie"), "customize": ("sit", "hearts"), "you": ("rig", "playbow"),
+                 "chat": ("sit", "talk"), "screen": ("rig", "stand"), "deadlines": ("sit", "focus"),
+                 "timetable": ("sit", "focus"), "reminders": ("sit", "happy"), "daily": ("sit", "happy")}
+
+    def hub_anim(self):
+        """The particles follow the season and weather; the little fox at the top acts out the page you're on."""
+        h = getattr(self, "hub", None)
+        theme = self.cfg.get("theme", "snow")
+        saved = PARTICLES.get(theme)
+        try:
+            if self.cfg.get("sky_seasons", True):
+                w = Z19_LOOK.get("weather")
+                PARTICLES[theme] = {"rain": "rain", "snow": "snow"}.get(w) or {
+                    "winter": "snow", "spring": "petals", "summer": "fireflies", "autumn": "leaves"}[z19_season()]
+            super().hub_anim()
+        finally:
+            if saved is None:
+                PARTICLES.pop(theme, None)
+            else:
+                PARTICLES[theme] = saved
+        if not h or not h["win"].winfo_exists() or not self.cfg.get("sidebar_living", True):
+            return
+        try:
+            self.z19_logo(h)
+        except Exception as ex:
+            zk_log_error("living logo: %r" % (ex,))
+
+    def z19_logo(self, h):
+        pp = self.PAGE_POSE.get(h.get("page"))
+        mood = self.current_mood()
+        if not pp or not h.get("logo_items") or mood in ("sleep", "alert") or self.session and pp[1] not in ("read", "focus"):
+            if h.get("z19_logo_on"):
+                h["z19_logo_on"] = False
+                h["logo_key"] = None
+            return
+        now = time.monotonic()
+        kind, what = pp
+        cv = h["snow"]
+        ti, bi = h["logo_items"]
+        z = h["logo_zoom"]
+        cache = h["logo_cache"]
+        n = self.tail_count()
+        acc = self.accessories()
+        if kind == "rig":
+            fr = int(now / (0.11 if what == "walk" else 0.5)) % 8
+            key = ("z19r", what, fr, n, acc)
+            if key not in cache:
+                st = "rigR:%s:%d" % (what, fr)
+                cache[key] = sprite_photo([rig_rows(st, n, acc)], self.pal, z)
+            cv.itemconfigure(ti, state="hidden")
+            cv.itemconfigure(bi, image=cache[key])
+        else:
+            tf = int(now / 0.17) % 8
+            fr = int(now / (0.5 if what == "lift" else 0.35 if what == "talk" else 0.9)) % 8
+            if what == "read":
+                state, acc2, extra = "focus", acc + (("glasses",) if "glasses" not in acc else ()), "read"
+            elif what == "lift":
+                state, acc2, extra = "happy" if fr % 4 == 0 else "focus", tuple(a for a in acc if a not in ROBES) + (
+                    () if "headband" in acc else ("headband",)), "lift"
+            elif what == "zen":
+                state, acc2, extra = "blink", acc, "zen"
+            elif what == "talk":
+                state, acc2, extra = ("boop2" if fr % 2 else "idle"), acc, None
+            elif what == "hearts":
+                state, acc2, extra = ("hearts" if fr % 4 < 2 else "happy"), acc, None
+            else:
+                state, acc2, extra = what if what in STATES else "idle", acc, None
+            if state in ("idle", "focus") and now < h.get("blink_until", 0):
+                state = "blink"
+            key = ("z19s", state, extra, fr % 4 if extra else fr % 2, acc2)
+            if key not in cache:
+                rows = build_frame(state, "up", fr % 2, None, acc2, 0)
+                if extra:
+                    rows = z19_sit_extra(rows, extra, fr)
+                cache[key] = sprite_photo([rows], self.pal, z)
+            tk_ = ("t", n, tf)
+            if tk_ not in cache:
+                cache[tk_] = sprite_photo([build_tails(n, tf, shadow=False)], self.pal, z)
+            cv.itemconfigure(ti, image=cache[tk_], state="normal")
+            cv.itemconfigure(bi, image=cache[key])
+        h["z19_logo_on"] = True
+        h["logo_key"] = ("z19",)                              # the base animation redraws her when we stop
+
+    # ------------------------------------------------------------------------------------------------------------
+    #  Settings: a quiet navigation bar + a card for the new look
+    # ------------------------------------------------------------------------------------------------------------
+    def hub_card(self, parent, title=None, bg=None, shape="round"):
+        f = super().hub_card(parent, title, bg, shape)
+        col = getattr(self, "_z19_cards", None)
+        if isinstance(col, list) and title:
+            col.append((title, f))
+        return f
+
+    Z19_SETTINGS_GROUPS = [("Look", ("appearance", "look", "sky", "colour", "font", "text", "frame", "border")),
+                           ("Focus", ("focus", "timer", "session", "break", "lock", "pomodoro", "study")),
+                           ("Voice", ("voice", "talk", "speech", "sound", "music")),
+                           ("Life", ("life", "desktop", "wellbeing", "sleep", "health", "remind")),
+                           ("Brain", ("brain", "model", "ollama", "online", "search", "web", "ai")),
+                           ("Apps", ("spotify", "remarkable", "rule", "keep", "close", "app", "screen")),
+                           ("Data", ("data", "backup", "update", "privacy", "start", "about", "reset"))]
+
+    def hub_build_settings(self, pg):
+        self._z19_cards = []
+        try:
+            super().hub_build_settings(pg)
+        finally:
+            cards, self._z19_cards = self._z19_cards, None
+        try:
+            self.z19_settings_nav(pg, cards)
+        except Exception as ex:
+            zk_log_error("settings nav: %r" % (ex,))
+
+    def z19_settings_nav(self, pg, cards):
+        h = self.hub
+        sc = None
+        for cv in h["scrollers"]:
+            try:
+                if str(cv).startswith(str(pg) + "."):
+                    sc = cv
+                    break
+            except Exception:
+                continue
+        if sc is None or not cards:
+            return
+        box = sc.master
+        inner = sc.nametowidget(sc.itemcget(sc.find_all()[0], "window")) if sc.find_all() else None
+        # each chip jumps to the first card whose title matches the group; leftover cards keep their own name
+        chips, used = [], set()
+        for name, words in self.Z19_SETTINGS_GROUPS:
+            for title, f in cards:
+                tl = title.lower()
+                if any(w in tl for w in words) and title not in used:
+                    chips.append((name, f))
+                    used.update(t for t, _ in cards if any(w in t.lower() for w in words))
+                    break
+        if len(chips) < 3:
+            chips = [(t if len(t) < 18 else t[:16] + "…", f) for t, f in cards[:9]]
+        bar = tk.Canvas(pg, height=30, bg=PAPER, highlightthickness=0, bd=0)
+        bar.pack(fill="x", before=box, padx=24, pady=(8, 0))
+        state = {"cur": 0, "boxes": []}
+
+        def jump(i):
+            f = chips[i][1]
+            try:
+                f.update_idletasks()
+                total = max(1, inner.winfo_height()) if inner is not None else max(1, sc.bbox("all")[3])
+                y = f.winfo_rooty() - (inner.winfo_rooty() if inner is not None else sc.winfo_rooty())
+                sc.yview_moveto(max(0.0, (y - 8) / float(total)))
+            except Exception:
+                pass
+            state["cur"] = i
+            draw()
+
+        def draw(_e=None):
+            bar.delete("all")
+            W = bar.winfo_width()
+            x = 2
+            state["boxes"] = []
+            fnt = (FONT_UI, max(9, self.zk_size(9) if hasattr(self, "zk_size") else 9))
+            for i, (name, _f) in enumerate(chips):
+                on = i == state["cur"]
+                tid = bar.create_text(x + 10, 15, text=name, anchor="w", font=fnt,
+                                      fill=GOLD if on else _mixhex(PAPER, INK, 0.55))
+                x1 = bar.bbox(tid)[2] + 10
+                if on:
+                    bar.create_line(x + 10, 26, x1 - 10, 26, fill=_mixhex(PAPER, GOLD, 0.7), width=2)
+                    bar.create_polygon(x + 4, 15, x + 6, 13, x + 8, 15, x + 6, 17, fill=GOLD, outline="")
+                state["boxes"].append((x, x1, i))
+                x = x1 + 4
+                if x > W - 40:
+                    break
+            bar.create_line(0, 29, W, 29, fill=_mixhex(PAPER, LINE, 0.6))
+
+        def click(e):
+            for (x0, x1, i) in state["boxes"]:
+                if x0 <= e.x <= x1:
+                    jump(i)
+                    return
+
+        def follow(*_a):                                    # the gold mark follows as you scroll
+            try:
+                top = sc.canvasy(0)
+                best = 0
+                for i, (_n, f) in enumerate(chips):
+                    y = f.winfo_rooty() - (inner.winfo_rooty() if inner is not None else 0)
+                    if y - 40 <= top:
+                        best = i
+                if best != state["cur"]:
+                    state["cur"] = best
+                    draw()
+            except Exception:
+                pass
+        bar.bind("<Configure>", draw)
+        bar.bind("<Button-1>", click)
+        bar.bind("<Motion>", lambda e: bar.config(cursor="hand2" if any(x0 <= e.x <= x1 for x0, x1, _ in state["boxes"]) else ""))
+        old = sc.cget("yscrollcommand")
+
+        def ysc(a, b):
+            try:
+                sc.tk.call(old, a, b) if old else None
+            except Exception:
+                pass
+            follow()
+        if old:
+            sc.configure(yscrollcommand=ysc)
+
+    def hub_settings_extras(self, left, right, check, radios, label, cfg_set):
+        super().hub_settings_extras(left, right, check, radios, label, cfg_set)
+        try:
+            self.z19_settings_card(right)
+        except Exception as ex:
+            zk_log_error("z19 settings card: %r" % (ex,))
+
+    def z19_settings_card(self, parent):
+        bg = T["card"]
+        c = self.hub_card(parent, "Sky, seasons and motion")
+        c.pack(fill="x", pady=(12, 0))
+        kw = dict(bg=bg, fg=INK, activebackground=bg, activeforeground=GOLD, selectcolor=FIELD, highlightthickness=0,
+                  font=(FONT_UI, 10), anchor="w")
+
+        def chk(text, key, default=True, after=None):
+            v = tk.BooleanVar(value=bool(self.cfg.get(key, default)))
+
+            def cmd():
+                self.cfg[key] = bool(v.get())
+                save_config(self.cfg)
+                if after:
+                    after()
+            tk.Checkbutton(c, text=text, variable=v, command=cmd, **kw).pack(fill="x", padx=14)
+
+        def redraw():
+            self._z19_sig = None
+            if self.hub:
+                self.hub_side_draw()
+
+        chk("Sky follows the time of day (soft dawn, day and dusk; night stays the shrine)", "sky_daynight", True, redraw)
+        chk("Seasons and weather in the sidebar and garden", "sky_seasons", True, redraw)
+        chk("Foxfire wisp when you switch pages", "page_fx", True)
+        chk("Dim foxfire progress glow in the window frame during focus", "focus_glow", True)
+        chk("The little fox at the top acts out the page you're on", "sidebar_living", True,
+            lambda: self.hub and self.hub.__setitem__("logo_key", None))
+        chk("Fox poses now and then (stretches, play bows, naps, pounces)", "fox_poses", True)
+        tk.Label(c, text="Study alerts and reminders are said in", bg=bg, fg=GREY, font=(FONT_UI, 9), anchor="w").pack(
+            fill="x", padx=14, pady=(6, 0))
+        rv = tk.StringVar(value=self.cfg.get("remind_voice", "zenko"))
+        f = tk.Frame(c, bg=bg)
+        f.pack(fill="x", padx=14, pady=(0, 10))
+
+        def setv():
+            self.cfg["remind_voice"] = rv.get()
+            save_config(self.cfg)
+        for lab, val in (("Her voice (VOICEVOX)", "zenko"), ("Windows voice (English)", "english"), ("Silent", "off")):
+            tk.Radiobutton(f, text=lab, value=val, variable=rv, command=setv, **kw).pack(side="left", padx=(0, 10))
+
+    # ------------------------------------------------------------------------------------------------------------
+    #  Customize: wardrobe + poses
+    # ------------------------------------------------------------------------------------------------------------
+    def z19_customize(self, parent):
+        bg = T["card"]
+        c = self.hub_card(parent, "Wardrobe (earned with study hours)")
+        c.pack(fill="x", pady=(12, 0))
+        kw = dict(bg=bg, fg=INK, activebackground=bg, activeforeground=GOLD, selectcolor=FIELD, highlightthickness=0,
+                  font=(FONT_UI, 10), anchor="w", disabledforeground=_mixhex(bg, GREY, 0.6))
+        hrs = self.z19_hours()
+        rv = tk.StringVar(value=self.cfg.get("robe", "auto"))
+
+        def setv():
+            self.cfg["robe"] = rv.get()
+            save_config(self.cfg)
+            self._robe_cur = "?"
+            self.accessories()
+        tk.Label(c, text="You've studied %.1f hours with her so far." % hrs, bg=bg, fg=GREY, font=(FONT_UI, 9),
+                 anchor="w").pack(fill="x", padx=14, pady=(0, 4))
+        opts = [("Dress for the season (auto)", "auto", 3,
+                 "Seasonal kimono, a yukata for summer festivals, the uniform when exams are near"),
+                ("Seasonal kimono", "kimono", 3, "Sakura, ro silk, momiji or snow, following the calendar"),
+                ("Festival yukata", "yukata", ROBES["yukata"]["hours"], "Indigo with morning glories and a yellow obi"),
+                ("Sailor uniform", "uniform", ROBES["uniform"]["hours"], "For exam season"),
+                ("Just her fur", "none", 0, "")]
+        for lab, val, need, sub in opts:
+            ok = hrs >= need
+            txt = lab if ok else "%s  (unlocks at %d h)" % (lab, need)
+            tk.Radiobutton(c, text=txt, value=val, variable=rv, command=setv, state="normal" if ok else "disabled",
+                           **kw).pack(fill="x", padx=14)
+            if sub:
+                tk.Label(c, text="    " + sub, bg=bg, fg=_mixhex(bg, GREY, 0.8), font=(FONT_UI, 8), anchor="w").pack(
+                    fill="x", padx=14)
+        tk.Frame(c, bg=bg, height=8).pack()
+        c2 = self.hub_card(parent, "Fox poses")
+        c2.pack(fill="x", pady=(12, 0))
+        v = tk.BooleanVar(value=bool(self.cfg.get("fox_poses", True)))
+
+        def tog():
+            self.cfg["fox_poses"] = bool(v.get())
+            save_config(self.cfg)
+        tk.Checkbutton(c2, text="Stretches, play bows, naps and pounces now and then", variable=v, command=tog,
+                       **kw).pack(fill="x", padx=14)
+        row = tk.Frame(c2, bg=bg)
+        row.pack(fill="x", padx=14, pady=(6, 12))
+        for lab, k in (("Stretch", "stretch"), ("Play bow", "playbow"), ("Pounce", "pounce"), ("Lie down", "rest"),
+                       ("Sniff", "sniff")):
+            self.tt_btn(row, lab, lambda k=k: self.z19_pose_start(k), bg=FIELD, size=9, padx=8, pady=2).pack(
+                side="left", padx=(0, 6), pady=2)
+
+    # ------------------------------------------------------------------------------------------------------------
+    #  chat
+    # ------------------------------------------------------------------------------------------------------------
+    def z19_route(self, text):
+        lw = (text or "").lower().strip(" .!?~")
+        lw = re.sub(r"^(?:hey |hi |ok |okay )?(?:zenko[, ]+)?(?:please |pls |can you |could you |will you )?", "", lw)
+        poses = [(r"^(?:do (?:a |some )?)?(?:big )?stretch(?:es|ing)?(?: out)?$", "stretch", "Nnnnh~ *stretches*"),
+                 (r"^(?:do (?:a )?)?play ?bow$|^wanna play\b|^let'?s play$", "playbow", "*play bow* Kon kon~!"),
+                 (r"^(?:do (?:a )?)?pounce|^(?:mouse|mousing) ?jump|^hunt$", "pounce", "*wiggles* ...Pounce!"),
+                 (r"^(?:lie|lay) down|^rest$|^take a rest$", "rest", "*flops down* Ahh, comfy~"),
+                 (r"^sniff(?: around)?$", "sniff", "*sniff sniff*")]
+        for pat, k, line in poses:
+            if re.search(pat, lw):
+                if self.session or self.lockin:
+                    return "After this focus session, ne~ I'm being a good study buddy right now."
+                self.z19_pose_start(k, say=False)
+                return line
+        m = re.match(r"^(?:wear|put on|change into|dress (?:up )?(?:in|for))\s+(?:a |an |the |your |my )?(.+)$", lw)
+        if m:
+            what = m.group(1)
+            key = None
+            if re.search(r"kimono", what):
+                key = "kimono"
+            elif re.search(r"yukata|festival", what):
+                key = "yukata"
+            elif re.search(r"uniform|sailor|seifuku", what):
+                key = "uniform"
+            elif re.search(r"season|auto", what):
+                key = "auto"
+            elif re.search(r"nothing|fur|no clothes|none", what):
+                key = "none"
+            if key:
+                need = {"kimono": 3, "auto": 0, "none": 0}.get(key, ROBES.get(key, {}).get("hours", 0))
+                if self.z19_hours() < need:
+                    return "Ehehe~ that one unlocks after %d hours of study together. We're at %.1f!" % (need, self.z19_hours())
+                self.cfg["robe"] = key
+                save_config(self.cfg)
+                self._robe_cur = "?"
+                self.accessories()
+                return {"kimono": "Kimono on~ it follows the seasons!", "yukata": "Festival yukata! Kon kon~",
+                        "uniform": "Sailor uniform for exam season! Ganbarou~", "auto": "I'll dress for the season~",
+                        "none": "Just my fluffy fur, then~"}[key]
+        return None
+
+    def gym_route(self, text):
+        try:
+            r = self.z19_route(text or "")
+        except Exception as ex:
+            zk_log_error("z19_route: %r" % (ex,))
+            r = None
+        return r or super().gym_route(text)
+
+
 def main():
     if "--make-icon" in sys.argv:
         out = sys.argv[sys.argv.index("--make-icon") + 1] if len(sys.argv) > sys.argv.index("--make-icon") + 1 \
@@ -36567,7 +38275,7 @@ def main():
         return
     started = {"ok": False}
     try:
-        app = Zenko()
+        app = Zenko19()
 
         def mark_ok():
             started["ok"] = True
