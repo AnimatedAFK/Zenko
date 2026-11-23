@@ -52,7 +52,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.23-zenko17.2"
+APP_VERSION = "v2026.11.23-zenko18"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -3141,8 +3141,12 @@ BRAIN_PROMPT = (
     'Reply with ONLY one JSON object: {"action": "...", "args": {...}, "reply": "short friendly sentence"}.\n'
     "Actions:\n"
     '- "start_session": args {"task": text, "minutes": number}\n'
-    '- "add_item": add to the timetable. args {"task": text, "time": "HH:MM" 24-hour, "minutes": number, '
+    '- "add_item": PLAN a study/work block on the timetable (the user says plan, schedule, block out, or "I will study X '
+    'at 9"). Never use add_item for "remind me". args {"task": text, "time": "HH:MM" 24-hour, "minutes": number, '
     '"daily": true/false, "tomorrow": true/false}\n'
+    '- "add_reminder": the user wants to BE REMINDED of something ("remind me to...", "do not let me forget...", '
+    '"reminder: ..."). args {"text": what to remind, "when": the time in plain words like "at 6pm", "in 20 minutes", '
+    '"tomorrow 7am", "every day at 8am", or ""}\n'
     '- "show_timetable", "time_left", "next", "stats", "pause", "resume", "stop": no args\n'
     '- "break": args {"minutes": number}\n'
     '- "weather": args {"city": text or ""}. "time": args {"city": text}. "news": args {"topic": text or ""}. '
@@ -22493,7 +22497,8 @@ class FoxBuddy(ZenkoGym, ZenkoBooks, ZenkoStudy, ZenkoLife, ZenkoExtras):
         stage = tk.Frame(right, bg=PAPER)
         stage.pack(fill="both", expand=True)
         self.hub["main"] = stage
-        self.hub["navkeys"] = [("home", "Home"), ("timetable", "Timetable"), ("deadlines", "Upcoming"), ("notebook", "Study books"),
+        self.hub["navkeys"] = [("home", "Home"), ("timetable", "Timetable"), ("deadlines", "Upcoming"), ("reminders", "Reminders"),
+                               ("notebook", "Study books"),
                                ("daily", "Daily"), ("exercise", "Exercise"), ("garden", "Zen garden"),
                                ("map", "World map"), ("screen", "Screen time"), ("chat", "Chat"), ("notes", "Notes"), ("you", "You"), ("customize", "Customize"),
                                ("settings", "Settings")]
@@ -22522,6 +22527,8 @@ class FoxBuddy(ZenkoGym, ZenkoBooks, ZenkoStudy, ZenkoLife, ZenkoExtras):
         "home": ["#########", ".#######.", "..#...#..", "#########", "..#...#..", "..#...#..", "..#...#..", "..#...#..", ".##...##."],
         "timetable": [".#.....#.", "#########", "#.......#", "#.#.#.#.#", "#.......#", "#.#.#.#.#", "#.......#", "#########", "........."],
         "deadlines": ["#########", ".#.....#.", "..#...#..", "...#.#...", "....#....", "...#.#...", "..#.#.#..", ".#.###.#.", "#########"],
+        "reminders": ["....#....", "...#.#...", "..#...#..", ".#######.", ".#.....#.", ".#.###.#.", ".#.....#.",
+                      ".#.##..#.", ".#######."],
         "notebook": ["##.....##", "#.##.##.#", "#..#.#..#", "#.##.##.#", "#..#.#..#", "#.##.##.#", "#..#.#..#", "####.####", "....#...."],
         "daily": ["....#....", "...##....", "...###...", "..#####..", "..##.##..", ".###.###.", ".##...##.", "..#...#..", "...###..."],
         "exercise": [".........", "#.......#", "##.....##", "##.....##", "#########", "##.....##", "##.....##", "#.......#", "........."],
@@ -22730,7 +22737,7 @@ class FoxBuddy(ZenkoGym, ZenkoBooks, ZenkoStudy, ZenkoLife, ZenkoExtras):
         old = h["page"]
         if old == name:
             return self.hub_after_show(name)
-        order = ["home", "timetable", "deadlines", "notebook", "daily", "exercise", "garden", "map", "screen", "chat", "notes", "you", "customize",
+        order = ["home", "timetable", "deadlines", "reminders", "notebook", "daily", "exercise", "garden", "map", "screen", "chat", "notes", "you", "customize",
                  "settings"]
         direction = 1 if (old is None or order.index(name) > order.index(old)) else -1
         h["anim"] += 1
@@ -24699,7 +24706,7 @@ class FoxBuddy(ZenkoGym, ZenkoBooks, ZenkoStudy, ZenkoLife, ZenkoExtras):
         if not m:
             return None
         target = m.group(1).lower().strip()
-        pages = {"timetable": "timetable", "schedule": "timetable", "chat": "chat", "notes": "notes", "settings": "settings",
+        pages = {"timetable": "timetable", "schedule": "timetable", "reminders": "reminders", "ema": "reminders", "chat": "chat", "notes": "notes", "settings": "settings",
                  "deadlines": "deadlines", "calendar": "deadlines", "exams": "deadlines", "home": "home",
                  "upcoming": "deadlines", "study plan": "deadlines", "planner": "deadlines", "clock": "deadlines",
                  "daily": "daily", "badges": "daily", "journal": "daily", "flashcards": "daily",
@@ -31265,6 +31272,208 @@ class BibleWindow(ZkToolWindow):
 
 
 
+# =====================================================================================================================
+#  zenko18: 絵馬 reminders. Write a wish plaque, hang it on the shrine rack, and Zenko says it out loud when it's time.
+#  Planned study (the timetable) hangs as paper lanterns above the rack, so "plan" and "remind" stay clearly apart.
+# =====================================================================================================================
+_EMA_NUM = {"a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "ten": 10, "fifteen": 15,
+            "twenty": 20, "thirty": 30, "forty": 40, "forty-five": 45, "fifty": 50, "sixty": 60, "ninety": 90,
+            "half a": 0.5, "half an": 0.5, "a couple of": 2, "couple of": 2, "a few": 3, "few": 3}
+_EMA_WD = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+_EMA_PARTS = {"noon": (12, 0), "midday": (12, 0), "midnight": (23, 59), "tonight": (20, 0), "this evening": (18, 0),
+              "in the evening": (18, 0), "this afternoon": (15, 0), "in the afternoon": (15, 0),
+              "this morning": (9, 0), "in the morning": (7, 30), "before bed": (22, 0), "after school": (16, 0),
+              "after dinner": (19, 30), "after lunch": (13, 30)}
+
+
+def ema_parse(text, now=None):
+    """'call mum at 6pm', 'study bio in 20 min', 'tomorrow 7am take vitamins', 'drink water every day at 10' ->
+    (clean text, epoch seconds or None, 'daily' or None). Times with no am/pm from 1 to 7 mean the afternoon."""
+    now = now or datetime.datetime.now()
+    t = " %s " % (text or "").strip()
+    st = {"t": t}
+
+    def cut(m):
+        st["t"] = st["t"][:m.start()] + " " + st["t"][m.end():]
+
+    def low():
+        return st["t"].lower()
+    repeat = None
+    m = re.search(r"\b(?:every ?day|daily|each day|every morning|every night|every evening)\b", low())
+    if m:
+        repeat = "daily"
+        word = m.group(0)
+        cut(m)
+        if "morning" in word and not re.search(r"\d", low()):
+            st["t"] += " at 7am"
+        elif ("night" in word or "evening" in word) and not re.search(r"\d", low()):
+            st["t"] += " at 8pm"
+    at = None
+    m = re.search(r"\b(?:in|after)\s+(\d+(?:\.\d+)?|half an?|a couple of|couple of|a few|few|an?|one|two|three|four|five|"
+                  r"six|ten|fifteen|twenty|thirty|forty-five|forty|fifty|sixty|ninety)\s*(seconds?|secs?|minutes?|mins?|"
+                  r"m|hours?|hrs?|hr|h)\b", low())
+    if m:
+        n = m.group(1)
+        v = _EMA_NUM.get(n)
+        if v is None:
+            try:
+                v = float(n)
+            except ValueError:
+                v = 1
+        u = m.group(2)
+        sec = v * (3600 if u.startswith("h") else (1 if u.startswith("s") else 60))
+        at = now + datetime.timedelta(seconds=max(5, sec))
+        cut(m)
+    else:
+        day_off, day_set = 0, False
+        m = re.search(r"\b(?:tomorrow|tmrw|tmr|tmrrw)\b", low())
+        if m:
+            day_off, day_set = 1, True
+            cut(m)
+        m = re.search(r"\b(?:on\s+|next\s+|this\s+)?(monday|tuesday|wednesday|thursday|friday|saturday|sunday|mon|tues|tue|"
+                      r"wed|thurs|thu|fri|sat|sun)\b(?!\w)", low())
+        if m and (m.group(0).startswith(("on ", "next ", "this ")) or len(m.group(1)) > 4):
+            key = m.group(1)[:3]
+            wd = [w[:3] for w in _EMA_WD].index(key)
+            day_off = (wd - now.weekday()) % 7 or 7
+            if m.group(0).startswith("next ") and day_off < 7:
+                day_off += 0
+            day_set = True
+            cut(m)
+        hm = None
+        m = re.search(r"\b(?:at|@|by|around|for)?\s*(\d{1,2})(?:[:.](\d{2}))?\s*(a\.?m\.?|p\.?m\.?)(?!\w)", low())
+        if m:
+            h, mi, ap = int(m.group(1)), int(m.group(2) or 0), m.group(3)[0]
+            if 1 <= h <= 12 and mi < 60:
+                hm = (h % 12 + (12 if ap == "p" else 0), mi)
+                cut(m)
+        if hm is None:
+            m = re.search(r"\b(?:at|@|by|around)\s+(\d{1,2})(?:[:.](\d{2}))?\b(?!\s*(?:min|hour|h\b|m\b|%|kg|km))", low()) or \
+                re.search(r"\b(\d{1,2})[:.](\d{2})\b", low())
+            if m:
+                h, mi = int(m.group(1)), int(m.group(2) or 0)
+                if h <= 23 and mi < 60:
+                    if 1 <= h <= 7:                           # 'at 5' / '5:30' with no am/pm: the afternoon
+                        h += 12
+                    elif 8 <= h <= 11 and not day_set and \
+                            now.replace(hour=h, minute=mi) <= now < now.replace(hour=h + 12, minute=mi):
+                        h += 12                                   # 'at 9' when 9am has passed: tonight, not tomorrow
+                    hm = (h, mi)
+                    cut(m)
+        if hm is None:
+            for k, v in sorted(_EMA_PARTS.items(), key=lambda kv: -len(kv[0])):
+                m = re.search(r"\b%s\b" % re.escape(k), low())
+                if m:
+                    hm = v
+                    cut(m)
+                    break
+        if hm is None and day_set:
+            hm = (8, 0)
+        if hm is not None:
+            base = (now + datetime.timedelta(days=day_off)).replace(hour=hm[0], minute=hm[1], second=0, microsecond=0)
+            if base <= now and not day_set:
+                base += datetime.timedelta(days=1)
+            at = base
+    c = st["t"]
+    c = re.sub(r"^\s*(?:hey |hi |ok |okay )?(?:zenko[, ]+)?(?:please |pls |plz |can you |could you |would you )?", "", c, flags=re.I)
+    c = re.sub(r"^\s*(?:remind me|set (?:a |an )?reminder|make (?:a |an )?reminder|add (?:a |an )?reminder|reminder|"
+               r"hang (?:an |a )?ema|write (?:an |a )?ema|ema)\b\s*[:,-]?\s*", "", c, flags=re.I)
+    c = re.sub(r"^\s*(?:to|about|that|of|for)\s+", "", c, flags=re.I)
+    c = re.sub(r"\s+(?:at|on|by|around|to|for|please|pls)\s*$", "", c.strip(), flags=re.I)
+    c = re.sub(r"^\s*(?:at|on|by)\s+", "", c, flags=re.I)
+    c = re.sub(r"\s+", " ", c).strip(" ,.;:-!?~")
+    c = re.sub(r"\bi need to\b", "", c, flags=re.I).strip() or c
+    if c:
+        c = c[0].upper() + c[1:]
+    return c[:160], (at.timestamp() if at else None), repeat
+
+
+def ema_when(at, now=None, short=False):
+    """A friendly time: 'Today 5:00 PM', 'Tomorrow 7:30 AM', 'Mon 9:00 AM', '12 Dec 9:00 AM'."""
+    if not at:
+        return "Anytime"
+    now = now or datetime.datetime.now()
+    d = datetime.datetime.fromtimestamp(at)
+    hm = d.strftime("%I:%M %p").lstrip("0")
+    if d.date() == now.date():
+        return ("" if short else "Today ") + hm
+    if d.date() == now.date() + datetime.timedelta(days=1):
+        return "Tomorrow " + hm
+    if 0 < (d.date() - now.date()).days < 7:
+        return d.strftime("%a ") + hm
+    return d.strftime("%d %b ").lstrip("0") + hm
+
+
+def ema_left(at, now_ts=None):
+    """'in 25 min', 'in 2 h', 'now', '3 min ago'."""
+    now_ts = now_ts or time.time()
+    s = at - now_ts
+    if abs(s) < 45:
+        return "now"
+    m_ = int(round(abs(s) / 60.0))
+    txt = ("%d min" % m_) if m_ < 60 else (("%d h %d min" % (m_ // 60, m_ % 60)) if m_ < 600 and m_ % 60 else "%d h" % round(m_ / 60.0))
+    if m_ >= 60 * 24:
+        txt = "%d day%s" % (round(m_ / 1440.0), "" if round(m_ / 1440.0) == 1 else "s")
+    return ("in " + txt) if s > 0 else (txt + " ago")
+
+
+_EMA_STOP = {"the", "a", "an", "my", "to", "of", "and", "at", "on", "for", "in", "it", "that", "this", "reminder", "ema",
+             "remind", "me", "about", "with", "one", "please"}
+
+
+def ema_words(s):
+    return [w for w in re.findall(r"[a-z0-9']+", (s or "").lower()) if w not in _EMA_STOP and len(w) > 1]
+
+
+def ema_plaque_wood(w, h, seed=1):
+    """A little wooden ema plaque painting (pentagon top, warm hinoki grain, darker edge), drawn pixel by pixel."""
+    rnd = random.Random(seed)
+    knots = [(rnd.uniform(0.15, 0.85) * w, rnd.uniform(0.35, 0.9) * h) for _ in range(2)]
+    ph = rnd.uniform(0, 6.28)
+    roof = h * 0.24
+
+    def f(x, y):
+        cx = abs(x + 0.5 - w / 2.0)
+        if y < roof * (cx / (w / 2.0)):
+            return None
+        edge = min(x, w - 1 - x, h - 1 - y, (y - roof * (cx / (w / 2.0))) * 1.6)
+        if edge < 1.2:
+            return (92, 56, 30)
+        if edge < 2.6:
+            return (176, 120, 66)
+        g = _m.sin(y * 0.55 + _m.sin(x * 0.09 + ph) * 2.2) * 0.5 + 0.5
+        c = _rgb_mix((236, 204, 152), (214, 172, 112), g * 0.55)
+        for kx, ky in knots:
+            d = _m.hypot((x - kx) * 0.8, (y - ky) * 1.6)
+            if d < 6:
+                c = _rgb_mix(c, (170, 116, 64), (1 - d / 6.0) * 0.45)
+        light = 1.0 - (y / float(h)) * 0.12
+        return (int(c[0] * light), int(c[1] * light), int(c[2] * light))
+    return f
+
+
+def ema_stone_lantern(w, h):
+    """A tōrō stone lantern with a warm light inside."""
+    def f(x, y):
+        u = x + 0.5 - w / 2.0
+        if y < h * 0.12:
+            return (120, 118, 128) if abs(u) < (y / (h * 0.12)) * w * 0.5 + 1 else None
+        if y < h * 0.18:
+            return (96, 94, 104) if abs(u) < w * 0.5 else None
+        if y < h * 0.42:
+            if abs(u) < w * 0.36:
+                if abs(u) < w * 0.22 and h * 0.22 < y < h * 0.38:
+                    return _rgb_mix((255, 214, 130), (255, 150, 60), abs(u) / (w * 0.22))
+                return (132, 130, 140)
+            return None
+        if y < h * 0.48:
+            return (104, 102, 112) if abs(u) < w * 0.44 else None
+        if y < h * 0.9:
+            return (118, 116, 126) if abs(u) < w * 0.14 + (y - h * 0.48) * 0.08 else None
+        return (90, 88, 98) if abs(u) < w * 0.42 else None
+    return f
+
+
 class Zenko(FoxBuddy):
     """zenko14 on top of everything else (a subclass, so it can build on FoxBuddy's own methods with super())."""
 
@@ -31318,6 +31527,10 @@ class Zenko(FoxBuddy):
             self.z17_init()
         except Exception as e:
             zk_log_error("z17_init: %r" % e)
+        try:
+            self.z18_init()
+        except Exception as e:
+            zk_log_error("z18_init: %r" % e)
 
     def zk_slow_tick(self):
         """Every minute: idle pop quiz, IA/EE/TOK nudges, garden health."""
@@ -31515,6 +31728,14 @@ class Zenko(FoxBuddy):
                                 w.configure(wraplength=wl, justify="left")
                                 w._zk_wrapped = True
                                 changed = True
+                    elif cls == "Frame" and getattr(w, "_zk_orig", None) and grew and _pass == 0:
+                        for k, pi in w._zk_orig:                       # wider again: try side by side once more
+                            k.pack_forget()
+                        for k, pi in w._zk_orig:
+                            k.pack(**pi)
+                        w._zk_orig = None
+                        w._zk_reflowed = False
+                        changed = True
                     elif cls == "Frame" and not getattr(w, "_zk_reflowed", False):
                         width = w.winfo_width()
                         if width <= 1:
@@ -31522,10 +31743,13 @@ class Zenko(FoxBuddy):
                         room = min(width, right - w.winfo_rootx())
                         if w.winfo_reqwidth() > room + 4 and room > 120:
                             kids = [k for k in w.winfo_children() if k.winfo_manager() == "pack"]
-                            if len(kids) == 2 and room < 860 and all(k.pack_info().get("side") == "left" and
-                                                                     k.winfo_class() == "Frame" and
-                                                                     k.winfo_reqwidth() > 200 for k in kids):
+                            two = len(kids) == 2 and all(k.pack_info().get("side") == "left" and k.winfo_class() == "Frame"
+                                                         and k.winfo_reqwidth() > 200 for k in kids)
+                            # zenko18: a column squeezed below what it needs is never clipped: it moves under the other
+                            squeezed = two and any(k.winfo_width() < min(k.winfo_reqwidth() - 8, 340) for k in kids)
+                            if two and (room < 860 or squeezed):
                                 w._zk_reflowed = True                  # two columns that don't fit: stack them
+                                w._zk_orig = [(k, {kk: vv for kk, vv in k.pack_info().items() if kk != "in"}) for k in kids]
                                 for k in kids:
                                     k.pack_forget()
                                 for n_, k in enumerate(kids):
@@ -31808,6 +32032,8 @@ class Zenko(FoxBuddy):
             self.map_refresh()
         elif name == "screen":
             self.screen_render()
+        elif name == "reminders":
+            self.ema_render_later()
         self.root.after(60, lambda: self.zk_fit(fonts=True))
         return r
 
@@ -33142,6 +33368,13 @@ class Zenko(FoxBuddy):
     #  chat
     # =================================================================================================
     def gym_route(self, text):
+        try:
+            r = self.z18_route(text or "")
+        except Exception as ex:
+            zk_log_error("z18_route: %r" % (ex,))
+            r = None
+        if r:
+            return r
         try:
             r = self.z17_route(text or "")
         except Exception:
@@ -34926,6 +35159,12 @@ class Zenko(FoxBuddy):
         """zenko17.1: when she will say the line out loud, the bubble waits until her voice is ready (made or taken
         from the cache), then both start together. Never waits more than a few seconds."""
         self._jp_flush()
+        cap = getattr(self, "_say_cap", None)
+        if isinstance(cap, list):                        # a timetable alert: said out loud in English instead
+            cap.append(text)
+            return super().say(text, secs, choices)
+        if getattr(self, "_no_jp", False):
+            return super().say(text, secs, choices)
         t = None
         try:
             t = self._jp_ok(text)
@@ -35282,6 +35521,963 @@ class Zenko(FoxBuddy):
             return "Your rules (first match wins):\n" + "\n".join("%d. %s%s" % (i + 1, rule_text(r), "" if r.get("on", True) else " (off)")
                                                                 for i, r in enumerate(rules))
         return None
+
+    # =================================================================================================================
+    #  zenko18 · 絵馬 reminders: a night-shrine ema rack (things to be reminded of) under paper lanterns (planned study)
+    # =================================================================================================================
+    def z18_init(self):
+        L = self.life
+        L.setdefault("ema", [])
+        self.cfg.setdefault("remind_aloud", True)
+        old = self.extra.get("reminders") or []                  # move the old chat reminders onto the rack once
+        if old:
+            for r in old:
+                try:
+                    self.ema_add(str(r.get("text") or "Reminder"), float(r.get("at")), None, quiet=True)
+                except (TypeError, ValueError):
+                    pass
+            self.extra["reminders"] = []
+            try:
+                self.save_extra()
+            except Exception:
+                pass
+        self._ema_sel = None
+        self._ema_last = None
+        self.ema_ui = None
+        self.root.after(4000, self.ema_tick)
+
+    # ---- data -------------------------------------------------------------------------------------------------------
+    def ema_list(self):
+        return self.life.setdefault("ema", [])
+
+    def ema_save(self):
+        try:
+            self.life_save()
+        except Exception as ex:
+            zk_log_error("ema save: %r" % (ex,))
+        self.ema_render_later()
+
+    def ema_add(self, text, at=None, repeat=None, quiet=False):
+        E = {"id": "%x%04x" % (int(time.time() * 1000), random.randint(0, 0xffff)), "text": (text or "Reminder").strip()[:160],
+             "at": float(at) if at else None, "repeat": repeat, "done": False, "rang": False, "made": time.time(),
+             "seed": random.randint(1, 9999)}
+        self.ema_list().append(E)
+        self._ema_last = E["id"]
+        if not quiet:
+            self.ema_save()
+        return E
+
+    def ema_get(self, eid):
+        return next((e for e in self.ema_list() if e.get("id") == eid), None)
+
+    def ema_active(self):
+        """Not yet fulfilled, soonest first, 'anytime' plaques after the timed ones."""
+        act = [e for e in self.ema_list() if not e.get("done")]
+        return sorted(act, key=lambda e: (e.get("at") is None, e.get("at") or 0, e.get("made", 0)))
+
+    def ema_done_list(self):
+        return sorted([e for e in self.ema_list() if e.get("done")], key=lambda e: -(e.get("done_at") or 0))
+
+    def ema_set_done(self, E, done=True):
+        E["done"] = bool(done)
+        E["done_at"] = time.time() if done else None
+        if not done:
+            E["rang"] = False
+        self._ema_last = E["id"]
+        self.ema_save()
+
+    def ema_remove(self, E):
+        self.life["ema"] = [e for e in self.ema_list() if e is not E]
+        if self._ema_sel == E.get("id"):
+            self._ema_sel = None
+        self.ema_save()
+
+    def ema_snooze(self, E, minutes=10):
+        if E.get("repeat") == "daily" and E.get("at") and not E.get("base_at"):
+            E["base_at"] = E["at"]
+        E["at"] = time.time() + minutes * 60
+        E["rang"] = False
+        E["done"] = False
+        self._ema_last = E["id"]
+        self.ema_save()
+
+    def ema_find(self, ref):
+        """'2', '#2', 'the bio one', 'call mum', 'it' -> an ema (active first), or None."""
+        ref = (ref or "").strip().lower().strip(" .!?~\"'")
+        ref = re.sub(r"\b(?:reminders?|emas?|plaques?|notes?|one|the|my)\b", " ", ref).strip()
+        act = self.ema_active()
+        if ref in ("", "it", "that", "this", "last", "the last", "latest"):
+            E = self.ema_get(self._ema_last) if self._ema_last else None
+            return E or (act[-1] if act else None)
+        m = re.match(r"^#?\s*(\d{1,2})$", ref) or re.match(r"^(?:number|no\.?)\s*(\d{1,2})$", ref)
+        if m:
+            i = int(m.group(1)) - 1
+            return act[i] if 0 <= i < len(act) else None
+        want = set(ema_words(ref))
+        if not want:
+            return None
+        best, score = None, 0.0
+        for e in act + self.ema_done_list():
+            have = set(ema_words(e.get("text")))
+            hit = sum(1 for w in want if w in have or any(h.startswith(w) or w.startswith(h) for h in have if len(h) > 3))
+            sc = hit / float(len(want)) + (0.01 if not e.get("done") else 0)
+            if sc > score:
+                best, score = e, sc
+        return best if score >= 0.5 else None
+
+    def ema_line(self, E, n=None):
+        when = ema_when(E.get("at")) if E.get("at") else "anytime"
+        rep = ", every day" if E.get("repeat") == "daily" else ""
+        return "%s%s  (%s%s)" % (("%d. " % n) if n else "", E.get("text"), when, rep)
+
+    # ---- ringing ----------------------------------------------------------------------------------------------------
+    def ema_tick(self):
+        try:
+            now = time.time()
+            changed = False
+            for E in list(self.ema_list()):
+                at = E.get("at")
+                if E.get("done") or not at or E.get("rang") or at > now:
+                    continue
+                if now - at > 6 * 3600 and E.get("repeat") != "daily":
+                    E["rang"] = True                                  # missed while the PC was off: show, don't shout
+                    changed = True
+                    continue
+                self.ema_ring(E)
+                changed = True
+                if E.get("repeat") == "daily":
+                    nxt = E.pop("base_at", None) or at
+                    while nxt <= now:
+                        nxt += 86400
+                    E["at"] = nxt
+                else:
+                    E["rang"] = True
+            if changed:
+                self.ema_save()
+            elif self.ema_ui and int(now) // 60 != self.ema_ui.get("minute"):
+                self.ema_render_later()                               # keep 'in 5 min' labels fresh
+        except Exception as ex:
+            zk_log_error("ema tick: %r" % (ex,))
+        self.root.after(5000, self.ema_tick)
+
+    def ema_ring(self, E):
+        txt = E.get("text") or "your reminder"
+        beep("ding")
+        self.set_mood("happy", 4)
+        msg = "Kon kon! Reminder: %s" % txt
+        eid = E.get("id")
+
+        def done_():
+            e = self.ema_get(eid)
+            if e:
+                self.ema_set_done(e)
+                self.say("Yatta~ I'll hang it with the fulfilled ones.", 5)
+
+        def snooze():
+            e = self.ema_get(eid)
+            if e:
+                self.ema_snooze(e, 10)
+                self.say("Okay, I'll ask again in 10 minutes~", 5)
+        self._no_jp = True
+        try:
+            self.say(msg, 30, choices=[("Done", done_), ("Snooze 10 min", snooze)])
+        finally:
+            self._no_jp = False
+        try:
+            self.chat_line("Fox", msg)
+        except Exception:
+            pass
+        self.remind_aloud("Reminder. " + txt)
+
+    def remind_aloud(self, text):
+        """Reminders and timetable alerts are always read out in English (the Mute button doesn't stop these; the
+        'Say reminders out loud' switch on the Reminders page does)."""
+        if not self.cfg.get("remind_aloud", True) or not IS_WIN or not SOUND.get("on", True):
+            return
+        t = md_plain(text or "")
+        t = re.sub(r"[“”\"*~_#]|Kon kon!?\s*", "", t).strip()
+        if not t:
+            return
+        try:
+            self.speaker.say(t, self.cfg.get("tts_voice", ""), int(self.cfg.get("tts_speed", 0) or 0),
+                             int(self.cfg.get("tts_pitch", 0) or 0))
+        except Exception as ex:
+            zk_log_error("remind aloud: %r" % (ex,))
+
+    def check_timetable(self, now):
+        """Planned study (timetable) alerts are spoken out loud too."""
+        self._say_cap = []
+        try:
+            super().check_timetable(now)
+        finally:
+            cap, self._say_cap = self._say_cap, None
+        for t in cap or []:
+            self.remind_aloud(re.sub(r"\s*Right-click me > Start timetable item!?", "", t))
+
+    def add_reminder(self, when_epoch, text):
+        """Old chat reminders now hang on the ema rack."""
+        self.ema_add(text, when_epoch)
+
+    # ---- chat ------------------------------------------------------------------------------------------------------
+    def z18_route(self, text):
+        raw = (text or "").strip()
+        lw = raw.lower().strip(" .!?~")
+        lw = re.sub(r"^(?:hey |hi |ok |okay )?(?:zenko[, ]+)?(?:please |pls |can you |could you |would you )?", "", lw)
+        if not lw:
+            return None
+        # what's on the rack
+        if re.match(r"^(?:show |list |open |see |check )?(?:me )?(?:my |all (?:my )?|the )?(?:reminders?|ema(?: board| rack)?|"
+                    r"emas|wish plaques?)(?: page| tab| list)?$|^what (?:are my reminders|do i need to remember|did i ask you "
+                    r"to remind)|^any reminders", lw):
+            self.root.after(120, lambda: self.open_hub("reminders"))
+            act = self.ema_active()
+            if not act:
+                return "Your ema rack is empty~ Say 'remind me to call mum at 6pm', or write one on the Reminders page."
+            return "Your ema:\n" + "\n".join(self.ema_line(e, i + 1) for i, e in enumerate(act[:12]))
+        if re.match(r"^(?:clear|remove|delete|take down) (?:all )?(?:the )?(?:fulfilled|done|finished|old|completed) "
+                    r"(?:reminders?|emas?|plaques?)$", lw):
+            n = len(self.ema_done_list())
+            self.life["ema"] = [e for e in self.ema_list() if not e.get("done")]
+            self.ema_save()
+            return "Took down %d fulfilled ema~" % n
+        if re.match(r"^(?:clear|remove|delete|cancel|take down) (?:all|every)(?: of)? (?:my |the )?(?:reminders?|emas?)$|"
+                    r"^(?:clear|cancel|delete) (?:my )?reminders$", lw):
+            act = self.ema_active()
+            for e in act:
+                e["done"], e["done_at"] = True, time.time()
+            self.ema_save()
+            return "Okay, I moved all %d reminders to the fulfilled row (tap one there to bring it back)." % len(act)
+        # plan = a study block on the timetable (still said out loud when it starts)
+        if not re.search(r"\bremind", lw):
+            m = re.match(r"^(?:let'?s |i want to |i'?d like to |help me )?(?:plan|schedule|block(?: out)?|book|pencil in|"
+                         r"put)\s+(?:in\s+)?(.+)$", lw) or \
+                re.match(r"^(?:i (?:will|'ll|want to|need to|have to|wanna|gotta|am going to|'m going to|'m gonna) )"
+                         r"((?:study|revise|do|practi[sc]e|work on)\b.+)$", lw)
+            if m and re.search(r"\b\d{1,2}(?::\d{2})?\s*(?:am|pm)\b|\b\d{1,2}:\d{2}\b|\bat \d{1,2}\b", m.group(1)):
+                body = re.sub(r"\b(?:a |an |my )?(?:study )?session\b", "study", m.group(1))
+                body = re.sub(r"\b(?:on|to|in|into) (?:my |the )?(?:timetable|schedule|planner|calendar)\b", " ", body)
+                body = re.sub(r"\bfor (?:an|one) hour\b", "for 60 min", body)
+                body = re.sub(r"\bfor (\d+(?:\.\d+)?) hours?\b", lambda q: "for %d min" % int(float(q.group(1)) * 60), body)
+                body = re.sub(r"\bfor half an hour\b", "for 30 min", body)
+                body = re.sub(r"\bat (\d{1,2})\b(?!\s*(?::|am|pm))", lambda q: "at %s%s" % (
+                    q.group(1), "pm" if 1 <= int(q.group(1)) <= 7 else ":00"), body)
+                r = self.tt_from_text("add " + body)
+                if r:
+                    self.root.after(150, self.ema_render_later)
+                    return r + " It's on your timetable, and I'll say it out loud when it's time~"
+        # remind = an ema on the rack
+        if re.match(r"^(?:remind me|set (?:a |an )?reminder|make (?:a |an )?reminder|add (?:a |an )?reminder|"
+                    r"new reminder|reminder\s*[:-]|hang (?:an |a )?ema|write (?:an |a )?ema|ema\s*[:-]|don'?t let me forget)\b", lw):
+            body = re.sub(r"^don'?t let me forget\s*(?:to )?", "remind me to ", lw)
+            txt, at, rep = ema_parse(body)
+            if not txt or txt.lower() in ("me", "reminder"):
+                return "What should I remind you about? e.g. 'remind me to call mum at 6pm'"
+            E = self.ema_add(txt, at, rep)
+            if at:
+                return "Hung an ema: “%s” · %s (%s)%s. I'll say it out loud then~" % (
+                    E["text"], ema_when(at), ema_left(at), ", every day" if rep else "")
+            return ("Hung an ema: “%s” (no time yet). Want me to say it at a time? Say 'move %s to 6pm'~" %
+                    (E["text"], " ".join(ema_words(E["text"])[:2]) or "it"))
+        # move / reschedule
+        m = re.match(r"^(?:move|change|push|reschedule|shift|set|make|put)\s+(.*?)\s*(?:reminder|ema)?\s+(?:to|for|until)\s+(.+)$", lw)
+        if m:
+            tail = m.group(2)
+            _t, at, rep = ema_parse("x " + tail)
+            ref = re.sub(r"\b(?:reminder|ema)\b", "", m.group(1)).strip()
+            E = self.ema_find(ref)
+            if E and at:
+                E["at"], E["rang"], E["done"] = at, False, False
+                if rep:
+                    E["repeat"] = rep
+                self._ema_last = E["id"]
+                self.ema_save()
+                return "Moved “%s” to %s (%s)~" % (E["text"], ema_when(at), ema_left(at))
+            if E and re.search(r"\b(?:daily|every ?day)\b", tail):
+                E["repeat"] = "daily"
+                self.ema_save()
+                return "“%s” is now every day~" % E["text"]
+            if E and re.search(r"\b(?:anytime|no time|untimed)\b", tail):
+                E["at"], E["rang"] = None, False
+                self.ema_save()
+                return "“%s” has no time now~" % E["text"]
+        m = re.match(r"^(?:rename|reword|edit|change|rewrite)\s+(.*?)\s*(?:reminder|ema)?\s+(?:to say|to read|to|so it says|:)\s+(.+)$", lw)
+        if m:
+            E = self.ema_find(m.group(1))
+            if E:
+                new = raw[-len(m.group(2)):].strip(" .\"'“”")
+                E["text"] = new[:1].upper() + new[1:160]
+                self._ema_last = E["id"]
+                self.ema_save()
+                return "Rewrote it: “%s”~" % E["text"]
+        m = re.match(r"^(?:mark|tick off|check off|cross off|complete|finish(?:ed)?|done with|i did|i(?:'ve| have) done|"
+                     r"fulfil+|fulfilled)\s+(.+?)(?:\s+as (?:done|finished|complete))?$", lw) or \
+            re.match(r"^(.+?) (?:reminder|ema) (?:is )?(?:done|finished|complete)$", lw)
+        if m:
+            E = self.ema_find(m.group(1))
+            if E and not E.get("done"):
+                self.ema_set_done(E)
+                return "Yatta! “%s” is fulfilled~ ✓" % E["text"]
+        m = re.match(r"^(?:delete|remove|cancel|take down|unhang|drop|forget)\s+(.+?)$", lw)
+        if m and re.search(r"\b(?:reminders?|ema|#?\d{1,2}$)", lw):
+            E = self.ema_find(m.group(1))
+            if E:
+                self.ema_remove(E)
+                return "Took down “%s”." % E["text"]
+        m = re.match(r"^snooze(?:\s+(.+?))?(?:\s+(?:for|by)\s+(\d+)\s*(min(?:ute)?s?|m|hours?|h))?$", lw)
+        if m:
+            E = self.ema_find(m.group(1) or "")
+            rung = [e for e in self.ema_active() if e.get("rang")]
+            E = E or (rung[0] if rung else None)
+            if E:
+                n = int(m.group(2) or 10) * (60 if (m.group(3) or "m").startswith("h") else 1)
+                self.ema_snooze(E, n)
+                return "Snoozed “%s” for %s~" % (E["text"], fmt_hm(n))
+        return None
+
+    def run_action(self, act, args, reply):
+        if str(act or "").lower().strip() == "add_reminder":
+            args = args if isinstance(args, dict) else {}
+            txt, at, rep = ema_parse("%s %s" % (args.get("text") or "", args.get("when") or ""))
+            if not txt:
+                return reply or "What should I remind you about?"
+            E = self.ema_add(txt, at, rep)
+            return "Hung an ema: “%s” · %s. I'll say it out loud then~" % (E["text"], ema_when(at)) if at else \
+                "Hung an ema: “%s” (anytime)." % E["text"]
+        return super().run_action(act, args, reply)
+
+    # ---- the page ---------------------------------------------------------------------------------------------------
+    def hub_build_reminders(self, pg):
+        self.hub_title(pg, "Reminders", "絵馬 · Write a wish plaque and hang it on the shrine rack. Zenko says it out loud "
+                                        "when it's time. Your planned study glows in the lanterns above.")
+        bg = T["card"]
+        inner = self.hub_scroller(pg)
+        top = tk.Frame(inner, bg=PAPER)
+        top.pack(fill="x", padx=24, pady=(12, 0))
+        card = self.hub_card(top, "Write an ema")
+        card.pack(fill="x")
+        r1 = tk.Frame(card, bg=bg)
+        r1.pack(fill="x", padx=16, pady=(2, 6))
+        tv = tk.StringVar()
+        ent = tk.Entry(r1, textvariable=tv, relief="flat", bg=FIELD, fg=INK, insertbackground=GOLD, font=(FONT_UI, 12),
+                       highlightthickness=1, highlightbackground=LINE, highlightcolor=GOLD)
+        ent.pack(side="left", fill="x", expand=True, ipady=5)
+        ph = "What should I remind you of?  (e.g. call mum at 6pm, take vitamins every day at 8)"
+
+        def ph_show(_e=None):
+            if not tv.get():
+                ent.config(fg=GREY)
+                ent.insert(0, ph)
+                ent._ph = True
+
+        def ph_hide(_e=None):
+            if getattr(ent, "_ph", False):
+                ent.delete(0, "end")
+                ent.config(fg=INK)
+                ent._ph = False
+        ent.bind("<FocusIn>", ph_hide)
+        ent.bind("<FocusOut>", ph_show)
+        ph_show()
+        r2 = tk.Frame(card, bg=bg)
+        r2.pack(fill="x", padx=16, pady=(0, 4))
+        tk.Label(r2, text="When", bg=bg, fg=GOLD, font=(FONT_UI, 9, "bold")).pack(side="left", padx=(0, 8))
+        pick = {"v": "auto"}
+        chips = {}
+        opts = [("auto", "From my words"), ("none", "Anytime"), ("30", "In 30 min"), ("60", "In 1 hour"),
+                ("tonight", "Tonight 8 PM"), ("tmrw", "Tomorrow 7 AM")]
+
+        def choose(k):
+            pick["v"] = k
+            for kk, b in chips.items():
+                b.config(bg=ORANGE if kk == k else T["start"], fg=ON_ACC if kk == k else INK)
+        for k, lab in opts:
+            b = self.tt_btn(r2, lab, lambda k=k: choose(k), bg=T["start"], size=9, padx=9, pady=2)
+            b.pack(side="left", padx=(0, 5))
+            chips[k] = b
+        tk.Label(r2, text="  or at", bg=bg, fg=GREY, font=(FONT_UI, 9)).pack(side="left")
+        atv = tk.StringVar()
+        ate = tk.Entry(r2, textvariable=atv, width=8, relief="flat", bg=FIELD, fg=INK, insertbackground=GOLD,
+                       font=(FONT_UI, 10), highlightthickness=1, highlightbackground=LINE, highlightcolor=GOLD)
+        ate.pack(side="left", padx=(6, 0), ipady=2)
+        ate.bind("<KeyRelease>", lambda e: choose("at") if atv.get().strip() else None)
+        r3 = tk.Frame(card, bg=bg)
+        r3.pack(fill="x", padx=16, pady=(2, 12))
+        dv = tk.BooleanVar(value=False)
+        kw = dict(bg=bg, fg=INK, activebackground=bg, activeforeground=GOLD, selectcolor=FIELD, highlightthickness=0,
+                  font=(FONT_UI, 10))
+        tk.Checkbutton(r3, text="Every day", variable=dv, **kw).pack(side="left")
+        av = tk.BooleanVar(value=bool(self.cfg.get("remind_aloud", True)))
+        tk.Checkbutton(r3, text="Say reminders and planned study out loud", variable=av,
+                       command=lambda: self.cfg_set("remind_aloud", bool(av.get())), **kw).pack(side="left", padx=(14, 0))
+        msg = tk.Label(r3, text="", bg=bg, fg=GOLD, font=(FONT_UI, 9, "bold"), anchor="w")
+
+        def hang(_e=None):
+            raw = "" if getattr(ent, "_ph", False) else tv.get().strip()
+            if not raw:
+                ent.focus_set()
+                return
+            txt, at, rep = ema_parse(raw)
+            k = pick["v"]
+            now = datetime.datetime.now()
+            if k == "none":
+                at = None
+            elif k in ("30", "60"):
+                at = time.time() + int(k) * 60
+            elif k == "tonight":
+                d = now.replace(hour=20, minute=0, second=0, microsecond=0)
+                at = (d if d > now else d + datetime.timedelta(days=1)).timestamp()
+            elif k == "tmrw":
+                at = (now + datetime.timedelta(days=1)).replace(hour=7, minute=0, second=0, microsecond=0).timestamp()
+            elif k == "at" and atv.get().strip():
+                _t, a2, r2_ = ema_parse("x at " + atv.get().strip()) if not re.search(r"[a-z]{3}", atv.get()) else \
+                    ema_parse("x " + atv.get().strip())
+                if a2:
+                    at = a2
+                rep = rep or r2_
+            if dv.get():
+                rep = "daily"
+                if not at:
+                    at = (now + datetime.timedelta(minutes=1)).timestamp()
+            E = self.ema_add(txt or raw[:160], at, rep)
+            tv.set("")
+            atv.set("")
+            dv.set(False)
+            choose("auto")
+            self._ema_sel = E["id"]
+            msg.config(text=("Hung~ %s" % (ema_when(at) + " (" + ema_left(at) + ")" if at else "anytime")))
+            beep("hello")
+            self.ema_render_later()
+        ent.bind("<Return>", hang)
+        self.tt_btn(r3, "Hang it", hang, bg=ORANGE, fg=ON_ACC, size=11, padx=18, pady=3).pack(side="right")
+        msg.pack(side="right", padx=10)
+        choose("auto")
+        # the shrine at night
+        mat = tk.Frame(inner, bg=_mixhex(LINE, GOLD, 0.25), padx=1, pady=1)
+        mat.pack(fill="x", padx=24, pady=(12, 16))
+        cv = tk.Canvas(mat, bg=NIGHT, highlightthickness=0, height=520)
+        cv.pack(fill="x")
+        self.ema_ui = {"cv": cv, "imgs": {}, "hits": [], "minute": -1, "job": None, "wisps": [], "anim": False,
+                       "hover": None, "w": 0}
+
+        def conf(e):
+            if abs(e.width - self.ema_ui["w"]) > 2:
+                self.ema_ui["w"] = e.width
+                self.ema_render_later()
+        cv.bind("<Configure>", conf)
+        cv.bind("<Motion>", self.ema_motion)
+        cv.bind("<Leave>", lambda e: self.ema_hover(None))
+        cv.bind("<ButtonRelease-1>", self.ema_click)
+        self.ema_render_later()
+
+    def ema_render_later(self, delay=60):
+        U = getattr(self, "ema_ui", None)
+        if not U:
+            return
+        try:
+            if not U["cv"].winfo_exists():
+                self.ema_ui = None
+                return
+        except tk.TclError:
+            self.ema_ui = None
+            return
+        if U.get("job"):
+            try:
+                self.root.after_cancel(U["job"])
+            except Exception:
+                pass
+        U["job"] = self.root.after(delay, self.ema_render)
+
+    def ema_img(self, key, make):
+        U = self.ema_ui
+        if key not in U["imgs"]:
+            if len(U["imgs"]) > 160:
+                U["imgs"].clear()
+            U["imgs"][key] = make()
+        return U["imgs"][key]
+
+    def ema_render(self):
+        U = self.ema_ui
+        if not U:
+            return
+        U["job"] = None
+        cv = U["cv"]
+        try:
+            W = cv.winfo_width()
+            VH = cv.winfo_height()
+        except tk.TclError:
+            self.ema_ui = None
+            return
+        if W < 120:
+            return
+        f = max(0.85, min(1.35, getattr(self, "zk_f", 1.0)))
+        now = datetime.datetime.now()
+        nts = time.time()
+        U["minute"] = int(nts) // 60
+        jp = _jp_font(self.root) or FONT_UI
+        serif = _font_pick(self.root, ["Yu Mincho", "MS Mincho", "Georgia", "Times New Roman"], FONT_UI) \
+            if "_font_pick" in globals() else FONT_UI
+        cv.delete("all")
+        U["hits"] = []
+        ink = "#3a2414"
+        wood_d, wood_l = "#3b2418", "#6b4329"
+        verm = "#c8372d"
+        # ---- layout first (so the sky is drawn tall enough) ----
+        act = self.ema_active()
+        done = self.ema_done_list()[:8]
+        pw, ph = int(176 * f), int(150 * f)
+        gap = int(22 * f)
+        rack_x0, rack_x1 = int(70 * f), W - int(70 * f)
+        cols = max(1, (rack_x1 - rack_x0 + gap - int(28 * f)) // (pw + gap))
+        rows = max(1, int(math.ceil(len(act) / float(cols)))) if act else 1
+        lan_top = int(18 * f)
+        lan_h = int(178 * f)
+        rack_top = lan_top + lan_h + int(30 * f)
+        beam_gap = ph + int(74 * f)
+        rack_bot = rack_top + int(34 * f) + rows * beam_gap + int(56 * f)     # room for Zenko on the ground
+        done_top = rack_bot + int(40 * f)
+        dw, dh = int(112 * f), int(96 * f)
+        dcols = max(1, (W - int(80 * f)) // (dw + int(14 * f)))
+        done_h = (int(40 * f) + int(math.ceil(len(done) / float(dcols))) * (dh + int(26 * f))) if done else 0
+        total = max(int(380 * f), done_top + done_h + int(40 * f))
+        if abs(int(float(cv.cget("height"))) - total) > 1:
+            cv.configure(height=total)
+        VH = total
+        # ---- the night sky, mountains and a torii in the mist ----
+        top_c, low_c = _mixhex(NIGHT, "#000000", 0.25), _mixhex(NIGHT, T["banner"], 0.9)
+        step = 6
+        for y in range(0, total, step):
+            cv.create_rectangle(0, y, W, y + step, fill=_mixhex(top_c, low_c, min(1.0, y / float(max(1, VH)))), outline="")
+        rnd = random.Random(7)
+        for _ in range(int(W * total / 9000)):
+            sx, sy = rnd.uniform(0, W), rnd.uniform(0, total * 0.9)
+            s_ = rnd.choice((1, 1, 2))
+            cv.create_rectangle(sx, sy, sx + s_, sy + s_, fill=_mixhex(NIGHT, INK, rnd.uniform(0.25, 0.75)), outline="")
+        mx, my, mr = W - int(90 * f), int(46 * f), int(26 * f)
+        cv.create_image(mx, my, image=self.ema_img(("moon", mr), lambda: px_photo(mr * 2, mr * 2, glow_art(mr, (255, 236, 190), 0.35))))
+        cv.create_oval(mx - mr * 0.55, my - mr * 0.55, mx + mr * 0.55, my + mr * 0.55, fill="#f6e7c1", outline="")
+        cv.create_oval(mx - mr * 0.25, my - mr * 0.6, mx + mr * 0.75, my + mr * 0.45, fill=top_c, outline="")
+        hill = _mixhex(NIGHT, "#000000", 0.35)
+        pts = [0, VH]
+        for x in range(0, W + 20, 20):
+            pts += [x, VH - int(70 * f) - int(26 * f * (0.5 + 0.5 * math.sin(x * 0.011 + 1.3) + 0.3 * math.sin(x * 0.037)))]
+        pts += [W, VH]
+        cv.create_polygon(pts, fill=_mixhex(hill, low_c, 0.35), outline="")
+        tx, ty = int(W * 0.12), VH - int(84 * f)          # a small torii far away
+        tc = _mixhex(verm, NIGHT, 0.45)
+        cv.create_rectangle(tx - 24 * f, ty - 34 * f, tx + 24 * f, ty - 30 * f, fill=tc, outline="")
+        cv.create_rectangle(tx - 19 * f, ty - 25 * f, tx + 19 * f, ty - 23 * f, fill=tc, outline="")
+        cv.create_rectangle(tx - 15 * f, ty - 30 * f, tx - 12 * f, ty, fill=tc, outline="")
+        cv.create_rectangle(tx + 12 * f, ty - 30 * f, tx + 15 * f, ty, fill=tc, outline="")
+        # ---- 今日の予定: planned study as paper lanterns on a rope ----
+        items = tt_today(self.tt, now.date())
+        cv.create_text(int(28 * f), lan_top, text="今日の予定", anchor="nw", fill=GOLD, font=(jp, int(11 * f), "bold"))
+        cv.create_text(int(28 * f) + int(92 * f), lan_top + int(2 * f), text="Planned study today  ·  from your timetable",
+                       anchor="nw", fill=GREY, font=(FONT_UI, int(9 * f)))
+        ry = lan_top + int(34 * f)
+        rope = []
+        for i in range(0, 41):
+            x = int(16 * f) + (W - int(32 * f)) * i / 40.0
+            rope += [x, ry + math.sin(math.pi * i / 40.0) * int(14 * f)]
+        cv.create_line(rope, fill="#7a2a20", width=max(2, int(2 * f)), smooth=True)
+        lw_, lh_ = 14, 20
+        lz = max(2, int(round(3 * f)))
+        lan = self.ema_img(("lan", lz), lambda: px_photo(lw_, lh_, lantern_art(lw_, lh_), lz))
+        glow = self.ema_img(("lglow", lz), lambda: px_photo(30, 30, glow_art(15, (255, 170, 80), 0.45), lz))
+        shown = items[:max(1, min(8, (W - int(60 * f)) // int(132 * f)))]
+        nxt = None
+        for it in items:
+            if not tt_done(it, now.date()) and tt_window(it, now.date())[1] > now:
+                nxt = it
+                break
+        if not shown:
+            x = W // 2
+            yy = ry + int(14 * f)
+            cv.create_line(x, yy, x, yy + int(10 * f), fill="#3a2a20", width=2)
+            cv.create_image(x, yy + int(10 * f), image=lan, anchor="n")
+            cv.create_rectangle(x - lw_ * lz / 2, yy + int(10 * f), x + lw_ * lz / 2, yy + int(10 * f) + lh_ * lz,
+                                fill=NIGHT, outline="", stipple="gray50")
+            cv.create_text(x, yy + int(10 * f) + lh_ * lz + int(10 * f), text="No study planned yet today", fill=GREY,
+                           font=(FONT_UI, int(9 * f), "bold"), anchor="n")
+            cv.create_text(x, yy + int(10 * f) + lh_ * lz + int(28 * f), text="Say “plan bio at 4pm for 45 min”",
+                           fill=_mixhex(GREY, NIGHT, 0.3), font=(FONT_UI, int(8 * f)), anchor="n")
+        for k, it in enumerate(shown):
+            x = int((W) * (k + 1) / float(len(shown) + 1))
+            sag = math.sin(math.pi * (x - 16 * f) / float(W - 32 * f)) * int(14 * f)
+            yy = ry + sag
+            cv.create_line(x, yy, x, yy + int(10 * f), fill="#3a2a20", width=2)
+            ly = yy + int(10 * f)
+            isdone = tt_done(it, now.date())
+            if it is nxt:
+                cv.create_image(x, ly + lh_ * lz / 2, image=glow)
+            cv.create_image(x, ly, image=lan, anchor="n")
+            if isdone:
+                cv.create_rectangle(x - lw_ * lz / 2, ly, x + lw_ * lz / 2, ly + lh_ * lz, fill=NIGHT, outline="",
+                                    stipple="gray50")
+            st = datetime.datetime.strptime(it["start"], "%H:%M").strftime("%I:%M %p").lstrip("0")
+            cv.create_text(x, ly + lh_ * lz + int(8 * f), text=st, fill=GOLD if not isdone else GREY,
+                           font=(FONT_UI, int(10 * f), "bold"), anchor="n")
+            cv.create_text(x, ly + lh_ * lz + int(26 * f), text=clip(it["task"], 22) + ("  ✓" if isdone else ""),
+                           fill=INK if not isdone else GREY, width=int(124 * f), justify="center",
+                           font=(FONT_UI, int(9 * f)), anchor="n")
+            if it is nxt:
+                win = tt_window(it, now.date())
+                lab = "now" if win[0] <= now else ema_left(win[0].timestamp(), nts)
+                cv.create_text(x, ly + lh_ * lz + int(44 * f), text="next · " + lab, fill=_mixhex(GOLD, "#ffffff", 0.3),
+                               font=(FONT_UI, int(8 * f), "bold"), anchor="n")
+        if len(items) > len(shown):
+            cv.create_text(W - int(24 * f), ry + int(30 * f), text="+%d more" % (len(items) - len(shown)), anchor="e",
+                           fill=GREY, font=(FONT_UI, int(8 * f), "bold"))
+        # ---- 絵馬掛け: the ema rack ----
+        cv.create_text(int(28 * f), rack_top - int(28 * f), text="絵馬掛け", anchor="nw", fill=GOLD,
+                       font=(jp, int(11 * f), "bold"))
+        n_due = sum(1 for e in act if e.get("at") and datetime.datetime.fromtimestamp(e["at"]).date() == now.date())
+        sub = "Your reminders  ·  %d hanging%s" % (len(act), ("  ·  %d today" % n_due) if n_due else "")
+        cv.create_text(int(28 * f) + int(78 * f), rack_top - int(26 * f), text=sub, anchor="nw", fill=GREY,
+                       font=(FONT_UI, int(9 * f)))
+        # roof
+        rx0, rx1 = rack_x0 - int(26 * f), rack_x1 + int(26 * f)
+        roof_y = rack_top
+        cv.create_polygon(rx0 - int(18 * f), roof_y + int(16 * f), rx0 + int(20 * f), roof_y - int(6 * f),
+                          rx1 - int(20 * f), roof_y - int(6 * f), rx1 + int(18 * f), roof_y + int(16 * f),
+                          fill="#2a2230", outline="")
+        for k in range(0, int(rx1 - rx0), int(10 * f)):                 # tile ridges
+            cv.create_line(rx0 + k, roof_y - int(4 * f), rx0 + k - int(4 * f), roof_y + int(14 * f), fill="#3a3142")
+        cv.create_line(rx0 + int(20 * f), roof_y - int(6 * f), rx1 - int(20 * f), roof_y - int(6 * f), fill=GOLD,
+                       width=max(2, int(2 * f)))
+        cv.create_line(rx0 - int(18 * f), roof_y + int(16 * f), rx1 + int(18 * f), roof_y + int(16 * f),
+                       fill="#15101a", width=max(2, int(3 * f)))
+        # posts
+        post_w = int(16 * f)
+        for px_ in (rack_x0 - int(16 * f), rack_x1 + int(16 * f)):
+            cv.create_rectangle(px_ - post_w / 2, roof_y + int(16 * f), px_ + post_w / 2, rack_bot + int(18 * f),
+                                fill=wood_d, outline="")
+            cv.create_rectangle(px_ - post_w / 2, roof_y + int(16 * f), px_ - post_w / 2 + int(4 * f), rack_bot + int(18 * f),
+                                fill=wood_l, outline="")
+            cv.create_rectangle(px_ - post_w * 0.8, rack_bot + int(12 * f), px_ + post_w * 0.8, rack_bot + int(22 * f),
+                                fill="#6e6a75", outline="")
+        # stone lantern + zenko at the foot of the rack
+        sl = self.ema_img(("toro", lz), lambda: px_photo(16, 30, ema_stone_lantern(16, 30), lz))
+        cv.create_image(rack_x1 + int(48 * f), rack_bot + int(22 * f), image=sl, anchor="s")
+        cv.create_image(rack_x1 + int(48 * f), rack_bot + int(22 * f) - 30 * lz * 0.7,
+                        image=self.ema_img(("tglow", lz), lambda: px_photo(24, 24, glow_art(12, (255, 190, 110), 0.4), lz)))
+        # Zenko keeps watch at the foot of the rack
+        try:
+            fz = 1 if f < 1.25 else 2
+            fox = self.ema_img(("fox", fz, T.get("night")), lambda: self.small_fox(fz))
+            fx_, fy_ = rack_x1 - int(30 * f) - fox.width() / 2, rack_bot + int(16 * f)
+            cv.create_image(fx_, fy_, image=fox, anchor="s")
+            n_soon = sum(1 for e in act if e.get("at") and 0 < e["at"] - nts < 3 * 3600)
+            n_rang = sum(1 for e in act if e.get("rang"))
+            line = ("%d rang! Tap it when it's done~" % n_rang) if n_rang else \
+                (("%d coming up soon~ I'll say it out loud." % n_soon) if n_soon else
+                 ("I'm watching your ema~" if act else "Write me an ema~"))
+            tb = cv.create_text(fx_ - fox.width() / 2 - int(16 * f), fy_ - fox.height() * 0.62, text=line, anchor="e",
+                                fill=INK, font=(FONT_UI, int(9 * f), "bold"))
+            b_ = cv.bbox(tb)
+            bub = rbox(cv, b_[0] - 10 * f, b_[1] - 6 * f, b_[2] + 10 * f, b_[3] + 6 * f, 10, fill=T["bub"],
+                       outline=_mixhex(GOLD, NIGHT, 0.4))
+            cv.create_polygon(b_[2] + 10 * f, (b_[1] + b_[3]) / 2 - 4 * f, b_[2] + 18 * f, (b_[1] + b_[3]) / 2,
+                              b_[2] + 10 * f, (b_[1] + b_[3]) / 2 + 4 * f, fill=T["bub"], outline="")
+            cv.tag_raise(tb, bub)
+        except Exception as ex:
+            zk_log_error("ema fox: %r" % (ex,))
+        # beams + plaques
+        U["plaques"] = []
+        for r in range(rows):
+            by = rack_top + int(34 * f) + r * beam_gap
+            cv.create_rectangle(rack_x0 - int(26 * f), by, rack_x1 + int(26 * f), by + int(10 * f), fill=wood_d, outline="")
+            cv.create_line(rack_x0 - int(26 * f), by + 1, rack_x1 + int(26 * f), by + 1, fill=wood_l, width=2)
+        if not act:
+            cy = rack_top + int(34 * f) + int(30 * f)
+            cv.create_text((rack_x0 + rack_x1) / 2, cy + ph / 2, text="No ema hanging yet.\nWrite one above, or tell me in "
+                           "chat: “remind me to drink water in 30 min”.", fill=GREY, justify="center",
+                           font=(FONT_UI, int(10 * f)), width=int(360 * f))
+        span = cols * pw + (cols - 1) * gap
+        x_start = rack_x0 + (rack_x1 - rack_x0 - span) / 2
+        for i, E in enumerate(act):
+            r, c = divmod(i, cols)
+            by = rack_top + int(34 * f) + r * beam_gap
+            x = x_start + c * (pw + gap)
+            y = by + int(24 * f)
+            self.ema_draw_plaque(cv, E, x, y, pw, ph, f, ink, verm, serif, jp, nts, by + int(10 * f), i + 1)
+        # fulfilled row
+        if done:
+            cv.create_text(int(28 * f), done_top, text="叶った", anchor="nw", fill=GOLD, font=(jp, int(11 * f), "bold"))
+            cv.create_text(int(28 * f) + int(64 * f), done_top + int(2 * f), text="Fulfilled  ·  click one to bring it back",
+                           anchor="nw", fill=GREY, font=(FONT_UI, int(9 * f)))
+            bx = W - int(30 * f)
+            t_ = cv.create_text(bx, done_top + int(2 * f), text="Clear fulfilled", anchor="ne", fill=GOLD,
+                                font=(FONT_UI, int(9 * f), "bold underline"))
+            bb = cv.bbox(t_)
+            U["hits"].append((bb, ("clear_done", None)))
+            for i, E in enumerate(done):
+                r, c = divmod(i, dcols)
+                x = int(40 * f) + c * (dw + int(14 * f))
+                y = done_top + int(34 * f) + r * (dh + int(26 * f))
+                self.ema_draw_plaque(cv, E, x, y, dw, dh, f * 0.72, ink, verm, serif, jp, nts, None, None, small=True)
+        # foxfire
+        U["wisps"] = []
+        rw = random.Random(int(nts) // 600)
+        for k in range(7):
+            wx, wy = rw.uniform(30, W - 30), rw.uniform(lan_top + lan_h * 0.6, min(total, VH) - 40)
+            gr = int(rw.choice((7, 9, 11)) * f)
+            gcol = tuple(int(GLOW.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))
+            o1 = cv.create_image(wx, wy, image=self.ema_img(("wisp", gr, GLOW), lambda: px_photo(
+                gr * 2, gr * 2, glow_art(gr, gcol, 0.75), 2)), tags="wisp")
+            o2 = cv.create_image(wx, wy, image=self.ema_img(("wispc", GLOW), lambda: px_photo(
+                4, 4, glow_art(2, tuple(min(255, c + 90) for c in gcol), 1.0), 2)), tags="wisp")
+            U["wisps"].append([o1, o2, wx, wy, rw.uniform(0, 6.28), rw.uniform(0.4, 1.0)])
+        cv.tag_raise("wisp")
+        cv.tag_raise("plaque")
+        cv.tag_raise("pill")
+        if not U.get("anim"):
+            U["anim"] = True
+            self.ema_anim()
+
+    def ema_draw_plaque(self, cv, E, x, y, w, h, f, ink, verm, serif, jp, nts, beam_y, num, small=False):
+        eid = E.get("id")
+        tag = "ema_" + eid
+        tags = ("plaque", tag)
+        sel = (self._ema_sel == eid) and not small
+        hov = (self.ema_ui.get("hover") == eid)
+        lift = int(3 * f) if (hov or sel) else 0
+        y -= lift
+        at = E.get("at")
+        rang = bool(E.get("rang")) and not E.get("done")
+        soon = bool(at) and not E.get("done") and 0 < at - nts < 3600
+        if beam_y is not None:                                   # red cord from the beam through the plaque's hole
+            cv.create_line(x + w / 2 - 10 * f, beam_y, x + w / 2, y + h * 0.13, x + w / 2 + 10 * f, beam_y,
+                           fill="#c0392b", width=max(2, int(2 * f)), tags=tags)
+            cv.create_oval(x + w / 2 - 3 * f, beam_y - 2 * f, x + w / 2 + 3 * f, beam_y + 4 * f, fill="#8a6a3a",
+                           outline="", tags=tags)
+        if rang or soon or sel:
+            gk = ("pglow", w, h, rang)
+            g_ = self.ema_img(gk, lambda: px_photo(int(w / 2) + 10, int(h / 2) + 10, glow_art(
+                int(w / 4) + 5, (255, 90, 70) if rang else (255, 190, 100), 0.45), 2))
+            cv.create_image(x + w / 2, y + h / 2, image=g_, tags=tags)
+        cv.create_polygon(x + 3, y + h * 0.24 + 4, x + w / 2 + 3, y + 4, x + w + 3, y + h * 0.24 + 4, x + w + 3, y + h + 4,
+                          x + 3, y + h + 4, fill="#0a0710", outline="", tags=tags)       # shadow
+        z = 2 if w >= 140 else 1
+        wood = self.ema_img(("wood", int(w / z), int(h / z), E.get("seed", 1) % 6, z),
+                            lambda: px_photo(int(w / z), int(h / z), ema_plaque_wood(int(w / z), int(h / z), E.get("seed", 1) % 6), z))
+        cv.create_image(x, y, image=wood, anchor="nw", tags=tags)
+        if sel or hov:
+            cv.create_polygon(x, y + h * 0.24, x + w / 2, y, x + w, y + h * 0.24, x + w, y + h, x, y + h, fill="",
+                              outline=GOLD, width=2, tags=tags)
+        cv.create_oval(x + w / 2 - 3 * f, y + h * 0.13 - 3 * f, x + w / 2 + 3 * f, y + h * 0.13 + 3 * f, fill="#5a3a1e",
+                       outline="", tags=tags)
+        if num and not small:
+            cv.create_text(x + 12 * f, y + h * 0.3, text=str(num), anchor="w", fill=_mixhex(ink, "#e6c391", 0.45),
+                           font=(FONT_UI, int(8 * f), "bold"), tags=tags)
+        txt = E.get("text") or ""
+        fs = int((10.5 if len(txt) < 50 else 9.5) * f) if not small else max(7, int(10 * f))
+        cv.create_text(x + w / 2, y + h * 0.29, text=clip(txt, 90 if not small else 40), anchor="n", fill=ink,
+                       width=w - (48 if not small else 16) * f, justify="center", font=(serif, fs, "bold"), tags=tags)
+        if not small:
+            if E.get("done"):
+                when = "Fulfilled"
+            elif rang:
+                when = "Rang %s" % ema_when(at, short=True)
+            elif at:
+                today = datetime.datetime.fromtimestamp(at).date() == datetime.date.today()
+                when = "%s · %s" % (ema_when(at, short=today), ema_left(at, nts)) if (at - nts) < 86400 * 2 else ema_when(at)
+            else:
+                when = "Anytime"
+            col = "#b3261e" if rang else ("#8a3b12" if soon else "#6b4a2a")
+            cv.create_line(x + 16 * f, y + h - 30 * f, x + w - 16 * f, y + h - 30 * f, fill=_mixhex("#e6c391", ink, 0.25),
+                           tags=tags)
+            fnt = (FONT_UI, int(8.5 * f), "bold")
+            t_ = cv.create_text(x + w / 2, y + h - 17 * f, text=when, fill=col, font=fnt, tags=tags)
+            bb_ = cv.bbox(t_)
+            if bb_ and bb_[2] - bb_[0] > w - 20 * f:
+                cv.itemconfigure(t_, font=(FONT_UI, max(6, int(7.5 * f)), "bold"))
+            if E.get("repeat") == "daily" and not E.get("done"):     # a little vermilion 'every day' tag before the time
+                bw_ = 28 * f
+                cv.move(t_, bw_ / 2 + 2, 0)
+                bb_ = cv.bbox(t_)
+                bx_, by_ = bb_[0] - bw_ - 3, y + h - 17 * f
+                rbox(cv, bx_, by_ - 7 * f, bx_ + bw_, by_ + 7 * f, 99, fill=verm, tags=tags, shape="pill")
+                cv.create_text(bx_ + bw_ / 2, by_, text="毎日", fill="#fbe9d0", font=(jp, max(6, int(7 * f)), "bold"),
+                               tags=tags)
+            sx, sy = x + w - 20 * f, y + h * 0.27                    # a tiny vermilion fox seal
+            cv.create_rectangle(sx - 7 * f, sy - 7 * f, sx + 7 * f, sy + 7 * f, fill=verm, outline="", tags=tags)
+            cv.create_text(sx, sy, text="狐", fill="#fbe9d0", font=(jp, max(6, int(7 * f)), "bold"), tags=tags)
+        if E.get("done"):
+            cx, cy, rr = x + w * 0.62, y + h * 0.62, min(w, h) * 0.26
+            cv.create_oval(cx - rr, cy - rr, cx + rr, cy + rr, outline=verm, width=max(2, int(3 * f)), tags=tags)
+            cv.create_text(cx, cy, text="済", fill=verm, font=(jp, int(rr * 0.95), "bold"), tags=tags)
+        bb = (x, y, x + w, y + h)
+        self.ema_ui["hits"].append((bb, ("plaque", eid)))
+        if sel:                                                   # the action pills under the selected plaque
+            labels = [("Undo", "undo"), ("Remove", "remove")] if E.get("done") else \
+                [("Done", "done"), ("Edit", "edit"), ("Snooze", "snooze"), ("Remove", "remove")]
+            import tkinter.font as tkfont
+            fnt = tkfont.Font(family=FONT_UI, size=int(8.5 * f), weight="bold")
+            widths = [fnt.measure(lab) + int(18 * f) for lab, _a in labels]
+            gap_ = int(4 * f)
+            tot = sum(widths) + gap_ * (len(labels) - 1)
+            px0 = x + w / 2 - tot / 2
+            py = y + h + 8 * f
+            for (lab, act), pw_ in zip(labels, widths):
+                rbox(cv, px0, py, px0 + pw_, py + 22 * f, 99, fill=ORANGE if act == "done" else T["start"],
+                     outline=_mixhex(GOLD, NIGHT, 0.3), tags=("pill",), shape="pill")
+                cv.create_text(px0 + pw_ / 2, py + 11 * f, text=lab, fill=ON_ACC if act == "done" else INK,
+                               font=fnt, tags=("pill",))
+                self.ema_ui["hits"].insert(0, ((px0, py, px0 + pw_, py + 22 * f), (act, eid)))
+                px0 += pw_ + gap_
+
+    def ema_anim(self):
+        U = self.ema_ui
+        if not U:
+            return
+        try:
+            cv = U["cv"]
+            if not cv.winfo_exists():
+                self.ema_ui = None
+                return
+            if cv.winfo_viewable():
+                t = time.monotonic()
+                for wsp in U["wisps"]:
+                    o1, o2, wx, wy, ph_, sp = wsp
+                    dx = math.sin(t * 0.6 * sp + ph_) * 14
+                    dy = math.cos(t * 0.45 * sp + ph_ * 1.7) * 9
+                    for o in (o1, o2):
+                        cv.coords(o, wx + dx, wy + dy)
+        except tk.TclError:
+            self.ema_ui = None
+            return
+        self.root.after(90, self.ema_anim)
+
+    def ema_hit(self, e):
+        U = self.ema_ui
+        cv = U["cv"]
+        x, y = cv.canvasx(e.x), cv.canvasy(e.y)
+        for bb, what in U["hits"]:
+            if bb[0] <= x <= bb[2] and bb[1] <= y <= bb[3]:
+                return what
+        return None
+
+    def ema_motion(self, e):
+        if not self.ema_ui:
+            return
+        h = self.ema_hit(e)
+        self.ema_hover(h[1] if h and h[0] == "plaque" else None)
+        try:
+            self.ema_ui["cv"].config(cursor="hand2" if h else "")
+        except tk.TclError:
+            pass
+
+    def ema_hover(self, eid):
+        U = self.ema_ui
+        if not U or U.get("hover") == eid:
+            return
+        U["hover"] = eid
+        self.ema_render_later(10)
+
+    def ema_click(self, e):
+        if not self.ema_ui:
+            return
+        h = self.ema_hit(e)
+        if not h:
+            if self._ema_sel:
+                self._ema_sel = None
+                self.ema_render_later(10)
+            return
+        what, eid = h
+        E = self.ema_get(eid) if eid else None
+        if what == "clear_done":
+            self.life["ema"] = [x for x in self.ema_list() if not x.get("done")]
+            self.ema_save()
+            return
+        if what == "plaque":
+            self._ema_sel = None if self._ema_sel == eid else eid
+            self.ema_render_later(10)
+            return
+        if not E:
+            return
+        if what == "done":
+            self._ema_sel = None
+            self.ema_set_done(E)
+            beep("happy")
+        elif what == "undo":
+            self.ema_set_done(E, False)
+        elif what == "remove":
+            self.ema_remove(E)
+        elif what == "snooze":
+            self.ema_snooze(E, 10)
+        elif what == "edit":
+            self.ema_edit(E)
+
+    def ema_edit(self, E):
+        top = tk.Toplevel(self.root)
+        top.title("Edit ema")
+        top.configure(bg=PAPER)
+        top.transient(self.hub["win"] if getattr(self, "hub", None) else self.root)
+        top.resizable(False, False)
+        bg = T["card"]
+        card = self.hub_card(top, "Rewrite this ema")
+        card.pack(fill="both", expand=True, padx=14, pady=14)
+        body = tk.Frame(card, bg=bg)
+        body.pack(fill="x", padx=16, pady=(0, 14))
+        tv = tk.StringVar(value=E.get("text", ""))
+        tk.Label(body, text="What", bg=bg, fg=GREY, font=(FONT_UI, 9, "bold"), anchor="w").pack(fill="x")
+        e1 = tk.Entry(body, textvariable=tv, width=44, relief="flat", bg=FIELD, fg=INK, insertbackground=GOLD,
+                      font=(FONT_UI, 11), highlightthickness=1, highlightbackground=LINE, highlightcolor=GOLD)
+        e1.pack(fill="x", ipady=4, pady=(2, 8))
+        tk.Label(body, text="When  (e.g. 6pm, tomorrow 7:30am, in 20 min, friday at 4pm, or leave empty for anytime)",
+                 bg=bg, fg=GREY, font=(FONT_UI, 9, "bold"), anchor="w", justify="left", wraplength=420).pack(fill="x")
+        cur = ""
+        if E.get("at"):
+            d = datetime.datetime.fromtimestamp(E["at"])
+            day = d.date() - datetime.date.today()
+            cur = ("" if day.days == 0 else ("tomorrow " if day.days == 1 else d.strftime("%A ").lower())) + \
+                d.strftime("%I:%M%p").lstrip("0").lower()
+        wv = tk.StringVar(value=cur)
+        e2 = tk.Entry(body, textvariable=wv, width=44, relief="flat", bg=FIELD, fg=INK, insertbackground=GOLD,
+                      font=(FONT_UI, 11), highlightthickness=1, highlightbackground=LINE, highlightcolor=GOLD)
+        e2.pack(fill="x", ipady=4, pady=(2, 8))
+        dv = tk.BooleanVar(value=E.get("repeat") == "daily")
+        tk.Checkbutton(body, text="Every day", variable=dv, bg=bg, fg=INK, activebackground=bg, activeforeground=GOLD,
+                       selectcolor=FIELD, highlightthickness=0, font=(FONT_UI, 10)).pack(anchor="w")
+        err = tk.Label(body, text="", bg=bg, fg=T.get("bad", "#ff6b7d"), font=(FONT_UI, 9, "bold"), anchor="w")
+        err.pack(fill="x")
+        br = tk.Frame(body, bg=bg)
+        br.pack(fill="x", pady=(8, 0))
+
+        def save(_e=None):
+            t = tv.get().strip()
+            if not t:
+                err.config(text="Write something on it first~")
+                return
+            wtxt = wv.get().strip()
+            at = None
+            if wtxt:
+                _x, at, _r = ema_parse("x " + (wtxt if re.search(r"[a-z]{3}|in \d", wtxt) else "at " + wtxt))
+                if not at:
+                    err.config(text="I couldn't read that time. Try 6pm or tomorrow 7am.")
+                    return
+            E["text"] = t[:160]
+            E["at"] = at
+            E["repeat"] = "daily" if dv.get() else None
+            E["rang"] = False
+            self._ema_last = E["id"]
+            self.ema_save()
+            top.destroy()
+        self.tt_btn(br, "Save", save, bg=ORANGE, fg=ON_ACC, size=10, padx=16, pady=3).pack(side="right")
+        self.tt_btn(br, "Cancel", top.destroy, bg=T["start"], size=10, padx=12, pady=3).pack(side="right", padx=8)
+        e1.bind("<Return>", save)
+        e2.bind("<Return>", save)
+        top.update_idletasks()
+        try:
+            pw_ = top.master.winfo_toplevel()
+            top.geometry("+%d+%d" % (pw_.winfo_rootx() + (pw_.winfo_width() - top.winfo_width()) // 2,
+                                     pw_.winfo_rooty() + (pw_.winfo_height() - top.winfo_height()) // 3))
+        except tk.TclError:
+            pass
+        e1.focus_set()
+        try:
+            top.grab_set()
+        except tk.TclError:
+            pass
 
 
 
