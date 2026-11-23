@@ -52,7 +52,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.23-zenko17.1"
+APP_VERSION = "v2026.11.23-zenko17.2"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -9218,11 +9218,20 @@ class ZenkoLife:
 
     # ---- roaming: she wanders along the taskbar, naps on window edges, chases the mouse --------------
     def roam_home(self):
+        """zenko17.2: home is always the far right of the screen, just above the taskbar."""
         l, t, r, b = work_area(self.root)
-        x, y = self.cfg.get("x"), self.cfg.get("y")
-        if x is None or y is None:
-            x, y = r - self.W - int(6 * self.U), b - self.H - int(2 * self.U)
-        return int(x), int(y)
+        return int(r - self.W - int(6 * self.U)), int(b - self.H - int(2 * self.U))
+
+    def roam_go_home(self, now, wait=(1.5, 4.0)):
+        hx, hy = self.roam_home()
+        if abs(self.root.winfo_x() - hx) <= 3 and abs(self.root.winfo_y() - hy) <= 3:
+            self.roam = None
+            return
+        if abs(self.root.winfo_y() - hy) > 3:
+            self.roam_go("hop", self.root.winfo_x(), hy, hop=True)
+            return
+        self.roam_go("walk", hx, hy)
+        self.roam["start"] = now + random.uniform(*wait)
 
     def roam_ok(self):
         return bool(self.cfg.get("roam", True)) and not (self.session or self.brk or self.lockin or self.drag or self.play
@@ -9306,7 +9315,7 @@ class ZenkoLife:
                     self.say(random.choice(["*hops up* Ooh, a warm window edge... just a little nap~ zzz",
                                             "Kon~ the view is nice up here. *curls up for a nap*"]), 5)
                 else:
-                    self.roam = None
+                    self.roam_go_home(now, (0.4, 1.0))
                 return st
             nx = R["sx"] + (R["tx"] - R["sx"]) * e
             ny = R["sy"] + (R["ty"] - R["sy"]) * e - math.sin(math.pi * e) * 90 * self.U
@@ -9321,17 +9330,20 @@ class ZenkoLife:
             l, t, r, b = work_area(self.root)
             R["tx"] = max(l, min(r - self.W, px - self.COLW - self.FW // 2))
             if now > R["until"]:
-                self.roam = None
                 self.set_mood("happy", 2)
+                self.roam_go_home(now, (0.8, 1.6))            # then trot back to her spot on the far right
                 return st
+        if mode == "walk" and now < R.get("start", 0.0):         # a little pause before walking back home
+            R["t0"] = now
+            return st
         dx = R["tx"] - x
         step = max(2, int(3 * self.U)) * (2 if mode == "chase" else 1)
         if abs(dx) <= step:
             self.root.geometry("+%d+%d" % (R["tx"], R["ty"]))
             if mode == "walk":
-                self.roam = None
                 if random.random() < 0.3:
                     self.play = {"kind": "yawn" if random.random() < 0.5 else "tail", "t0": now, "dur": 1.6}
+                self.roam_go_home(now)                        # always back to the far right afterwards
             return st
         # ease in for the first steps and ease out near the end, so she doesn't slide
         run = now - R["t0"]
@@ -19434,7 +19446,7 @@ def beep(kind="nag"):
         pick = varied_sound(kind)
     else:
         pick = VOICE_FOR.get(kind) or _VOICE_EXTRA.get(kind)
-    if not pick or not (IS_WIN and SOUND["on"]) or SOUND.get("clips", "synth") == "off" or JPV.get("muted"):
+    if not pick or not (IS_WIN and SOUND["on"]) or SOUND.get("clips", "synth") == "off":
         return
     t0 = time.monotonic()
 
@@ -34982,7 +34994,7 @@ class Zenko(FoxBuddy):
             save_config(self.cfg)
         except Exception:
             pass
-        if on:
+        if on:                                           # only her spoken lines: pet/boop voice clips keep playing
             vv_hush()
             _JPS["gen"] += 1
             try:
@@ -35218,6 +35230,9 @@ class Zenko(FoxBuddy):
             pass
         try:
             row = self.chat["mic"].master
+            for ch in row.winfo_children():                 # make room: the text box still stretches to fill
+                if ch.winfo_class() == "Entry":
+                    ch.config(width=16)
             mb = self.tt_btn(row, "Unmute" if self.cfg.get("voice_muted") else "Mute", lambda: self.voice_mute(),
                              bg=T["start"], size=10, padx=12, pady=3)
             mb.pack(side="left", padx=(6, 0))
