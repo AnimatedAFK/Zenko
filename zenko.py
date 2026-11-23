@@ -52,7 +52,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.23-zenko17"
+APP_VERSION = "v2026.11.23-zenko17.1"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -19434,7 +19434,7 @@ def beep(kind="nag"):
         pick = varied_sound(kind)
     else:
         pick = VOICE_FOR.get(kind) or _VOICE_EXTRA.get(kind)
-    if not pick or not (IS_WIN and SOUND["on"]) or SOUND.get("clips", "synth") == "off":
+    if not pick or not (IS_WIN and SOUND["on"]) or SOUND.get("clips", "synth") == "off" or JPV.get("muted"):
         return
     t0 = time.monotonic()
 
@@ -27533,9 +27533,43 @@ def vv_say_text(text):
     return out
 
 
+VV_CACHE_MAX = 500
+
+
+def _vv_cached_wav(p, speaker):
+    """VOICEVOX audio for one sentence, from the disk cache when she has said it before (no wait at all)."""
+    import hashlib
+    d = _ext_dir("speech_cache")
+    key = hashlib.sha1(("%s|%s|v1" % (speaker, p)).encode("utf-8")).hexdigest()[:20]
+    path = os.path.join(d, key + ".wav")
+    try:
+        if os.path.getsize(path) > 1000:
+            try:
+                os.utime(path, None)
+            except OSError:
+                pass
+            return path
+    except OSError:
+        pass
+    data = voicevox_wav(p, speaker, pitch=0.04, speed=1.05)
+    with open(path + ".part", "wb") as f:
+        f.write(data)
+    os.replace(path + ".part", path)
+    try:
+        names = [os.path.join(d, n) for n in os.listdir(d) if n.endswith(".wav")]
+        if len(names) > VV_CACHE_MAX:
+            names.sort(key=lambda n: os.path.getmtime(n))
+            for n in names[:len(names) - VV_CACHE_MAX + 50]:
+                os.remove(n)
+    except OSError:
+        pass
+    return path
+
+
 def vv_speak(text, speaker, done=None):
-    """Speak with VOICEVOX in a thread, sentence by sentence. done(seconds) is called with the expected length
-    as soon as the first sentence is ready. Returns False if VOICEVOX isn't running."""
+    """Speak with VOICEVOX in a thread. Every sentence is made (or taken from the cache) FIRST; then done(seconds)
+    is called and the whole line plays in one go, so the bubble and her voice start together. done(-1) means
+    VOICEVOX isn't running. Returns False when there is nothing to say."""
     if not IS_WIN:
         return False
     _VV_SAY["gen"] += 1
@@ -27547,30 +27581,39 @@ def vv_speak(text, speaker, done=None):
     def run():
         import winsound
         import wave
-        tmp_dir = _ext_dir("speech_tmp")
-        for k, p in enumerate(parts):
+        paths = []
+        for p in parts:
             if _VV_SAY["gen"] != gen:
                 return
             try:
-                data = voicevox_wav(p, speaker, pitch=0.04, speed=1.05)
+                paths.append(_vv_cached_wav(p, speaker))
             except Exception:
-                if done and k == 0:
-                    done(-1)
-                return
-            path = os.path.join(tmp_dir, "reply%d.wav" % (k % 2))
-            with open(path, "wb") as f:
-                f.write(data)
-            try:
-                with wave.open(path, "rb") as w:
-                    secs = w.getnframes() / float(w.getframerate() or 24000)
-            except Exception:
-                secs = len(p) / 12.0
-            if done:
-                rest = sum(len(q) for q in parts[k + 1:]) / 11.0
-                done(secs + rest)
-            if _VV_SAY["gen"] != gen:
-                return
-            winsound.PlaySound(path, winsound.SND_FILENAME | winsound.SND_NODEFAULT)   # blocking, in this thread
+                if not paths:
+                    if done:
+                        done(-1)
+                    return
+                break
+        if _VV_SAY["gen"] != gen:
+            return
+        play, secs = paths[0], 0.0
+        try:
+            if len(paths) > 1:
+                play = os.path.join(_ext_dir("speech_tmp"), "reply%d.wav" % (gen % 2))
+                with wave.open(play, "wb") as out:
+                    for k, pth in enumerate(paths):
+                        with wave.open(pth, "rb") as w:
+                            if k == 0:
+                                out.setparams(w.getparams())
+                            out.writeframes(w.readframes(w.getnframes()))
+            with wave.open(play, "rb") as w:
+                secs = w.getnframes() / float(w.getframerate() or 24000)
+        except Exception:
+            play, secs = paths[0], len(parts[0]) / 12.0
+        if done:
+            done(secs)
+        if _VV_SAY["gen"] != gen or JPV.get("muted"):
+            return
+        winsound.PlaySound(play, winsound.SND_FILENAME | winsound.SND_NODEFAULT)   # blocking, in this thread
     threading.Thread(target=run, daemon=True).start()
     return True
 
@@ -27926,7 +27969,9 @@ def jp_speak(text, speaker, done=None, llm_model=None, already_jp=False):
 
     def run():
         jp = text if already_jp else jp_translate(text, llm_model=llm_model)
-        if not jp or gen != _JPS["gen"]:
+        if not jp or gen != _JPS["gen"] or JPV.get("muted"):
+            if done:
+                done(-1)
             return
 
         def got(secs):
@@ -27934,7 +27979,8 @@ def jp_speak(text, speaker, done=None, llm_model=None, already_jp=False):
                 JPV["until"] = time.monotonic() + secs + 0.4
             if done:
                 done(secs)
-        vv_speak(jp, speaker, got)
+        if not vv_speak(jp, speaker, got) and done:
+            done(-1)
     threading.Thread(target=run, daemon=True).start()
     return True
 
@@ -28470,6 +28516,91 @@ def calc_solve_linear(rows):
     return [m[i][n] / m[i][i] for i in range(n)]
 
 
+def cg_solve(eq, ans=0.0, deg=False, mem=None, lo=-1000.0, hi=1000.0, limit=12):
+    """SolveN: every real x (in lo..hi) where the left side equals the right side. 'x^2=2^x', 'sin(x)=0.5',
+    or just 'x^3-2x-5' (= 0). Returns a sorted list of floats."""
+    eq = (eq or "").replace("＝", "=")
+    if eq.count("=") > 1:
+        raise CalcError("Syntax ERROR")
+    lhs, rhs = (eq.split("=") + ["0"])[:2]
+    if not lhs.strip():
+        raise CalcError("Syntax ERROR")
+    rhs = rhs.strip() or "0"
+    cg_eval(lhs.replace("x", "(1)"), ans, deg, mem=mem) if "x" not in lhs and "x" not in rhs else None
+
+    def f(x):
+        try:
+            v = cg_eval(lhs, ans, deg, x=x, mem=mem) - cg_eval(rhs, ans, deg, x=x, mem=mem)
+        except (CalcError, ZeroDivisionError, OverflowError, ValueError, TypeError):
+            return None
+        if isinstance(v, complex):
+            if abs(v.imag) > 1e-9:
+                return None
+            v = v.real
+        return v if v == v and abs(v) < 1e300 else None
+
+    def bisect(a, fa, b):
+        for _ in range(80):
+            m = (a + b) / 2.0
+            fm = f(m)
+            if fm is None:
+                return None
+            if fm == 0:
+                return m
+            if (fm < 0) == (fa < 0):
+                a, fa = m, fm
+            else:
+                b = m
+        return (a + b) / 2.0
+
+    roots = []
+
+    def add(r):
+        if r is None or not (lo <= r <= hi):
+            return
+        fr = f(r)
+        if fr is None:
+            return
+        scale = max(1.0, abs(f(r + 1e-3) or 0), abs(f(r - 1e-3) or 0))
+        if abs(fr) > 1e-7 * scale and abs(fr) > 1e-9:
+            return                                              # a jump (asymptote), not a root
+        r = round(r, 12)
+        if abs(r) < 1e-12:
+            r = 0.0
+        if all(abs(r - q) > 1e-7 * max(1.0, abs(r)) for q in roots):
+            roots.append(r)
+
+    spans = [(max(lo, -10.0), min(hi, 10.0), 4000), (lo, hi, 4000)]
+    for a0, b0, n in spans:
+        if a0 >= b0:
+            continue
+        step = (b0 - a0) / n
+        xs = [a0 + i * step for i in range(n + 1)]
+        ys = [f(x) for x in xs]
+        for i in range(n):
+            y0, y1 = ys[i], ys[i + 1]
+            if y0 is None or y1 is None:
+                continue
+            if y0 == 0:
+                add(xs[i])
+            elif (y0 < 0) != (y1 < 0):
+                add(bisect(xs[i], y0, xs[i + 1]))
+            elif i and ys[i - 1] is not None and abs(y0) <= abs(ys[i - 1]) and abs(y0) <= abs(y1) and \
+                    abs(y0) < 1e-2 * max(1.0, abs(y1)):        # touches zero without crossing (x² = 0)
+                a, b = xs[i - 1], xs[i + 1]
+                for _ in range(100):                           # golden-section on |f|
+                    m1, m2 = b - (b - a) * 0.618, a + (b - a) * 0.618
+                    f1, f2 = f(m1), f(m2)
+                    if f1 is None or f2 is None:
+                        break
+                    if abs(f1) < abs(f2):
+                        b = m2
+                    else:
+                        a = m1
+                add((a + b) / 2.0)
+    return sorted(sorted(roots, key=abs)[:limit])
+
+
 def calc_stats1(xs):
     n = len(xs)
     if not n:
@@ -28671,7 +28802,7 @@ def bible_book(code_or_name):
     s = (code_or_name or "").strip().lower().replace(".", "")
     if not s:
         return None
-    s2 = re.sub(r"^(1|2|3|i{1,3})\s*", lambda m: {"i": "1", "ii": "2", "iii": "3"}.get(m.group(1), m.group(1)), s)
+    s2 = re.sub(r"^(1|2|3|i{1,3}(?=\s))\s*", lambda m: {"i": "1", "ii": "2", "iii": "3"}.get(m.group(1), m.group(1)), s)
     s2n = s2.replace(" ", "")
     for i, b in enumerate(BIBLE_BOOKS):
         if s2n in (b[0].lower(), b[1].lower().replace(" ", ""), b[3].replace("_", "")):
@@ -28798,17 +28929,29 @@ def _step_index():
     return ix
 
 
-def _step_file_for(bi):
-    """The STEPBible file (path) that holds this book."""
+def _step_files_for(bi):
+    """STEPBible files (paths) whose book range holds this book, narrowest range first."""
     kind = "TAHOT" if bi < 39 else "TAGNT"
-    for path in _step_index().get(kind, []):
+    hits = []
+    for path in list(_step_index().get(kind, [])) + [g for g in STEP_GUESS[kind]]:
         m = re.search(r"TA[HG][A-Z]T\s+([1-3]?[A-Za-z]{2,3})-([1-3]?[A-Za-z]{2,3})", os.path.basename(path))
         if not m:
             continue
         a, b = bible_book(m.group(1)), bible_book(m.group(2))
-        if a is not None and b is not None and a <= bi <= b:
-            return path
-    return None
+        if a is not None and b is not None and a <= bi <= b and path not in hits:
+            hits.append((b - a, path))
+    hits.sort(key=lambda h: h[0])
+    out = []
+    for _w, pth in hits:
+        if pth not in out:
+            out.append(pth)
+    return out
+
+
+def _step_file_for(bi):
+    """The STEPBible file (path) that holds this book."""
+    f = _step_files_for(bi)
+    return f[0] if f else None
 
 
 def step_parse_line(line):
@@ -28816,7 +28959,7 @@ def step_parse_line(line):
     cols = line.rstrip("\r\n").split("\t")
     if len(cols) < 4:
         return None
-    m = re.match(r"^([1-3]?[A-Za-z]{2,3})\.(\d+)\.(\d+)(?:\([^)]*\))?#(\d+)(?:=(\w+))?", cols[0].strip())
+    m = re.match(r"^([1-3]?[A-Za-z]{2,3})\.(\d+)\.(\d+)(?:[(\[{][^)\]}]*[)\]}])?#(\d+)(?:=([\w()]+))?", cols[0].strip())
     if not m:
         return None
     bi = bible_book(m.group(1))
@@ -28852,53 +28995,135 @@ def step_parse_line(line):
                         "lg": lg.strip(), "lang": "Greek", "var": variant}
 
 
+_ORIG_FORMAT = "2"     # zenko17.1: older saves could hold Isaiah under 1 Samuel, so they are cleared once
+
+
 def _orig_path(bi, ch):
+    if not _STEP.get("checked"):
+        _STEP["checked"] = True
+        root = os.path.join(BIBLE_DIR, "orig")
+        mark = os.path.join(root, "format.txt")
+        try:
+            with open(mark, encoding="utf-8") as f:
+                ok = f.read().strip() == _ORIG_FORMAT
+        except OSError:
+            ok = False
+        if not ok:
+            import shutil
+            shutil.rmtree(root, ignore_errors=True)
+            try:
+                os.remove(os.path.join(BIBLE_DIR, "step_index.json"))
+            except OSError:
+                pass
+            _STEP["index"] = None
+            try:
+                os.makedirs(root, exist_ok=True)
+                with open(mark, "w", encoding="utf-8") as f:
+                    f.write(_ORIG_FORMAT)
+            except OSError:
+                pass
     return os.path.join(BIBLE_DIR, "orig", BIBLE_BOOKS[bi][0], "%d.json" % ch)
 
 
-def step_download_section(bi, progress=None):
-    """Download the STEPBible file holding this book and split it into small per-chapter files on disk."""
-    path = _step_file_for(bi)
-    if not path:
-        raise WebError("I couldn't find the original-language file for %s." % BIBLE_BOOKS[bi][1])
-    if path in _STEP["busy"]:
-        raise WebError("Already downloading, one moment~")
-    _STEP["busy"].add(path)
-    try:
+_STEP_LOCK = threading.Lock()
+
+
+def step_download_file(path, progress=None):
+    """Download one STEPBible section and split it into small per-chapter files on disk. Returns the set of
+    (book, chapter) it wrote. Only one section downloads at a time (each into its own temp file)."""
+    with _STEP_LOCK:
         os.makedirs(os.path.join(BIBLE_DIR, "orig"), exist_ok=True)
-        tmp = os.path.join(BIBLE_DIR, "orig", "section.txt")
+        tag = re.sub(r"[^A-Za-z0-9]+", "_", os.path.basename(path))[:40]
+        tmp = os.path.join(BIBLE_DIR, "orig", "section_%s.txt" % tag)
         url = BIBLE_SRC["gh_raw"] + "/" + urllib.parse.quote(path)
         _download(url, tmp, "", 100000, progress, "the original-language text")
-        cur, buf = None, {}
+        cur, buf, wrote = None, {}, set()
 
         def flush():
             if cur and buf:
                 p = _orig_path(cur[0], cur[1])
                 os.makedirs(os.path.dirname(p), exist_ok=True)
-                with open(p, "w", encoding="utf-8") as f:
+                with open(p + ".tmp", "w", encoding="utf-8") as f:
                     json.dump({"v": buf}, f, ensure_ascii=False, separators=(",", ":"))
-        n = 0
+                os.replace(p + ".tmp", p)
+                wrote.add(cur)
         with open(tmp, encoding="utf-8", errors="replace") as f:
             for line in f:
                 r = step_parse_line(line)
                 if not r:
                     continue
-                b, c, v, w = r
-                if (b, c) != cur:
+                bk, c, v, w = r
+                if (bk, c) != cur:
                     flush()
-                    cur, buf = (b, c), {}
+                    cur, buf = (bk, c), {}
                 buf.setdefault(str(v), []).append(w)
-                n += 1
         flush()
         try:
             os.remove(tmp)
         except OSError:
             pass
-        if not n:
+        if not wrote:
             raise WebError("The original-language file came back empty (the network may have blocked it).")
-        return n
-    finally:
-        _STEP["busy"].discard(path)
+        return wrote
+
+
+def step_download_section(bi, progress=None, want=None):
+    """Make sure the original text for book `bi` (and chapter `want`, if given) is on disk."""
+    paths = _step_files_for(bi)
+    if not paths:
+        raise WebError("I couldn't find the original-language file for %s." % BIBLE_BOOKS[bi][1])
+    err = None
+    for path in paths:
+        if want and os.path.exists(_orig_path(bi, want)):
+            return True
+        try:
+            wrote = step_download_file(path, progress)
+        except WebError as e:
+            err = e
+            continue
+        if any(b == bi for b, _c in wrote) and (not want or os.path.exists(_orig_path(bi, want))):
+            return True
+    if want and os.path.exists(_orig_path(bi, want)):
+        return True
+    if err:
+        raise err
+    raise WebError("That download didn't include %s %s. Try the 'Interlinear' button for this one."
+                   % (BIBLE_BOOKS[bi][1], want or ""))
+
+
+def step_have_all():
+    """(chapters on disk, chapters in the Bible)."""
+    total = sum(b[2] for b in BIBLE_BOOKS)
+    have = 0
+    for i, b in enumerate(BIBLE_BOOKS):
+        d = os.path.dirname(_orig_path(i, 1))
+        try:
+            have += sum(1 for n in os.listdir(d) if n.endswith(".json"))
+        except OSError:
+            pass
+    return min(have, total), total
+
+
+def step_download_all(progress=None):
+    """Download every section (Hebrew/Aramaic OT, Greek NT) and both lexicons, so every verse works offline."""
+    done, errs = set(), []
+    for bi in range(len(BIBLE_BOOKS)):
+        if os.path.exists(_orig_path(bi, 1)) and os.path.exists(_orig_path(bi, BIBLE_BOOKS[bi][2])):
+            continue
+        path = _step_file_for(bi)
+        if not path or path in done:
+            continue
+        done.add(path)
+        try:
+            step_download_file(path, progress)
+        except Exception as e:
+            errs.append(str(e))
+    for lang in ("Hebrew", "Greek"):
+        try:
+            step_lexicon(lang)
+        except Exception as e:
+            errs.append(str(e))
+    return step_have_all(), errs
 
 
 def bible_original(bi, ch, vs, allow_net=True, progress=None):
@@ -28907,9 +29132,17 @@ def bible_original(bi, ch, vs, allow_net=True, progress=None):
     if not os.path.exists(p):
         if not allow_net:
             raise WebError("The original text for this book isn't on this PC yet.")
-        step_download_section(bi, progress)
-    with open(p, encoding="utf-8") as f:
-        d = json.load(f).get("v", {})
+        step_download_section(bi, progress, ch)
+    try:
+        with open(p, encoding="utf-8") as f:
+            d = json.load(f).get("v", {})
+    except (OSError, ValueError):
+        try:
+            os.remove(p)
+        except OSError:
+            pass
+        raise WebError("The saved original text for this chapter was damaged, so I removed it. Click the verse again "
+                       "to re-download it.")
     return d.get(str(vs)) or []
 
 
@@ -29527,14 +29760,14 @@ _CG_KEYS = [  # (key id, label, shift label, alpha letter, style)
      ("DIV", "÷", "", "T", "n")],
     [("1", "1", "", "U", "n"), ("2", "2", "", "V", "n"), ("3", "3", "", "W", "n"), ("ADD", "+", "", "X", "n"),
      ("SUB", "−", "", "Y", "n")],
-    [("0", "0", "", "Z", "n"), ("DOT", ".", "", "", "n"), ("EXP", "×10ˣ", "π", "", "n"), ("NEG", "(−)", "Ans", "", "n"),
+    [("0", "0", "", "Z", "n"), ("DOT", ".", "=", "", "n"), ("EXP", "×10ˣ", "π", "", "n"), ("NEG", "(−)", "Ans", "", "n"),
      ("EXE", "EXE", "", "", "exe")],
 ]
 _CG_INS = {"SQ": "²", "POW": "^", "XT": "x", "LOG": "log(", "LN": "ln(", "SIN": "sin(", "COS": "cos(", "TAN": "tan(",
            "FRAC": "/", "ROOT": "√(", "INV": "⁻¹", "LP": "(", "RP": ")", "COMMA": ",", "STO": "→", "DOT": ".",
            "EXP": "ᴇ", "NEG": "-", "MUL": "×", "DIV": "÷", "ADD": "+", "SUB": "−"}
 _CG_SHIFT = {"SQ": "√(", "POW": "root(", "LOG": "10^(", "LN": "e^(", "SIN": "sin⁻¹(", "COS": "cos⁻¹(", "TAN": "tan⁻¹(",
-             "FRAC": "nCr(", "SD": "nPr(", "ROOT": "³√(", "INV": "!", "EXP": "π", "NEG": "Ans"}
+             "FRAC": "nCr(", "SD": "nPr(", "ROOT": "³√(", "INV": "!", "EXP": "π", "NEG": "Ans", "DOT": "="}
 _CG_ALPHA = dict((k[0], k[3]) for row in _CG_KEYS for k in row if k[3])
 CG_VIEWS = [("Initial", -6.3, 6.3, -3.1, 3.1), ("Standard", -10, 10, -10, 10), ("Trig", -2 * math.pi, 2 * math.pi, -1.6, 1.6),
             ("Wide", -50, 50, -50, 50)]
@@ -29632,6 +29865,9 @@ class CasioWindow(ZkToolWindow):
         if ch == "p":
             self.shift = True
             return self.press("EXP")
+        if ch == "=" and self.mode == "eqn" and getattr(self, "eq_sub", None) == "solver":
+            self.insert("=")
+            return self.draw()
         if ch and ch.isalpha() and ch.upper() in "ABCDEFGHIJKLMNOPQRSTUVWYZ" and self.mode == "run":
             self.insert(ch.upper())
             self.draw()
@@ -29696,6 +29932,7 @@ class CasioWindow(ZkToolWindow):
             self.inp, self.cur = [], 0
         elif m == "eqn":
             self.grid = None
+            self.eq_sub = None
         elif m == "stat":
             self.grid_stat()
         elif m == "dist":
@@ -29996,33 +30233,46 @@ class CasioWindow(ZkToolWindow):
         G["top"] = max(0, min(G["top"], G["r"]), G["r"] - 5)
         return True
 
+    # ---- EQUATION: SIMUL (2-6 unknowns) · POLY (degree 2-6) · SOLVER (any equation, every real root) ----------
     def key_eqn(self, kid, text):
+        sub = getattr(self, "eq_sub", None)
         if self.result is not None:
             if kid in ("EXIT", "EXE", "AC"):
                 self.result = None
+                if sub == "solver":
+                    return
             elif kid in ("UP", "DOWN"):
-                self.res_top = max(0, self.res_top + (1 if kid == "DOWN" else -1))
+                self.res_top = max(0, min(len(self.result) - 1, self.res_top + (1 if kid == "DOWN" else -1)))
             return
+        if sub == "solver":
+            return self.key_solver(kid, text)
         if self.grid is None:
-            spec = {"F1": ("simul", 2), "F2": ("simul", 3), "F3": ("poly", 2), "F4": ("poly", 3)}.get(kid)
-            if kid in ("1", "2", "3", "4"):
-                spec = {"1": ("simul", 2), "2": ("simul", 3), "3": ("poly", 2), "4": ("poly", 3)}[kid]
+            if sub is None:
+                pick = {"F1": "simul", "1": "simul", "F2": "poly", "2": "poly", "F3": "solver", "3": "solver"}.get(kid)
+                if kid == "EXIT":
+                    return self.open_mode("run")
+                if pick == "solver":
+                    self.eq_sub = "solver"
+                    self.edit_line(self.app.life.get("cg", {}).get("solver", ""))
+                elif pick:
+                    self.eq_sub = pick
+                return
             if kid == "EXIT":
-                return self.open_mode("run")
-            if spec:
-                k, n = spec
-                if k == "simul":
-                    labels = ["a", "b", "c", "d"][:n + 1]
-                    self.make_grid("simul", labels, [[None] * (n + 1) for _ in range(n)],
-                                   "SIMUL  %d unknowns" % n)
+                self.eq_sub = None
+                return
+            n = {"F1": 2, "F2": 3, "F3": 4, "F4": 5, "F5": 6, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6}.get(kid)
+            if n:
+                if sub == "simul":
+                    labels = (["x", "y", "z"] if n <= 3 else ["x%d" % (i + 1) for i in range(n)])[:n] + ["="]
+                    self.make_grid("simul", labels, [[None] * (n + 1) for _ in range(n)], "SIMUL  %d unknowns" % n)
                 else:
-                    labels = ["a", "b", "c", "d"][:n + 1]
-                    self.make_grid("poly", labels, [[None] * (n + 1)], "POLY  degree %d" % n)
+                    labels = list("abcdefg")[:n + 1]
+                    self.make_grid("poly", labels, [[None] * (n + 1)], "POLY  degree %d   (%s)" % (n, self.poly_form(n)))
             return
         if kid == "EXIT":
             self.grid = None
             return
-        if kid == "F1":
+        if kid in ("F1", "F6"):
             if self.inp:
                 self.grid_commit()
             return self.solve_eqn()
@@ -30032,16 +30282,68 @@ class CasioWindow(ZkToolWindow):
             return
         self.grid_keys(kid, text)
 
+    @staticmethod
+    def poly_form(n):
+        sup = {2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶"}
+        parts = []
+        for i, L in enumerate("abcdefg"[:n + 1]):
+            p = n - i
+            parts.append(L + ("x" + sup.get(p, "") if p > 1 else ("x" if p == 1 else "")))
+        return "+".join(parts) + "=0"
+
+    def key_solver(self, kid, text):
+        if kid == "EXIT":
+            self.eq_sub = None
+            self.inp, self.cur = [], 0
+            return
+        if kid == "AC":
+            self.inp, self.cur = [], 0
+            return
+        if kid in ("EXE", "F1", "F6"):
+            eq = "".join(self.inp).strip()
+            if not eq:
+                return
+            self.app.life.setdefault("cg", {})["solver"] = eq
+            self.result = [("Solving...", "")]
+            self.res_top = 0
+            deg, ans, mem = self.deg, self.ans, dict(self.mem)
+
+            def job():
+                return cg_solve(eq, ans, deg, mem)
+
+            def done(res, err):
+                if self.eq_sub != "solver" or self.result != [("Solving...", "")]:
+                    return
+                if err:
+                    self.result = [(str(err) if isinstance(err, CalcError) else "Syntax ERROR", "")]
+                elif not res:
+                    self.result = [("No real solution", ""), ("(searched", "−1000 ≤ x ≤ 1000)")]
+                else:
+                    many = len(res) > 1
+                    self.result = [("x%s =" % (i + 1 if many else ""), calc_fmt(r, True)) for i, r in enumerate(res)]
+                    if self.result:
+                        self.ans = res[0]
+                    self.result.append(("Lft − Rgt", "0"))
+                self.draw()
+            self.app.bg(job, self.safe(done))
+            return
+        if kid == "F3":
+            self.insert("=")
+            return
+        self.edit_keys(kid, text)
+
     def solve_eqn(self):
         G = self.grid
         vals = [[v if v is not None else 0.0 for v in row] for row in G["rows"]]
         try:
             if G["kind"] == "simul":
                 sol = calc_solve_linear(vals)
-                self.result = [("%s =" % "xyz"[i], calc_fmt(v, self.exact)) for i, v in enumerate(sol)]
+                names = G["labels"][:-1]
+                self.result = [("%s =" % names[i], calc_fmt(v, self.exact)) for i, v in enumerate(sol)]
             else:
                 co = vals[0]
                 rts = calc_roots_poly(co)
+                rts.sort(key=lambda r: (abs(r.imag) > 1e-10, -r.real, r.imag))
                 res = []
                 for i, r in enumerate(rts):
                     if abs(r.imag) < 1e-10:
@@ -30165,7 +30467,8 @@ class CasioWindow(ZkToolWindow):
         if not self.alive():
             return
         self.blink = not self.blink
-        if self.mode in ("run", "graph") or (self.grid and self.mode in ("eqn", "stat", "dist")):
+        if self.mode in ("run", "graph") or (self.grid and self.mode in ("eqn", "stat", "dist")) or \
+                (self.mode == "eqn" and getattr(self, "eq_sub", None) == "solver" and self.result is None):
             self.draw()
         self.win.after(530, self.tick)
 
@@ -30316,7 +30619,8 @@ class CasioWindow(ZkToolWindow):
     def draw_grid(self, cv, W, H, ink, dim):
         G = self.grid
         if self.result is not None:
-            title = G["title"] if G else ""
+            title = G["title"] if G else ("SOLVER   " + "".join(self.inp)
+                                           if getattr(self, "eq_sub", None) == "solver" else "")
             cv.create_text(6, 26, text=title, anchor="w", fill=dim, font=(FONT_UI, 8, "bold"))
             y = 46
             for k, v in self.result[self.res_top:self.res_top + 9]:
@@ -30326,11 +30630,30 @@ class CasioWindow(ZkToolWindow):
             self.softkeys(cv, ["", "", "", "", "", ""])
             cv.create_text(W - 6, H - 24, text="EXE / EXIT to go back", anchor="e", fill=dim, font=(FONT_UI, 7))
             return
+        if self.mode == "eqn" and getattr(self, "eq_sub", None) == "solver":
+            cv.create_text(6, 26, text="SOLVER  ·  type an equation in x, then EXE", anchor="w", fill=dim,
+                           font=(FONT_UI, 8, "bold"))
+            cv.create_text(10, 50, text="Eq:", anchor="w", fill="#3b6ea8", font=(FONT_UI, 9, "bold"))
+            self.input_line(cv, 72)
+            for k, ln in enumerate(["e.g.  x^2=2^x    sin(x)=0.5    x³−2x−5", "No '=' means '= 0'.  SHIFT then . types '='",
+                                    "Finds every real root from −1000 to 1000"]):
+                cv.create_text(10, 104 + k * 18, text=ln, anchor="w", fill=dim, font=(FONT_UI, 8))
+            self.softkeys(cv, ["SOLVE", "", "=", "", "", ""])
+            return
+        if self.mode == "eqn" and G is None and getattr(self, "eq_sub", None) in ("simul", "poly"):
+            simul = self.eq_sub == "simul"
+            cv.create_text(6, 26, text="SIMULTANEOUS: how many unknowns?" if simul else "POLYNOMIAL: what degree?",
+                           anchor="w", fill=dim, font=(FONT_UI, 8, "bold"))
+            for k, n in enumerate(range(2, 7)):
+                ln = ("F%d  %d unknowns" % (k + 1, n)) if simul else ("F%d  %s" % (k + 1, self.poly_form(n)))
+                cv.create_text(10, 46 + k * 22, text=ln, anchor="w", fill=ink, font=(FONT_UI, 10))
+            self.softkeys(cv, ["2", "3", "4", "5", "6", ""])
+            return
         if G is None:
-            menus = {"eqn": ["SIMUL 2", "SIMUL 3", "POLY 2", "POLY 3", "", ""],
+            menus = {"eqn": ["SIMUL", "POLY", "SOLVER", "", "", ""],
                      "dist": ["NORM-CD", "INV-N", "BIN-PD", "BIN-CD", "", ""]}[self.mode]
-            lines = {"eqn": ["F1  Simultaneous, 2 unknowns  (ax+by=c)", "F2  Simultaneous, 3 unknowns",
-                             "F3  Polynomial, degree 2  (ax²+bx+c=0)", "F4  Polynomial, degree 3"],
+            lines = {"eqn": ["F1  Simultaneous equations  (2 to 6 unknowns)", "F2  Polynomial  (degree 2 to 6)",
+                             "F3  Solver  (any equation, e.g. x^2=2^x)", "Then fill the table and press F1 SOLVE"],
                      "dist": ["F1  Normal C.D  P(a < X < b)", "F2  Inverse Normal  (left tail)",
                               "F3  Binomial P.D  P(X = x)", "F4  Binomial C.D  P(a ≤ X ≤ b)"]}[self.mode]
             for k, ln in enumerate(lines):
@@ -30359,7 +30682,8 @@ class CasioWindow(ZkToolWindow):
                     s = "".join(self.inp) + ("|" if self.blink else "")
                 else:
                     s = "" if v is None else ("-∞" if v <= -1e98 else ("∞" if v >= 1e98 else calc_fmt(v, False)))
-                cv.create_text(x + cw - 4, y, text=clip(s, 14), anchor="e", fill=ink, font=("Consolas", 11))
+                cv.create_text(x + cw - 4, y, text=clip(s, max(4, int(cw / 8))), anchor="e", fill=ink,
+                               font=("Consolas", 11 if ncol <= 5 else 9))
         if self.mode == "eqn":
             self.softkeys(cv, ["SOLVE", "", "CLEAR", "", "", ""])
         elif self.mode == "stat":
@@ -30462,6 +30786,10 @@ class BibleWindow(ZkToolWindow):
         self.btn(br, "Interlinear ↗", lambda: self.open_web("interlinear")).pack(side="left", padx=6)
         self.btn(br, "Commentaries ↗", lambda: self.open_web("commentaries")).pack(side="left")
         self.btn(br, "My note", self.edit_note).pack(side="left", padx=6)
+        br.pack_configure(pady=(6, 4))
+        br2 = tk.Frame(right, bg=bg)
+        br2.pack(fill="x", padx=16, pady=(0, 12))
+        self.btn(br2, "Save all Hebrew + Greek for offline", self.get_all).pack(side="left")
         self._flow_job = None
         self.cards = []
         self.load_chapter()
@@ -30618,6 +30946,33 @@ class BibleWindow(ZkToolWindow):
         if P:
             self.status.config(text="Downloading %s... %d%%  (one time, then it works offline)" % (P[0], int(P[1] * 100)))
         self.win.after(400, self.poll)
+
+    def get_all(self):
+        """Download the original text of every book (about 110 MB once, ~40 MB on disk) for offline study."""
+        have, total = step_have_all()
+        if have >= total:
+            self.status.config(text="All %d chapters of the Hebrew, Aramaic and Greek are already saved on this PC." % total)
+            return
+        self.status.config(text="Saving the original text of the whole Bible (about 110 MB, one time). You can keep "
+                                "reading while it downloads.")
+
+        def prog(label, f):
+            self.prog = (label, f)
+
+        def done(res, err):
+            self.prog = None
+            if err:
+                self.status.config(text=str(err))
+                return
+            (h, t), errs = res
+            msg = "Saved %d of %d chapters in the original languages. Every verse now works offline." % (h, t) \
+                if h >= t else "Saved %d of %d chapters. Some parts didn't download: %s" % (h, t, "; ".join(errs[:2]))
+            if h and not self.words:
+                self.load_original()
+                self.win.after(1500, lambda: self.alive() and self.status.config(text=msg))
+            else:
+                self.status.config(text=msg)
+        self.app.bg(lambda: step_download_all(prog), self.safe(done))
 
     def load_original(self):
         bi, ch, vs = self.bi, self.ch, self.vs
@@ -34314,6 +34669,8 @@ class Zenko(FoxBuddy):
         C = getattr(self, "conv", None)
         if C is not None:
             C["spoke"] = True
+        if self.cfg.get("voice_muted") and C is None:             # the Mute button in Chat
+            return
         if self.cfg.get("speak_mode", "voice") == "off" and C is None:
             return
         words = len((text or "").split())
@@ -34482,6 +34839,7 @@ class Zenko(FoxBuddy):
         c = self.cfg
         c.setdefault("jp_voice", True)
         c.setdefault("zk_rules", [])
+        JPV["muted"] = bool(c.get("voice_muted"))
         if not c.get("z17_quiet_ui"):
             # the user asked for voice lines only: the plucks/chimes on buttons go off once (Settings > General
             # > Interface sounds turns them back on)
@@ -34549,27 +34907,107 @@ class Zenko(FoxBuddy):
         self.root.after(30000, self.z17_vv_check)
 
     def jp_voice_on(self):
-        return bool(IS_WIN and SOUND.get("on") and self.cfg.get("jp_voice", True) and
+        return bool(IS_WIN and SOUND.get("on") and self.cfg.get("jp_voice", True) and not self.cfg.get("voice_muted") and
                     self.cfg.get("voice_clips") == "voicevox" and _JPS.get("alive"))
 
     def say(self, text, secs=9, choices=None):
-        r = super().say(text, secs, choices)
+        """zenko17.1: when she will say the line out loud, the bubble waits until her voice is ready (made or taken
+        from the cache), then both start together. Never waits more than a few seconds."""
+        self._jp_flush()
+        t = None
         try:
-            self.jp_line(text)
+            t = self._jp_ok(text)
         except Exception:
-            pass
-        return r
+            t = None
+        if t:
+            P = {"text": text, "secs": secs, "choices": choices, "ready": None, "t": time.monotonic(), "shown": False}
+            self._jp_pending = P
 
-    def jp_line(self, text):
-        if not self.jp_voice_on() or getattr(self, "conv", None) is not None:
+            def ready(sec):
+                P["ready"] = sec                         # set from the voice thread; the UI thread polls it
+            sid = int(self.cfg.get("voicevox_speaker", 8) or 8)
+            if jp_speak(t, sid, ready, llm_model=self.cfg.get("llm_model")):
+                self.root.after(30, self._jp_wait)
+                return None
+            self._jp_pending = None
+        return super().say(text, secs, choices)
+
+    def _jp_wait(self):
+        P = getattr(self, "_jp_pending", None)
+        if not P or P["shown"]:
             return
+        if P["ready"] is not None or time.monotonic() - P["t"] > 5.0:
+            return self._jp_show(P)
+        self.root.after(30, self._jp_wait)
+
+    def _jp_show(self, P):
+        P["shown"] = True
+        if getattr(self, "_jp_pending", None) is P:
+            self._jp_pending = None
+        secs = P["secs"]
+        sec = P["ready"]
+        if sec and sec > 0:
+            secs = max(secs, sec + 1.5)
+        try:
+            super(Zenko, self).say(P["text"], secs, P["choices"])
+        except Exception as ex:
+            zk_log_error("bubble: %r" % (ex,))
+
+    def _jp_flush(self):
+        """A newer line is coming: show the waiting bubble right away (its voice is replaced by the new one)."""
+        P = getattr(self, "_jp_pending", None)
+        if P and not P["shown"]:
+            self._jp_show(P)
+
+    def _jp_ok(self, text):
+        if not self.jp_voice_on() or getattr(self, "conv", None) is not None:
+            return None
         t = (text or "").strip()
         if len(t) < 2 or t.startswith(("Listening", "(thinking", "Mm-hm", "Reading", "~ ", "Downloading", "Looking", "Checking")):
-            return
+            return None
         if self.voice_reply_until > time.monotonic() or (self.cfg.get("speak_mode") == "always"):
-            return                                       # her full reply is about to be read out anyway
-        sid = int(self.cfg.get("voicevox_speaker", 8) or 8)
-        jp_speak(t, sid, llm_model=self.cfg.get("llm_model"))
+            return None                                  # her full reply is about to be read out anyway
+        return t
+
+    def jp_line(self, text):
+        t = self._jp_ok(text)
+        if t:
+            jp_speak(t, int(self.cfg.get("voicevox_speaker", 8) or 8), llm_model=self.cfg.get("llm_model"))
+
+    def voice_mute(self, on=None):
+        on = (not self.cfg.get("voice_muted")) if on is None else bool(on)
+        self.cfg["voice_muted"] = on
+        JPV["muted"] = on
+        try:
+            save_config(self.cfg)
+        except Exception:
+            pass
+        if on:
+            vv_hush()
+            _JPS["gen"] += 1
+            try:
+                self.speaker.hush()
+            except Exception:
+                pass
+        b = (getattr(self, "chat", None) or {}).get("mute")
+        if b is not None:
+            try:
+                if b.winfo_exists():
+                    self.mute_btn_look(b)
+            except tk.TclError:
+                pass
+        return on
+
+    def mute_btn_look(self, b):
+        on = bool(self.cfg.get("voice_muted"))
+        txt = "Unmute" if on else "Mute"
+        try:
+            w = b._font.measure(txt) + 2 * 12 + 10 if hasattr(b, "_font") else None
+            b.config(text=txt, bg=ORANGE if on else T["start"], fg=ON_ACC if on else INK)
+            if w:
+                b.config(width=w)
+        except (tk.TclError, AttributeError):
+            pass
 
     # ---- close / keep rules -------------------------------------------------------------------------------------
     def rule_check(self, title, proc):
@@ -34778,6 +35216,15 @@ class Zenko(FoxBuddy):
             zk_text_scroll(self.chat["txt"])
         except Exception:
             pass
+        try:
+            row = self.chat["mic"].master
+            mb = self.tt_btn(row, "Unmute" if self.cfg.get("voice_muted") else "Mute", lambda: self.voice_mute(),
+                             bg=T["start"], size=10, padx=12, pady=3)
+            mb.pack(side="left", padx=(6, 0))
+            self.chat["mute"] = mb
+            self.mute_btn_look(mb)
+        except Exception as ex:
+            zk_log_error("mute button: %r" % (ex,))
         return r
 
     # ---- chat -----------------------------------------------------------------------------------------------

@@ -1,5 +1,11 @@
 # Zenko changes
 
+## v2026.11.23-zenko17.1
+- **Bible originals work for every verse**: fixed the "No such file" error. The app mixed up "Isa" (Isaiah) with "1 Sa" (1 Samuel), so it sometimes downloaded the wrong part of the Bible. All 1,189 chapters were checked against the STEPBible data. A new "Save all Hebrew + Greek for offline" button saves the whole Old and New Testament once (do it at home if school wifi blocks GitHub). Old, mixed-up saves are cleared once by themselves.
+- **Calculator Equation mode** now works like the real one: F1 SIMUL (2 to 6 unknowns), F2 POLY (degree 2 to 6, including complex roots), F3 SOLVER (type any equation, e.g. x^2=2^x or sin(x)=0.5, and it finds every real solution from -1000 to 1000). SHIFT then . types "=".
+- **Her voice and bubble start together**: the bubble waits until her voice is ready (at most 5 seconds), and a long line plays as one clip with no gaps. Voice clips are saved, so lines she has said before play instantly.
+- **Mute button in Chat**: stops her talking right away (for long answers). Press it again to unmute. It is remembered.
+
 ## v2026.11.23-zenko17
 - **Her voice matches what she says**: with VOICEVOX on, every speech bubble is said out loud in Japanese (translated for free online, or by your local Ollama model, and remembered so it works offline next time). The bubble stays in English. Talk mode with the anime voice works the same way.
 - **Only voice lines**: no more drums, bells, plucks or chimes when you play with her. The interface click sounds are switched off once (Settings > General turns them back on).
