@@ -43,6 +43,7 @@ import urllib.parse
 import urllib.error
 import webbrowser
 import math
+ZK_T0 = time.time()                    # when Zenko started (zenko20 shows how long opening took)
 
 try:
     import tkinter as tk
@@ -52,7 +53,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.24-zenko19.1"
+APP_VERSION = "v2026.11.24-zenko20"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -4040,13 +4041,21 @@ def aa_pixels(w, h, shapes, bg=None):
     return [[(int(r), int(g), int(b), int(round(a * 255))) for (r, g, b, a) in row] for row in px]
 
 
+def aa_png(w, h, shapes, bg=None):
+    return _png(aa_pixels(w, h, shapes, bg), 6)
+
+
 def aa_photo(w, h, shapes, bg=None):
     """A smooth Tk image (PNG with real alpha) from simple shapes."""
-    return tk.PhotoImage(data=base64.b64encode(_png(aa_pixels(w, h, shapes, bg), 6)))
+    return tk.PhotoImage(data=base64.b64encode(aa_png(w, h, shapes, bg)))
 
 
 def seigaiha_photo(w, h, top, bottom, line, r=14, fade=True):
     """Smooth seigaiha (blue-ocean wave) pattern over a vertical gradient, fading out to the left."""
+    return tk.PhotoImage(data=base64.b64encode(seigaiha_png(w, h, top, bottom, line, r, fade)))
+
+
+def seigaiha_png(w, h, top, bottom, line, r=14, fade=True):
     t_rgb, b_rgb, l_rgb = _hex_rgb(top), _hex_rgb(bottom), _hex_rgb(line)
     dy = r // 2
     rows = []
@@ -4077,7 +4086,7 @@ def seigaiha_photo(w, h, top, bottom, line, r=14, fade=True):
                 col = tuple(col[i] + (l_rgb[i] - col[i]) * k for i in range(3))
             out.append((int(col[0]), int(col[1]), int(col[2]), 255))
         rows.append(out)
-    return tk.PhotoImage(data=base64.b64encode(_png(rows, 6)))
+    return _png(rows, 6)
 
 
 def icon_png(size=64, theme="snow"):
@@ -4091,8 +4100,8 @@ def icon_png(size=64, theme="snow"):
 _RGB = {}
 
 
-def sprite_photo(layers, pal, zoom=1, bg=None):
-    """Palette-letter grids (drawn in order) -> a Tk PhotoImage with real transparency, zoomed by whole steps."""
+def sprite_png(layers, pal, bg=None):
+    """Palette-letter grids (drawn in order) -> PNG bytes with real transparency (cached by the zenko20 art cache)."""
     h, w = len(layers[0]), len(layers[0][0])
     clear = (0, 0, 0, 0) if bg is None else _hex_rgb(bg) + (255,)
     px = [[clear] * w for _ in range(h)]
@@ -4107,7 +4116,12 @@ def sprite_photo(layers, pal, zoom=1, bg=None):
                         if rgb is None:
                             rgb = _RGB[col] = _hex_rgb(col) + (255,)
                         line[x] = rgb
-    img = tk.PhotoImage(data=base64.b64encode(_png(px, 1)))
+    return _png(px, 1)
+
+
+def sprite_photo(layers, pal, zoom=1, bg=None):
+    """Palette-letter grids (drawn in order) -> a Tk PhotoImage with real transparency, zoomed by whole steps."""
+    img = tk.PhotoImage(data=base64.b64encode(sprite_png(layers, pal, bg)))
     return img.zoom(zoom, zoom) if zoom > 1 else img
 
 
@@ -6199,8 +6213,10 @@ class PixelButton(tk.Canvas if tk else object):
         changed = False
         for k_in, attr in (("text", "_text"), ("bg", "_bg"), ("background", "_bg"), ("fg", "_fg"), ("foreground", "_fg")):
             if k_in in kw:
-                setattr(self, attr, kw.pop(k_in))
-                changed = True
+                v = kw.pop(k_in)
+                if getattr(self, attr, None) != v:           # nothing new: don't repaint
+                    setattr(self, attr, v)
+                    changed = True
         if kw:
             tk.Canvas.configure(self, **kw)
         if changed:
@@ -20836,7 +20852,7 @@ class FoxBuddy(ZenkoGym, ZenkoBooks, ZenkoStudy, ZenkoLife, ZenkoExtras):
         self.keep_on_top()
         beep("hello")
         if self.cfg.get("open_hub_on_start", True):
-            self.root.after(700, self.open_hub)
+            self.root.after(250, self.open_hub)          # zenko20: the window comes up sooner
         if self.user_short():
             self.say("%s Hi %s. Double-click me to focus, or middle-click to chat." % (self.catchphrase(), self.user_short()), 8)
         else:
@@ -20948,7 +20964,7 @@ class FoxBuddy(ZenkoGym, ZenkoBooks, ZenkoStudy, ZenkoLife, ZenkoExtras):
             img = self.images.get(key)
             if img is None:
                 if len(self.images) > 360:
-                    self.images = {}
+                    lru_trim(self.images, 300)
                 img = sprite_photo([rig_rows(state, self.tail_count(), acc)], self.pal, self.Z)
                 self.images[key] = img
             return img
@@ -20959,7 +20975,7 @@ class FoxBuddy(ZenkoGym, ZenkoBooks, ZenkoStudy, ZenkoLife, ZenkoExtras):
         img = self.images.get(key)
         if img is None:
             if len(self.images) > 360:
-                self.images = {}
+                lru_trim(self.images, 300)
             if state.startswith("qwalk"):
                 rows = build_walk34(int(state[-1]), self.tail_count(), left=state[5] == "L")
             else:
@@ -23547,7 +23563,7 @@ class FoxBuddy(ZenkoGym, ZenkoBooks, ZenkoStudy, ZenkoLife, ZenkoExtras):
         if btn is not None and h["page"] == "home" and not self.session:
             try:
                 if btn.winfo_exists():
-                    t = (1 + math.sin(now * 3.2)) / 2
+                    t = round((1 + math.sin(now * 3.2)) / 2 * 10) / 10.0      # 11 shades: redraw only when it shows
                     btn.config(bg=self.mix(ORANGE, _mixhex(ORANGE, "#ffffff", 0.3), t))
             except tk.TclError:
                 pass
@@ -23558,13 +23574,19 @@ class FoxBuddy(ZenkoGym, ZenkoBooks, ZenkoStudy, ZenkoLife, ZenkoExtras):
             h["tip_i"] = (h["tip_i"] + 1) % len(TIPS)
             e = 0
         a = min(1.0, e / 0.6) if e < 8.0 else max(0.0, (9.0 - e) / 1.0)
-        h["tip"].config(text="\u2726  " + TIPS[h["tip_i"]], fg=self.mix(NIGHT, _mixhex(INK, GOLD, 0.25), 0.85 * a))
+        tip = ("\u2726  " + TIPS[h["tip_i"]], self.mix(NIGHT, _mixhex(INK, GOLD, 0.25), round(0.85 * a, 2)))
+        if h.get("tip_now") != tip:
+            h["tip_now"] = tip
+            h["tip"].config(text=tip[0], fg=tip[1])
         # --- chat "thinking" dots
         c = self.chat
         if c and c.get("status") is not None:
             try:
                 busy = self.llm_busy or self.web_busy
-                c["status"].config(text=("Zenko is thinking" + "." * (int(now * 3) % 4)) if busy else "")
+                stx = ("Zenko is thinking" + "." * (int(now * 3) % 4)) if busy else ""
+                if c.get("status_now") != stx:
+                    c["status_now"] = stx
+                    c["status"].config(text=stx)
             except tk.TclError:
                 pass
         h["win"].after(50, self.hub_anim)
@@ -27348,8 +27370,7 @@ def run_code_update():
     ns = {"__name__": "zenko_live", "__file__": CODE_FILE, "__builtins__": __builtins__, "_ZENKO_LIVE": True,
           "_ZENKO_EXE_VERSION": APP_VERSION}
     try:
-        with open(CODE_FILE, "r", encoding="utf-8") as f:
-            code = compile(f.read(), CODE_FILE, "exec")
+        code = compiled_code(CODE_FILE)
         exec(code, ns)
         ns["main"]()
         return True
@@ -32710,10 +32731,10 @@ class Zenko(FoxBuddy):
         elif name == "map":
             self.map_refresh()
         elif name == "screen":
-            self.screen_render()
+            self.root.after(160, self.screen_render)          # after the page has slid in
         elif name == "reminders":
             self.ema_render_later()
-        self.root.after(60, lambda: self.zk_fit(fonts=True))
+        self.root.after(getattr(self, "ZK_FIT_DELAY", 60), lambda: self.zk_fit(fonts=True))
         return r
 
     def up_row(self, body):
@@ -38246,6 +38267,1325 @@ class Zenko19(Zenko):
         return r or super().gym_route(text)
 
 
+
+# ==================================================================================================================
+#  zenko20: the speed engine
+#  Everything Zenko draws is pixel art made in plain Python, which is slow the first time. zenko20 remembers every
+#  picture it has made (in memory and in %APPDATA%\FoxBuddy\cache), pre-draws the next frames in the background,
+#  builds pages while you aren't touching anything, skips canvas updates that change nothing, and slows the
+#  animations down when the window is hidden, unfocused or on battery. Nothing about your data changes.
+# ==================================================================================================================
+import pickle as _pickle
+import hashlib as _hashlib
+import zlib as _zlib
+import marshal as _marshal
+
+ART_CACHE_DIR = os.path.join(DATA_DIR, "cache")
+
+
+def lru_trim(d, keep):
+    """Drop the oldest entries of a dict (dicts keep insertion order) until `keep` are left."""
+    try:
+        for k in list(d.keys())[:max(0, len(d) - keep)]:
+            d.pop(k, None)
+    except Exception:
+        d.clear()
+
+
+class ArtCache:
+    """Pictures and sprite grids by a short hash of what made them. Saved between runs (one file per version)."""
+    LIMIT = 5000
+
+    def __init__(self):
+        self.mem = {}
+        self.lock = threading.RLock()
+        self.loaded = False
+        self.dirty = 0
+        self.hits = self.misses = 0
+        self.load_ms = 0.0
+
+    def path(self):
+        tag = re.sub(r"[^\w.-]", "_", APP_VERSION)
+        return os.path.join(ART_CACHE_DIR, "art-%s-py%d%d.bin" % (tag, sys.version_info[0], sys.version_info[1]))
+
+    def load(self):
+        if self.loaded:
+            return
+        self.loaded = True
+        t0 = time.perf_counter()
+        p = self.path()
+        try:
+            with open(p, "rb") as f:
+                data = _pickle.loads(_zlib.decompress(f.read()))
+            if isinstance(data, dict):
+                with self.lock:
+                    for k, v in data.items():
+                        self.mem.setdefault(k, v)
+        except FileNotFoundError:
+            pass
+        except Exception as ex:                         # a broken cache is simply rebuilt
+            zk_log_error("art cache load: %r" % (ex,))
+        try:                                            # tidy away caches from older versions
+            for fn in os.listdir(ART_CACHE_DIR):
+                fp = os.path.join(ART_CACHE_DIR, fn)
+                if fn.startswith("art-") and fp != p:
+                    os.remove(fp)
+        except Exception:
+            pass
+        self.load_ms = (time.perf_counter() - t0) * 1000
+
+    def get(self, k):
+        with self.lock:
+            v = self.mem.pop(k, None)
+            if v is not None:
+                self.mem[k] = v                         # most recently used goes to the end
+                self.hits += 1
+            else:
+                self.misses += 1
+            return v
+
+    def put(self, k, v):
+        with self.lock:
+            self.mem[k] = v
+            self.dirty += 1
+            if len(self.mem) > self.LIMIT + 400:
+                lru_trim(self.mem, self.LIMIT)
+
+    def save(self, force=False):
+        if not self.dirty and not force:
+            return
+        with self.lock:
+            snap = dict(self.mem)
+            self.dirty = 0
+        try:
+            os.makedirs(ART_CACHE_DIR, exist_ok=True)
+            blob = _zlib.compress(_pickle.dumps(snap, protocol=4), 3)
+            tmp = self.path() + ".part"
+            with open(tmp, "wb") as f:
+                f.write(blob)
+            os.replace(tmp, self.path())
+        except Exception as ex:
+            zk_log_error("art cache save: %r" % (ex,))
+
+    def clear(self):
+        with self.lock:
+            self.mem.clear()
+            self.dirty = 0
+        try:
+            os.remove(self.path())
+        except OSError:
+            pass
+
+    def size_text(self):
+        try:
+            kb = os.path.getsize(self.path()) / 1024.0
+        except OSError:
+            kb = 0
+        return "%d pictures remembered, %.1f MB on disk" % (len(self.mem), kb / 1024.0)
+
+
+ART = ArtCache()
+
+
+def _art_key(name, args, kw, extra=None):
+    raw = repr((name, args, sorted(kw.items()) if kw else (), extra)).encode("utf-8", "surrogatepass")
+    return name + ":" + _hashlib.blake2b(raw, digest_size=16).hexdigest()
+
+
+def _memo_rows(fn, extra=None):
+    """Sprite grids (lists of strings) never change for the same inputs: make each one only once, ever."""
+    name = fn.__name__
+
+    def wrapped(*a, **kw):
+        try:
+            k = _art_key(name, a, kw, extra() if extra else None)
+        except Exception:
+            return fn(*a, **kw)
+        v = ART.get(k)
+        if v is None:
+            v = fn(*a, **kw)
+            if isinstance(v, list) and v and isinstance(v[0], str):
+                ART.put(k, tuple(v))
+            return v
+        return list(v)
+    wrapped.__name__ = name
+    wrapped.__doc__ = fn.__doc__
+    wrapped._zk_raw = fn
+    return wrapped
+
+
+def _memo_bytes(fn, extra=None):
+    """PNG makers: remember the finished PNG bytes."""
+    name = fn.__name__
+
+    def wrapped(*a, **kw):
+        try:
+            k = _art_key(name, a, kw, extra() if extra else None)
+        except Exception:
+            return fn(*a, **kw)
+        v = ART.get(k)
+        if v is None:
+            v = fn(*a, **kw)
+            if isinstance(v, (bytes, bytearray)):
+                ART.put(k, bytes(v))
+        return v
+    wrapped.__name__ = name
+    wrapped.__doc__ = fn.__doc__
+    wrapped._zk_raw = fn
+    return wrapped
+
+
+def _look_sig():
+    return tuple(sorted(LOOK.items()))
+
+
+# grids that depend only on their arguments (and her ear/blush style)
+for _n in ("build_tails", "build_frame", "build_walk34", "rig_rows", "build_curl", "z19_sit_extra"):
+    if _n in globals() and not hasattr(globals()[_n], "_zk_raw"):
+        globals()[_n] = _memo_rows(globals()[_n], _look_sig)
+for _n in ("sprite_png", "aa_png", "seigaiha_png"):
+    if _n in globals() and not hasattr(globals()[_n], "_zk_raw"):
+        globals()[_n] = _memo_bytes(globals()[_n])
+
+
+if not hasattr(icon_png, "_zk_raw"):
+    _icon_png_raw = icon_png
+
+    def icon_png(size=64, theme="snow"):
+        k = _art_key("icon_png", (size, theme), {}, (_look_sig(), repr(sorted((FUR.get(theme) or {}).items())),
+                                                     repr(sorted((THEMES.get(theme) or {}).items()))))
+        v = ART.get(k)
+        if v is None:
+            v = _icon_png_raw(size, theme)
+            ART.put(k, v)
+        return v
+    icon_png._zk_raw = _icon_png_raw
+
+_JMAP_MEMO = {}
+if not hasattr(jmap_scene, "_zk_raw"):
+    _jmap_scene_raw = jmap_scene
+
+    def jmap_scene(w, h, seed=11):
+        k = (w, h, seed)
+        v = _JMAP_MEMO.get(k)
+        if v is None:
+            v = _JMAP_MEMO[k] = _jmap_scene_raw(w, h, seed)
+            if len(_JMAP_MEMO) > 4:
+                lru_trim(_JMAP_MEMO, 4)
+        return v
+    jmap_scene._zk_raw = _jmap_scene_raw
+
+
+def gym_pngs(day, targets, acc, done):
+    """The muscle map's glow frames as PNG bytes {view: [png, ...]} (slow to paint, so remembered)."""
+    k = _art_key("gym", (day, tuple(targets), acc, tuple(done)), {})
+    v = ART.get(k)
+    if v is None:
+        v = {}
+        for view in ("front", "back"):
+            out = []
+            for fn in body_frames(view, targets, acc, done=done):
+                rows = []
+                for y in range(BODY_H):
+                    row = []
+                    for x in range(BODY_W):
+                        c = fn(x, y)
+                        row.append((0, 0, 0, 0) if c is None else ((c[0], c[1], c[2], 255) if len(c) == 3 else tuple(c)))
+                    rows.append(row)
+                out.append(_png(rows, 1))
+            v[view] = out
+        ART.put(k, v)
+    return v
+
+
+def compiled_code(path):
+    """compile() a zenko.py once, then reuse the compiled form (saves seconds on every start of a slow PC)."""
+    with open(path, "rb") as f:
+        src = f.read()
+    tag = "%s-%d%d" % (_hashlib.sha256(src).hexdigest()[:20], sys.version_info[0], sys.version_info[1])
+    cpath = os.path.join(os.path.dirname(path), "zenko.%s.code" % tag)
+    try:
+        with open(cpath, "rb") as f:
+            return _marshal.load(f)
+    except Exception:
+        pass
+    code = compile(src, path, "exec")
+    try:
+        for fn in os.listdir(os.path.dirname(path)):
+            if fn.startswith("zenko.") and fn.endswith(".code"):
+                os.remove(os.path.join(os.path.dirname(path), fn))
+        with open(cpath + ".part", "wb") as f:
+            _marshal.dump(code, f)
+        os.replace(cpath + ".part", cpath)
+    except Exception:
+        pass
+    return code
+
+
+def dedupe_canvas(cv):
+    """Make a canvas skip itemconfigure/coords calls that would set exactly what is already there (the desktop
+    fox sets her picture and place 16 times a second; most of the time nothing has changed)."""
+    if getattr(cv, "_zk_dedupe", False):
+        return cv
+    memo = {}
+    cls = type(cv)
+    o_conf, o_coords, o_delete = cls.itemconfigure, cls.coords, cls.delete
+    o_move, o_scale = cls.move, cls.scale
+
+    def itemconfigure(tagOrId, cnf=None, **kw):
+        if cnf is None and kw and isinstance(tagOrId, int):
+            cur = memo.setdefault(tagOrId, {})
+            new = {k: (v if isinstance(v, (str, int, float)) else str(v)) for k, v in kw.items()}
+            if all(cur.get(k, cur) == v for k, v in new.items()):
+                return None
+            r = o_conf(cv, tagOrId, None, **kw)
+            cur.update(new)
+            return r
+        if kw or cnf:
+            if isinstance(tagOrId, int):
+                memo.pop(tagOrId, None)
+            else:
+                memo.clear()
+        return o_conf(cv, tagOrId, cnf, **kw)
+
+    def coords(*args, **kw):
+        if len(args) >= 2 and isinstance(args[0], int) and not kw:
+            pts = tuple(float(x) for x in (args[1] if len(args) == 2 and isinstance(args[1], (list, tuple)) else args[1:]))
+            cur = memo.setdefault(args[0], {})
+            if cur.get("@xy") == pts:
+                return []
+            r = o_coords(cv, *args)
+            cur["@xy"] = pts
+            return r
+        if len(args) >= 2:
+            if isinstance(args[0], int):
+                memo.get(args[0], {}).pop("@xy", None)
+            else:
+                memo.clear()
+        return o_coords(cv, *args, **kw)
+
+    def delete(*args):
+        for a in args:
+            if isinstance(a, int):
+                memo.pop(a, None)
+            else:
+                memo.clear()
+                break
+        return o_delete(cv, *args)
+
+    def move(*args):
+        memo.clear()
+        return o_move(cv, *args)
+
+    def scale(*args):
+        memo.clear()
+        return o_scale(cv, *args)
+    cv.itemconfigure = cv.itemconfig = itemconfigure
+    cv.coords = coords
+    cv.delete = delete
+    cv.move = move
+    cv.scale = scale
+    cv._zk_dedupe = True
+    cv._zk_dedupe_memo = memo
+    return cv
+
+
+# ---- accent colours (Customize > Look and feel): a second colour choice on top of the fox theme -----------------
+ACCENTS = [("theme", "Theme", None), ("gold", "Gold", ("#e9b45a", "#f6d293", "#f0c96a", "#ffd88a")),
+           ("vermilion", "Torii", ("#ff6a3d", "#ffa27d", "#f4c25b", "#ff9a6a")),
+           ("sakura", "Sakura", ("#ff86bd", "#ffb6d8", "#f3c56b", "#ff9fd0")),
+           ("jade", "Jade", ("#3fd6a4", "#8aeecb", "#e9c46a", "#5ff0c0")),
+           ("sky", "Sky", ("#6fb6ff", "#a4d3ff", "#e9c46a", "#7fd8ff")),
+           ("wisteria", "Wisteria", ("#a28cff", "#c9bcff", "#e3b04b", "#b9a6ff")),
+           ("moon", "Moonlight", ("#8fb0e8", "#bfd2f6", "#d8c08a", "#a8c4ff"))]
+ACCENT_NOW = {"key": "theme"}
+
+if not hasattr(apply_theme, "_zk_raw"):
+    _apply_theme_raw = apply_theme
+
+    def apply_theme(name):
+        """The fox theme's colours, then the chosen accent (buttons, highlights, glow) on top."""
+        global INK, PAPER, ORANGE, ORANGE_D, GREY, T, NIGHT, FIELD, LINE, ON_ACC, GOLD, GLOW
+        _apply_theme_raw(name)
+        acc = dict((k, v) for k, _l, v in ACCENTS).get(ACCENT_NOW.get("key") or "theme")
+        if not acc:
+            return
+        t = THEMES.get(name) or THEMES["snow"]
+        a, ad, gold, glow = acc
+        t2 = _realm(t["night"], t["paper"], t["card"], t["ink"], t["grey"], a, ad, gold, glow, t["onacc"],
+                    t.get("good", "#5fd39a"), t.get("bad", "#ff6b7d"))
+        INK, PAPER, ORANGE, ORANGE_D, GREY = t2["ink"], t2["paper"], t2["acc"], t2["accd"], t2["grey"]
+        NIGHT, FIELD, LINE, ON_ACC, GOLD, GLOW = t2["night"], t2["field"], t2["line"], t2["onacc"], t2["gold"], t2["glow"]
+        T = t2
+    apply_theme._zk_raw = _apply_theme_raw
+
+
+# ---- the quick search (Ctrl+K) ----------------------------------------------------------------------------------
+PAGE_WORDS = {
+    "home": "start dashboard today overview focus session",
+    "timetable": "schedule timetable plan day classes lessons",
+    "deadlines": "upcoming exams deadlines homework due countdown study planner clock",
+    "reminders": "reminders ema remind me alerts notes shrine",
+    "notebook": "study books subjects tutor flashcards practice grades notebook ia ee tok bookshelf",
+    "daily": "daily mood water sleep journal wellbeing badges",
+    "exercise": "exercise gym workout weight calories food muscles training",
+    "garden": "zen garden breathing calm relax grounding sleep anxious",
+    "map": "world map japan journey places travel",
+    "screen": "screen time apps sites usage youtube hours",
+    "chat": "chat talk ask questions",
+    "notes": "notes remarkable handwriting",
+    "you": "you profile stats habits learned memory",
+    "customize": "customize coat colours look outfit wardrobe fox eyes foxfire voice sidebar accent theme",
+    "settings": "settings preferences options",
+}
+
+
+def zk_match(q, text, words=""):
+    """How well a search fits a title (0 = not at all). Word starts beat middles beat fuzzy."""
+    q = q.lower().strip()
+    if not q:
+        return 1.0
+    t = text.lower()
+    hay = t + " " + words.lower()
+    score = 0.0
+    for part in q.split():
+        if t.startswith(part):
+            score += 6
+        elif re.search(r"\b" + re.escape(part), t):
+            score += 4.5
+        elif part in t:
+            score += 3
+        elif re.search(r"\b" + re.escape(part), hay):
+            score += 2
+        elif part in hay:
+            score += 1.2
+        else:
+            if len(part) < 4:
+                return 0.0
+            best = max([difflib.SequenceMatcher(None, part, w).ratio() for w in re.findall(r"\w+", hay)] or [0])
+            if best < 0.78:
+                return 0.0
+            score += best
+    return score
+
+
+class ZkPalette:
+    """A floating search box over the main window: pages, settings, look choices and things to do."""
+
+    def __init__(self, app, items):
+        self.app = app
+        self.items = items
+        h = app.hub
+        hub = h["win"]
+        self.win = w = tk.Toplevel(hub)
+        w.withdraw()
+        w.overrideredirect(True)
+        try:
+            w.attributes("-topmost", True)
+        except tk.TclError:
+            pass
+        W = min(640, max(420, hub.winfo_width() - 160))
+        self.W = W
+        edge = _mixhex(T["card"], GOLD, 0.45)
+        w.configure(bg=edge)
+        body = tk.Frame(w, bg=T["card"])
+        body.pack(fill="both", expand=True, padx=1, pady=1)
+        top = tk.Frame(body, bg=T["card"])
+        top.pack(fill="x", padx=14, pady=(12, 6))
+        tk.Label(top, text="⌕", bg=T["card"], fg=GOLD, font=(FONT_UI, 15)).pack(side="left", padx=(2, 8))
+        self.var = tk.StringVar()
+        self.entry = e = tk.Entry(top, textvariable=self.var, bg=T["card"], fg=INK, insertbackground=GOLD, relief="flat",
+                                  font=(FONT_UI, 14), highlightthickness=0, bd=0)
+        e.pack(side="left", fill="x", expand=True, ipady=4)
+        tk.Label(top, text="esc", bg=_mixhex(T["card"], INK, 0.08), fg=GREY, font=(FONT_UI, 8), padx=6).pack(side="right")
+        tk.Frame(body, bg=LINE, height=1).pack(fill="x")
+        self.list = tk.Frame(body, bg=T["card"])
+        self.list.pack(fill="both", expand=True, pady=(4, 4))
+        tk.Frame(body, bg=T["card"], width=W - 2, height=1).pack()
+        foot = tk.Label(body, text="↑↓ to move  ·  Enter to open  ·  Ctrl+1…9 jump to sidebar pages",
+                        bg=_mixhex(T["card"], NIGHT, 0.35), fg=GREY, font=(FONT_UI, 8), anchor="w", padx=14, pady=5)
+        foot.pack(fill="x", side="bottom")
+        self.rows = []
+        self.sel = 0
+        self.shown = []
+        self.var.trace_add("write", lambda *_: self.refresh())
+        e.bind("<Down>", lambda ev: self.move(1))
+        e.bind("<Up>", lambda ev: self.move(-1))
+        e.bind("<Tab>", lambda ev: self.move(1))
+        e.bind("<Return>", lambda ev: self.run(self.sel))
+        e.bind("<Escape>", lambda ev: self.close())
+        self.had_focus = False
+        w.bind("<FocusIn>", lambda ev: setattr(self, "had_focus", True))
+        w.bind("<FocusOut>", lambda ev: w.after(150, self._maybe_close))
+
+        self.refresh()
+        hub.update_idletasks()
+        x = hub.winfo_rootx() + (hub.winfo_width() - W) // 2
+        y = hub.winfo_rooty() + max(40, hub.winfo_height() // 7)
+        w.geometry("+%d+%d" % (x, y))
+        w.deiconify()
+        w.lift()
+        try:
+            w.focus_force()
+        except tk.TclError:
+            pass
+        e.focus_set()
+
+    def _maybe_close(self, again=True):
+        if not self.had_focus:
+            return
+        try:
+            f = self.win.focus_get()
+        except (KeyError, tk.TclError):
+            f = None
+        if f is None:                                  # you switched to another app (checked twice: focus can blink)
+            if again:
+                try:
+                    self.win.after(300, lambda: self._maybe_close(False))
+                except tk.TclError:
+                    pass
+            else:
+                self.close()
+        elif not str(f).startswith(str(self.win)):
+            try:
+                if str(f) == str(self.app.hub["win"]):   # the window itself took focus back: keep typing here
+                    self.entry.focus_force()
+                else:
+                    self.close()
+            except (tk.TclError, TypeError, KeyError):
+                self.close()
+
+    def close(self):
+        try:
+            self.win.destroy()
+        except tk.TclError:
+            pass
+        if getattr(self.app, "_z20_palette", None) is self:
+            self.app._z20_palette = None
+
+    def results(self):
+        q = self.var.get()
+        out = []
+        for it in self.items:
+            s = zk_match(q, it["title"], it.get("words", "") + " " + it.get("sub", ""))
+            if s > 0:
+                out.append((-(s + it.get("boost", 0)), len(out), it))
+        out.sort(key=lambda t: (t[0], t[1]))
+        res = [it for _s, _i, it in out[:8]]
+        if q.strip():
+            res.append({"title": "Ask %s: “%s”" % (self.app.fox_name(), q.strip()), "kind": "Chat",
+                        "sub": "Sends it to the Chat page", "run": lambda q=q.strip(): self.app.z20_ask(q)})
+        return res
+
+    def refresh(self):
+        self.shown = self.results()
+        self.sel = 0
+        for r in self.rows:
+            r.destroy()
+        self.rows = []
+        if not self.shown:
+            lab = tk.Label(self.list, text="Nothing found", bg=T["card"], fg=GREY, font=(FONT_UI, 10), pady=10)
+            lab.pack(fill="x")
+            self.rows.append(lab)
+        for i, it in enumerate(self.shown):
+            row = tk.Frame(self.list, bg=T["card"], cursor="hand2")
+            row.pack(fill="x", padx=8, pady=1)
+            kind = tk.Label(row, text=it.get("kind", ""), width=8, bg=T["card"], fg=_mixhex(T["card"], GOLD, 0.8),
+                            font=(FONT_UI, 8, "bold"), anchor="w")
+            kind.pack(side="left", padx=(8, 4), pady=6)
+            tl = tk.Label(row, text=it["title"], bg=T["card"], fg=INK, font=(FONT_UI, 11), anchor="w")
+            tl.pack(side="left")
+            sub = tk.Label(row, text=it.get("sub", ""), bg=T["card"], fg=GREY, font=(FONT_UI, 9), anchor="e")
+            sub.pack(side="right", padx=10)
+            for wd in (row, kind, tl, sub):
+                wd.bind("<Button-1>", lambda ev, i=i: self.run(i))
+                wd.bind("<Enter>", lambda ev, i=i: self.select(i))
+            self.rows.append(row)
+        self.paint()
+
+    def paint(self):
+        for i, row in enumerate(self.rows):
+            if not isinstance(row, tk.Frame):
+                continue
+            bg = _mixhex(T["card"], ORANGE, 0.22) if i == self.sel else T["card"]
+            row.configure(bg=bg)
+            for c in row.winfo_children():
+                c.configure(bg=bg)
+
+    def select(self, i):
+        self.sel = i
+        self.paint()
+
+    def move(self, d):
+        if self.shown:
+            self.sel = (self.sel + d) % len(self.shown)
+            self.paint()
+        return "break"
+
+    def run(self, i):
+        if not (0 <= i < len(self.shown)):
+            return "break"
+        it = self.shown[i]
+        self.close()
+        try:
+            ui_sound("nav")
+        except Exception:
+            pass
+        try:
+            it["run"]()
+        except Exception as ex:
+            zk_log_error("palette %s: %r" % (it.get("title"), ex))
+        return "break"
+
+
+MOTION_LEVELS = [("auto", "Auto (calmer on battery)"), ("smooth", "Smooth"), ("balanced", "Balanced"),
+                 ("saver", "Battery saver")]
+
+
+class Zenko20(Zenko19):
+    """zenko20: the fast, easy one. Speed engine + quick search + a sidebar and look you can arrange yourself."""
+
+    PREBUILD = ("timetable", "deadlines", "reminders", "daily", "notebook", "customize", "settings", "you", "garden",
+                "exercise", "screen", "map", "chat", "notes")
+
+    def __init__(self):
+        t0 = time.perf_counter()
+        ART.load()
+        ACCENT_NOW["key"] = load_config().get("accent", "theme")
+        apply_theme(load_config().get("theme", "snow"))
+        self._z20_palette = None
+        self._z20_hist = []
+        self._z20_last_anim = 0.0
+        self._z20_last_fox = 0.0
+        self._z20_motion_cache = (0.0, "smooth")
+        self._z20_cards = {}
+        super().__init__()
+        self.z20_t_init = time.perf_counter() - t0
+        try:
+            dedupe_canvas(self.canvas)
+        except Exception as ex:
+            zk_log_error("dedupe: %r" % (ex,))
+        self.root.after(2500, self.z20_prewarm)
+        self.root.after(90 * 1000, self.z20_autosave)
+
+    # ---- motion level ----------------------------------------------------------------------------------------------
+    def z20_motion(self):
+        """'smooth', 'balanced' or 'saver' right now (Auto follows the battery)."""
+        now = time.monotonic()
+        t, lvl = self._z20_motion_cache
+        if now - t < 20:
+            return lvl
+        lvl = self.cfg.get("motion_level", "auto")
+        if lvl == "auto":
+            lvl = "smooth"
+            try:
+                b = battery_status()
+                if b and not b[1]:
+                    lvl = "saver" if b[0] <= 20 else "balanced"
+            except Exception:
+                pass
+        self._z20_motion_cache = (now, lvl)
+        return lvl
+
+    def z20_hub_state(self):
+        """'hidden', 'background' (another app has focus) or 'front'."""
+        h = getattr(self, "hub", None)
+        if not h:
+            return "hidden"
+        w = h["win"]
+        try:
+            if not w.winfo_viewable():
+                return "hidden"
+            if IS_WIN:
+                hw = self.win_hwnd(w)
+                if hw and ctypes.windll.user32.IsIconic(hw):
+                    return "hidden"
+            f = w.focus_get()
+        except (KeyError, tk.TclError, Exception):
+            f = None
+        return "front" if f is not None else "background"
+
+    def hub_anim(self):
+        h = getattr(self, "hub", None)
+        if not h:
+            return
+        try:
+            if not h["win"].winfo_exists():
+                return
+        except tk.TclError:
+            return
+        st = self.z20_hub_state()
+        lvl = self.z20_motion()
+        gap = {"smooth": 0.045, "balanced": 0.09, "saver": 0.22}.get(lvl, 0.045)
+        if st == "hidden":
+            gap = 0.8
+        elif st == "background":
+            gap = max(gap, 0.12)
+        now = time.monotonic()
+        if now - self._z20_last_anim < gap:
+            h["win"].after(max(20, int((gap - (now - self._z20_last_anim)) * 1000)), self.hub_anim)
+            return
+        self._z20_last_anim = now
+        super().hub_anim()
+
+    def animate(self):
+        lvl = self.z20_motion()
+        gap = {"saver": 0.11}.get(lvl, 0.0)
+        if gap:
+            now = time.monotonic()
+            if now - self._z20_last_fox < gap:
+                self.root.after(max(20, int((gap - (now - self._z20_last_fox)) * 1000)), self.animate)
+                return
+            self._z20_last_fox = now
+        super().animate()
+
+    def z19_wisp(self, direction):
+        if self.z20_motion() == "smooth":
+            super().z19_wisp(direction)
+
+    # ---- pre-drawing in the background ---------------------------------------------------------------------------
+    def z20_prewarm(self):
+        """Draw the next pictures she'll need on a background thread (pure pixel maths, no Tk), so walking,
+        page poses and tails never stutter the first time."""
+        if getattr(self, "_z20_warm", None):
+            return
+        try:
+            n, acc = self.tail_count(), tuple(self.accessories())
+            pal = dict(self.pal)
+        except Exception:
+            return
+        jobs = []
+        for fr in range(8):
+            jobs.append(lambda fr=fr: sprite_png([build_tails(n, fr)], pal))
+            jobs.append(lambda fr=fr: sprite_png([build_tails(n, fr, shadow=False)], pal))
+        for side in "RL":
+            for fr in range(8):
+                jobs.append(lambda s=side, fr=fr: sprite_png([rig_rows("qwalk%s%d" % (s, fr), n, acc)], pal))
+        for st in ("idle", "blink", "focus", "happy"):
+            for fr in (0, 1):
+                for hx in (0, -1, 1):
+                    jobs.append(lambda st=st, fr=fr, hx=hx: sprite_png([build_frame(st, "up", fr, (0, 0, 0, 0), acc, hx, 0)], pal))
+        for name in ("walk", "stand", "lie", "playbow"):
+            for fr in range(8):
+                jobs.append(lambda nm=name, fr=fr: rig_rows("rigR:%s:%d" % (nm, fr), n, acc))
+        self._z20_warm = {"left": len(jobs), "t0": time.monotonic()}
+
+        def work():
+            for j in jobs:
+                if getattr(self, "_z20_quit", False):
+                    return
+                try:
+                    j()
+                except Exception:
+                    pass
+                self._z20_warm["left"] -= 1
+                time.sleep(0.03)                       # leave the window plenty of room to breathe
+            self._z20_warm["done"] = time.monotonic()
+            ART.save()
+        threading.Thread(target=work, name="zenko-prewarm", daemon=True).start()
+
+    def z20_autosave(self):
+        if ART.dirty:
+            threading.Thread(target=ART.save, name="zenko-artsave", daemon=True).start()
+        self.root.after(5 * 60 * 1000, self.z20_autosave)
+
+    def quit(self):
+        self._z20_quit = True
+        try:
+            ART.save()
+        except Exception:
+            pass
+        return super().quit()
+
+    # ---- the hub: pages built while you aren't touching anything ---------------------------------------------------
+    def open_hub(self, page=None):
+        fresh = not (getattr(self, "hub", None) and self.hub["win"].winfo_exists())
+        if fresh and page and page not in dict(self.z20_nav_all()):
+            page = None
+        super().open_hub(page)
+        h = getattr(self, "hub", None)
+        if not fresh or not h:
+            return
+        h["navkeys_all"] = list(h["navkeys"])
+        h["navkeys"] = self.z20_nav_list()
+        self._z20_cards = {}
+        h["win"].bind("<Button-1>", lambda e: self._z20_palette.close() if self._z20_palette else None, add="+")
+        try:
+            self.hub_side_draw()
+        except Exception:
+            pass
+        w = h["win"]
+        for seq in ("<Control-k>", "<Control-K>", "<Control-space>"):
+            w.bind(seq, self.z20_palette_key)
+        for cls in ("Entry", "Text"):
+            try:
+                self.root.bind_class(cls, "<Control-k>", self.z20_palette_key)
+            except tk.TclError:
+                pass
+        for i in range(1, 10):
+            w.bind("<Control-Key-%d>" % i, lambda e, i=i: self.z20_nav_jump(i - 1))
+        w.bind("<Control-comma>", lambda e: self.hub_show("settings"))
+        w.bind("<Alt-Left>", lambda e: self.z20_back())
+        h["z20_t_open"] = time.monotonic()
+        if not hasattr(self, "z20_t_ready"):
+            self.z20_t_ready = time.time() - globals().get("ZK_T0", time.time())
+        if self.cfg.get("prebuild_pages", True):
+            w.after(2200, self.z20_prebuild_tick)
+
+    def z20_prebuild_tick(self):
+        h = getattr(self, "hub", None)
+        if not h or not self.cfg.get("prebuild_pages", True):
+            return
+        try:
+            if not h["win"].winfo_exists():
+                return
+        except tk.TclError:
+            return
+        todo = [p for p in self.PREBUILD if p not in h["pages"] and hasattr(self, "hub_build_" + p)]
+        if not todo:
+            if ART.dirty:
+                threading.Thread(target=ART.save, name="zenko-artsave", daemon=True).start()
+            return
+        try:
+            idle = idle_seconds() if IS_WIN else 9.0
+        except Exception:
+            idle = 9.0
+        busy = time.monotonic() - h.get("z20_touch", 0.0) < 1.2 or idle < 1.0 or self.z20_hub_state() == "hidden"
+        if not busy:
+            self.z20_prebuild(todo[0])
+        h["win"].after(900 if busy else 350, self.z20_prebuild_tick)
+
+    def z20_prebuild(self, name):
+        h = self.hub
+        t0 = time.perf_counter()
+        pg = tk.Frame(h["main"], bg=PAPER)
+        h["pages"][name] = pg
+        cur = h["page"]
+        try:
+            pg.place(x=0, y=0, relwidth=1, relheight=1)    # real size (hidden under the page you're on), so it lays
+            pg.lower()                                       # out exactly as if you had opened it yourself
+            getattr(self, "hub_build_" + name)(pg)
+            pg.update_idletasks()
+            if h.get("page") != name:
+                pg.place_forget()
+        except Exception as ex:                       # build it normally when it's opened instead
+            zk_log_error("prebuild %s: %r" % (name, ex))
+            h["pages"].pop(name, None)
+            try:
+                pg.destroy()
+            except tk.TclError:
+                pass
+        h["page"] = cur
+        h.setdefault("z20_built", {})[name] = time.perf_counter() - t0
+
+    def hub_show(self, name):
+        h = getattr(self, "hub", None)
+        if h:
+            h["z20_touch"] = time.monotonic()
+            old = h.get("page")
+            if old and old != name:
+                self._z20_hist = (self._z20_hist + [old])[-20:]
+        return super().hub_show(name)
+
+    def z20_back(self):
+        h = getattr(self, "hub", None)
+        if h and self._z20_hist:
+            p = self._z20_hist.pop()
+            super().hub_show(p)
+            self._z20_hist = self._z20_hist[:-1] if self._z20_hist and self._z20_hist[-1] == h.get("page") else self._z20_hist
+        return "break"
+
+    # ---- sidebar you can arrange -----------------------------------------------------------------------------------
+    def z20_nav_all(self):
+        h = getattr(self, "hub", None)
+        if h and h.get("navkeys_all"):
+            return h["navkeys_all"]
+        return [("home", "Home"), ("timetable", "Timetable"), ("deadlines", "Upcoming"), ("reminders", "Reminders"),
+                ("notebook", "Study books"), ("daily", "Daily"), ("exercise", "Exercise"), ("garden", "Zen garden"),
+                ("map", "World map"), ("screen", "Screen time"), ("chat", "Chat"), ("notes", "Notes"), ("you", "You"),
+                ("customize", "Customize"), ("settings", "Settings")]
+
+    def z20_nav_list(self):
+        allk = self.z20_nav_all()
+        labels = dict(allk)
+        order = [k for k in (self.cfg.get("nav_order") or []) if k in labels]
+        order += [k for k, _ in allk if k not in order]
+        hidden = set(self.cfg.get("nav_hidden") or []) - {"home", "settings"}
+        return [(k, labels[k]) for k in order if k not in hidden]
+
+    def z20_nav_apply(self):
+        h = getattr(self, "hub", None)
+        if not h:
+            return
+        h["navkeys"] = self.z20_nav_list()
+        h["pill_y"] = None
+        try:
+            self.hub_side_draw()
+        except Exception as ex:
+            zk_log_error("nav apply: %r" % (ex,))
+
+    def hub_side_layout(self):
+        z, top, title_y, nav_y, rowh = super().hub_side_layout()
+        if self.cfg.get("nav_compact", False):
+            rowh = min(rowh, 32)
+        return z, top, title_y, nav_y, rowh
+
+    def z20_nav_jump(self, i):
+        h = getattr(self, "hub", None)
+        if h and 0 <= i < len(h["navkeys"]):
+            k = h["navkeys"][i][0]
+            if k != h.get("page"):
+                ui_sound("nav")
+            self.hub_show(k)
+        return "break"
+
+    # ---- quick search ------------------------------------------------------------------------------------------------
+    def hub_card(self, parent, title=None, bg=None, shape="round"):
+        f = super().hub_card(parent, title, bg, shape)
+        h = getattr(self, "hub", None)
+        if title and h and not getattr(self, "_book_ctx", False):
+            try:
+                path = str(parent)
+                page = next((k for k, pg in h["pages"].items() if path.startswith(str(pg) + ".") or path == str(pg)), None)
+                if page:
+                    self._z20_cards[(page, title)] = f
+            except Exception:
+                pass
+        return f
+
+    def z20_palette_key(self, _e=None):
+        self.z20_palette()
+        return "break"
+
+    def z20_palette(self):
+        h = getattr(self, "hub", None)
+        if not h:
+            self.open_hub()
+            self.root.after(400, self.z20_palette)
+            return
+        old = self._z20_palette
+        if old is not None:
+            old.close()
+        self._z20_palette = ZkPalette(self, self.z20_items())
+
+    def z20_items(self):
+        items = []
+        visible = [k for k, _ in (self.hub or {}).get("navkeys", [])]
+        for k, lab in self.z20_nav_all():
+            sub = ("Ctrl+%d" % (visible.index(k) + 1) if visible.index(k) < 9 else "") if k in visible else "hidden from sidebar"
+            items.append({"title": lab, "kind": "Page", "words": PAGE_WORDS.get(k, ""), "boost": 1.5, "sub": sub,
+                          "run": lambda k=k: self.hub_show(k)})
+        labels = dict(self.z20_nav_all())
+        seen = set()
+        for (page, title), f in list(self._z20_cards.items()):
+            try:
+                if not f.winfo_exists():
+                    continue
+            except tk.TclError:
+                continue
+            clean = re.sub(r"^[^\x00-\x7f]+\s*·\s*", "", title)
+            clean = re.sub(r"\s*\(.*?\)\s*$", "", clean) or title
+            key = (page, clean)
+            if key in seen or "%s" in title:
+                continue
+            seen.add(key)
+            items.append({"title": clean, "kind": "Setting" if page in ("settings", "customize") else "Section",
+                          "sub": labels.get(page, page), "words": title,
+                          "run": lambda p=page, t=title: self.z20_reveal(p, t)})
+        A = []
+        for b in BOOKS:
+            sd = next((d for d in SUBJECT_DEFS if d[0] == b[0]), None)
+            A.append({"title": "%s book" % b[3], "kind": "Book", "sub": "Study books",
+                      "words": " ".join([b[0], b[2], b[3]] + (list(sd[4]) if sd else [])) + " subject notes practice tutor",
+                      "boost": 0.8, "run": lambda k=b[0]: self.book_open(k, anim=False)})
+
+        def act(title, fn, words="", sub=""):
+            A.append({"title": title, "kind": "Do", "run": fn, "words": words, "sub": sub, "boost": 0.5})
+        if self.session:
+            act("Pause or resume the session", self.toggle_pause, "focus timer stop pause")
+            act("Stop the session", lambda: self.end_session(False), "focus timer end")
+        else:
+            act("Start a focus session", self.open_dialog, "focus timer pomodoro study start begin")
+        if hasattr(self, "lockin_start"):
+            act("Lock in (no distractions)", self.lockin_start, "lockin lock-in focus strict")
+        act("Take a break", self.start_break, "rest pause")
+        if hasattr(self, "breath_start"):
+            act("Box breathing", lambda: (self.hub_show("garden"), self.breath_start("box")), "breathe calm anxious relax")
+            act("4-7-8 breathing before sleep", lambda: (self.hub_show("garden"), self.breath_start("478")), "breathe sleep")
+        if hasattr(self, "conv_start"):
+            act("Talk out loud with %s" % self.fox_name(), self.conv_start, "voice speak microphone talk")
+        for title, fn, w in (("Periodic table", "open_ptable", "chemistry elements"),
+                             ("French dictionary", "open_french_dict", "french words translate"),
+                             ("Calculator (fx-CG50 style)", "open_calc", "math maths calculator casio"),
+                             ("Bible", "open_bible", "scripture verse")):
+            if hasattr(self, fn):
+                act(title, getattr(self, fn), w, "Tool window")
+        if hasattr(self, "export_pdf"):
+            act("Export timetable as PDF", self.export_pdf, "remarkable print")
+        act("Check for updates", lambda: self.z20_reveal("settings", "Updates and install"), "update version new")
+        for val, lab in FUR_NAMES:
+            A.append({"title": "Theme: %s" % lab, "kind": "Look", "words": "colour color theme fox coat " + val,
+                      "run": lambda v=val: self.set_theme(v)})
+        for k, lab, _v in ACCENTS:
+            A.append({"title": "Accent: %s" % lab, "kind": "Look", "words": "accent colour color highlight buttons",
+                      "run": lambda k=k: self.z20_set_accent(k)})
+        for k, lab in MOTION_LEVELS:
+            A.append({"title": "Motion: %s" % lab, "kind": "Look", "words": "motion speed animation battery performance fast",
+                      "run": lambda k=k: (self.cfg_set("motion_level", k), self.z20_motion_reset())})
+        A.append({"title": "Arrange the sidebar", "kind": "Look", "words": "sidebar order hide pages menu navigation",
+                  "run": lambda: self.z20_reveal("customize", "Sidebar pages")})
+        return items + A
+
+    def z20_motion_reset(self):
+        self._z20_motion_cache = (0.0, "smooth")
+
+    def z20_ask(self, q):
+        self.hub_show("chat")
+
+        def go():
+            try:
+                self.chat_send(q)
+            except Exception as ex:
+                zk_log_error("palette ask: %r" % (ex,))
+        self.root.after(250, go)
+
+    def z20_reveal(self, page, title):
+        """Open a page and glide to one of its cards, then make its border glow for a moment."""
+        self.hub_show(page)
+
+        def find():
+            f = self._z20_cards.get((page, title))
+            if f is None:
+                for (p, t), fr in self._z20_cards.items():
+                    if p == page and title.lower() in t.lower():
+                        f = fr
+                        break
+            if f is None:
+                return
+            h = self.hub
+            try:
+                f.update_idletasks()
+                sc = None
+                for cv in h["scrollers"]:
+                    if str(f).startswith(str(cv) + "."):
+                        sc = cv
+                if sc is not None:
+                    inner = sc.nametowidget(sc.itemcget(sc.find_all()[0], "window"))
+                    total = max(1, inner.winfo_height())
+                    y = f.winfo_rooty() - inner.winfo_rooty()
+                    sc.yview_moveto(max(0.0, (y - 12) / float(total)))
+                self.z20_flash(f)
+            except Exception as ex:
+                zk_log_error("reveal: %r" % (ex,))
+        self.root.after(160, find)
+
+    def z20_flash(self, f):
+        bgc = None
+        for c in f.winfo_children():
+            if getattr(c, "_zk_bg", False) or c.winfo_class() == "Canvas":
+                bgc = c
+                break
+        if bgc is None:
+            return
+        W, H = bgc.winfo_width(), bgc.winfo_height()
+        steps = 14
+
+        def step(i):
+            try:
+                bgc.delete("z20flash")
+                if i >= steps:
+                    return
+                a = 1.0 - abs(i - steps / 2.0) / (steps / 2.0)
+                rbox(bgc, 1, 1, W - 2, H - 2, 12, fill="", outline=_mixhex(T["card"], GOLD, 0.25 + 0.75 * a),
+                     tags="z20flash", width=2)
+                bgc.after(70, lambda: step(i + 1))
+            except tk.TclError:
+                pass
+        step(0)
+
+    # ---- title bar: a search pill ---------------------------------------------------------------------------------
+    def hub_titlebar(self, parent):
+        bar = super().hub_titlebar(parent)
+        try:
+            pill = tk.Canvas(bar, width=300, height=26, bg=NIGHT, highlightthickness=0, cursor="hand2")
+            pill.pack(side="left", padx=(6, 0), pady=4)
+
+            def draw(hover=False):
+                pill.delete("all")
+                t1 = pill.create_text(32, 13, text="Search pages, settings, actions", anchor="w",
+                                      fill=_mixhex(NIGHT, INK, 0.72 if hover else 0.62), font=(FONT_UI, 9), tags="t")
+                t2 = pill.create_text(0, 13, text="Ctrl K", anchor="w", fill=_mixhex(NIGHT, INK, 0.42), font=(FONT_UI, 8),
+                                      tags="t")
+                pill.coords(t2, pill.bbox(t1)[2] + 14, 13)
+                W = pill.bbox(t2)[2] + 14
+                if int(float(pill.cget("width"))) != W:
+                    pill.configure(width=W)
+                base = _mixhex(NIGHT, INK, 0.10 if hover else 0.06)
+                rbox(pill, 1, 1, W - 2, 24, 99, fill=base, outline=_mixhex(NIGHT, GOLD, 0.35 if hover else 0.18), shape="pill")
+                pill.create_text(16, 13, text="⌕", fill=GOLD, font=(FONT_UI, 10), anchor="w")
+                pill.tag_raise("t")
+            draw()
+            pill.bind("<Enter>", lambda e: draw(True))
+            pill.bind("<Leave>", lambda e: draw(False))
+            pill.bind("<ButtonRelease-1>", lambda e: self.z20_palette())
+        except Exception as ex:
+            zk_log_error("search pill: %r" % (ex,))
+        return bar
+
+    # ---- the study-books shelf: its painted pieces come from the art cache -----------------------------------------
+    def shelf_img(self, key, make):
+        imgs = self.__dict__.setdefault("shelf_imgs", {})
+        img = imgs.get(key)
+        if img is None:
+            if len(imgs) > 60:
+                lru_trim(imgs, 40)
+            img = imgs[key] = self.z20_photo(("shelf", key), make)
+        return img
+
+    def z20_photo(self, key, make):
+        """A PhotoImage remembered across runs as PNG (Tk writes the PNG itself, so it's quick)."""
+        try:
+            k = _art_key("photo", key, {})
+        except Exception:
+            return make()
+        png = ART.get(k)
+        if png is not None:
+            try:
+                return tk.PhotoImage(data=base64.b64encode(png))
+            except tk.TclError:
+                pass
+        img = make()
+        try:
+            d = img.tk.call(img.name, "data", "-format", "png")
+            if isinstance(d, str):
+                d = base64.b64decode(d) if not d.startswith("\x89PNG") else d.encode("latin-1")
+            if isinstance(d, (bytes, bytearray)) and bytes(d[:4]) == b"\x89PNG":
+                ART.put(k, bytes(d))
+        except Exception:
+            pass
+        return img
+
+    # ---- fitting text to the window: only when something really changed -------------------------------------------
+    ZK_FIT_DELAY = 200                                   # after the page has slid in, so the slide stays smooth
+
+    def zk_fit(self, fonts=True):
+        h = getattr(self, "hub", None)
+        if fonts and h and not os.environ.get("ZK_TIME_FIT"):
+            try:
+                pg = h["pages"].get(h["page"])
+                main = h["main"]
+                sig = (round(self.zk_factor(), 3), main.winfo_width(), main.winfo_height(),
+                       float(self.cfg.get("text_scale", 1.0) or 1.0), len(self.zk_walk(pg)) if pg is not None else 0)
+                if pg is not None and getattr(pg, "_z20_fit", None) == sig:
+                    self._zk_fit_job = None
+                    return
+                super().zk_fit(fonts)
+                if pg is not None and pg.winfo_exists():
+                    pg._z20_fit = sig
+                return
+            except tk.TclError:
+                pass
+        return super().zk_fit(fonts)
+
+    # ---- muscle map from the art cache ---------------------------------------------------------------------------
+    def gym_photos(self, day):
+        cache = self.__dict__.setdefault("_gym_img", {})
+        acc = (236, 78, 58)
+        dn = self.gym_done_regions(day)
+        key = (day, acc, dn)
+        if key not in cache:
+            pngs = gym_pngs(day, GYM_ALL[day]["targets"], acc, dn)
+            cache[key] = {v: [tk.PhotoImage(data=base64.b64encode(p)).zoom(2, 2) for p in pngs[v]] for v in ("front", "back")}
+            if len(cache) > 6:
+                cache.pop(next(iter(cache)))
+        return cache[key]
+
+    # ---- accent -------------------------------------------------------------------------------------------------
+    def z20_set_accent(self, key):
+        self.cfg["accent"] = key
+        ACCENT_NOW["key"] = key
+        self.set_theme(self.cfg.get("theme", "snow"), announce=False)
+
+    # ---- Customize: look and feel + sidebar ------------------------------------------------------------------------
+    def hub_build_customize(self, pg):
+        super().hub_build_customize(pg)
+        try:
+            self.z20_customize_extra(pg)
+        except Exception as ex:
+            zk_log_error("z20 customize: %r" % (ex,))
+
+    def z20_inner_of(self, pg):
+        for cv in self.hub["scrollers"]:
+            try:
+                if str(cv).startswith(str(pg) + ".") and cv.find_all():
+                    return cv.nametowidget(cv.itemcget(cv.find_all()[0], "window"))
+            except Exception:
+                continue
+        return None
+
+    def z20_customize_extra(self, pg):
+        inner = self.z20_inner_of(pg)
+        if inner is None:
+            return
+        bg = T["card"]
+        row = tk.Frame(inner, bg=PAPER)
+        row.pack(fill="x", padx=24, pady=(4, 18))
+        left = tk.Frame(row, bg=PAPER)
+        left.pack(side="left", fill="both", expand=True, padx=(0, 8), anchor="n")
+        right = tk.Frame(row, bg=PAPER)
+        right.pack(side="left", fill="both", expand=True, padx=(8, 0), anchor="n")
+        kw = dict(bg=bg, fg=INK, activebackground=bg, activeforeground=GOLD, selectcolor=FIELD, highlightthickness=0,
+                  font=(FONT_UI, 10), anchor="w")
+
+        # look and feel: accent + motion + compact sidebar
+        c = self.hub_card(left, "Look and feel")
+        c.pack(fill="x")
+        tk.Label(c, text="Accent colour (buttons, highlights, the glow)", bg=bg, fg=GREY, font=(FONT_UI, 9),
+                 anchor="w").pack(fill="x", padx=16, pady=(2, 2))
+        sw = tk.Frame(c, bg=bg)
+        sw.pack(fill="x", padx=12, pady=(0, 6))
+        cur = self.cfg.get("accent", "theme")
+        for i, (k, lab, v) in enumerate(ACCENTS):
+            f = tk.Frame(sw, bg=bg)
+            f.grid(row=0, column=i, padx=3)
+            cv = tk.Canvas(f, width=30, height=30, bg=bg, highlightthickness=0, cursor="hand2")
+            cv.pack()
+            col = v[0] if v else (THEMES.get(self.cfg.get("theme", "snow")) or THEMES["snow"])["acc"]
+            on = k == cur
+            cv.create_oval(2, 2, 28, 28, outline=GOLD if on else _mixhex(bg, INK, 0.14), width=3 if on else 1)
+            cv.create_oval(8, 8, 22, 22, fill=col, outline="")
+            if not v:
+                cv.create_text(15, 15, text="T", fill=ON_ACC, font=(FONT_UI, 7, "bold"))
+            tl = tk.Label(f, text=lab, bg=bg, fg=GREY, font=(FONT_UI, 8), cursor="hand2")
+            tl.pack()
+            for wd in (cv, tl):
+                wd.bind("<Button-1>", lambda e, k=k: self.z20_set_accent(k))
+        tk.Label(c, text="Motion (how lively the window is)", bg=bg, fg=GREY, font=(FONT_UI, 9),
+                 anchor="w").pack(fill="x", padx=16, pady=(4, 0))
+        mv = tk.StringVar(value=self.cfg.get("motion_level", "auto"))
+        mf = tk.Frame(c, bg=bg)
+        mf.pack(fill="x", padx=14)
+        for i, (k, lab) in enumerate(MOTION_LEVELS):
+            tk.Radiobutton(mf, text=lab, value=k, variable=mv, **kw,
+                           command=lambda: (self.cfg_set("motion_level", mv.get()), self.z20_motion_reset())
+                           ).grid(row=i // 2, column=i % 2, sticky="w", padx=(0, 10))
+        cv_ = tk.BooleanVar(value=bool(self.cfg.get("nav_compact", False)))
+        tk.Checkbutton(c, text="Compact sidebar (smaller rows)", variable=cv_, **kw,
+                       command=lambda: (self.cfg_set("nav_compact", bool(cv_.get())), self.z20_nav_apply())
+                       ).pack(fill="x", padx=14, pady=(4, 12))
+
+        # sidebar pages: order + show/hide
+        s = self.hub_card(right, "Sidebar pages")
+        s.pack(fill="x")
+        tk.Label(s, text="Tick what shows in the sidebar and use the arrows to reorder. Hidden pages are still one "
+                         "Ctrl+K search away.", bg=bg, fg=GREY, font=(FONT_UI, 9), anchor="w", justify="left",
+                 wraplength=360).pack(fill="x", padx=16, pady=(0, 4))
+        box = tk.Frame(s, bg=bg)
+        box.pack(fill="x", padx=12, pady=(0, 12))
+        self.z20_nav_editor(box)
+
+    def z20_nav_editor(self, box):
+        for w in box.winfo_children():
+            w.destroy()
+        bg = T["card"]
+        allk = self.z20_nav_all()
+        labels = dict(allk)
+        order = [k for k in (self.cfg.get("nav_order") or []) if k in labels]
+        order += [k for k, _ in allk if k not in order]
+        hidden = set(self.cfg.get("nav_hidden") or [])
+
+        def save(new_order=None, new_hidden=None):
+            if new_order is not None:
+                self.cfg["nav_order"] = new_order
+            if new_hidden is not None:
+                self.cfg["nav_hidden"] = sorted(new_hidden)
+            save_config(self.cfg)
+            self.z20_nav_apply()
+            self.z20_nav_editor(box)
+
+        def mv(i, d):
+            j = i + d
+            if 0 <= j < len(order):
+                o = list(order)
+                o[i], o[j] = o[j], o[i]
+                save(new_order=o)
+
+        def tog(k, var):
+            hs = set(hidden)
+            if var.get():
+                hs.discard(k)
+            else:
+                hs.add(k)
+            save(new_hidden=hs)
+        for i, k in enumerate(order):
+            r = tk.Frame(box, bg=bg)
+            half = (len(order) + 1) // 2                   # two columns, read top to bottom
+            r.grid(row=i % half, column=i // half, sticky="we", padx=4, pady=1)
+            locked = k in ("home", "settings")
+            v = tk.BooleanVar(value=locked or k not in hidden)
+            cb = tk.Checkbutton(r, text=labels[k], variable=v, bg=bg, fg=INK if v.get() else GREY, selectcolor=FIELD,
+                                activebackground=bg, activeforeground=GOLD, highlightthickness=0, font=(FONT_UI, 10),
+                                anchor="w", width=13, command=lambda k=k, v=v: tog(k, v))
+            if locked:
+                cb.configure(state="disabled")
+            cb.pack(side="left")
+            for sym, d in (("▲", -1), ("▼", 1)):
+                b = tk.Label(r, text=sym, bg=bg, fg=_mixhex(bg, INK, 0.5), font=(FONT_UI, 8), cursor="hand2", padx=3)
+                b.pack(side="left")
+                b.bind("<Button-1>", lambda e, i=i, d=d: mv(i, d))
+                b.bind("<Enter>", lambda e, b=b: b.config(fg=GOLD))
+                b.bind("<Leave>", lambda e, b=b: b.config(fg=_mixhex(bg, INK, 0.5)))
+        box.grid_columnconfigure(0, weight=1)
+        box.grid_columnconfigure(1, weight=1)
+        rs = tk.Label(box, text="Reset to the usual order", bg=bg, fg=_mixhex(bg, GOLD, 0.8), font=(FONT_UI, 9, "underline"),
+                      cursor="hand2")
+        rs.grid(row=(len(order) + 1) // 2 + 1, column=0, sticky="w", padx=6, pady=(6, 0))
+        rs.bind("<Button-1>", lambda e: save(new_order=[], new_hidden=set()))
+
+    # ---- Settings: speed card ---------------------------------------------------------------------------------------
+    def hub_settings_extras(self, left, right, check, radios, label, cfg_set):
+        super().hub_settings_extras(left, right, check, radios, label, cfg_set)
+        try:
+            self.z20_speed_card(left)
+        except Exception as ex:
+            zk_log_error("z20 speed card: %r" % (ex,))
+
+    def z20_speed_card(self, parent):
+        bg = T["card"]
+        c = self.hub_card(parent, "Speed and smoothness")
+        c.pack(fill="x", pady=(12, 0))
+        kw = dict(bg=bg, fg=INK, activebackground=bg, activeforeground=GOLD, selectcolor=FIELD, highlightthickness=0,
+                  font=(FONT_UI, 10), anchor="w")
+        pv = tk.BooleanVar(value=bool(self.cfg.get("prebuild_pages", True)))
+        tk.Checkbutton(c, text="Get pages ready in the background (instant page switching)", variable=pv, **kw,
+                       command=lambda: self.cfg_set("prebuild_pages", bool(pv.get()))).pack(fill="x", padx=14)
+        tk.Label(c, text="Motion level lives in Customize > Look and feel. On battery, Auto calms the animations.",
+                 bg=bg, fg=GREY, font=(FONT_UI, 9), anchor="w", justify="left", wraplength=560).pack(fill="x", padx=16, pady=(2, 2))
+        info = tk.Label(c, text="", bg=bg, fg=GREY, font=(FONT_UI, 9), anchor="w", justify="left", wraplength=560)
+        info.pack(fill="x", padx=16, pady=(2, 4))
+
+        def fill():
+            try:
+                warm = getattr(self, "_z20_warm", None) or {}
+                built = (self.hub or {}).get("z20_built", {})
+                info.configure(text="This window opened %.1f s after start.  %s.  Pages ready: %d.%s" % (
+                    getattr(self, "z20_t_ready", 0.0), ART.size_text(), len((self.hub or {}).get("pages", {})),
+                    "  Pre-drawing… %d left" % warm["left"] if warm.get("left") else ""))
+            except tk.TclError:
+                pass
+        fill()
+        info.bind("<Map>", lambda e: fill())
+        row = tk.Frame(c, bg=bg)
+        row.pack(fill="x", padx=12, pady=(0, 12))
+
+        def clear():
+            ART.clear()
+            self._z20_warm = None
+            self.say("Picture cache cleared. I'll redraw everything as I need it~", 6)
+            fill()
+        self.tt_btn(row, "Clear picture cache", clear, bg=_mixhex(bg, INK, 0.08), fg=INK, size=9).pack(side="left")
+
+
 def main():
     if "--make-icon" in sys.argv:
         out = sys.argv[sys.argv.index("--make-icon") + 1] if len(sys.argv) > sys.argv.index("--make-icon") + 1 \
@@ -38286,7 +39626,7 @@ def main():
         return
     started = {"ok": False}
     try:
-        app = Zenko19()
+        app = Zenko20()
 
         def mark_ok():
             started["ok"] = True
