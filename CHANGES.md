@@ -1,5 +1,21 @@
 # Zenko changes
 
+## v2026.11.24-zenko20
+
+Zenko 20 is the speed and ease update. Everything she could do before still works, and your saved data and settings are untouched.
+
+- **Much faster.** The window now opens about 0.6 s after start instead of 1.6 s, and switching between pages is near instant (all 15 pages: 4.9 s before, 0.7 s now, measured on the same PC).
+  - Every picture Zenko paints (her frames, tails, walk, the sidebar fox, the shelf, the muscle map, the wave banner) is remembered in `%APPDATA%\FoxBuddy\cache`, so it is painted only once, ever, instead of on every start.
+  - Her next frames are pre-drawn in the background, so walking and poses never stutter the first time.
+  - Pages get ready quietly in the background while you aren't touching anything, so clicking one shows it straight away (Settings > Speed and smoothness can turn this off).
+  - When Zenko.exe runs a newer zenko.py from an update, it now compiles it once and reuses that (0.57 s down to 0.06 s per start).
+- **Calmer on your PC.** Animations slow down when the window is hidden or you're in another app, and nothing is redrawn unless it changed. New **Motion** choice in Customize > Look and feel: Auto (calmer on battery), Smooth, Balanced or Battery saver.
+- **Quick search (Ctrl+K)**, or click the search bar at the top: type a few letters to jump to any page, any settings card (it scrolls there and glows), a study book ("bio", "chem"), a theme or accent, or an action like box breathing, the periodic table, the calculator, a focus session or a break. Anything else you type can go straight to Chat.
+- **Shortcuts**: Ctrl+1 to Ctrl+9 open the sidebar pages in order, Ctrl+, opens Settings, Alt+Left goes back to the page you were on.
+- **Arrange the sidebar** (Customize > Sidebar pages): tick which pages show and move them up or down. Hidden pages are still one Ctrl+K away. There's also a compact sidebar option.
+- **Accent colours** (Customize > Look and feel): Gold, Torii, Sakura, Jade, Sky, Wisteria or Moonlight on top of any fox theme, or keep the theme's own.
+- Small polish: the Home button glow, tips and the chat "thinking" dots no longer repaint every frame, and the search bar fits its text.
+
 ## v2026.11.24-zenko19.1
 
 - Zenko is fluffy again when she walks and does her poses. She has a round, soft body with a fluffy coat edge, a big white chest ruff under her chin, round haunches, thick fluffy legs instead of thin dark "stockings", round little paws like the ones she shows when sitting, and bigger cloud-like tails.
