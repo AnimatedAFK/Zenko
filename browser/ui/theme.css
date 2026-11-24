@@ -34,6 +34,22 @@ svg.px { display: block; image-rendering: pixelated; }
 .btn.on { color: var(--acc); background: var(--accbg); }
 .btn[disabled] { opacity: .35; pointer-events: none; }
 
+/* Pixel fonts (SIL Open Font License, see fonts/OFL-*.txt) */
+@font-face { font-family: "Pixelify Sans"; src: url("fonts/PixelifySans.ttf") format("truetype"); font-weight: 400 700; font-display: swap; }
+@font-face { font-family: "DotGothic16"; src: url("fonts/DotGothic16.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+.dot { font-family: "DotGothic16", "Pixelify Sans", monospace; }
+
+/* Subtle pixel edges: stepped corners (2px steps) instead of smooth curves */
+:root {
+  --clip: polygon(0 6px,2px 6px,2px 4px,4px 4px,4px 2px,6px 2px,6px 0,calc(100% - 6px) 0,calc(100% - 6px) 2px,calc(100% - 4px) 2px,calc(100% - 4px) 4px,calc(100% - 2px) 4px,calc(100% - 2px) 6px,100% 6px,100% calc(100% - 6px),calc(100% - 2px) calc(100% - 6px),calc(100% - 2px) calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) calc(100% - 2px),calc(100% - 6px) calc(100% - 2px),calc(100% - 6px) 100%,6px 100%,6px calc(100% - 2px),4px calc(100% - 2px),4px calc(100% - 4px),2px calc(100% - 4px),2px calc(100% - 6px),0 calc(100% - 6px));
+  --clips: polygon(0 4px,2px 4px,2px 2px,4px 2px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 2px,calc(100% - 2px) 2px,calc(100% - 2px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 2px) calc(100% - 4px),calc(100% - 2px) calc(100% - 2px),calc(100% - 4px) calc(100% - 2px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 2px),2px calc(100% - 2px),2px calc(100% - 4px),0 calc(100% - 4px));
+  --cliptop: polygon(0 6px,2px 6px,2px 4px,4px 4px,4px 2px,6px 2px,6px 0,calc(100% - 6px) 0,calc(100% - 6px) 2px,calc(100% - 4px) 2px,calc(100% - 4px) 4px,calc(100% - 2px) 4px,calc(100% - 2px) 6px,100% 6px,100% 100%,0 100%);
+}
+/* A box with a 2px pixel border: --b border colour, --c fill */
+.pxb { position: relative; isolation: isolate; clip-path: var(--clip); background: var(--b, var(--line)); }
+.pxb::before { content: ""; position: absolute; inset: 2px; clip-path: var(--clips); background: var(--c, var(--panel)); z-index: -1; transition: background .18s; }
+.pxs { clip-path: var(--clips); }
+
 /* Zenko's own fonts (SIL Open Font License, see fonts/OFL-*.txt) */
 @font-face { font-family: "Zen Maru Gothic"; src: url("fonts/ZenMaruGothic-Regular.ttf") format("truetype"); font-weight: 400 500; font-display: swap; }
 @font-face { font-family: "Zen Maru Gothic"; src: url("fonts/ZenMaruGothic-Bold.ttf") format("truetype"); font-weight: 600 900; font-display: swap; }
@@ -41,12 +57,13 @@ svg.px { display: block; image-rendering: pixelated; }
 .mincho { font-family: "Zen Old Mincho", "Yu Mincho", Georgia, serif; }
 
 /* Zenko-style pieces shared by our pages */
-.card { background: var(--panel); border: 1px solid color-mix(in srgb, var(--line) 75%, var(--gold) 25%); border-radius: var(--r); padding: 1.1rem 1.2rem; box-shadow: 0 8px 30px rgba(0,0,0,.25); }
+.card { position: relative; isolation: isolate; clip-path: var(--clip); background: color-mix(in srgb, var(--line) 55%, var(--gold) 45%); padding: 1.2rem 1.3rem; }
+.card::before { content: ""; position: absolute; inset: 2px; clip-path: var(--clips); background: color-mix(in srgb, var(--panel) 94%, transparent); z-index: -1; }
 .card > h2, .dia { display: flex; align-items: center; gap: .6rem; color: var(--gold); font-weight: 700; font-size: 1.08rem; margin: 0 0 .8rem; }
 .card > h2::before, .dia::before { content: ""; width: .5rem; height: .5rem; background: var(--gold); transform: rotate(45deg); flex: none; box-shadow: 0 0 6px color-mix(in srgb, var(--gold) 50%, transparent); }
-.obtn { height: 2.1rem; padding: 0 .9rem; border-radius: var(--rs); border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent); background: var(--field);
+.obtn { height: 2.1rem; padding: 0 .9rem; clip-path: var(--clips); border: 0; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--ink) 30%, transparent), inset 0 -4px 0 rgba(0,0,0,.18); background: var(--field);
         color: var(--ink); font-weight: 700; display: inline-flex; align-items: center; gap: .4rem; transition: background .15s, border-color .15s, transform .12s; cursor: pointer; }
-.obtn:hover { background: var(--hover); border-color: var(--gold); }
+.obtn:hover { background: var(--hover); box-shadow: inset 0 0 0 2px var(--gold), inset 0 -4px 0 rgba(0,0,0,.18); }
 .obtn:active { transform: scale(.96); }
 .obtn.solid { background: var(--acc); color: var(--night); border-color: transparent; }
 .banner { position: relative; overflow: hidden; border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, var(--gold) 40%); }

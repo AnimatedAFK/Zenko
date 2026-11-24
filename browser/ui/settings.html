@@ -12,30 +12,31 @@
   h1 img { width: 44px; image-rendering: pixelated; }
   .sub { color: var(--grey); margin: 0 0 1.8rem; }
   section { margin-bottom: 1rem; }
-  .banner { margin: -2.4rem -1.2rem 1.6rem; padding: 2.2rem 1.6rem 1.3rem; }
+  .banner { margin: 0 0 1.4rem; padding: 1.4rem 1.6rem 1.3rem; border-bottom: 0; }
+  .banner h1 { font-family: "DotGothic16", var(--font); font-weight: 400; letter-spacing: .06em; text-shadow: 3px 3px 0 rgba(0,0,0,.35); }
   .banner h1 img { width: 54px; image-rendering: pixelated; }
   .row { display: flex; align-items: center; gap: 1rem; padding: .55rem 0; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
   .row:first-of-type { border-top: 0; }
   .row > label { flex: 1; }
   .row > label small { display: block; color: var(--grey); font-size: .85rem; margin-top: .15rem; }
-  select, input[type=text], input[type=url] { background: var(--field); border: 1px solid var(--line); border-radius: var(--rs); height: 2.2rem; padding: 0 .7rem; outline: 0; min-width: 12rem; }
+  select, input[type=text], input[type=url] { background: var(--field); border: 2px solid var(--line); border-radius: 0; clip-path: var(--clips); height: 2.2rem; padding: 0 .7rem; outline: 0; min-width: 12rem; }
   select:focus, input:focus { border-color: var(--acc); }
   input[type=range] { accent-color: var(--acc); width: 12rem; }
   .sw { display: flex; flex-wrap: wrap; gap: .55rem; }
-  .sw button { width: 5.6rem; padding: .5rem .3rem .4rem; border-radius: var(--rs); border: 2px solid transparent; background: var(--field); font-size: .8rem; color: var(--grey); transition: transform .15s, border-color .15s; }
+  .sw button { width: 5.6rem; padding: .5rem .3rem .4rem; clip-path: var(--clips); border: 2px solid transparent; background: var(--field); font-size: .8rem; color: var(--grey); transition: transform .15s, border-color .15s; }
   .sw button:hover { transform: translateY(-2px); }
   .sw button.on { border-color: var(--acc); color: var(--ink); }
   .sw button i { display: flex; height: 1.4rem; border-radius: 6px; overflow: hidden; margin-bottom: .35rem; }
   .sw button i b { flex: 1; }
-  .seg { display: inline-flex; background: var(--field); border-radius: var(--rs); padding: 3px; gap: 2px; }
-  .seg button { padding: .35rem .8rem; border-radius: calc(var(--rs) - 2px); color: var(--grey); }
+  .seg { display: inline-flex; background: var(--field); clip-path: var(--clips); padding: 3px; gap: 2px; }
+  .seg button { padding: .35rem .8rem; clip-path: var(--clips); color: var(--grey); }
   .seg button.on { background: var(--acc); color: var(--night); }
-  .tog { width: 2.8rem; height: 1.55rem; border-radius: 999px; background: var(--line); position: relative; transition: background .2s; flex: none; }
-  .tog::after { content: ""; position: absolute; top: 3px; left: 3px; width: calc(1.55rem - 6px); height: calc(1.55rem - 6px); border-radius: 50%; background: var(--ink); transition: transform .22s cubic-bezier(.2,.9,.25,1.3); }
+  .tog { width: 2.8rem; height: 1.55rem; clip-path: var(--clips); background: var(--line); position: relative; transition: background .2s; flex: none; }
+  .tog::after { content: ""; position: absolute; top: 3px; left: 3px; width: calc(1.55rem - 6px); height: calc(1.55rem - 6px); background: var(--ink); transition: transform .22s cubic-bezier(.2,.9,.25,1.3); }
   .tog.on { background: var(--acc); }
   .tog.on::after { transform: translateX(1.25rem); background: var(--night); }
   .keys { display: grid; grid-template-columns: 1fr auto auto; gap: .35rem .8rem; align-items: center; }
-  kbd { font: inherit; font-size: .9rem; padding: .2rem .55rem; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; min-width: 6rem; text-align: center; cursor: pointer; background: var(--field); }
+  kbd { font: inherit; font-size: .9rem; padding: .2rem .55rem; clip-path: var(--clips); box-shadow: inset 0 -3px 0 rgba(0,0,0,.3); min-width: 6rem; text-align: center; cursor: pointer; background: var(--field); }
   kbd.rec { border-color: var(--acc); color: var(--acc); animation: blink 1s infinite; }
   @keyframes blink { 50% { opacity: .5; } }
   .small { font-size: .85rem; color: var(--grey); }
@@ -49,9 +50,9 @@
 </style>
 </head>
 <body>
-<div class="sky"><canvas id="stars"></canvas></div>
+<canvas id="sky" style="position:fixed;inset:0;width:100%;height:100%;image-rendering:pixelated;z-index:0"></canvas>
 <main>
-  <div class="banner"><canvas class="waves" id="waves"></canvas>
+  <div class="banner card"><canvas class="waves" id="waves"></canvas>
     <h1><img src="zenko.png" alt="">Settings</h1>
     <p>Your browser's look, keys and habits. Everything changes instantly. Kon kon~</p></div>
 
@@ -115,8 +116,8 @@
   let p = ZB.load();
   function set(k, v) { p = ZB.load(); p[k] = v; ZB.save(p); ZB.apply(p); sync(); if (k === "palette" || k === "accent") waves(); }
   ZB.apply(p);
-  ZB.starfield($("#stars"));
-  function waves() { const cs = getComputedStyle(document.documentElement), v = (k) => cs.getPropertyValue(k).trim(); ZB.seigaiha($("#waves"), v("--night"), ZB.mix(v("--night"), v("--acc"), 0.4)); }
+  ZB.sky($("#sky"), { moon: [0.9, 0.08, 7], wisps: 6 });
+  function waves() { const cs = getComputedStyle(document.documentElement), v = (k) => cs.getPropertyValue(k).trim(); ZB.seigaiha($("#waves"), v("--panel"), ZB.mix(v("--panel"), v("--acc"), 0.35)); }
   waves();
 
   const pal = $("#pal");

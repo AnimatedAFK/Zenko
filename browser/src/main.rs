@@ -135,6 +135,8 @@ fn serve(path: &str) -> Response<Cow<'static, [u8]>> {
         "zenko_sleep.png" => (include_bytes!("../ui/zenko_sleep.png"), "image/png"),
         "fonts/ZenMaruGothic-Regular.ttf" => (include_bytes!("../ui/fonts/ZenMaruGothic-Regular.ttf"), "font/ttf"),
         "fonts/ZenMaruGothic-Bold.ttf" => (include_bytes!("../ui/fonts/ZenMaruGothic-Bold.ttf"), "font/ttf"),
+        "fonts/PixelifySans.ttf" => (include_bytes!("../ui/fonts/PixelifySans.ttf"), "font/ttf"),
+        "fonts/DotGothic16.ttf" => (include_bytes!("../ui/fonts/DotGothic16.ttf"), "font/ttf"),
         "fonts/ZenOldMincho-Bold.ttf" => (include_bytes!("../ui/fonts/ZenOldMincho-Bold.ttf"), "font/ttf"),
         _ => (b"Not found", "text/plain"),
     };
