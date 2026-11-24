@@ -11,8 +11,9 @@
   h1 { font-size: 1.9rem; font-weight: 600; margin: 0 0 .3rem; display: flex; align-items: center; gap: .7rem; }
   h1 img { width: 44px; image-rendering: pixelated; }
   .sub { color: var(--grey); margin: 0 0 1.8rem; }
-  section { background: color-mix(in srgb, var(--card) 90%, transparent); border: 1px solid var(--line); border-radius: var(--r); padding: 1.1rem 1.2rem; margin-bottom: 1rem; }
-  h2 { font-size: 1.05rem; margin: 0 0 .9rem; color: var(--acc); font-weight: 600; letter-spacing: .02em; }
+  section { margin-bottom: 1rem; }
+  .banner { margin: -2.4rem -1.2rem 1.6rem; padding: 2.2rem 1.6rem 1.3rem; }
+  .banner h1 img { width: 54px; image-rendering: pixelated; }
   .row { display: flex; align-items: center; gap: 1rem; padding: .55rem 0; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
   .row:first-of-type { border-top: 0; }
   .row > label { flex: 1; }
@@ -50,17 +51,18 @@
 <body>
 <div class="sky"><canvas id="stars"></canvas></div>
 <main>
-  <h1><img src="zenko.png" alt="">Settings</h1>
-  <p class="sub">Everything changes instantly. Kon kon~</p>
+  <div class="banner"><canvas class="waves" id="waves"></canvas>
+    <h1><img src="zenko.png" alt="">Settings</h1>
+    <p>Your browser's look, keys and habits. Everything changes instantly. Kon kon~</p></div>
 
-  <section>
+  <section class="card">
     <h2>Colours</h2>
     <div class="sw" id="pal"></div>
     <div class="row"><label>Your own accent colour<small>Leave it on the theme colour or pick any colour.</small></label>
-      <input type="color" id="accent"><button class="btn" id="accReset">Theme colour</button></div>
+      <input type="color" id="accent"><button class="obtn" id="accReset">Theme colour</button></div>
   </section>
 
-  <section>
+  <section class="card">
     <h2>Shape and layout</h2>
     <div class="row"><label>Tabs</label><div class="seg" data-k="tabs"><button data-v="top">On top</button><button data-v="side">On the side</button></div></div>
     <div class="row"><label>Tab shape<div class="preview"><span>Active tab</span><span>Other tab</span></div></label>
@@ -71,14 +73,14 @@
     <div class="row"><label>Font</label><select id="font"></select></div>
   </section>
 
-  <section>
+  <section class="card">
     <h2>Motion and sparkle</h2>
     <div class="row"><label>Animations<small>Reduced turns most movement off.</small></label><div class="seg" data-k="motion"><button data-v="full">Full</button><button data-v="reduced">Reduced</button></div></div>
     <div class="row"><label>Twinkling stars in the sky</label><button class="tog" data-t="stars"></button></div>
     <div class="row"><label>Foxfire glow around the page</label><button class="tog" data-t="glow"></button></div>
   </section>
 
-  <section>
+  <section class="card">
     <h2>Browsing</h2>
     <div class="row"><label>Search with</label><select id="engine"></select></div>
     <div class="row"><label>School portal address<small>Shown on the new tab page and in Ctrl+K.</small></label><input type="url" id="school" placeholder="e.g. school.managebac.com"></div>
@@ -87,23 +89,23 @@
     <div class="row"><label>Saved passwords<small>The browser offers to save passwords when you sign in, and fills them in next time.</small></label><span class="small">On</span></div>
   </section>
 
-  <section>
+  <section class="card">
     <h2>Keyboard shortcuts</h2>
     <p class="small" style="margin-top:-.4rem">Click a shortcut, then press the new keys. Backspace clears it, Esc cancels.</p>
     <div class="keys" id="keys"></div>
-    <div class="row"><label></label><button class="btn" id="keysReset">Reset all shortcuts</button></div>
+    <div class="row"><label></label><button class="obtn" id="keysReset">Reset all shortcuts</button></div>
   </section>
 
-  <section>
+  <section class="card">
     <h2>Zenko link</h2>
     <p class="small" style="margin:0">When Zenko is running, she sees which page you are on (and what your Claude chat is about), so your study time is logged
       for the right subject automatically. Zenko's focus mode can also close distracting tabs here, just like in Edge.</p>
   </section>
 
-  <section>
+  <section class="card">
     <h2>Updates</h2>
-    <div class="row"><label>Zenko Browser updates itself from GitHub<small>New versions download quietly; restart to use them.</small></label><button class="btn solid" id="upd">Check now</button></div>
-    <div class="row"><label>Browser data folder<small>Session, sign-ins and saved passwords are kept here.</small></label><button class="btn" id="data">Open folder</button></div>
+    <div class="row"><label>Zenko Browser updates itself from GitHub<small>New versions download quietly; restart to use them.</small></label><button class="obtn solid" id="upd">Check now</button></div>
+    <div class="row"><label>Browser data folder<small>Session, sign-ins and saved passwords are kept here.</small></label><button class="obtn" id="data">Open folder</button></div>
   </section>
 </main>
 <script>
@@ -111,9 +113,11 @@
   const $ = (s) => document.querySelector(s);
   const send = (o) => window.ipc && window.ipc.postMessage(JSON.stringify(o));
   let p = ZB.load();
-  function set(k, v) { p = ZB.load(); p[k] = v; ZB.save(p); ZB.apply(p); sync(); }
+  function set(k, v) { p = ZB.load(); p[k] = v; ZB.save(p); ZB.apply(p); sync(); if (k === "palette" || k === "accent") waves(); }
   ZB.apply(p);
   ZB.starfield($("#stars"));
+  function waves() { const cs = getComputedStyle(document.documentElement), v = (k) => cs.getPropertyValue(k).trim(); ZB.seigaiha($("#waves"), v("--night"), ZB.mix(v("--night"), v("--acc"), 0.4)); }
+  waves();
 
   const pal = $("#pal");
   for (const k in ZB.PALETTES) {
@@ -183,7 +187,7 @@
     if (!rec) drawKeys();
   }
   sync();
-  window.addEventListener("storage", (e) => { if (e.key === "zb.prefs") { ZB.apply(ZB.load()); sync(); } });
+  window.addEventListener("storage", (e) => { if (e.key === "zb.prefs") { ZB.apply(ZB.load()); sync(); waves(); } });
 })();
 </script>
 </body>

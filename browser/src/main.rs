@@ -133,6 +133,9 @@ fn serve(path: &str) -> Response<Cow<'static, [u8]>> {
         "prefs.js" => (include_bytes!("../ui/prefs.js"), "text/javascript; charset=utf-8"),
         "zenko.png" => (include_bytes!("../ui/zenko.png"), "image/png"),
         "zenko_sleep.png" => (include_bytes!("../ui/zenko_sleep.png"), "image/png"),
+        "fonts/ZenMaruGothic-Regular.ttf" => (include_bytes!("../ui/fonts/ZenMaruGothic-Regular.ttf"), "font/ttf"),
+        "fonts/ZenMaruGothic-Bold.ttf" => (include_bytes!("../ui/fonts/ZenMaruGothic-Bold.ttf"), "font/ttf"),
+        "fonts/ZenOldMincho-Bold.ttf" => (include_bytes!("../ui/fonts/ZenOldMincho-Bold.ttf"), "font/ttf"),
         _ => (b"Not found", "text/plain"),
     };
     Response::builder()

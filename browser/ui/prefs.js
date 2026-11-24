@@ -14,6 +14,7 @@
     silver: ["#0c0e13", "#12151c", "#1b1f28", "#f2f5fb", "#9ba4b6", "#8fb0e8", "#bfd2f6", "#d8c08a", "#a8c4ff", "Moonlight"],
   };
   const FONTS = {
+    zen: ['"Zen Maru Gothic", "Yu Gothic UI", "Segoe UI", sans-serif', "Zen Maru Gothic (like Zenko)"],
     segoe: ['"Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif', "Segoe UI"],
     rounded: ['"Nunito", "Varela Round", "Segoe UI Variable Display", "Segoe UI", sans-serif', "Soft rounded"],
     bahn: ['Bahnschrift, "Segoe UI", sans-serif', "Bahnschrift"],
@@ -41,7 +42,7 @@
     lastTab: ["C+57", "Last tab"],
   };
   const DEFAULTS = {
-    palette: "classic", accent: "", font: "segoe", tabShape: "ema", tabs: "top", radius: 12, density: "normal",
+    palette: "snow", accent: "", font: "zen", tabShape: "ema", tabs: "side", radius: 12, density: "normal",
     stars: true, motion: "full", glow: true, sleepAfter: 20, engine: "google", panelWidth: 430,
     school: "", keys: {}, uiScale: 100,
   };
@@ -65,14 +66,16 @@
   }
   function apply(p, root) {
     root = root || document.documentElement;
-    const c = P[p.palette] || P.classic;
+    const c = P[p.palette] || P.snow;
     const acc = /^#[0-9a-f]{6}$/i.test(p.accent || "") ? p.accent : c[5];
     const v = {
       "--night": c[0], "--paper": c[1], "--card": c[2], "--ink": c[3], "--grey": c[4], "--acc": acc,
       "--accl": p.accent ? mix(acc, "#ffffff", 0.35) : c[6], "--gold": c[7], "--glow": c[8],
       "--night2": mix(c[0], acc, 0.14), "--field": mix(c[2], c[3], 0.07), "--line": mix(c[2], c[3], 0.14),
       "--edge": mix(c[2], c[3], 0.28), "--hover": mix(c[2], c[3], 0.10), "--accbg": mix(c[2], acc, 0.22),
-      "--accdim": mix(c[1], acc, 0.35), "--font": (FONTS[p.font] || FONTS.segoe)[0], "--r": (p.radius | 0) + "px",
+      "--accdim": mix(c[1], acc, 0.35), "--font": (FONTS[p.font] || FONTS.zen)[0], "--r": (p.radius | 0) + "px",
+      "--lacq": mix(mix(c[0], "#b5362a", 0.55), acc, 0.08), "--lacqd": mix(c[0], "#7a1f18", 0.6),
+      "--dusk": mix(c[0], "#7a3d6a", 0.42), "--panel": mix(c[1], c[3], 0.025), "--goldl": mix(c[7], c[2], 0.55),
       "--rs": Math.max(2, Math.round((p.radius | 0) * 0.6)) + "px",
     };
     for (const k in v) root.style.setProperty(k, v[k]);
@@ -82,7 +85,7 @@
     root.dataset.motion = p.motion;
     root.dataset.glow = p.glow ? "on" : "off";
     root.dataset.stars = p.stars ? "on" : "off";
-    root.style.fontSize = (p.uiScale || 100) * 0.13 + "px";
+    root.style.fontSize = (p.uiScale || 100) * 0.14 + "px";
   }
   function keymap(p) {
     const m = {};
@@ -194,13 +197,20 @@
     gear: ["..#.#..", ".#####.", "##...##", ".#...#.", "##...##", ".#####.", "..#.#.."],
     zzz: ["####", "..#.", ".#..", "####"],
     lock: [".###.", "#...#", "#...#", "#####", "##.##", "#####"],
+    torii: ["rrrrrrrrr", ".RrrrrrR.", "..r...r..", "rrrrrrrrr", "..r...r..", "..r...r..", "..r...r..", ".RR...RR."],
+    moon2: ["..gggg.", ".gg..g.", "gg.....", "gg.....", "gg.....", ".gg..g.", "..gggg."],
+    diamond: ["..g..", ".ggg.", "ggggg", ".ggg.", "..g.."],
+    claudec: ["...a...", "a..a..a", ".a.a.a.", "..aaa..", ".a.a.a.", "a..a..a", "...a..."],
+    fox: ["w.....w", "ww...ww", "wwwwwww", "w.www.w", "wwwwwww", ".wwgww.", "..www.."],
     star: ["...#...", "..###..", "#######", ".#####.", "..###..", ".##.##.", "#.....#"],
   };
   function icon(name, px) {
     const rows = ICONS[name] || ICONS.star;
     const h = rows.length, w = Math.max(...rows.map((r) => r.length));
     let r = "";
-    rows.forEach((row, y) => { for (let x = 0; x < row.length; x++) if (row[x] === "#") r += `<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`; });
+    const COL = { g: "var(--gold)", r: "#e0533a", R: "#a8321f", p: "#ff9fc6", P: "#f06d9f", b: "#8a5a3c", w: "var(--ink)", a: "var(--acc)", d: "var(--edge)", s: "#c8cfe8", f: "var(--glow)" };
+    rows.forEach((row, y) => { for (let x = 0; x < row.length; x++) { const ch = row[x]; if (ch === "." || ch === " ") continue;
+      r += `<rect x="${x}" y="${y}" width="1.02" height="1.02"${ch === "#" ? "" : ` fill="${COL[ch] || "currentColor"}"`}/>`; } });
     const s = px || 2;
     return `<svg class="px" viewBox="0 0 ${w} ${h}" width="${w * s}" height="${h * s}" shape-rendering="crispEdges" fill="currentColor">${r}</svg>`;
   }
@@ -236,5 +246,35 @@
     new ResizeObserver(size).observe(cv);
     requestAnimationFrame(frame);
   }
-  window.ZB = { starfield, PALETTES: P, FONTS, KEYS, DEFAULTS, ENGINES, load, save, apply, keymap, keyName, comboOf, toUrl, calc, sites, icon, mix };
+  // Seigaiha (blue-ocean waves) like Zenko's banner, drawn once into a canvas.
+  function seigaiha(cv, bg, line) {
+    const w = cv.width = cv.clientWidth * 2 || 800, h = cv.height = cv.clientHeight * 2 || 120;
+    const x = cv.getContext("2d"), R = 26;
+    x.fillStyle = bg; x.fillRect(0, 0, w, h);
+    x.lineWidth = 2.2;
+    for (let row = -2, y = -R; y < h + R; row++, y += R / 2) {
+      const off = (row & 1) ? R : 0;
+      for (let cx = -R * 2 + off; cx < w + R * 2; cx += R * 2) {
+        x.fillStyle = bg; x.beginPath(); x.arc(cx, y, R, Math.PI, 0); x.lineTo(cx + R, y + R); x.lineTo(cx - R, y + R); x.fill();
+        for (const k of [1, 0.76, 0.52, 0.28]) { x.strokeStyle = line; x.beginPath(); x.arc(cx, y + 0.5, R * k, Math.PI, 0); x.stroke(); }
+      }
+    }
+  }
+  // Pixel landscape: dusk hills, a torii, lanterns with foxfire. Returns SVG markup (viewBox 0 0 W H).
+  function landscape(W, H, opt) {
+    opt = opt || {};
+    const css = getComputedStyle(document.documentElement), c = (v) => css.getPropertyValue(v).trim();
+    let r = "";
+    const box = (x, y, w, h, f, o) => { r += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"${o ? ` opacity="${o}"` : ""}/>`; };
+    const far = mix(c("--dusk"), c("--night"), 0.25), near = mix(c("--night"), "#000000", 0.25);
+    for (let x = 0; x < W; x += 2) { const h = Math.round(H * 0.42 + H * 0.14 * Math.sin(x / (W / 5.5) + 1) + H * 0.05 * Math.sin(x / 7)); box(x, H - h, 2, h, far); }
+    for (let x = 0; x < W; x += 2) { const h = Math.round(H * 0.22 + H * 0.08 * Math.sin(x / (W / 4) + 3) + H * 0.03 * Math.sin(x / 5)); box(x, H - h, 2, h, near); }
+    const tx = Math.round(opt.toriiX != null ? opt.toriiX : W * 0.22), ty = Math.round(H * 0.38), red = "#d9472b", dr = "#8f2a1a";
+    box(tx - 4, ty, 36, 3, red); box(tx - 6, ty - 1, 4, 2, red); box(tx + 30, ty - 1, 4, 2, red); box(tx - 2, ty + 3, 32, 1, dr);
+    box(tx + 1, ty + 7, 26, 2, red); box(tx + 12, ty + 3, 4, 4, red);
+    box(tx + 3, ty + 4, 3, H - ty - 4, red); box(tx + 22, ty + 4, 3, H - ty - 4, red); box(tx + 3, ty + 4, 1, H - ty - 4, dr); box(tx + 22, ty + 4, 1, H - ty - 4, dr);
+    (opt.lights || [0.62, 0.7]).forEach((f) => { const lx = Math.round(W * f), ly = Math.round(H * 0.72); box(lx - 2, ly - 2, 7, 7, c("--gold"), 0.18); box(lx, ly, 3, 3, c("--gold")); });
+    return r;
+  }
+  window.ZB = { starfield, seigaiha, landscape, PALETTES: P, FONTS, KEYS, DEFAULTS, ENGINES, load, save, apply, keymap, keyName, comboOf, toUrl, calc, sites, icon, mix };
 })();

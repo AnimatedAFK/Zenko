@@ -1,6 +1,6 @@
 /* Shared night-shrine look for Zenko Browser pages */
 * { box-sizing: border-box; }
-html { color-scheme: dark; font-size: 13px; }
+html { color-scheme: dark; font-size: 14px; }
 body {
   margin: 0; color: var(--ink); background: var(--night); font-family: var(--font);
   -webkit-font-smoothing: antialiased; overflow: hidden;
@@ -33,3 +33,41 @@ svg.px { display: block; image-rendering: pixelated; }
 .btn:active { transform: scale(.94); }
 .btn.on { color: var(--acc); background: var(--accbg); }
 .btn[disabled] { opacity: .35; pointer-events: none; }
+
+/* Zenko's own fonts (SIL Open Font License, see fonts/OFL-*.txt) */
+@font-face { font-family: "Zen Maru Gothic"; src: url("fonts/ZenMaruGothic-Regular.ttf") format("truetype"); font-weight: 400 500; font-display: swap; }
+@font-face { font-family: "Zen Maru Gothic"; src: url("fonts/ZenMaruGothic-Bold.ttf") format("truetype"); font-weight: 600 900; font-display: swap; }
+@font-face { font-family: "Zen Old Mincho"; src: url("fonts/ZenOldMincho-Bold.ttf") format("truetype"); font-weight: 400 900; font-display: swap; }
+.mincho { font-family: "Zen Old Mincho", "Yu Mincho", Georgia, serif; }
+
+/* Zenko-style pieces shared by our pages */
+.card { background: var(--panel); border: 1px solid color-mix(in srgb, var(--line) 75%, var(--gold) 25%); border-radius: var(--r); padding: 1.1rem 1.2rem; box-shadow: 0 8px 30px rgba(0,0,0,.25); }
+.card > h2, .dia { display: flex; align-items: center; gap: .6rem; color: var(--gold); font-weight: 700; font-size: 1.08rem; margin: 0 0 .8rem; }
+.card > h2::before, .dia::before { content: ""; width: .5rem; height: .5rem; background: var(--gold); transform: rotate(45deg); flex: none; box-shadow: 0 0 6px color-mix(in srgb, var(--gold) 50%, transparent); }
+.obtn { height: 2.1rem; padding: 0 .9rem; border-radius: var(--rs); border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent); background: var(--field);
+        color: var(--ink); font-weight: 700; display: inline-flex; align-items: center; gap: .4rem; transition: background .15s, border-color .15s, transform .12s; cursor: pointer; }
+.obtn:hover { background: var(--hover); border-color: var(--gold); }
+.obtn:active { transform: scale(.96); }
+.obtn.solid { background: var(--acc); color: var(--night); border-color: transparent; }
+.banner { position: relative; overflow: hidden; border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, var(--gold) 40%); }
+.banner canvas.waves { position: absolute; right: 0; top: 0; height: 100%; width: 60%; opacity: .55;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 60%); }
+.banner h1 { font-family: var(--font); font-weight: 700; font-size: 2.2rem; margin: 0; position: relative; }
+.banner p { color: var(--grey); margin: .4rem 0 0; position: relative; }
+.lacquer { position: fixed; inset: 0; pointer-events: none; z-index: 95; border: 5px solid var(--lacq);
+  box-shadow: inset 0 0 0 1px var(--gold), inset 0 0 0 2px var(--lacqd); }
+.lacquer::before { content: ""; position: absolute; inset: -5px; border: 5px solid transparent;
+  background: repeating-linear-gradient(90deg, transparent 0 22px, var(--gold) 22px 24px, transparent 24px 26px) top / 100% 5px no-repeat,
+              repeating-linear-gradient(90deg, transparent 0 22px, var(--gold) 22px 24px, transparent 24px 26px) bottom / 100% 5px no-repeat,
+              repeating-linear-gradient(180deg, transparent 0 22px, var(--gold) 22px 24px, transparent 24px 26px) left / 5px 100% no-repeat,
+              repeating-linear-gradient(180deg, transparent 0 22px, var(--gold) 22px 24px, transparent 24px 26px) right / 5px 100% no-repeat;
+  opacity: .55; border: 0; }
+.lacquer i { position: absolute; width: 14px; height: 14px; border: 2px solid var(--gold); }
+.lacquer i:nth-child(1) { left: -5px; top: -5px; border-right: 0; border-bottom: 0; }
+.lacquer i:nth-child(2) { right: -5px; top: -5px; border-left: 0; border-bottom: 0; }
+.lacquer i:nth-child(3) { left: -5px; bottom: -5px; border-right: 0; border-top: 0; }
+.lacquer i:nth-child(4) { right: -5px; bottom: -5px; border-left: 0; border-top: 0; }
+.lacquer b { position: absolute; left: 50%; top: -6px; width: 26px; height: 12px; margin-left: -13px; background: var(--lacq);
+  border: 1.5px solid var(--gold); border-top: 0; border-radius: 0 0 8px 8px; }
+.lacquer b::after { content: ""; position: absolute; left: 50%; top: 2px; width: 5px; height: 5px; margin-left: -2.5px; background: var(--gold); transform: rotate(45deg); }
+[data-max="on"] .lacquer { display: none; }
