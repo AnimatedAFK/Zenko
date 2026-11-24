@@ -35,6 +35,7 @@ svg.px { display: block; image-rendering: pixelated; }
 .btn[disabled] { opacity: .35; pointer-events: none; }
 
 /* Pixel fonts (SIL Open Font License, see fonts/OFL-*.txt) */
+@font-face { font-family: "Outfit"; src: url("fonts/Outfit.ttf") format("truetype"); font-weight: 100 900; font-display: swap; }
 @font-face { font-family: "Pixelify Sans"; src: url("fonts/PixelifySans.ttf") format("truetype"); font-weight: 400 700; font-display: swap; }
 @font-face { font-family: "DotGothic16"; src: url("fonts/DotGothic16.ttf") format("truetype"); font-weight: 400; font-display: swap; }
 .dot { font-family: "DotGothic16", "Pixelify Sans", monospace; }
@@ -45,9 +46,17 @@ svg.px { display: block; image-rendering: pixelated; }
   --clips: polygon(0 4px,2px 4px,2px 2px,4px 2px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 2px,calc(100% - 2px) 2px,calc(100% - 2px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 2px) calc(100% - 4px),calc(100% - 2px) calc(100% - 2px),calc(100% - 4px) calc(100% - 2px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 2px),2px calc(100% - 2px),2px calc(100% - 4px),0 calc(100% - 4px));
   --cliptop: polygon(0 6px,2px 6px,2px 4px,4px 4px,4px 2px,6px 2px,6px 0,calc(100% - 6px) 0,calc(100% - 6px) 2px,calc(100% - 4px) 2px,calc(100% - 4px) 4px,calc(100% - 2px) 4px,calc(100% - 2px) 6px,100% 6px,100% 100%,0 100%);
 }
-/* A box with a 2px pixel border: --b border colour, --c fill */
+/* subtle pixel flair (default): tiny 1px-stepped corners you barely notice */
+:root[data-pixel="subtle"] {
+  --clip: polygon(0 4px,1px 4px,1px 2px,2px 2px,2px 1px,4px 1px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 1px,calc(100% - 2px) 1px,calc(100% - 2px) 2px,calc(100% - 1px) 2px,calc(100% - 1px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 1px) calc(100% - 4px),calc(100% - 1px) calc(100% - 2px),calc(100% - 2px) calc(100% - 2px),calc(100% - 2px) calc(100% - 1px),calc(100% - 4px) calc(100% - 1px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 1px),2px calc(100% - 1px),2px calc(100% - 2px),1px calc(100% - 2px),1px calc(100% - 4px),0 calc(100% - 4px));
+  --clips: polygon(0 3px,1px 3px,1px 1px,3px 1px,3px 0,calc(100% - 3px) 0,calc(100% - 3px) 1px,calc(100% - 1px) 1px,calc(100% - 1px) 3px,100% 3px,100% calc(100% - 3px),calc(100% - 1px) calc(100% - 3px),calc(100% - 1px) calc(100% - 1px),calc(100% - 3px) calc(100% - 1px),calc(100% - 3px) 100%,3px 100%,3px calc(100% - 1px),1px calc(100% - 1px),1px calc(100% - 3px),0 calc(100% - 3px));
+  --cliptop: polygon(0 4px,1px 4px,1px 2px,2px 2px,2px 1px,4px 1px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 1px,calc(100% - 2px) 1px,calc(100% - 2px) 2px,calc(100% - 1px) 2px,calc(100% - 1px) 4px,100% 4px,100% 100%,0 100%);
+  --bw: 1.5px;
+}
+:root[data-pixel="off"] { --clip: inset(0 round 7px); --clips: inset(0 round 6px); --cliptop: inset(0 round 7px 7px 0 0); --bw: 1.5px; }
+/* A box with a pixel border: --b border colour, --c fill */
 .pxb { position: relative; isolation: isolate; clip-path: var(--clip); background: var(--b, var(--line)); }
-.pxb::before { content: ""; position: absolute; inset: 2px; clip-path: var(--clips); background: var(--c, var(--panel)); z-index: -1; transition: background .18s; }
+.pxb::before { content: ""; position: absolute; inset: var(--bw, 2px); clip-path: var(--clips); background: var(--c, var(--panel)); z-index: -1; transition: background .18s; }
 .pxs { clip-path: var(--clips); }
 
 /* Zenko's own fonts (SIL Open Font License, see fonts/OFL-*.txt) */

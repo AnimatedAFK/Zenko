@@ -13,7 +13,7 @@
   .sub { color: var(--grey); margin: 0 0 1.8rem; }
   section { margin-bottom: 1rem; }
   .banner { margin: 0 0 1.4rem; padding: 1.4rem 1.6rem 1.3rem; border-bottom: 0; }
-  .banner h1 { font-family: "DotGothic16", var(--font); font-weight: 400; letter-spacing: .06em; text-shadow: 3px 3px 0 rgba(0,0,0,.35); }
+  .banner h1 { font-weight: 600; letter-spacing: .01em; }
   .banner h1 img { width: 54px; image-rendering: pixelated; }
   .row { display: flex; align-items: center; gap: 1rem; padding: .55rem 0; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
   .row:first-of-type { border-top: 0; }
@@ -50,7 +50,7 @@
 </style>
 </head>
 <body>
-<canvas id="sky" style="position:fixed;inset:0;width:100%;height:100%;image-rendering:pixelated;z-index:0"></canvas>
+<canvas id="sky" style="position:fixed;inset:0;width:100%;height:100%;z-index:0"></canvas>
 <main>
   <div class="banner card"><canvas class="waves" id="waves"></canvas>
     <h1><img src="zenko.png" alt="">Settings</h1>
@@ -68,6 +68,8 @@
     <div class="row"><label>Tabs</label><div class="seg" data-k="tabs"><button data-v="top">On top</button><button data-v="side">On the side</button></div></div>
     <div class="row"><label>Tab shape<div class="preview"><span>Active tab</span><span>Other tab</span></div></label>
       <div class="seg" data-k="tabShape"><button data-v="ema">Ema plaque</button><button data-v="round">Rounded</button><button data-v="pill">Pill</button><button data-v="square">Square</button></div></div>
+    <div class="row"><label>Pixel flair<small>Subtle: tiny pixel corners and pixel stars, still crisp. Strong: chunky retro pixels.</small></label>
+      <div class="seg" data-k="pixel"><button data-v="off">Off</button><button data-v="subtle">Subtle</button><button data-v="strong">Strong</button></div></div>
     <div class="row"><label>Corner roundness</label><input type="range" min="0" max="22" id="radius"></div>
     <div class="row"><label>Spacing</label><div class="seg" data-k="density"><button data-v="normal">Comfy</button><button data-v="compact">Compact</button></div></div>
     <div class="row"><label>Size of everything</label><input type="range" min="85" max="135" step="5" id="uiScale"></div>
@@ -104,6 +106,12 @@
   </section>
 
   <section class="card">
+    <h2>Import from Edge</h2>
+    <div class="row"><label>Bring over your Edge sign-ins, passwords, bookmarks and history<small>Zenko Browser uses the same engine as Edge, so it copies Edge's profile and stays signed in. Edge is closed for a moment while copying (it reopens your tabs next time), and this browser restarts.</small></label><button class="obtn solid" id="imp">Import now</button></div>
+    <p class="small" style="margin:0">Honest limit: newer Edge versions can lock sign-in cookies so only Edge can read them. If that happens you'll be told, and you sign in once per site. Passwords, bookmarks and history still come across.</p>
+  </section>
+
+  <section class="card">
     <h2>Updates</h2>
     <div class="row"><label>Zenko Browser updates itself from GitHub<small>New versions download quietly; restart to use them.</small></label><button class="obtn solid" id="upd">Check now</button></div>
     <div class="row"><label>Browser data folder<small>Session, sign-ins and saved passwords are kept here.</small></label><button class="obtn" id="data">Open folder</button></div>
@@ -114,9 +122,10 @@
   const $ = (s) => document.querySelector(s);
   const send = (o) => window.ipc && window.ipc.postMessage(JSON.stringify(o));
   let p = ZB.load();
-  function set(k, v) { p = ZB.load(); p[k] = v; ZB.save(p); ZB.apply(p); sync(); if (k === "palette" || k === "accent") waves(); }
+  let skyB = null;
+  function set(k, v) { p = ZB.load(); p[k] = v; ZB.save(p); ZB.apply(p); sync(); if (k === "palette" || k === "accent" || k === "pixel") { waves(); skyB && skyB(); } }
   ZB.apply(p);
-  ZB.sky($("#sky"), { moon: [0.9, 0.08, 7], wisps: 6 });
+  skyB = ZB.sky($("#sky"), { moon: [0.9, 0.08, 9], wisps: 6 });
   function waves() { const cs = getComputedStyle(document.documentElement), v = (k) => cs.getPropertyValue(k).trim(); ZB.seigaiha($("#waves"), v("--panel"), ZB.mix(v("--panel"), v("--acc"), 0.35)); }
   waves();
 
@@ -145,6 +154,7 @@
   $("#sleepAfter").onchange = (e) => set("sleepAfter", +e.target.value);
   $("#upd").onclick = () => { send({ c: "update" }); $("#upd").textContent = "Checking (see the top bar)"; };
   $("#data").onclick = () => send({ c: "openData" });
+  $("#imp").onclick = () => { $("#imp").textContent = "Importing..."; send({ c: "importEdge", close: true }); };
 
   // shortcuts
   let rec = null;

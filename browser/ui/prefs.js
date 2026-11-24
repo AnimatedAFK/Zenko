@@ -14,6 +14,7 @@
     silver: ["#0c0e13", "#12151c", "#1b1f28", "#f2f5fb", "#9ba4b6", "#8fb0e8", "#bfd2f6", "#d8c08a", "#a8c4ff", "Moonlight"],
   };
   const FONTS = {
+    outfit: ['"Outfit", "Segoe UI Variable Text", "Segoe UI", sans-serif', "Outfit (clean, default)"],
     pixel: ['"Pixelify Sans", "DotGothic16", "Segoe UI", sans-serif', "Pixelify Sans (pixel)"],
     dot: ['"DotGothic16", "Pixelify Sans", "Segoe UI", sans-serif', "DotGothic16 (pixel, Japanese feel)"],
     zen: ['"Zen Maru Gothic", "Yu Gothic UI", "Segoe UI", sans-serif', "Zen Maru Gothic (like Zenko)"],
@@ -44,7 +45,7 @@
     lastTab: ["C+57", "Last tab"],
   };
   const DEFAULTS = {
-    palette: "snow", accent: "", font: "pixel", tabShape: "ema", tabs: "top", radius: 12, density: "normal",
+    palette: "snow", accent: "", font: "outfit", pixel: "subtle", tabShape: "ema", tabs: "top", radius: 12, density: "normal",
     stars: true, motion: "full", glow: true, sleepAfter: 20, engine: "google", panelWidth: 430,
     school: "", keys: {}, uiScale: 100,
   };
@@ -75,13 +76,14 @@
       "--accl": p.accent ? mix(acc, "#ffffff", 0.35) : c[6], "--gold": c[7], "--glow": c[8],
       "--night2": mix(c[0], acc, 0.14), "--field": mix(c[2], c[3], 0.07), "--line": mix(c[2], c[3], 0.14),
       "--edge": mix(c[2], c[3], 0.28), "--hover": mix(c[2], c[3], 0.10), "--accbg": mix(c[2], acc, 0.22),
-      "--accdim": mix(c[1], acc, 0.35), "--font": (FONTS[p.font] || FONTS.pixel)[0], "--r": (p.radius | 0) + "px",
+      "--accdim": mix(c[1], acc, 0.35), "--font": (FONTS[p.font] || FONTS.outfit)[0], "--r": (p.radius | 0) + "px",
       "--lacq": mix(mix(c[0], "#b5362a", 0.55), acc, 0.08), "--lacqd": mix(c[0], "#7a1f18", 0.6),
       "--dusk": mix(c[0], "#7a3d6a", 0.42), "--panel": mix(c[1], c[3], 0.025), "--goldl": mix(c[7], c[2], 0.55),
       "--rs": Math.max(2, Math.round((p.radius | 0) * 0.6)) + "px",
     };
     for (const k in v) root.style.setProperty(k, v[k]);
     root.dataset.shape = p.tabShape;
+    root.dataset.pixel = p.pixel || "subtle";
     root.dataset.tabs = p.tabs;
     root.dataset.density = p.density;
     root.dataset.motion = p.motion;
@@ -251,12 +253,11 @@
   }
   // Seigaiha (blue-ocean waves) like Zenko's banner, drawn once into a canvas.
   function seigaiha(cv, bg, line, k) {
-    k = k || 0.5;
+    k = document.documentElement.dataset.pixel === "strong" ? (k || 0.5) : (window.devicePixelRatio || 1) * 1.0;
     const w = cv.width = Math.ceil((cv.clientWidth || 400) * k), h = cv.height = Math.ceil((cv.clientHeight || 60) * k);
     const x = cv.getContext("2d"), R = Math.max(6, Math.round(13 * k * 2));
-    x.imageSmoothingEnabled = false;
     x.fillStyle = bg; x.fillRect(0, 0, w, h);
-    x.lineWidth = 1;
+    x.lineWidth = k >= 1 ? 1.2 * k : 1;
     for (let row = -2, y = -R; y < h + R; row++, y += R / 2) {
       const off = (row & 1) ? R : 0;
       for (let cx = -R * 2 + off; cx < w + R * 2; cx += R * 2) {
@@ -281,110 +282,113 @@
     (opt.lights || [0.62, 0.7]).forEach((f) => { const lx = Math.round(W * f), ly = Math.round(H * 0.72); box(lx - 2, ly - 2, 7, 7, c("--gold"), 0.18); box(lx, ly, 3, 3, c("--gold")); });
     return r;
   }
-  // The animated pixel night sky used behind the browser frame and on the new-tab page.
-  // Drawn at 1/3 resolution and scaled up crisply: dithered gradient, twinkling stars, a pixel moon,
-  // drifting foxfire wisps and the odd shooting star. ~20 fps, pauses when hidden.
+  // The animated night sky behind the browser frame and on the new-tab page.
+  // "subtle" pixel flair: drawn at full screen resolution (crisp), with stars, foxfire and hills built from tiny
+  // 2px squares. "strong": the old chunky look (1/3 resolution, dithered). Pauses when hidden.
   function sky(cv, opt) {
     if (!cv) return () => {};
-    opt = Object.assign({ S: 3, moon: [0.8, 0.16, 6], ridge: 0, torii: false, wisps: 5, shoot: true, fps: 20 }, opt || {});
+    opt = Object.assign({ moon: [0.8, 0.16, 6], ridge: 0, torii: false, wisps: 5, shoot: true, fps: 24 }, opt || {});
     const ctx = cv.getContext("2d");
     const base = document.createElement("canvas"), bx = base.getContext("2d");
-    let w = 0, h = 0, stars = [], wisps = [], shot = null, nextShot = 0, last = 0, col = {};
+    let w = 0, h = 0, u = 1, stars = [], wisps = [], shot = null, nextShot = 0, last = 0, col = {}, strong = false;
     const B4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
-    const hex = (c) => { const n = parseInt(c.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
-    const rgb = (a) => `rgb(${a[0] | 0},${a[1] | 0},${a[2] | 0})`;
-    const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
     function colors() {
       const cs = getComputedStyle(document.documentElement), v = (k) => cs.getPropertyValue(k).trim() || "#000000";
-      col = { top: hex(v("--night2")), mid: hex(v("--night")), low: hex(mix(v("--night"), v("--acc"), 0.16)), dusk: hex(v("--dusk")),
-        ink: v("--ink"), glow: v("--glow"), gold: v("--gold"), acc: v("--acc"), moon: "#f3e2b3", moonD: "#cdb57f",
+      col = { top: v("--night2"), mid: v("--night"), low: mix(v("--night"), v("--acc"), 0.14), dusk: v("--dusk"),
+        ink: v("--ink"), glow: v("--glow"), gold: v("--gold"), moon: "#f6e7bd", moonD: "#d8c08a",
         ridge: mix(v("--night"), "#000000", 0.35), ridge2: mix(v("--night"), v("--dusk"), 0.35) };
     }
     function build(o) {
       if (o && typeof o === "object" && !Array.isArray(o)) Object.assign(opt, o);
       colors();
-      w = Math.max(8, Math.ceil(cv.clientWidth / opt.S)); h = Math.max(8, Math.ceil(cv.clientHeight / opt.S));
+      strong = document.documentElement.dataset.pixel === "strong";
+      const dpr = window.devicePixelRatio || 1;
+      const k = strong ? 1 / 3 : dpr;                     // canvas pixels per css px
+      u = strong ? 1 : Math.max(1, Math.round(2 * dpr));  // one "art pixel" in canvas pixels
+      w = Math.max(8, Math.ceil(cv.clientWidth * k)); h = Math.max(8, Math.ceil(cv.clientHeight * k));
       cv.width = w; cv.height = h; base.width = w; base.height = h;
-      const img = bx.createImageData(w, h), d = img.data, bands = 9;
-      for (let y = 0; y < h; y++) {
-        const t = y / h;
-        const c = t < 0.55 ? lerp(col.top, col.mid, t / 0.55) : lerp(col.mid, opt.ridge ? col.dusk : col.low, (t - 0.55) / 0.45);
-        const c2 = t < 0.55 ? lerp(col.top, col.mid, Math.min(1, (t + 1 / bands) / 0.55)) : lerp(col.mid, opt.ridge ? col.dusk : col.low, Math.min(1, (t + 1 / bands - 0.55) / 0.45));
-        const f = (t * bands) % 1;
-        for (let x = 0; x < w; x++) {
-          const use = (B4[(y & 3) * 4 + (x & 3)] / 16) < f ? c2 : c, i = (y * w + x) * 4;
-          d[i] = use[0]; d[i + 1] = use[1]; d[i + 2] = use[2]; d[i + 3] = 255;
+      cv.style.imageRendering = strong ? "pixelated" : "auto";
+      const g = bx.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, col.top); g.addColorStop(0.55, col.mid); g.addColorStop(1, opt.ridge ? col.dusk : col.low);
+      bx.fillStyle = g; bx.fillRect(0, 0, w, h);
+      if (strong) {   // ordered dithering bands
+        const img = bx.getImageData(0, 0, w, h), d = img.data;
+        for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+          const i = (y * w + x) * 4, t = B4[(y & 3) * 4 + (x & 3)] / 16 - 0.5;
+          for (let c = 0; c < 3; c++) d[i + c] = Math.max(0, Math.min(255, Math.round((d[i + c] + t * 10) / 6) * 6));
         }
+        bx.putImageData(img, 0, 0);
       }
-      bx.putImageData(img, 0, 0);
       if (opt.moon) {
-        const [mxf, myf, r] = opt.moon, mx = Math.round(w * mxf), my = Math.round(Math.max(r + 2, h * myf));
-        for (let y = -r - 5; y <= r + 5; y++) for (let x = -r - 5; x <= r + 5; x++) {
-          const dd = Math.sqrt(x * x + y * y);
-          if (dd <= r) {
-            const shade = Math.sqrt((x + 3) * (x + 3) + (y + 2) * (y + 2)) < r - 1 ? col.moon : col.moonD;
-            bx.fillStyle = shade; bx.fillRect(mx + x, my + y, 1, 1);
-          } else if (dd <= r + 5 && B4[((y + 64) & 3) * 4 + ((x + 64) & 3)] / 16 < 0.32 * (1 - (dd - r) / 5)) {
-            bx.fillStyle = col.moonD; bx.globalAlpha = 0.35; bx.fillRect(mx + x, my + y, 1, 1); bx.globalAlpha = 1;
-          }
-        }
-        bx.fillStyle = col.moonD; bx.fillRect(mx - 2, my - 1, 2, 2); bx.fillRect(mx + 2, my + 2, 1, 1);
+        const [mxf, myf, r0] = opt.moon, r = r0 * u * (strong ? 1 : 0.9), mx = w * mxf, my = Math.max(r + 4 * u, h * myf);
+        const halo = bx.createRadialGradient(mx, my, r * 0.8, mx, my, r * 4);
+        halo.addColorStop(0, "rgba(246,231,189,.22)"); halo.addColorStop(1, "rgba(246,231,189,0)");
+        bx.fillStyle = halo; bx.fillRect(mx - r * 4, my - r * 4, r * 8, r * 8);
+        const body = bx.createRadialGradient(mx - r * 0.35, my - r * 0.35, r * 0.1, mx, my, r);
+        body.addColorStop(0, "#fffaf0"); body.addColorStop(0.6, col.moon); body.addColorStop(1, col.moonD);
+        bx.fillStyle = body; bx.beginPath(); bx.arc(mx, my, r, 0, 6.2832); bx.fill();
+        bx.fillStyle = "rgba(170,140,90,.22)";
+        [[-0.3, -0.1, 0.22], [0.25, 0.3, 0.16], [0.1, -0.4, 0.1]].forEach(([dx, dy, rr]) => { bx.beginPath(); bx.arc(mx + dx * r, my + dy * r, rr * r, 0, 6.2832); bx.fill(); });
       }
       if (opt.ridge) {
         const rh = h * opt.ridge;
-        for (let x = 0; x < w; x++) {
-          const a = Math.round(rh * (0.62 + 0.25 * Math.sin(x / 23 + 1.3) + 0.1 * Math.sin(x / 7)));
-          bx.fillStyle = col.ridge2; bx.fillRect(x, h - a, 1, a);
-          const b = Math.round(rh * (0.32 + 0.12 * Math.sin(x / 31 + 4) + 0.05 * Math.sin(x / 5)));
-          bx.fillStyle = col.ridge; bx.fillRect(x, h - b, 1, b);
+        for (let x = 0; x < w; x += u) {
+          const X = x / u, a = Math.round(rh * (0.62 + 0.25 * Math.sin(X / 23 + 1.3) + 0.1 * Math.sin(X / 7)) / u) * u;
+          bx.fillStyle = col.ridge2; bx.fillRect(x, h - a, u, a);
+          const b = Math.round(rh * (0.32 + 0.12 * Math.sin(X / 31 + 4) + 0.05 * Math.sin(X / 5)) / u) * u;
+          bx.fillStyle = col.ridge; bx.fillRect(x, h - b, u, b);
         }
         if (opt.torii) {
-          const tx = Math.round(w * opt.torii), ty = Math.round(h - rh * 0.62 - 9), red = "#d9472b", dr = "#8f2a1a";
-          bx.fillStyle = red; bx.fillRect(tx - 1, ty, 13, 1); bx.fillRect(tx, ty + 2, 11, 1); bx.fillRect(tx + 2, ty + 1, 1, 9); bx.fillRect(tx + 8, ty + 1, 1, 9);
-          bx.fillStyle = dr; bx.fillRect(tx, ty + 1, 11, 1);
-          bx.fillStyle = col.gold; bx.fillRect(tx - 6, ty + 7, 1, 1); bx.fillRect(tx + 17, ty + 7, 1, 1);
+          const P = (x, y, ww, hh, c) => { bx.fillStyle = c; bx.fillRect(tx + x * u, ty + y * u, ww * u, hh * u); };
+          const tx = Math.round(w * opt.torii / u) * u, ty = Math.round((h - rh * 0.62) / u) * u - 10 * u, red = "#d9472b", dr = "#8f2a1a";
+          P(-1, 0, 13, 1, red); P(0, 1, 11, 1, dr); P(0, 2, 11, 1, red); P(2, 1, 1, 9, red); P(8, 1, 1, 9, red);
+          bx.globalAlpha = 0.9; P(-6, 7, 1, 1, col.gold); P(17, 7, 1, 1, col.gold); bx.globalAlpha = 1;
         }
       }
       stars = [];
-      const n = Math.round(w * h / 140);
-      for (let i = 0; i < n; i++) stars.push({ x: Math.random() * w | 0, y: Math.random() * h * (opt.ridge ? 0.7 : 1) | 0, p: Math.random() * 6.28, s: 0.5 + Math.random() * 1.6, big: Math.random() < 0.07, g: Math.random() < 0.3 });
+      const n = Math.round((w / u) * (h / u) / 110);
+      for (let i = 0; i < n; i++) stars.push({ x: Math.round(Math.random() * w / u) * u, y: Math.round(Math.random() * h * (opt.ridge ? 0.7 : 1) / u) * u, p: Math.random() * 6.28, s: 0.5 + Math.random() * 1.6, big: Math.random() < 0.07, g: Math.random() < 0.3 });
       wisps = [];
       for (let i = 0; i < opt.wisps; i++) wisps.push({ x: Math.random() * w, y: h * (0.3 + Math.random() * 0.65), vx: (Math.random() - 0.5) * 0.12, ph: Math.random() * 6.28, life: Math.random() });
     }
     function frame(t) {
       requestAnimationFrame(frame);
-      if (t - last < 1000 / opt.fps || document.hidden || document.documentElement.dataset.motion === "reduced" && last) return;
+      if (t - last < 1000 / opt.fps || document.hidden || (document.documentElement.dataset.motion === "reduced" && last)) return;
       last = t;
       ctx.drawImage(base, 0, 0);
       const sec = t / 1000;
       if (document.documentElement.dataset.stars !== "off") for (const s of stars) {
-        const a = 0.2 + 0.8 * Math.max(0, Math.sin(sec * s.s + s.p));
+        const a = 0.15 + 0.85 * Math.max(0, Math.sin(sec * s.s + s.p));
         ctx.globalAlpha = a; ctx.fillStyle = s.g ? col.glow : col.ink;
-        ctx.fillRect(s.x, s.y, 1, 1);
-        if (s.big && a > 0.75) { ctx.globalAlpha = (a - 0.6); ctx.fillRect(s.x - 1, s.y, 3, 1); ctx.fillRect(s.x, s.y - 1, 1, 3); }
+        ctx.fillRect(s.x, s.y, u, u);
+        if (s.big && a > 0.75) { ctx.globalAlpha = a - 0.6; ctx.fillRect(s.x - u, s.y, 3 * u, u); ctx.fillRect(s.x, s.y - u, u, 3 * u); }
       }
       for (const p of wisps) {
-        p.ph += 0.03; p.x += p.vx + Math.sin(p.ph) * 0.06; p.y -= 0.05; p.life += 0.002;
-        if (p.y < h * 0.15 || p.x < -4 || p.x > w + 4 || p.life > 1) { p.x = Math.random() * w; p.y = h * (0.55 + Math.random() * 0.4); p.life = 0; }
+        p.ph += 0.03; p.x += (p.vx + Math.sin(p.ph) * 0.06) * u; p.y -= 0.05 * u; p.life += 0.002;
+        if (p.y < h * 0.15 || p.x < -4 * u || p.x > w + 4 * u || p.life > 1) { p.x = Math.random() * w; p.y = h * (0.55 + Math.random() * 0.4); p.life = 0; }
         const a = Math.sin(p.life * Math.PI) * (0.6 + 0.4 * Math.sin(p.ph * 3));
-        const x = Math.round(p.x), y = Math.round(p.y);
-        ctx.globalAlpha = a * 0.25; ctx.fillStyle = col.glow; ctx.fillRect(x - 2, y - 1, 5, 3); ctx.fillRect(x - 1, y - 2, 3, 5);
-        ctx.globalAlpha = a * 0.9; ctx.fillRect(x - 1, y, 3, 1); ctx.fillRect(x, y - 1, 1, 3);
-        ctx.fillStyle = "#ffffff"; ctx.globalAlpha = a; ctx.fillRect(x, y, 1, 1);
+        const x = Math.round(p.x / u) * u, y = Math.round(p.y / u) * u;
+        if (!strong) {
+          const gl = ctx.createRadialGradient(x, y, 0, x, y, 6 * u);
+          gl.addColorStop(0, col.glow); gl.addColorStop(1, "rgba(0,0,0,0)");
+          ctx.globalAlpha = a * 0.35; ctx.fillStyle = gl; ctx.fillRect(x - 6 * u, y - 6 * u, 12 * u, 12 * u);
+        } else { ctx.globalAlpha = a * 0.25; ctx.fillStyle = col.glow; ctx.fillRect(x - 2 * u, y - u, 5 * u, 3 * u); ctx.fillRect(x - u, y - 2 * u, 3 * u, 5 * u); }
+        ctx.fillStyle = col.glow; ctx.globalAlpha = a * 0.9; ctx.fillRect(x - u, y, 3 * u, u); ctx.fillRect(x, y - u, u, 3 * u);
+        ctx.fillStyle = "#ffffff"; ctx.globalAlpha = a; ctx.fillRect(x, y, u, u);
       }
       if (opt.shoot) {
         if (!shot && sec > nextShot) { shot = { x: w * (0.3 + Math.random() * 0.6), y: Math.random() * h * 0.3, k: 0 }; nextShot = sec + 9 + Math.random() * 14; }
         if (shot) {
           shot.k += 1;
-          for (let i = 0; i < 9; i++) { ctx.globalAlpha = (1 - i / 9) * Math.max(0, 1 - shot.k / 22); ctx.fillStyle = i < 2 ? "#ffffff" : col.ink; ctx.fillRect(Math.round(shot.x - shot.k * 2 + i * 2), Math.round(shot.y + shot.k - i), 1, 1); }
-          if (shot.k > 22) shot = null;
+          for (let i = 0; i < 12; i++) { ctx.globalAlpha = (1 - i / 12) * Math.max(0, 1 - shot.k / 24); ctx.fillStyle = i < 2 ? "#ffffff" : col.ink; ctx.fillRect(Math.round(shot.x - (shot.k * 2 - i * 2) * u), Math.round(shot.y + (shot.k - i) * u), u, u); }
+          if (shot.k > 24) shot = null;
         }
       }
       ctx.globalAlpha = 1;
     }
     build();
     let rt = 0;
-    new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(build, 60); }).observe(cv);
+    new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(() => build(), 60); }).observe(cv);
     requestAnimationFrame(frame);
     return build;
   }

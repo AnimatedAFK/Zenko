@@ -5,6 +5,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod bridge;
+mod edge;
+mod history;
 mod updater;
 #[cfg(windows)]
 mod win;
@@ -64,6 +66,9 @@ struct Tab {
     muted: bool,
     hidden_at: Option<Instant>,
     level: u8, // 0 awake, 1 low memory, 2 asleep
+    /// New tab still behind the closed shoji door (page hidden until it has loaded, so no white flash).
+    door: Option<Instant>,
+    pinned: bool,
 }
 
 #[derive(Clone, Copy, Default)]
@@ -93,6 +98,8 @@ struct Session {
 struct SavedTab {
     url: String,
     title: String,
+    #[serde(default)]
+    pinned: bool,
 }
 
 struct App {
@@ -120,6 +127,8 @@ struct App {
     last_title: String,
     sleep_after: u64,
     fullscreen: bool,
+    hist: std::collections::HashMap<String, history::Entry>,
+    hist_dirty: bool,
 }
 
 // ---------------------------------------------------------------- built-in pages (zenko://...)
@@ -135,6 +144,7 @@ fn serve(path: &str) -> Response<Cow<'static, [u8]>> {
         "zenko_sleep.png" => (include_bytes!("../ui/zenko_sleep.png"), "image/png"),
         "fonts/ZenMaruGothic-Regular.ttf" => (include_bytes!("../ui/fonts/ZenMaruGothic-Regular.ttf"), "font/ttf"),
         "fonts/ZenMaruGothic-Bold.ttf" => (include_bytes!("../ui/fonts/ZenMaruGothic-Bold.ttf"), "font/ttf"),
+        "fonts/Outfit.ttf" => (include_bytes!("../ui/fonts/Outfit.ttf"), "font/ttf"),
         "fonts/PixelifySans.ttf" => (include_bytes!("../ui/fonts/PixelifySans.ttf"), "font/ttf"),
         "fonts/DotGothic16.ttf" => (include_bytes!("../ui/fonts/DotGothic16.ttf"), "font/ttf"),
         "fonts/ZenOldMincho-Bold.ttf" => (include_bytes!("../ui/fonts/ZenOldMincho-Bold.ttf"), "font/ttf"),
@@ -264,6 +274,8 @@ impl App {
             muted: false,
             hidden_at: Some(Instant::now()),
             level: 0,
+            door: if focus { Some(Instant::now()) } else { None },
+            pinned: false,
         };
         // new tabs open right after the current one
         let at = self.index(self.active).map(|i| i + 1).unwrap_or(self.tabs.len());
@@ -291,7 +303,7 @@ impl App {
         for t in self.tabs.iter_mut() {
             if t.id == id {
                 let _ = t.wv.set_bounds(rect(content));
-                let _ = t.wv.set_visible(!overlay);
+                let _ = t.wv.set_visible(!overlay && t.door.is_none());
                 #[cfg(windows)]
                 if t.level > 0 {
                     let _ = t.wv.set_memory_usage_level(MemoryUsageLevel::Normal);
@@ -346,7 +358,7 @@ impl App {
             .iter()
             .map(|t| {
                 json!({"id": t.id, "title": t.title, "url": nice_url(&t.url), "icon": t.icon,
-                       "loading": t.loading, "audio": t.audio, "muted": t.muted, "asleep": t.level >= 2})
+                       "loading": t.loading, "audio": t.audio, "muted": t.muted, "asleep": t.level >= 2, "door": t.door.is_some(), "pinned": t.pinned})
             })
             .collect();
         let (back, fwd) = self
@@ -468,7 +480,7 @@ impl App {
             }
         } else {
             if let Some(t) = self.active_tab() {
-                let _ = t.wv.set_visible(true);
+                let _ = t.wv.set_visible(t.door.is_none());
             }
             if self.panel_open {
                 if let Some(p) = &self.panel {
@@ -524,7 +536,7 @@ impl App {
             tabs: self
                 .tabs
                 .iter()
-                .map(|t| SavedTab { url: nice_url(&t.url), title: t.title.clone() })
+                .map(|t| SavedTab { url: nice_url(&t.url), title: t.title.clone(), pinned: t.pinned })
                 .collect(),
             active: self.index(self.active).unwrap_or(0),
             panel: self.panel_open,
@@ -536,6 +548,10 @@ impl App {
             if std::fs::write(&tmp, txt).is_ok() {
                 let _ = std::fs::rename(&tmp, self.data_file("session.json"));
             }
+        }
+        if self.hist_dirty {
+            history::save(&self.data_file("history.json"), &self.hist);
+            self.hist_dirty = false;
         }
         self.dirty = false;
         self.last_save = Instant::now();
@@ -578,7 +594,30 @@ impl App {
         let s = |k: &str| v.get(k).and_then(|x| x.as_str()).unwrap_or("").to_string();
         let n = |k: &str| v.get(k).and_then(|x| x.as_u64()).unwrap_or(0) as u32;
         match s("c").as_str() {
-            "ready" => self.changed(),
+            "ready" => {
+                self.changed();
+                let f = self.data_file("import.json");
+                let mut rep = std::fs::read_to_string(&f).ok().and_then(|t| serde_json::from_str::<Value>(&t).ok()).unwrap_or(Value::Null);
+                if rep.is_object() && rep["shown"] != true {
+                    self.ui(&format!("zb.imported({})", rep));
+                    rep["shown"] = json!(true);
+                    let _ = std::fs::write(&f, rep.to_string());
+                }
+                let bm = edge::bookmarks(&self.data_dir.join("web"));
+                self.ui(&format!("zb.bookmarks({})", bm));
+                self.ui(&format!("zb.history({})", history::for_ui(&self.hist)));
+            }
+            "importEdge" => {
+                self.save();
+                let mut a = vec![format!("--wait-parent={}", std::process::id()), "--import-edge".to_string()];
+                if v["close"].as_bool().unwrap_or(false) {
+                    a.push("--close-edge".into());
+                }
+                if let Ok(exe) = std::env::current_exe() {
+                    let _ = std::process::Command::new(exe).args(a).spawn();
+                }
+                *flow = ControlFlow::Exit;
+            }
             "layout" => self.layout(&v),
             "new" => {
                 let u = s("url");
@@ -606,8 +645,43 @@ impl App {
                 }
             }
             "reload" => {
-                if let Some(t) = self.active_tab() {
+                let id = if n("id") > 0 { n("id") } else { self.active };
+                if let Some(i) = self.index(id) {
+                    let t = &mut self.tabs[i];
+                    if t.level >= 2 {
+                        t.level = 0;
+                    }
                     let _ = t.wv.reload();
+                }
+            }
+            "dup" => {
+                if let Some(i) = self.index(n("id")) {
+                    let u = self.tabs[i].url.clone();
+                    let id = self.tabs[i].id;
+                    self.activate(id);
+                    self.new_tab(&u, true);
+                }
+            }
+            "pin" => {
+                if let Some(i) = self.index(n("id")) {
+                    let mut t = self.tabs.remove(i);
+                    t.pinned = !t.pinned;
+                    let pins = self.tabs.iter().filter(|x| x.pinned).count();
+                    self.tabs.insert(pins.min(self.tabs.len()), t);
+                    self.changed();
+                }
+            }
+            "closeOthers" | "closeRight" => {
+                let id = n("id");
+                let Some(at) = self.index(id) else { return };
+                let right = s("c") == "closeRight";
+                let gone: Vec<u32> =
+                    self.tabs.iter().enumerate().filter(|(i, t)| t.id != id && !t.pinned && (!right || *i > at)).map(|(_, t)| t.id).collect();
+                if !gone.is_empty() {
+                    self.activate(id);
+                }
+                for g in gone {
+                    self.close_tab(g);
                 }
             }
             "stop" => {
@@ -619,7 +693,9 @@ impl App {
             "move" => {
                 if let Some(i) = self.index(n("id")) {
                     let t = self.tabs.remove(i);
+                    let pins = self.tabs.iter().filter(|x| x.pinned).count();
                     let to = (n("to") as usize).min(self.tabs.len());
+                    let to = if t.pinned { to.min(pins) } else { to.max(pins) };
                     self.tabs.insert(to, t);
                     self.changed();
                 }
@@ -680,6 +756,17 @@ impl App {
                     let _ = t.wv.zoom(v["f"].as_f64().unwrap_or(1.0));
                 }
             }
+            "revealed" => {
+                let id = n("id");
+                if let Some(i) = self.index(id) {
+                    self.tabs[i].door = None;
+                    if id == self.active && !self.overlay {
+                        let _ = self.tabs[i].wv.set_visible(true);
+                        let _ = self.tabs[i].wv.focus();
+                    }
+                    self.changed();
+                }
+            }
             "focusPage" => {
                 if let Some(t) = self.active_tab() {
                     let _ = t.wv.focus();
@@ -717,7 +804,7 @@ impl App {
             "restart" => {
                 self.save();
                 if let Ok(exe) = std::env::current_exe() {
-                    let _ = std::process::Command::new(exe).spawn();
+                    let _ = std::process::Command::new(exe).arg(format!("--wait-parent={}", std::process::id())).spawn();
                 }
                 *flow = ControlFlow::Exit;
             }
@@ -770,7 +857,34 @@ fn main() {
     updater::cleanup_old();
     let dir = data_dir();
     let _ = std::fs::create_dir_all(&dir);
-    let args: Vec<String> = std::env::args().skip(1).filter(|a| !a.starts_with("--")).collect();
+    let all: Vec<String> = std::env::args().skip(1).collect();
+    let args: Vec<String> = all.iter().filter(|a| !a.starts_with("--")).cloned().collect();
+    if let Some(pid) = all.iter().find_map(|a| a.strip_prefix("--wait-parent=").and_then(|p| p.parse::<u32>().ok())) {
+        edge::wait_for_pid(pid);
+    }
+    // Import from Edge: automatically on the very first start, or when asked from the browser.
+    let web = dir.join("web");
+    let first = !web.join("EBWebView").exists();
+    let asked = all.iter().any(|a| a == "--import-edge");
+    if (first || asked) && edge::has_edge() {
+        if all.iter().any(|a| a == "--close-edge") {
+            edge::close_edge();
+        }
+        let mut rep = edge::run(&web);
+        rep["shown"] = json!(false);
+        rep["first"] = json!(first);
+        let _ = std::fs::write(dir.join("import.json"), rep.to_string());
+    }
+    // Address-bar history: our own visits plus Edge's (read once after each import).
+    let mut hist = history::load(&dir.join("history.json"));
+    let edge_hist = web.join("EBWebView").join("Default").join("History");
+    let mark = dir.join("history-edge.done");
+    if edge_hist.exists() && (!mark.exists() || asked) {
+        if history::merge_edge(&mut hist, &edge_hist) > 0 {
+            history::save(&dir.join("history.json"), &hist);
+            let _ = std::fs::write(&mark, "1");
+        }
+    }
 
     let event_loop = EventLoopBuilder::<Ev>::with_user_event().build();
     let proxy = event_loop.create_proxy();
@@ -836,6 +950,8 @@ fn main() {
         last_title: String::new(),
         sleep_after: 20,
         fullscreen: false,
+        hist,
+        hist_dirty: false,
     };
 
     // Session restore
@@ -849,6 +965,7 @@ fn main() {
         app.new_tab(&t.url, false);
         if let Some(last) = app.tabs.last_mut() {
             last.title = t.title.clone();
+            last.pinned = t.pinned;
             ids.push(last.id);
         }
     }
@@ -907,15 +1024,25 @@ fn main() {
                         app.panel_title = t;
                         app.tell_zenko();
                     } else if let Some(i) = app.index(id) {
-                        app.tabs[i].title = t;
                         if let Ok(u) = app.tabs[i].wv.url() {
                             app.tabs[i].url = u;
                         }
+                        history::set_title(&mut app.hist, &app.tabs[i].url, &t);
+                        app.hist_dirty = true;
+                        app.tabs[i].title = t;
                         app.changed();
                     }
                 }
                 Ev::Load(id, started, url) => {
                     if let Some(i) = app.index(id) {
+                        if !started && app.tabs[i].door.is_some() {
+                            app.ui(&format!("zb.openDoor({})", id));
+                        }
+                        if !started {
+                            let title = app.tabs[i].title.clone();
+                            history::visit(&mut app.hist, &url, if title.starts_with("http") { "" } else { &title });
+                            app.hist_dirty = true;
+                        }
                         app.tabs[i].loading = started;
                         app.tabs[i].url = url;
                         if started {
@@ -956,6 +1083,18 @@ fn main() {
                 app.save();
             }
             app.sleep_tick();
+            let slow: Vec<u32> = app
+                .tabs
+                .iter()
+                .filter(|t| t.door.map(|d| d.elapsed() > Duration::from_secs(6)).unwrap_or(false))
+                .map(|t| t.id)
+                .collect();
+            for id in slow {
+                if let Some(i) = app.index(id) {
+                    app.tabs[i].door = Some(Instant::now() + Duration::from_secs(60));
+                }
+                app.ui(&format!("zb.openDoor({})", id));
+            }
         }
     });
 }
