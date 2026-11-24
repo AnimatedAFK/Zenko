@@ -53,7 +53,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.24-zenko21"
+APP_VERSION = "v2026.11.24-zenko21.1"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -40174,6 +40174,7 @@ class Zenko21(Zenko20):
         except Exception as ex:
             zk_log_error("notebooks: %r" % (ex,))
         self.root.after(20000, self.nb_watch_tick)
+        self.root.after(45000, self.eat_prewarm)                 # her pounce frames, ready before you need them
 
     # =================================================================================================================
     #  window: a sensible minimum size
@@ -41301,6 +41302,270 @@ class Zenko21(Zenko20):
                 time.sleep(0.05)
             ART.save()
         threading.Thread(target=work, name="zenko-prewarm-hd", daemon=True).start()
+
+    # =================================================================================================================
+    #  lock-in mode: a real fox pounce (crouch, wiggle, leap, dive), gobbling the window, a happy shake, hop away
+    # =================================================================================================================
+    EAT_HD = 4                                                # pixel-art smoothing step; Tk zooms the rest
+
+    def _eat_states(self):
+        st = [("rigL", "crouch", f) for f in (0, 2, 4, 6)] + [("rigL", "leap", f) for f in (0, 2, 4, 6)] + \
+             [("rigL", "dive", f) for f in (0, 4)] + [("rigL", "land", 0), ("rigL", "playbow", 0), ("rigL", "playbow", 4)] + \
+             [("rigL", "shake", f) for f in (0, 2, 4, 6)] + [("rigR", "leap", f) for f in (0, 2, 4, 6)]
+        return st
+
+    def _eat_acc(self):
+        return ("headband",) + tuple(a for a in self.accessories() if a != "headband")
+
+    def eat_prewarm(self):
+        """Draw her pounce frames once in the background (then they're on disk forever), so the pounce never stutters."""
+        if getattr(self, "_eat_warm", False) or not self.cfg.get("lockin_animation", True):
+            return
+        self._eat_warm = True
+        try:
+            n, acc, pal = self.tail_count(), self._eat_acc(), dict(self.pal)
+        except Exception:
+            return
+        jobs = [(h, nm, f) for h, nm, f in self._eat_states()]
+
+        def work():
+            for h, nm, f in jobs:
+                if getattr(self, "_z20_quit", False):
+                    return
+                try:
+                    sprite_png_hd([rig_rows("%s:%s:%d" % (h, nm, f), n, acc)], pal, self.EAT_HD)
+                except Exception:
+                    pass
+                time.sleep(0.04)
+            ART.save()
+        threading.Thread(target=work, name="zenko-eat-warm", daemon=True).start()
+
+    def lockin_start(self, minutes=None, resume=False):
+        r = super().lockin_start(minutes, resume)
+        try:
+            self.root.after(800, self.eat_prewarm)
+        except Exception:
+            pass
+        return r
+
+    def eat_overlay(self, rect, site, finish):
+        try:
+            return self.z21_eat_overlay(rect, site, finish)
+        except Exception as ex:
+            zk_log_error("eat overlay: %r" % (ex,))
+            return super().eat_overlay(rect, site, finish)
+
+    def z21_eat_overlay(self, rect, site, finish):
+        x1, y1, x2, y2 = rect
+        sw, sh = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
+        x1, y1 = max(-8, x1), max(-8, y1)
+        x2, y2 = min(sw + 8, x2), min(sh + 8, y2)
+        w, h = max(320, x2 - x1), max(240, y2 - y1)
+        GW, GH = 110, 78                                       # the rig sprite grid
+        Z = max(2, min(12, int(round(min(w * 0.42 / GW, h * 0.5 / GH)))))
+        hd = self.EAT_HD if Z >= self.EAT_HD else Z
+        k = max(1, Z // hd)
+        Z = hd * k
+        fw, fh = GW * Z, GH * Z
+        n, acc = self.tail_count(), self._eat_acc()
+        imgs = {}
+
+        def img(hd_, nm, f):
+            key = (hd_, nm, f, Z, n, acc, id(self.pal))
+            if key in imgs:
+                return imgs[key]
+            im = self.lock_imgs.get(key)
+            if im is None:
+                if len(self.lock_imgs) > 60:
+                    self.lock_imgs.clear()
+                rows = [rig_rows("%s:%s:%d" % (hd_, nm, f), n, acc)]
+                if time.perf_counter() - t_prep < 0.3:          # smooth high-res frames (instant once pre-drawn)
+                    im = tk.PhotoImage(data=base64.b64encode(sprite_png_hd(rows, self.pal, hd)))
+                    if k > 1:
+                        im = im.zoom(k, k)
+                    self.lock_imgs[key] = im
+                else:                                           # not pre-drawn yet: never make you wait for her
+                    im = _sprite_photo_plain(rows, self.pal, Z)
+                    imgs_fast.append(key)
+            imgs[key] = im
+            return im
+        t_prep, imgs_fast = time.perf_counter(), []
+        for hd_, nm, f in self._eat_states():                  # everything ready before anything moves
+            img(hd_, nm, f)
+        if imgs_fast:
+            self.root.after(3000, self.eat_prewarm)
+
+        ov = tk.Toplevel(self.root)
+        ov.overrideredirect(True)
+        ov.attributes("-topmost", True)
+        try:
+            ov.attributes("-transparentcolor", KEY)
+        except tk.TclError:
+            pass
+        ov.configure(bg=KEY)
+        ov.geometry("%dx%d+%d+%d" % (w, h, x1, y1))
+        cv = tk.Canvas(ov, width=w, height=h, bg=KEY, highlightthickness=0, bd=0)
+        cv.pack()
+        night = _mixhex(NIGHT, "#000000", 0.25)
+        rim = _mixhex(night, GOLD, 0.18)
+        rnd = random.Random()
+        # where she starts (crouched in the bottom-right corner) and lands (the middle)
+        sx, sy = w - fw * 0.92, h - fh * 1.02
+        tx, ty = (w - fw) / 2.0 + fw * 0.1, (h - fh) / 2.0
+        mouth = lambda x, y: (x + fw * 0.2, y + fh * 0.66)
+        fox = cv.create_image(sx, sy, anchor="nw", image=img("rigL", "crouch", 0))
+        trail, crumbs, dust = [], [], []
+        st = {"bites": 0, "done": False, "t0": time.perf_counter(), "last": None}
+        NB = 22
+        # bite centres: a spiral from her mouth outwards, so the window disappears where she's eating
+        mx0, my0 = mouth(tx, ty)
+        far = math.hypot(max(mx0, w - mx0), max(my0, h - my0))
+        spots = []
+        for i in range(NB):
+            q = (i + 1) / float(NB)
+            a = i * 2.39996 + rnd.uniform(-0.3, 0.3)
+            d = far * (q ** 0.8) * 0.9
+            spots.append((mx0 + math.cos(a) * d, my0 + math.sin(a) * d * 0.8, max(w, h) * (0.07 + 0.2 * q)))
+
+        def bite(bx, by, r):
+            cv.create_oval(bx - r, by - r, bx + r, by + r, fill=night, outline="", tags="bite")
+            for j in range(7):                                  # a scalloped, toothy edge
+                a = j / 7.0 * 2 * math.pi + rnd.uniform(-0.2, 0.2)
+                rr = r * 0.32
+                cx_, cy_ = bx + math.cos(a) * r * 0.92, by + math.sin(a) * r * 0.92
+                cv.create_oval(cx_ - rr, cy_ - rr, cx_ + rr, cy_ + rr, fill=night, outline="", tags="bite")
+            cv.create_arc(bx - r * 1.05, by - r * 1.05, bx + r * 1.05, by + r * 1.05, start=rnd.uniform(0, 360),
+                          extent=70, style="arc", outline=rim, width=max(1, Z // 3), tags="rim")
+
+        def spark(x, y, cols=(GOLD, GLOW, "#ffffff"), v=6.0, g=0.5, life=0.6, size=None):
+            s_ = size or rnd.choice((Z, Z, 2 * Z))
+            it = cv.create_rectangle(x, y, x + s_, y + s_, fill=rnd.choice(cols), outline="", tags="fx")
+            crumbs.append([it, x, y, rnd.uniform(-v, v), rnd.uniform(-v * 1.4, -v * 0.3), s_, g, time.perf_counter() + life])
+
+        def frame():
+            if not ov.winfo_exists():
+                self.lock_eating = False
+                return
+            now = time.perf_counter()
+            e = now - st["t0"]
+            dtf = min(0.05, now - (st["last"] or now))
+            st["last"] = now
+            try:
+                if e < 0.34:                                    # crouch: eyes on the prey, a little butt wiggle
+                    f = (0, 2, 4, 6)[int(e / 0.085) % 4]
+                    cv.itemconfigure(fox, image=img("rigL", "crouch", f))
+                    cv.coords(fox, sx + (Z if int(e / 0.06) % 2 else -Z), sy)
+                elif e < 0.80:                                  # the leap: a real arc, stretching out, diving down
+                    t = (e - 0.34) / 0.46
+                    ez = t * t * (3 - 2 * t)
+                    x = sx + (tx - sx) * ez
+                    y = sy + (ty - sy) * ez - math.sin(math.pi * t) * min(h * 0.22, max(0.0, ty - 4))
+                    if t < 0.55:
+                        f = (0, 2, 4, 6)[min(3, int(t / 0.55 * 4))]
+                        im = img("rigL", "leap", f)
+                    else:
+                        im = img("rigL", "dive", 0 if t < 0.8 else 4)
+                    cv.itemconfigure(fox, image=im)
+                    cv.coords(fox, x, y)
+                    if rnd.random() < 0.8:
+                        tx_, ty_ = x + fw * 0.75, y + fh * 0.35
+                        spark(tx_, ty_, cols=(GLOW, _mixhex(GLOW, "#ffffff", 0.5)), v=1.5, g=0.0, life=0.35)
+                elif e < 0.92:                                  # landing: front paws down, a puff of dust
+                    cv.itemconfigure(fox, image=img("rigL", "land", 0))
+                    cv.coords(fox, tx, ty + Z)
+                    if not dust:
+                        for side in (-1, 1):
+                            for _ in range(6):
+                                spark(tx + fw * (0.5 + 0.45 * side), ty + fh * 0.95,
+                                      cols=(_mixhex(INK, NIGHT, 0.4), GREY), v=4.0, g=0.15, life=0.4)
+                        dust.append(1)
+                elif e < 1.75:                                  # gobble gobble: head down, bites spread from her mouth
+                    chew = int((e - 0.92) / 0.085) % 2
+                    cv.itemconfigure(fox, image=img("rigL", "playbow", 0 if chew else 4))
+                    cv.coords(fox, tx, ty + (Z if chew else 0))
+                    want = min(NB, int((e - 0.92) / 0.78 * NB) + 1)
+                    while st["bites"] < want:
+                        bx, by, r = spots[st["bites"]]
+                        bite(bx, by, r)
+                        st["bites"] += 1
+                        mx, my = mouth(tx, ty)
+                        for _ in range(4):
+                            spark(mx, my, cols=(GOLD, ORANGE, INK, "#ffffff"), v=7.0, g=0.9, life=0.7)
+                    cv.tag_raise("rim")
+                    cv.tag_raise(fox)
+                    cv.tag_raise("fx")
+                elif not st["done"]:                            # gone. Gulp!
+                    st["done"] = True
+                    cv.create_rectangle(0, 0, w, h, fill=night, outline="", tags="bite")
+                    cv.delete("rim")
+                    finish()
+                    ty2 = ty + fh + 26 if ty + fh + 44 < h else max(30, ty - 24)
+                    cv.create_text(w / 2, ty2, text="Gulp! %s eaten. Back to work~ kon!" % site, fill=GOLD,
+                                   font=(FONT_TITLE or FONT_UI, max(13, min(28, int(w / 38))), "bold"), tags="txt")
+                    cv.tag_raise(fox)
+                    cv.tag_raise("fx")
+                elif e < 2.35:                                  # a happy full-tummy shake with sparkles
+                    f = (0, 2, 4, 6)[int((e - 1.75) / 0.07) % 4]
+                    cv.itemconfigure(fox, image=img("rigL", "shake", f))
+                    cv.coords(fox, tx, ty)
+                    if rnd.random() < 0.35:
+                        spark(tx + rnd.uniform(0.1, 0.9) * fw, ty + rnd.uniform(0.0, 0.6) * fh, v=2.0, g=-0.05, life=0.5)
+                elif e < 2.85:                                  # and off she hops, while the dark melts away
+                    t = (e - 2.35) / 0.5
+                    f = (0, 2, 4, 6)[min(3, int(t * 4))]
+                    cv.itemconfigure(fox, image=img("rigR", "leap", f))
+                    cv.coords(fox, tx + (w - tx + fw * 0.2) * t * t, ty - math.sin(math.pi * min(1, t * 1.2)) * h * 0.12)
+                    try:
+                        ov.attributes("-alpha", max(0.0, 1.0 - t))
+                    except tk.TclError:
+                        pass
+                else:
+                    ov.destroy()
+                    self.lock_eating = False
+                    return
+                live = []
+                for cr in crumbs:                               # crumbs, dust and foxfire sparkles
+                    it, x, y, vx, vy, s_, g, end = cr
+                    if now >= end:
+                        cv.delete(it)
+                        continue
+                    k_ = dtf * 60.0
+                    x, y, vy = x + vx * k_, y + vy * k_, vy + g * k_
+                    cr[1], cr[2], cr[4] = x, y, vy
+                    cv.coords(it, x, y, x + s_, y + s_)
+                    live.append(cr)
+                crumbs[:] = live
+            except tk.TclError:
+                self.lock_eating = False
+                return
+            ov.after(16, frame)
+        frame()
+        self.root.after(5000, lambda: (self.__setattr__("lock_eating", False),
+                                       ov.destroy() if ov.winfo_exists() else None))
+
+    # =================================================================================================================
+    #  focus sessions: close the distraction 10 seconds after her first warning (zenko21.1)
+    # =================================================================================================================
+    def maybe_close(self, s, site, proc):
+        if not self.cfg.get("auto_close", True):
+            return
+        warn_at = float(self.cfg.get("grace_seconds", 10) or 10)
+        limit = warn_at + max(3.0, float(self.cfg.get("close_after_warning", 10) or 10))
+        if self.dist_run < warn_at:
+            self.warned = False
+            return
+        if self.dist_run < limit:
+            if not self.warned:
+                self.warned = True
+                self.say("Closing %s in %d seconds unless you go back to “%s”!" %
+                         (site, int(round(limit - self.dist_run)), clip(s["task"], 24)), 8)
+                beep("nag")
+            return
+        self.cfg["close_after_seconds"] = limit                  # the original closer does the actual closing
+        try:
+            return super().maybe_close(s, site, proc)
+        finally:
+            self.cfg["close_after_seconds"] = 60
 
     # =================================================================================================================
     #  Settings: sharper pixel art toggle

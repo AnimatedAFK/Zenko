@@ -1,5 +1,10 @@
 # Zenko changes
 
+## v2026.11.24-zenko21.1
+
+- **Focus sessions close distractions much sooner.** After her first warning ("Closing YouTube in 10 seconds unless you go back to…"), Zenko now closes the tab 10 seconds later instead of waiting about a minute. Setting: `close_after_warning` (seconds).
+- **A new lock-in pounce.** The old animation slid her sitting sprite across the window. Now her full fox body hunts it properly: she crouches in the corner with a little butt wiggle, leaps in a real arc (stretching out, then diving with a foxfire trail), lands in a puff of dust and gobbles the window with her head down. Bites spread out from her mouth with crumbs flying. Then a happy full-tummy shake with sparkles, and she hops away while the dark melts. The frames are drawn ahead of time in the background, so the pounce never stutters. If she has to pounce before they're ready, she uses quick frames instead of making you wait.
+
 ## v2026.11.24-zenko21
 
 Zenko 21 rebuilds the Notes tab and makes her look sharper. Your saved data and settings carry over.
