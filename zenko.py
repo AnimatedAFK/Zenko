@@ -52,7 +52,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.23-zenko19"
+APP_VERSION = "v2026.11.24-zenko19.1"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -995,21 +995,21 @@ def _bez_pts(pts, n=10):
 
 
 # torso landmarks in spine space: u = 0 at the hip joint, 1 at the shoulder joint; v = px below the spine line
-_TORSO = [(-0.20, -3.2),   # tail root
-          (-0.05, -6.0),   # croup
-          (0.25, -6.6),    # loin
-          (0.55, -6.4),    # back
-          (0.86, -8.0),    # withers
-          (1.10, -9.5),    # top of the neck (goes up under her head)
-          (1.30, -5.0),    # throat
-          (1.22, 1.8),     # point of the breast (manubrium)
-          (1.06, 8.4),     # deep chest behind the elbow
-          (0.78, 9.0),     # sternum
-          (0.52, 6.6),     # belly
-          (0.32, 2.4),     # flank tuck (waist)
-          (0.12, 2.6),     # stifle fold
-          (-0.12, 2.2),    # back of the thigh
-          (-0.22, 0.2)]    # buttock
+_TORSO = [(-0.24, -3.6),   # tail root
+          (-0.10, -7.6),   # round croup
+          (0.20, -9.0),    # loin (a soft, full back, not a bony one)
+          (0.55, -8.8),    # back
+          (0.88, -9.6),    # withers, under a thick scruff
+          (1.10, -10.5),   # top of the neck (goes up under her head)
+          (1.34, -5.0),    # throat
+          (1.30, 2.6),     # chest ruff
+          (1.12, 10.2),    # deep, fluffy chest
+          (0.80, 11.6),    # sternum
+          (0.48, 11.4),    # round little belly
+          (0.22, 9.4),     # belly fluff
+          (0.00, 8.0),     # stifle fold
+          (-0.20, 4.6),    # back of the thigh (fluffy 'trousers')
+          (-0.30, 0.0)]    # round rump
 
 
 def _spine_xy(H, S, u, v):
@@ -1037,63 +1037,56 @@ def _leg_cells(top, paw, meta_ang, bones, kind, near):
     kx, ky = _ik2(top[0], top[1], jx, jy, l1, l2, bend)
     parts = {}
     if kind == "fore":
-        parts["upper"] = _capsule(top, (kx, ky), 3.6 if near else 3.2, 2.5)
-        parts["lower"] = _capsule((kx, ky), (jx, jy), 2.2, 1.7)
-        parts["meta"] = _capsule((jx, jy), paw, 1.7, 1.6)
+        parts["upper"] = _capsule(top, (kx, ky), 5.2 if near else 4.6, 3.8)
+        parts["lower"] = _capsule((kx, ky), (jx, jy), 3.5, 3.1)
+        parts["meta"] = _capsule((jx, jy), paw, 3.0, 2.8)
     else:
-        parts["upper"] = _capsule(top, (kx, ky), 5.4 if near else 4.8, 3.0)       # the big thigh
-        parts["lower"] = _capsule((kx, ky), (jx, jy), 2.8, 1.5)                   # gaskin tapering to the hock
-        parts["meta"] = _capsule((jx, jy), paw, 1.5, 1.5)
+        parts["upper"] = _capsule(top, (kx, ky), 7.6 if near else 6.8, 4.6) | _ell(top[0] - 0.5, top[1] + 2.6, 6.4, 6.6)   # round haunch
+        parts["lower"] = _capsule((kx, ky), (jx, jy), 4.0, 3.2)                   # fluffy 'trousers' to the hock
+        parts["meta"] = _capsule((jx, jy), paw, 3.0, 2.8)
     return parts, {"top": top, "knee": (kx, ky), "joint": (jx, jy), "paw": paw, "kind": kind}
 
 
 def _draw_leg(g, parts, J, near, toe_dir=1, paw_flat=True, robe=None):
-    """Fur on the upper leg, dark 'stockings' from the elbow/hock down (red fox socks), a small oval-free paw."""
+    """A soft, fluffy leg: fur all the way down (a little darker towards the foot) and a round dark paw,
+    like the paws she shows when sitting. zenko19.1: no stockings or thin shins - nothing bony."""
     up = parts["upper"]
     low = parts["lower"] | parts["meta"]
-    kx, ky = J["knee"]
-    jy0 = J["joint"][1]
-    fore = parts["upper"] and len(parts["upper"]) < 150 and J.get("kind") == "fore"
-    sock_y = (ky + 2.5) if fore else (jy0 - 1.5)   # black stockings: from the elbow on the forelegs, the hock behind
+    py0 = J["paw"][1]
+    ty = J["top"][1]
+    span = max(6.0, py0 - ty)
     if near:
-        upc = lambda x, y: _dither(x, y, 0.35 + (y - J["top"][1]) / 22.0, ["L", "O", "O", "D"])
-        # the stocking fades in over a few pixels (dithered), so it reads as fur, not a boot
-        sock = lambda x, y: "n" if y > sock_y + 1.5 else (_dither(x, y, 0.5 + (y - sock_y) / 3.0, ["O", "D", "n"])
-                                                          if y > sock_y - 1.5 else _dither(x, y, 0.62, ["O", "D"]))
+        upc = lambda x, y: _dither(x, y, 0.25 + (y - ty) / 26.0, ["l", "L", "O", "O", "D"])
+        lowc = lambda x, y: _dither(x, y, 0.30 + 0.55 * (y - ty) / span, ["L", "O", "O", "D"])
     else:
-        upc = lambda x, y: _dither(x, y, 0.7, ["D", "d"])
-        sock = lambda x, y: "N" if y > sock_y else "d"
+        upc = lambda x, y: _dither(x, y, 0.55 + (y - ty) / 40.0, ["O", "D", "D", "d"])
+        lowc = lambda x, y: _dither(x, y, 0.62 + 0.3 * (y - ty) / span, ["O", "D", "d"])
     if robe:                                       # sleeves / the skirt of the robe over the upper legs
         sl = "h" if ROBES[robe]["motif"] == "sailor" and J.get("kind") == "fore" else "a"
         upc = (lambda x, y: sl if near else "c")
-    _paint(g, low, sock, "K", over=".g")
-    if near:                                       # the near thigh/shoulder sits on the body: soft fur line inside
+    _paint(g, low, lowc, "K", over=".g")
+    if near:                                       # the near thigh/shoulder sits on the body: no hard line inside
         _paint(g, up, upc, None)
         for (x, y) in up:
             for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
                 n2 = (x + dx, y + dy)
-                if n2 not in up and 0 <= n2[0] < W_ and 0 <= n2[1] < H_:
-                    c = g[n2[1]][n2[0]]
-                    if c in ".g":
-                        g[n2[1]][n2[0]] = "K"
-                    elif c in "lLOWC" and dx >= 0 and (dy >= 0 or dx > 0) and y > J["top"][1] + 2:
-                        g[n2[1]][n2[0]] = "D"
+                if n2 not in up and 0 <= n2[0] < W_ and 0 <= n2[1] < H_ and g[n2[1]][n2[0]] in ".g":
+                    g[n2[1]][n2[0]] = "K"
     else:
         _paint(g, up, upc, "K", over=".gnNKd")
-    # paw: a compact foot of toes (digitigrade), heel pad behind, toes pointing where she faces
+    # paw: a round, soft mitten of a paw (toes forward), a toe line for the beans
     px, py = J["paw"]
-    jx, jy = J["joint"]
     if paw_flat:
-        cells = {(int(px + toe_dir * dx), int(py + dy)) for dx in (-1, 0, 1, 2) for dy in (-1, 0)}
-        cells |= {(int(px + toe_dir * 3), int(py))}
-    else:                                          # lifted: the paw folds back under the wrist
-        cells = {(int(px + dx), int(py + dy)) for dx in (-1, 0, 1) for dy in (-1, 0, 1)}
-    _paint(g, cells, "n" if near else "N", "K", over=".gnNdDK")
+        cells = _ell(px + toe_dir * 1.0, py - 0.9, 3.6, 2.3)
+    else:                                          # lifted: the paw curls back under the wrist
+        cells = _ell(px, py, 2.8, 2.8)
+    _paint(g, cells, (lambda x, y: "n" if y > py - 1.6 or not near else _dither(x, y, 0.55, ["D", "n"])) if near
+           else "N", "K", over=".gnNdDKOLl")
     if paw_flat:
-        put(g, int(px + toe_dir * 2), int(py), "K")              # toe split
+        put(g, int(px + toe_dir * 2.4), int(py - 0.6), "K")          # toe split
 
 
-def _rig_tails(g, base, ang, n, frame, frames, sway, length=24.0, lift=0.0, r=6.6):
+def _rig_tails(g, base, ang, n, frame, frames, sway, length=24.0, lift=0.0, r=8.6):
     """Her tails as one fluffy plume from the tail root. ang = direction in degrees (180 = straight back)."""
     nn = max(1, min(9, int(n)))
     T = 2 * _m.pi * (frame % frames) / float(frames)
@@ -1112,7 +1105,7 @@ def _rig_tails(g, base, ang, n, frame, frames, sway, length=24.0, lift=0.0, r=6.
         lay.append((a, ((bx, by), (bx + c1[0] * L * 0.45, by + c1[1] * L * 0.45),
                         (tip[0] - c2[0] * L * 0.35, tip[1] - c2[1] * L * 0.35), tip)))
     for i, (a, pts) in enumerate(sorted(lay, key=lambda p: -abs(p[0] - 180.0))):
-        _tail(g, pts, r if nn <= 3 else r - 0.6, i * 3 + 1, flame=(frame + i) % 3, base_r=2.6)
+        _tail(g, pts, r if nn <= 3 else r - 0.6, i * 3 + 1, flame=(frame + i) % 3, base_r=4.2)
     for row in g:
         for x, ch in enumerate(row):
             if ch == "k":
@@ -1173,7 +1166,17 @@ def build_rig(P, n=3, frame=0, frames=8, acc=(), left=False):
         drawn[key] = J
     # torso
     pts = [_spine_xy(H, S, u, v) for (u, v) in P.get("torso", _TORSO)]
-    body = _poly(_bez_pts(pts, 6))
+    outline = _bez_pts(pts, 6)
+    body = _poly(outline)
+    # fluffy coat: little round tufts all round the outline, longer ones hanging under the belly and chest
+    for i, (x, y) in enumerate(outline):
+        if i % 3:
+            continue
+        bx, by_ = x - H[0], y - H[1]
+        Lb = _m.hypot(S[0] - H[0], S[1] - H[1]) or 1.0
+        v = (-bx * (S[1] - H[1]) + by_ * (S[0] - H[0])) / Lb
+        body |= _ell(x, y + (0.9 if v > 5 else 0.0), 2.1, 2.9 if v > 5 else 2.1)
+    body = {(x, y) for (x, y) in body if y <= int(RIG_GROUND)}
     ang = _m.atan2(S[1] - H[1], S[0] - H[0])
     top_y = min(y for (x, y) in body) if body else 50
 
@@ -1189,15 +1192,13 @@ def build_rig(P, n=3, frame=0, frames=8, acc=(), left=False):
             return _dither(x, y, 0.2 + (v - under) / 10.0, ["W", "W", "C"])
         return _dither(x, y, 0.20 + (v + 7.0) / 15.0, ["l", "L", "O", "O", "D"])
     _paint(g, body, fur, "K")
-    # a soft line where the thigh muscle meets the flank, and the shoulder blade line (anatomy hints, not outlines)
-    for t in range(6):
-        x, y = _spine_xy(H, S, 0.14 + t * 0.012, -1.0 + t * 0.9)
-        if (int(x), int(y)) in body:
-            put(g, int(x), int(y), "D")
-    for t in range(6):
-        x, y = _spine_xy(H, S, 0.88 - t * 0.02, -6.0 + t * 1.3)
-        if (int(x), int(y)) in body:
-            put(g, int(x), int(y), "D")
+    # soft fur-direction strokes on the coat (a couple of tufts, never bony lines)
+    for (u, v) in ((0.18, -4.0), (0.42, -5.5), (0.66, -5.0)):
+        x, y = _spine_xy(H, S, u, v)
+        for k in range(3):
+            c = (int(x) - k, int(y) + k // 2)
+            if c in body and g[c[1]][c[0]] in "lLO":
+                put(g, c[0], c[1], "L" if k else "l")
     # near legs over the body (with paws_front the forelegs come after the head: forearms out under her chin)
     front = P.get("paws_front")
     for key, kind, near in (("rh", "hind", True), ("rf", "fore", True)):
@@ -1217,8 +1218,18 @@ def build_rig(P, n=3, frame=0, frames=8, acc=(), left=False):
     ox = hx_ - 38.0 + hd.get("dx", 0.0) - 1
     oy = hy_ - 40.0 + hd.get("dy", 0.0)
     nb = _spine_xy(H, S, 0.95, -2.0)
-    neck = _capsule(nb, (ox + 38.0, oy + 38.0), 6.0, 7.0)
+    neck = _capsule(nb, (ox + 38.0, oy + 38.0), 8.5, 9.5)
     _paint(g, neck, lambda x, y: _dither(x, y, 0.25 + (y - oy - 30) / 30.0, ["L", "O", "O", "D"]), "K", over=".gD")
+    # the big white chest ruff under her chin (a scalloped bib of fluff)
+    if not rb or ROBES[rb]["motif"] != "sailor":
+        rc = (ox + 38.0 + 1.0, oy + 46.0)
+        ruff = _ell(rc[0], rc[1], 7.5, 6.5)
+        for k in range(7):
+            a = _m.radians(20 + k * 23.0)
+            ruff |= _ell(rc[0] + _m.cos(a) * 6.8, rc[1] + _m.sin(a) * 5.6, 2.2, 2.6)
+        ruff = {c for c in ruff if c[1] <= int(RIG_GROUND) and g[c[1]][c[0]] not in "nN"}
+        _paint(g, ruff, lambda x, y: _dither(x, y, 0.15 + (y - rc[1] + 6) / 22.0, ["W", "W", "W", "C"]), "K",
+               over=".gK")
     _rig_head(g, ox, oy, hd.get("look", "open"), hd.get("mouth", "flat"), 2, hd.get("ear", 0), acc, frame, hd.get("ly", 0))
     # collar + bell under her chin
     cx_, cy_ = ox + 38.0, oy + 44.0
