@@ -1,0 +1,35 @@
+/* Shared night-shrine look for Zenko Browser pages */
+* { box-sizing: border-box; }
+html { color-scheme: dark; font-size: 13px; }
+body {
+  margin: 0; color: var(--ink); background: var(--night); font-family: var(--font);
+  -webkit-font-smoothing: antialiased; overflow: hidden;
+}
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+input, select, textarea { font: inherit; color: var(--ink); }
+svg.px { display: block; image-rendering: pixelated; }
+::selection { background: var(--accdim); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 10px; border: 3px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--accdim); background-clip: padding-box; border: 3px solid transparent; }
+::-webkit-scrollbar-track { background: transparent; }
+[data-motion="reduced"] *, [data-motion="reduced"] *::before, [data-motion="reduced"] *::after {
+  animation-duration: 0.001s !important; transition-duration: 0.001s !important;
+}
+.sky {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(1200px 600px at 85% -10%, color-mix(in srgb, var(--acc) 12%, transparent), transparent 60%),
+    radial-gradient(900px 500px at 0% 110%, color-mix(in srgb, var(--glow) 8%, transparent), transparent 60%),
+    linear-gradient(180deg, var(--night2), var(--night));
+}
+.sky canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+[data-stars="off"] .sky canvas { display: none; }
+.btn {
+  height: 2.3rem; min-width: 2.3rem; padding: 0 .7rem; border-radius: var(--rs); display: inline-flex; align-items: center;
+  justify-content: center; gap: .45rem; color: var(--grey); transition: background .15s, color .15s, transform .12s;
+}
+.btn:hover { background: var(--hover); color: var(--ink); }
+.btn:active { transform: scale(.94); }
+.btn.on { color: var(--acc); background: var(--accbg); }
+.btn[disabled] { opacity: .35; pointer-events: none; }

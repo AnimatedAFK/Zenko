@@ -1,5 +1,9 @@
 # Zenko changes
 
+## v2026.11.24-zenko21.2
+
+- **Zenko knows Zenko Browser.** She now treats the new Zenko Browser like Edge or Chrome: study time on its pages (and in its Claude panel) is logged for the right subject automatically, the screen-time page lists it as "Zenko Browser", and focus sessions can close its distracting tabs the same way.
+
 ## v2026.11.24-zenko21.1
 
 - **Focus sessions close distractions much sooner.** After her first warning ("Closing YouTube in 10 seconds unless you go back to…"), Zenko now closes the tab 10 seconds later instead of waiting about a minute. Setting: `close_after_warning` (seconds).

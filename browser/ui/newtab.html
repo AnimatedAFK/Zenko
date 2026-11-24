@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New tab</title>
+<link rel="stylesheet" href="theme.css">
+<script src="prefs.js"></script>
+<style>
+  body { overflow: auto; min-height: 100vh; }
+  main { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 9vh 1rem 0; }
+  .clock { font-size: 5.2rem; font-weight: 300; letter-spacing: .02em; line-height: 1; text-shadow: 0 0 30px color-mix(in srgb, var(--glow) 25%, transparent); font-variant-numeric: tabular-nums; }
+  .clock small { font-size: 1.6rem; color: var(--grey); margin-left: .4rem; }
+  .jp { color: var(--gold); letter-spacing: .25em; margin-top: .6rem; font-family: "Yu Gothic UI", "Meiryo UI", var(--font); }
+  .hello { margin-top: .4rem; color: var(--grey); font-size: 1.1rem; }
+  .hello b { color: var(--acc); font-weight: 600; }
+  form { margin-top: 2.2rem; width: min(40rem, 100%); }
+  .search { display: flex; align-items: center; gap: .8rem; height: 3.4rem; padding: 0 1.2rem; border-radius: 999px; background: color-mix(in srgb, var(--card) 88%, transparent);
+            border: 1px solid var(--line); color: var(--acc); box-shadow: 0 18px 50px rgba(0,0,0,.35); transition: border-color .2s, box-shadow .2s; }
+  .search:focus-within { border-color: color-mix(in srgb, var(--acc) 60%, var(--line)); box-shadow: 0 18px 50px rgba(0,0,0,.35), 0 0 0 4px color-mix(in srgb, var(--acc) 14%, transparent), 0 0 30px color-mix(in srgb, var(--glow) 14%, transparent); }
+  .search input { flex: 1; height: 100%; background: none; border: 0; outline: 0; font-size: 1.15rem; min-width: 0; }
+  .search input::placeholder { color: var(--grey); }
+  .calc { height: 1.6rem; margin-top: .5rem; text-align: center; color: var(--gold); font-size: 1.05rem; }
+  .sites { display: flex; flex-wrap: wrap; justify-content: center; gap: .8rem; margin-top: 1.6rem; max-width: 46rem; }
+  .site { width: 6.4rem; display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: .85rem .4rem .7rem; border-radius: var(--r); color: var(--ink); text-decoration: none;
+          background: color-mix(in srgb, var(--card) 70%, transparent); border: 1px solid transparent; transition: transform .2s cubic-bezier(.2,.9,.25,1.3), background .2s, border-color .2s; }
+  .site:hover { transform: translateY(-3px); background: var(--card); border-color: var(--line); }
+  .site i { width: 2.5rem; height: 2.5rem; border-radius: 12px; display: grid; place-items: center; font-style: normal; font-weight: 700; font-size: 1.15rem; background: var(--accbg); color: var(--acc); overflow: hidden; }
+  .site i img { width: 22px; height: 22px; }
+  .site span { font-size: .9rem; color: var(--grey); }
+  .quote { margin: 2.4rem 0 0; max-width: 36rem; text-align: center; color: var(--grey); font-style: italic; line-height: 1.5; }
+  .scene { position: fixed; left: 0; right: 0; bottom: 0; height: 38vh; pointer-events: none; z-index: 0; }
+  .scene svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .fox { position: fixed; right: max(5vw, 1rem); bottom: 3.2vh; width: 132px; z-index: 1; image-rendering: pixelated; filter: drop-shadow(0 0 18px color-mix(in srgb, var(--glow) 35%, transparent)); cursor: pointer; transition: transform .25s cubic-bezier(.2,.9,.25,1.4); }
+  .fox:hover { transform: scale(1.06) rotate(-2deg); }
+  .bubble { position: fixed; right: calc(max(5vw, 1rem) + 120px); bottom: calc(3.2vh + 96px); z-index: 2; max-width: 16rem; padding: .6rem .85rem; border-radius: 14px 14px 4px 14px;
+            background: var(--card); border: 1px solid var(--line); color: var(--ink); font-size: .95rem; opacity: 0; transform: translateY(6px) scale(.96); transition: opacity .25s, transform .25s cubic-bezier(.2,.9,.25,1.3); }
+  .bubble.on { opacity: 1; transform: none; }
+  .flame { position: fixed; width: 10px; height: 10px; border-radius: 50% 50% 50% 0; background: radial-gradient(circle at 40% 40%, #fff, var(--glow) 45%, transparent 70%); filter: blur(.5px) drop-shadow(0 0 8px var(--glow)); z-index: 1; animation: drift 6s ease-in-out infinite; opacity: .85; pointer-events: none; }
+  @keyframes drift { 0%, 100% { transform: translate(0, 0) rotate(-45deg) scale(1); } 50% { transform: translate(8px, -14px) rotate(-45deg) scale(.8); opacity: .55; } }
+  .gear { position: fixed; right: 1rem; top: 1rem; z-index: 2; }
+</style>
+</head>
+<body>
+<div class="sky"><canvas id="stars"></canvas></div>
+<div class="scene">
+  <svg viewBox="0 0 300 100" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges" id="scene"></svg>
+</div>
+<main>
+  <div class="clock" id="clock">--:--</div>
+  <div class="jp" id="jp"></div>
+  <div class="hello" id="hello"></div>
+  <form id="f" autocomplete="off">
+    <label class="search"><span id="si"></span><input id="q" autofocus placeholder="Search the web or type an address" spellcheck="false"></label>
+    <div class="calc" id="calc"></div>
+  </form>
+  <div class="sites" id="sites"></div>
+  <p class="quote" id="quote"></p>
+</main>
+<img class="fox" id="fox" src="zenko.png" alt="Zenko">
+<div class="bubble" id="bub"></div>
+<a class="btn gear" href="settings.html" title="Settings and look" id="gear"></a>
+<script>
+(function () {
+  const $ = (s) => document.querySelector(s);
+  const p = ZB.load();
+  ZB.apply(p);
+  ZB.starfield($("#stars"));
+  $("#si").innerHTML = ZB.icon("search", 2.4);
+  $("#gear").innerHTML = ZB.icon("gear", 2);
+
+  // pixel shrine: hills, torii gate, lanterns, moon (one SVG pixel = one art pixel)
+  (function () {
+    const css = getComputedStyle(document.documentElement);
+    const c = (v) => css.getPropertyValue(v).trim();
+    let r = "";
+    const box = (x, y, w, h, f, o) => { r += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"${o ? ` opacity="${o}"` : ""}/>`; };
+    const hill = ZB.mix(c("--night"), c("--acc"), 0.06), hill2 = ZB.mix(c("--night"), c("--ink"), 0.05);
+    for (let x = 0; x < 300; x += 2) { const h = 22 + Math.round(9 * Math.sin(x / 31) + 5 * Math.sin(x / 13)); box(x, 100 - h, 2, h, hill2); }
+    for (let x = 0; x < 300; x += 2) { const h = 12 + Math.round(5 * Math.sin(x / 23 + 2) + 3 * Math.sin(x / 9)); box(x, 100 - h, 2, h, hill); }
+    const red = ZB.mix(c("--acc"), "#c0392b", 0.35), dark = ZB.mix(red, "#000", 0.35);
+    // torii
+    box(110, 52, 80, 4, red); box(106, 50, 6, 3, red); box(188, 50, 6, 3, red); box(112, 56, 76, 2, dark);
+    box(116, 62, 68, 3, red); box(146, 56, 8, 6, red);
+    box(122, 58, 6, 42, red); box(172, 58, 6, 42, red); box(122, 58, 2, 42, dark); box(172, 58, 2, 42, dark);
+    box(120, 96, 10, 4, dark); box(170, 96, 10, 4, dark);
+    // stone lanterns with foxfire
+    [[84, 0], [208, 1]].forEach(([x]) => {
+      const st = ZB.mix(c("--night"), c("--ink"), 0.22);
+      box(x, 80, 10, 2, st); box(x + 2, 82, 6, 6, st); box(x + 3, 83, 4, 4, c("--glow"), 0.85); box(x + 1, 88, 8, 2, st); box(x + 3, 90, 4, 6, st); box(x, 96, 10, 4, st);
+    });
+    // moon
+    const moon = ZB.mix(c("--ink"), c("--gold"), 0.35);
+    [[8, 0], [12, 1], [14, 2], [16, 3], [16, 4], [18, 5], [18, 6], [18, 7], [18, 8], [16, 9], [16, 10], [14, 11], [12, 12], [8, 13]].forEach(([w, y]) => box(250 - w / 2, 6 + y, w, 1, moon, 0.9));
+    box(246, 10, 2, 2, ZB.mix(moon, "#000", 0.15)); box(251, 14, 3, 2, ZB.mix(moon, "#000", 0.15));
+    $("#scene").innerHTML = r;
+  })();
+
+  // foxfire wisps
+  for (let i = 0; i < 5; i++) {
+    const f = document.createElement("div");
+    f.className = "flame";
+    f.style.left = 8 + Math.random() * 84 + "vw";
+    f.style.bottom = 12 + Math.random() * 30 + "vh";
+    f.style.animationDelay = -Math.random() * 6 + "s";
+    f.style.animationDuration = 5 + Math.random() * 4 + "s";
+    document.body.appendChild(f);
+  }
+
+  const JP_H = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
+  function tick() {
+    const d = new Date();
+    let h = d.getHours(), m = d.getMinutes();
+    const ampm = h < 12 ? "AM" : "PM", h12 = h % 12 || 12;
+    $("#clock").innerHTML = `${h12}:${String(m).padStart(2, "0")}<small>${ampm}</small>`;
+    $("#jp").textContent = (h < 12 ? "午前 " : "午後 ") + JP_H[h12] + "時 · " +
+      d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+    const part = h < 5 ? "Still up? Kon..." : h < 12 ? "Ohayou! Good morning" : h < 17 ? "Konnichiwa! Good afternoon" : h < 22 ? "Konbanwa! Good evening" : "Late night study? Rest soon";
+    $("#hello").innerHTML = `${part}, <b>Kon! Kon!</b>`;
+  }
+  tick(); setInterval(tick, 1000 * 15);
+
+  const sites = $("#sites");
+  ZB.sites(p).forEach(([name, url, l]) => {
+    const a = document.createElement("a");
+    a.className = "site"; a.href = url;
+    const h = new URL(url).hostname;
+    a.innerHTML = `<i>${l}</i><span></span>`;
+    a.querySelector("span").textContent = name;
+    const img = new Image();
+    img.onload = () => { const i = a.querySelector("i"); i.textContent = ""; i.appendChild(img); };
+    img.src = "https://" + h + "/favicon.ico";
+    sites.appendChild(a);
+  });
+
+  const Q = [
+    "Small steps every day add up to big results.", "Rest is part of the work. Your brain files what you learned while you sleep.",
+    "You don't have to be perfect, just a little better than yesterday.", "First do it, then do it right, then do it better.",
+    "Focus on the next 25 minutes. That's all.", "The expert in anything was once a beginner.",
+    "Kon kon~ Inari believes in your harvest. Plant some study today!", "Done is better than perfect.",
+  ];
+  $("#quote").textContent = Q[new Date().getDate() % Q.length];
+
+  const q = $("#q");
+  q.addEventListener("input", () => { const v = ZB.calc(q.value); $("#calc").textContent = v === null ? "" : "= " + v.toLocaleString("en", { maximumFractionDigits: 10 }); });
+  $("#f").addEventListener("submit", (e) => { e.preventDefault(); const u = ZB.toUrl(q.value, p); if (u) location.href = u; });
+  setTimeout(() => q.focus(), 50);
+
+  const LINES = ["Kon kon! What are we studying today?", "Ne~ one tab at a time, okay?", "I'll log your study time for you!", "Open Claude with Ctrl+J if you get stuck~", "Ctrl+K finds anything: tabs, sites, commands!"];
+  let n = 0;
+  $("#fox").addEventListener("click", () => {
+    const b = $("#bub");
+    b.textContent = LINES[n++ % LINES.length];
+    b.classList.add("on");
+    clearTimeout(b._t); b._t = setTimeout(() => b.classList.remove("on"), 3500);
+  });
+  window.addEventListener("storage", (e) => { if (e.key === "zb.prefs") location.reload(); });
+})();
+</script>
+</body>
+</html>

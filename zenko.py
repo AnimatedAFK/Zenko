@@ -53,7 +53,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.24-zenko21.1"
+APP_VERSION = "v2026.11.24-zenko21.2"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -2816,7 +2816,8 @@ def shorthand_summary():
     return "Kon kon~ Your shorthand I've learned: " + ", ".join("%s = %s" % kv for kv in list(al.items())[-12:])
 
 
-BROWSERS = ("chrome.exe", "msedge.exe", "firefox.exe", "brave.exe", "opera.exe", "vivaldi.exe", "arc.exe")
+BROWSERS = ("chrome.exe", "msedge.exe", "firefox.exe", "brave.exe", "opera.exe", "vivaldi.exe", "arc.exe",
+            "zenkobrowser.exe")   # zenko21.2: Zenko Browser (its window title is "page - site - Zenko Browser")
 CLOSED_LOG = []          # only used when testing off-Windows
 
 
@@ -26301,7 +26302,7 @@ SCREEN_EXCLUDE_DEFAULT = [
 _SCREEN_PRIVATE = re.compile(r"\b(inprivate|incognito)\b|private browsing|\(private\)|private window|"
                              r"mozilla firefox private|new private tab", re.I)
 _SCREEN_BROWSER_TAIL = re.compile(r"\s+[-\u2013\u2014]\s+(google chrome|chromium|microsoft\u200b?\s?edge|mozilla firefox|"
-                                  r"firefox|brave|opera(\s+gx)?|vivaldi|arc)\b.*$", re.I)
+                                  r"firefox|brave|opera(\s+gx)?|vivaldi|arc|zenko browser)\b.*$", re.I)
 _SCREEN_PROFILE = re.compile(r"^(personal|work|school|guest|default|profile\s*\d+)$", re.I)
 SCREEN_SITES = [
     (r"\byoutube\b", "YouTube"), (r"\bnetflix\b", "Netflix"), (r"prime video", "Prime Video"),
@@ -26323,7 +26324,7 @@ _SCREEN_SITES_RX = [(re.compile(p, re.I), n) for p, n in SCREEN_SITES]
 SCREEN_MEDIA = {"YouTube", "Netflix", "Prime Video", "Hotstar", "Disney+", "Twitch", "Crunchyroll", "VLC",
                 "Media Player", "Movies & TV"}
 SCREEN_APP_NAMES = {
-    "chrome.exe": "Google Chrome", "msedge.exe": "Microsoft Edge", "firefox.exe": "Firefox", "brave.exe": "Brave",
+    "zenkobrowser.exe": "Zenko Browser", "chrome.exe": "Google Chrome", "msedge.exe": "Microsoft Edge", "firefox.exe": "Firefox", "brave.exe": "Brave",
     "opera.exe": "Opera", "vivaldi.exe": "Vivaldi", "arc.exe": "Arc", "code.exe": "VS Code", "winword.exe": "Word",
     "excel.exe": "Excel", "powerpnt.exe": "PowerPoint", "onenote.exe": "OneNote", "outlook.exe": "Outlook",
     "olk.exe": "Outlook", "ms-teams.exe": "Teams", "teams.exe": "Teams", "explorer.exe": "File Explorer",
