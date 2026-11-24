@@ -6,9 +6,9 @@
 <link rel="stylesheet" href="theme.css">
 <script src="prefs.js"></script>
 <style>
-  body { overflow: hidden; min-height: 100vh; background: var(--night); }
+  body { overflow-x: hidden; overflow-y: auto; min-height: 100vh; background: var(--night); }
   #sky { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
-  main { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 10vh 1rem 0; }
+  main { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 7vh 1rem 3rem; }
   .clock { font-size: 6.4rem; font-weight: 200; line-height: 1; letter-spacing: .01em; color: var(--ink);
     text-shadow: 0 0 40px color-mix(in srgb, var(--glow) 35%, transparent), 0 2px 0 rgba(0,0,0,.25); }
   [data-pixel="strong"] .clock { font-family: "DotGothic16", var(--font); font-weight: 400; }
@@ -43,6 +43,24 @@
   .bubble { position: fixed; right: calc(max(4vw, 1rem) + 104px); bottom: calc(4vh + 84px); z-index: 2; max-width: 16rem; padding: .65rem .9rem; color: var(--ink); font-size: .98rem;
     --b: var(--gold); --c: var(--panel); opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .2s cubic-bezier(.2,.8,.2,1); }
   .bubble.on { opacity: 1; transform: none; }
+  .widgets { display: grid; grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr)); gap: .8rem; width: min(60rem, 100%); margin-top: 1.5rem; }
+  .w { padding: .8rem 1rem .9rem; min-height: 8.4rem; color: var(--ink); --b: color-mix(in srgb, var(--line) 75%, var(--gold) 25%); --c: color-mix(in srgb, var(--panel) 88%, transparent); }
+  .w h3 { margin: 0 0 .5rem; font-size: .8rem; letter-spacing: .09em; text-transform: uppercase; color: var(--gold); font-weight: 600; display: flex; align-items: center; gap: .45rem; }
+  .w h3 i { font-style: normal; color: var(--grey); text-transform: none; letter-spacing: 0; margin-left: auto; font-weight: 400; }
+  .w ul { list-style: none; margin: 0; padding: 0; }
+  .w li { display: flex; align-items: center; gap: .5rem; padding: .18rem 0; font-size: .95rem; min-width: 0; }
+  .w li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .w li.done span { text-decoration: line-through; color: var(--grey); }
+  .w li input[type=checkbox] { accent-color: var(--acc); }
+  .w li button { color: var(--grey); opacity: 0; padding: 0 .2rem; }
+  .w li:hover button { opacity: 1; }
+  .w .add { width: 100%; height: 1.9rem; margin-top: .35rem; background: var(--field); border: 0; outline: 0; padding: 0 .55rem; clip-path: var(--clips); font-size: .92rem; }
+  .w .muted { color: var(--grey); font-size: .9rem; line-height: 1.45; }
+  .w .big { font-size: 2.1rem; font-weight: 300; line-height: 1.1; }
+  .w a { color: var(--ink); text-decoration: none; }
+  .w a:hover { color: var(--gold); }
+  .w .bar { height: 5px; background: var(--line); margin: .15rem 0 .3rem; clip-path: var(--clips); }
+  .w .bar i { display: block; height: 100%; background: var(--gold); }
   .gear { position: fixed; right: 1rem; top: 1rem; z-index: 2; clip-path: var(--clips); }
 </style>
 </head>
@@ -57,6 +75,12 @@
     <div class="calc" id="calc"></div>
   </form>
   <div class="sites" id="sites"></div>
+  <div class="widgets">
+    <div class="w pxb"><h3>Today <i id="wday"></i></h3><ul id="sched"></ul></div>
+    <div class="w pxb"><h3>Tasks</h3><ul id="tasks"></ul><input class="add" id="taskIn" placeholder="+ Add a task, then Enter"></div>
+    <div class="w pxb"><h3>Weather <i id="wcity"></i></h3><div id="weather" class="muted">...</div></div>
+    <div class="w pxb"><h3>Time online today</h3><div id="recap" class="muted">...</div><h3 style="margin-top:.6rem">Recent notes</h3><ul id="notes"></ul></div>
+  </div>
   <p class="quote pxb" id="quote"></p>
 </main>
 <img class="fox" id="fox" src="zenko.png" alt="Zenko">
@@ -111,6 +135,66 @@
     clearTimeout(b._t); b._t = setTimeout(() => b.classList.remove("on"), 3500);
   });
   window.addEventListener("storage", (e) => { if (e.key === "zb.prefs") location.reload(); });
+
+  // ---- widgets
+  const send = (o) => window.ipc && window.ipc.postMessage(JSON.stringify(o));
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  // schedule: Settings > New tab, lines like "Mon: Biology 8:00, Maths 9:30"
+  const WD = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"], now = new Date();
+  $("#wday").textContent = now.toLocaleDateString("en-GB", { weekday: "long" });
+  const lines = String(p.schedule || "").split("\n").map((l) => l.trim()).filter(Boolean);
+  const mine = lines.filter((l) => l.toLowerCase().startsWith(WD[now.getDay()])).map((l) => l.replace(/^[a-z]+\s*:\s*/i, ""));
+  const sched = mine.join(",").split(",").map((x) => x.trim()).filter(Boolean);
+  $("#sched").innerHTML = sched.length ? sched.map((x) => `<li><span>${esc(x)}</span></li>`).join("") : `<li class="muted"><span style="white-space:normal">${lines.length ? "Nothing planned today. Rest is part of the work~" : "Add your timetable in Settings > New tab page."}</span></li>`;
+  // tasks
+  const T = () => { try { return JSON.parse(localStorage.getItem("zb.tasks") || "[]"); } catch (e) { return []; } };
+  const saveT = (l) => { try { localStorage.setItem("zb.tasks", JSON.stringify(l)); } catch (e) {} drawT(); };
+  function drawT() {
+    const l = T();
+    $("#tasks").innerHTML = l.length ? "" : `<li class="muted"><span>No tasks. Nice~</span></li>`;
+    l.slice(0, 7).forEach((t, i) => {
+      const li = document.createElement("li"); if (t.d) li.className = "done";
+      li.innerHTML = `<input type="checkbox" ${t.d ? "checked" : ""}><span></span><button title="Remove">✕</button>`;
+      li.querySelector("span").textContent = t.t;
+      li.querySelector("input").onchange = () => { const x = T(); x[i].d = !x[i].d; saveT(x); };
+      li.querySelector("button").onclick = () => { const x = T(); x.splice(i, 1); saveT(x); };
+      $("#tasks").appendChild(li);
+    });
+  }
+  drawT();
+  $("#taskIn").addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.value.trim()) { const x = T(); x.push({ t: e.target.value.trim(), d: false }); e.target.value = ""; saveT(x); } });
+  // weather (free Open-Meteo, no account)
+  const CODES = [[0, "☀", "Clear"], [3, "⛅", "Partly cloudy"], [48, "🌫", "Fog"], [57, "🌦", "Drizzle"], [67, "🌧", "Rain"], [77, "❄", "Snow"], [82, "🌧", "Showers"], [86, "❄", "Snow showers"], [99, "⛈", "Thunder"]];
+  const wdesc = (c) => CODES.find((x) => c <= x[0]) || CODES[CODES.length - 1];
+  function showW(w) {
+    const [, ic, txt] = wdesc(w.code);
+    $("#weather").innerHTML = `<div class="big">${ic} ${Math.round(w.t)}°</div><div>${txt}</div><div class="muted">High ${Math.round(w.hi)}° · Low ${Math.round(w.lo)}°</div>`;
+  }
+  if (p.weatherLat == null) { $("#weather").textContent = "Set your town in Settings > New tab page to see the weather."; }
+  else {
+    $("#wcity").textContent = p.weatherCity || "";
+    let c = null; try { c = JSON.parse(localStorage.getItem("zb.weather") || "null"); } catch (e) {}
+    if (c && c.at > Date.now() - 30 * 60000 && c.lat === p.weatherLat) showW(c);
+    else fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.weatherLat}&longitude=${p.weatherLon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1`)
+      .then((r) => r.json()).then((j) => {
+        const w = { t: j.current.temperature_2m, code: j.current.weather_code, hi: j.daily.temperature_2m_max[0], lo: j.daily.temperature_2m_min[0], at: Date.now(), lat: p.weatherLat };
+        try { localStorage.setItem("zb.weather", JSON.stringify(w)); } catch (e) {}
+        showW(w);
+      }).catch(() => { $("#weather").textContent = c ? "" : "Weather is offline right now."; if (c) showW(c); });
+  }
+  // notes written in the side panel
+  let notes = {}; try { notes = JSON.parse(localStorage.getItem("zb.notes") || "{}"); } catch (e) {}
+  const nl = Object.values(notes).sort((a, b) => b.at - a.at).slice(0, 3);
+  $("#notes").innerHTML = nl.length ? nl.map((n) => `<li><span><a href="${esc(n.u)}">${esc(n.t || n.u)}</a></span></li>`).join("") : `<li class="muted"><span>Notes you write beside pages show here.</span></li>`;
+  // time online today (from the browser)
+  window.zbNT = function (d) {
+    const r = (d.recap || []).slice(0, 4);
+    if (!r.length) { $("#recap").textContent = "Nothing yet today."; return; }
+    const top = r[0].s, fm = (s) => { const m = Math.round(s / 60); return m < 60 ? m + "m" : Math.floor(m / 60) + "h " + (m % 60) + "m"; };
+    $("#recap").innerHTML = r.map((x) => `<div style="display:flex;justify-content:space-between;color:var(--ink)"><span>${esc(x.h)}</span><span class="muted">${fm(x.s)}</span></div><div class="bar"><i style="width:${Math.max(4, x.s / top * 100)}%"></i></div>`).join("");
+  };
+  send({ c: "ntData" });
+  if (!window.ipc) $("#recap").textContent = "Nothing yet today.";
 })();
 </script>
 </body>

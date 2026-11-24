@@ -43,11 +43,24 @@
     tab1: ["C+49", "Tab 1"], tab2: ["C+50", "Tab 2"], tab3: ["C+51", "Tab 3"], tab4: ["C+52", "Tab 4"],
     tab5: ["C+53", "Tab 5"], tab6: ["C+54", "Tab 6"], tab7: ["C+55", "Tab 7"], tab8: ["C+56", "Tab 8"],
     lastTab: ["C+57", "Last tab"],
+    hints: ["A+70", "Link hints (click with the keyboard)"],
+    split: ["A+83", "Split view"],
+    focus: ["C+S+70", "Focus mode"],
+    notes: ["C+S+78", "Notes for this page"],
+    pip: ["A+80", "Floating video"],
+    clip: ["C+S+88", "Clip part of the page to Zenko"],
+    space1: ["A+49", "Space 1"], space2: ["A+50", "Space 2"], space3: ["A+51", "Space 3"],
   };
   const DEFAULTS = {
     palette: "snow", accent: "", font: "outfit", pixel: "subtle", tabShape: "ema", tabs: "top", radius: 12, density: "normal",
     stars: true, motion: "full", glow: true, sleepAfter: 20, engine: "google", panelWidth: 430,
     school: "", keys: {}, uiScale: 100,
+    spaces: ["Study", "School", "Fun"], profiles: ["School"],
+    ads: true, adsOff: [], clean: true, cookies: true, ytAds: true, sponsor: true, noAutoplay: false, preload: true,
+    focus: false, focusBlock: ["youtube.com", "instagram.com", "tiktok.com", "reddit.com", "x.com", "twitter.com", "facebook.com", "netflix.com", "twitch.tv", "discord.com"],
+    focusOnlyMode: false, focusOnly: [], focusAllow: ["claude.ai", "inthinking.net", "ibo.org", "khanacademy.org", "wikipedia.org"],
+    sortDownloads: true, gestures: true, drafts: true, archiveDays: 7, sites: {}, outlookSound: true, battery: "auto",
+    translateTo: "en", startWeekday: [], startWeekend: [], weatherCity: "", weatherLat: null, weatherLon: null, schedule: "",
   };
   const ENGINES = {
     google: ["https://www.google.com/search?q=", "Google"],
@@ -173,6 +186,26 @@
     ["Claude", "https://claude.ai/new", "C"], ["YouTube", "https://www.youtube.com/", "Y"],
     ["InThinking", "https://www.inthinking.net/", "i"], ["GitHub", "https://github.com/", "H"],
   ];
+  // "5 km to mi", "100 f in c", "2.5 kg to lb"
+  const U = {
+    km: ["l", 1000], m: ["l", 1], cm: ["l", 0.01], mm: ["l", 0.001], mi: ["l", 1609.344], mile: ["l", 1609.344], miles: ["l", 1609.344], ft: ["l", 0.3048], feet: ["l", 0.3048], in: ["l", 0.0254], inch: ["l", 0.0254], yd: ["l", 0.9144],
+    kg: ["w", 1], g: ["w", 0.001], mg: ["w", 1e-6], lb: ["w", 0.45359237], lbs: ["w", 0.45359237], oz: ["w", 0.028349523],
+    l: ["v", 1], ml: ["v", 0.001], cl: ["v", 0.01], gal: ["v", 3.785411784], cup: ["v", 0.2365882],
+    s: ["t", 1], sec: ["t", 1], min: ["t", 60], h: ["t", 3600], hr: ["t", 3600], hours: ["t", 3600], day: ["t", 86400], days: ["t", 86400], week: ["t", 604800],
+    kmh: ["s", 1 / 3.6], "km/h": ["s", 1 / 3.6], mph: ["s", 0.44704], "m/s": ["s", 1],
+    j: ["e", 1], kj: ["e", 1000], cal: ["e", 4.184], kcal: ["e", 4184], ev: ["e", 1.602176634e-19],
+    pa: ["p", 1], kpa: ["p", 1000], atm: ["p", 101325], bar: ["p", 1e5], mmhg: ["p", 133.322],
+  };
+  function units(text) {
+    const m = (text || "").trim().toLowerCase().match(/^(-?[\d.]+)\s*([a-z°\/]+)\s+(?:to|in|as)\s+([a-z°\/]+)$/);
+    if (!m) return null;
+    const v = parseFloat(m[1]);
+    let a = m[2].replace("°", ""), b = m[3].replace("°", "");
+    const T = { c: (x) => x, f: (x) => (x - 32) * 5 / 9, k: (x) => x - 273.15 }, TB = { c: (x) => x, f: (x) => x * 9 / 5 + 32, k: (x) => x + 273.15 };
+    if (T[a] && TB[b]) return { v: TB[b](T[a](v)), u: b.toUpperCase() === "K" ? "K" : "°" + b.toUpperCase() };
+    if (!U[a] || !U[b] || U[a][0] !== U[b][0]) return null;
+    return { v: v * U[a][1] / U[b][1], u: m[3] };
+  }
   function sites(p) {
     const s = SITES.slice();
     if (p.school) s.push(["School", toUrl(p.school, p), "S"]);
@@ -180,6 +213,21 @@
   }
   // Pixel icons: strings of rows, "#" = filled pixel. Drawn as crisp SVG squares.
   const ICONS = {
+    shield: ["#######", "#.....#", "#.###.#", "#.###.#", ".#.#.#.", "..#.#..", "...#..."],
+    note: ["######.", "#....##", "#.##..#", "#.....#", "#.###.#", "#.....#", "#######"],
+    down: ["...#...", "...#...", "...#...", "#.###.#", ".#####.", "..###..", "#######"],
+    clock: ["..###..", ".#...#.", "#..#..#", "#..##.#", "#.....#", ".#...#.", "..###.."],
+    music: ["..#####", "..#...#", "..#...#", "..#...#", "###.###", "###.###", "###.###"],
+    split: ["###.###", "#.#.#.#", "#.#.#.#", "#.#.#.#", "#.#.#.#", "#.#.#.#", "###.###"],
+    clip: ["#.....#", ".#...#.", "..#.#..", "...#...", "..#.#..", "##...##", "##...##"],
+    book: ["##.##..", "#.#.#..", "#.#.#..", "#.#.#..", "#.#.#..", "##.##..", "......."],
+    globe: ["..###..", ".#.#.#.", "#..#..#", "#######", "#..#..#", ".#.#.#.", "..###.."],
+    save: ["######.", "#.##.##", "#.##..#", "#.....#", "#.###.#", "#.###.#", "#######"],
+    eye: [".......", "..###..", ".#...#.", "#..#..#", ".#...#.", "..###..", "......."],
+    space: ["##.##..", "##.##..", ".......", "##.##..", "##.##..", ".......", "......."],
+    user: ["..###..", "..###..", "..###..", ".......", ".#####.", "#######", "#######"],
+    bolt: ["....##.", "...##..", "..##...", ".######", "...##..", "..##...", ".##...."],
+    keyb: ["#######", "#.#.#.#", "#######", "#.#.#.#", "#######", "#.....#", "#######"],
     back: ["...#....", "..##....", ".#######", "########", ".#######", "..##....", "...#...."],
     fwd: ["....#...", "....##..", "#######.", "########", "#######.", "....##..", "....#..."],
     reload: ["..####..", ".#....#.", "#.......", "#.....##", "#....###", ".#....#.", "..####.."],
@@ -392,5 +440,5 @@
     requestAnimationFrame(frame);
     return build;
   }
-  window.ZB = { sky, starfield, seigaiha, landscape, PALETTES: P, FONTS, KEYS, DEFAULTS, ENGINES, load, save, apply, keymap, keyName, comboOf, toUrl, calc, sites, icon, mix };
+  window.ZB = { sky, starfield, seigaiha, landscape, PALETTES: P, FONTS, KEYS, DEFAULTS, ENGINES, load, save, apply, keymap, keyName, comboOf, toUrl, calc, units, sites, icon, mix };
 })();

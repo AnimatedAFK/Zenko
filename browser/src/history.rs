@@ -62,7 +62,7 @@ pub fn set_title(h: &mut HashMap<String, Entry>, url: &str, title: &str) {
 pub fn for_ui(h: &HashMap<String, Entry>) -> Value {
     let mut v: Vec<(&String, &Entry)> = h.iter().collect();
     v.sort_by(|a, b| score(b.1).partial_cmp(&score(a.1)).unwrap_or(std::cmp::Ordering::Equal));
-    Value::Array(v.into_iter().take(4000).map(|(u, e)| json!({"u": u, "t": e.t, "s": (score(e) * 10.0).round() / 10.0})).collect())
+    Value::Array(v.into_iter().take(4000).map(|(u, e)| json!({"u": u, "t": e.t, "s": (score(e) * 10.0).round() / 10.0, "l": e.l})).collect())
 }
 
 /// Read Edge's History database (our imported copy) into `h`. Only called before WebView2 starts.

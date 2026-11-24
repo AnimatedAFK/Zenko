@@ -1,6 +1,6 @@
 [package]
 name = "zenko-browser"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "Zenko Browser - a fast night-shrine browser that talks to Zenko"
 build = "build.rs"
@@ -29,7 +29,10 @@ windows = { version = "0.62", features = [
   "Win32_System_Com_StructuredStorage",
   "Win32_System_Diagnostics_ToolHelp",
   "Win32_System_LibraryLoader",
+  "Win32_System_Power",
+  "Win32_System_Registry",
   "Win32_System_Threading",
+  "Win32_Security",
 ] }
 windows-core = "0.62"
 

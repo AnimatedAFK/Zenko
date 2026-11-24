@@ -7,6 +7,12 @@ pub fn zenko_dir() -> PathBuf {
     base.join("FoxBuddy")
 }
 
+/// Zenko's folder, only when Zenko is installed on this account.
+pub fn foxbuddy_dir() -> Option<PathBuf> {
+    let d = zenko_dir();
+    d.exists().then_some(d)
+}
+
 pub fn host_of(url: &str) -> String {
     let rest = match url.find("://") {
         Some(i) => &url[i + 3..],

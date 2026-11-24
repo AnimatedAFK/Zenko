@@ -53,7 +53,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.24-zenko21.2"
+APP_VERSION = "v2026.11.24-zenko21.3"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -40176,6 +40176,69 @@ class Zenko21(Zenko20):
             zk_log_error("notebooks: %r" % (ex,))
         self.root.after(20000, self.nb_watch_tick)
         self.root.after(45000, self.eat_prewarm)                 # her pounce frames, ready before you need them
+        self.root.after(9000, self.zb_inbox_tick)                # notes, clips and reminders sent from Zenko Browser
+
+    # =================================================================================================================
+    #  Zenko Browser inbox (zenko21.3): the browser drops notes, page clips and due-date reminders into
+    #  %APPDATA%\FoxBuddy\browser_inbox.json. Notes and clips land in the Notes scratchpad (which files itself
+    #  into the right subject notebook); reminders hang on the ema rack.
+    # =================================================================================================================
+    def zb_inbox_tick(self):
+        try:
+            path = os.path.join(DATA_DIR, "browser_inbox.json")
+            if os.path.exists(path):
+                take = path + ".take"
+                os.replace(path, take)
+                with open(take, encoding="utf-8") as f:
+                    items = json.load(f)
+                os.remove(take)
+                said = None
+                for it in items if isinstance(items, list) else []:
+                    if isinstance(it, dict):
+                        said = self.zb_inbox_item(it) or said
+                if said:
+                    try:
+                        self.say(said, 7)
+                    except Exception:
+                        pass
+        except Exception as ex:
+            zk_log_error("browser inbox: %r" % (ex,))
+        try:
+            self.root.after(5000, self.zb_inbox_tick)
+        except Exception:
+            pass
+
+    def zb_inbox_item(self, it):
+        kind = it.get("kind") or "note"
+        title = (it.get("title") or "").strip()[:140]
+        url = (it.get("url") or "").strip()
+        if kind == "reminder":
+            when = float(it.get("when") or 0)
+            text = re.sub(r"\s+", " ", it.get("text") or "").strip()[:150]
+            if not text:
+                return None
+            self.ema_add(text, when or None)
+            return "Kon! I hung that on the ema rack for you~"
+        text = (it.get("text") or "").strip()
+        if kind == "clip":
+            text = (text + "\n" if text else "") + "[picture clip] " + (it.get("path") or "")
+        if not text:
+            return None
+        subj = (it.get("subject") or "").strip()
+        block = "\n" + ("%s\n" % subj if subj and subj != "Core" else "") + (title + "\n" if title else "") + text + ("\n(from %s)" % url if url else "") + "\n"
+        ui = self._nb_alive()
+        try:
+            if ui:
+                ui["scratch"].insert("end", block)
+                self.nb_draft_later()
+            else:
+                os.makedirs(DATA_DIR, exist_ok=True)
+                with open(NB_SCRATCH, "a", encoding="utf-8") as f:
+                    f.write(block)
+        except (OSError, tk.TclError) as ex:
+            zk_log_error("browser inbox note: %r" % (ex,))
+            return None
+        return "Got it~ I put that in your Notes scratchpad. It files itself when you open Notes."
 
     # =================================================================================================================
     #  window: a sensible minimum size

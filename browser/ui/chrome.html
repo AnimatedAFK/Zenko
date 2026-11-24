@@ -235,6 +235,68 @@
   [data-tabs="side"] .tab.pinned { width: auto; max-width: none; justify-content: flex-start; padding: 0 .7rem; }
   [data-tabs="side"] .tab.pinned .t { display: block; }
   .tab.pinned::before { content: ""; position: absolute; right: 5px; top: 5px; width: 4px; height: 4px; background: var(--gold); box-shadow: 0 0 5px var(--gold); }
+  /* spaces */
+  #spaces { display: flex; gap: 2px; align-self: center; margin: 0 .35rem 0 .1rem; padding: 2px; background: color-mix(in srgb, var(--night) 60%, transparent); clip-path: var(--clips); flex: none; }
+  #spaces button { padding: 0 .55rem; height: 1.65rem; font-size: .85rem; color: var(--grey); clip-path: var(--clips); display: flex; align-items: center; gap: .35rem; }
+  #spaces button:hover { color: var(--ink); background: var(--hover); }
+  #spaces button.on { color: var(--night); background: var(--gold); font-weight: 600; }
+  #spaces button i { font-style: normal; font-size: .72rem; opacity: .7; }
+  [data-tabs="side"] #spaces { margin: .45rem .3rem .35rem .1rem; justify-content: stretch; }
+  [data-tabs="side"] #spaces button { flex: 1; justify-content: center; }
+  /* subject stripe, tree, badges, profile, split */
+  .tab[data-subj]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 1px; height: 2px; background: var(--sc); opacity: .9; }
+  [data-tabs="side"] .tab[data-subj]::after { left: 1px; right: auto; top: 22%; bottom: 22%; width: 3px; height: auto; }
+  .tab[data-subj="Biology"] { --sc: #5fcf7b; } .tab[data-subj="Chemistry"] { --sc: #c58cff; } .tab[data-subj="Maths"] { --sc: #4fb3ff; }
+  .tab[data-subj="French"] { --sc: #ff6f8c; } .tab[data-subj="Psychology"] { --sc: #ffb347; } .tab[data-subj="English"] { --sc: #f2e36b; } .tab[data-subj="Core"] { --sc: #e8e2d0; }
+  [data-tabs="side"] .tab.d1 { margin-left: 1rem !important; } [data-tabs="side"] .tab.d2 { margin-left: 2rem !important; } [data-tabs="side"] .tab.d3 { margin-left: 2.8rem !important; }
+  [data-tabs="side"] .tab.d1::before, [data-tabs="side"] .tab.d2::before, [data-tabs="side"] .tab.d3::before { content: ""; position: absolute; left: -.6rem; top: 50%; width: .45rem; height: 2px; background: var(--line); }
+  .tab .bd { display: none; min-width: 1.05rem; height: 1.05rem; padding: 0 .25rem; font-size: .72rem; font-weight: 700; line-height: 1.05rem; text-align: center; background: #d9472b; color: #fff; clip-path: var(--clips); flex: none; }
+  .tab.badge .bd { display: block; }
+  .tab.pinned .bd { position: absolute; right: 2px; top: 2px; }
+  .tab .pf { display: none; font-size: .68rem; font-weight: 700; color: var(--night); background: var(--glow); padding: 0 .25rem; clip-path: var(--clips); flex: none; }
+  .tab.prof .pf { display: block; }
+  .tab.splitt { box-shadow: inset 0 -2px 0 var(--glow); }
+  #splitbar { display: none; position: absolute; top: 10%; bottom: 10%; left: calc(50% - 1px); width: 2px; background: linear-gradient(var(--gold), var(--glow)); box-shadow: 0 0 10px var(--gold); z-index: 2; pointer-events: none; }
+  [data-split="on"] #splitbar { display: block; }
+  /* toolbar extras */
+  #b-shield { position: relative; }
+  #b-shield b { position: absolute; right: -2px; bottom: 0; font-size: .66rem; line-height: 1; padding: 1px 3px; color: var(--night); background: var(--gold); clip-path: var(--clips); display: none; }
+  #b-shield.has b { display: block; }
+  #b-shield.off { opacity: .45; }
+  #b-focus.on { color: var(--night); background: var(--gold); animation: breathe 2.6s ease-in-out infinite; }
+  /* side panels drawn by the frame */
+  .ptabs { display: flex; gap: 2px; flex: 1; min-width: 0; overflow: hidden; }
+  .ptabs button { height: 1.9rem; padding: 0 .55rem; color: var(--grey); clip-path: var(--clips); display: flex; align-items: center; gap: .35rem; font-size: .88rem; white-space: nowrap; }
+  .ptabs button:hover { color: var(--ink); background: var(--hover); }
+  .ptabs button.on { color: var(--night); background: var(--gold); font-weight: 600; }
+  .ptabs button span { display: none; }
+  .ptabs button.on span { display: inline; }
+  #pside { display: none; position: absolute; inset: 0; overflow-y: auto; padding: .7rem .8rem 1rem; color: var(--ink); }
+  [data-pmode]:not([data-pmode="claude"]) #pside { display: block; }
+  #pside h4 { margin: .2rem 0 .5rem; color: var(--gold); font-size: .82rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
+  #pside textarea { width: 100%; min-height: 12rem; resize: vertical; background: var(--field); color: var(--ink); border: 2px solid var(--line); padding: .6rem .7rem; font: inherit; outline: 0; clip-path: var(--clips); }
+  #pside textarea:focus { border-color: var(--gold); }
+  #pside input { width: 100%; height: 2.1rem; background: var(--field); border: 2px solid var(--line); padding: 0 .6rem; outline: 0; clip-path: var(--clips); margin-bottom: .5rem; }
+  #pside .li { display: flex; align-items: center; gap: .6rem; padding: .45rem .5rem; clip-path: var(--clips); cursor: default; }
+  #pside .li:hover { background: color-mix(in srgb, var(--accbg) 70%, var(--panel)); }
+  #pside .li .tx { flex: 1; min-width: 0; }
+  #pside .li .tt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #pside .li .sb { color: var(--grey); font-size: .82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #pside .li .btn { height: 1.8rem; min-width: 1.8rem; }
+  #pside .day { margin: .8rem 0 .2rem; color: var(--gold); font-size: .8rem; font-weight: 600; letter-spacing: .06em; }
+  #pside .row { display: flex; gap: .4rem; margin: .5rem 0; flex-wrap: wrap; }
+  #pside .empty { color: var(--grey); padding: 1rem .3rem; line-height: 1.5; }
+  #pside .bar { height: 6px; background: var(--line); margin-top: .25rem; clip-path: var(--clips); }
+  #pside .bar i { display: block; height: 100%; background: var(--gold); }
+  /* clip to Zenko */
+  #clipbox { display: none; position: absolute; border: 2px dashed var(--gold); background: color-mix(in srgb, var(--gold) 12%, transparent); box-shadow: 0 0 0 9999px color-mix(in srgb, var(--night) 45%, transparent); pointer-events: none; }
+  #cliphint { display: none; position: absolute; left: 50%; top: 1rem; transform: translateX(-50%); padding: .5rem 1rem; --b: var(--gold); --c: var(--panel); color: var(--ink); }
+  #ov.clip { cursor: crosshair; }
+  #ov.clip #pal, #ov.clip #tmenu { display: none; }
+  #ov.clip .dim { opacity: 0 !important; }
+  #ov.clip #cliphint, #ov.clip.sel #clipbox { display: block; }
+  #notice .btn { height: 1.6rem; }
+  [data-pmode]:not([data-pmode="claude"]) #p-home, [data-pmode]:not([data-pmode="claude"]) #p-pop { display: none; }
   #q::selection { background: color-mix(in srgb, var(--gold) 45%, transparent); color: var(--ink); }
   .grp { padding: .6rem .75rem .25rem; font-size: .82rem; color: var(--gold); display: flex; align-items: center; gap: .5rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
   .grp::before { content: ""; width: 4px; height: 4px; background: var(--gold); box-shadow: 0 0 6px var(--gold); }
@@ -253,6 +315,7 @@
     <div id="bar" data-drag>
       <span class="lantern"><i></i></span>
       <div class="brand"><span class="mask" id="mask1"></span><b>ZENKO</b></div>
+      <div id="spaces"></div>
       <div id="tabs"><div id="ind"></div></div>
       <button class="btn" id="newtab" title="New tab (Ctrl+T)"><span>New tab</span></button>
       <div class="grow" data-drag></div>
@@ -264,6 +327,8 @@
       <button class="btn" id="b-fwd" title="Forward (Alt+Right)"></button>
       <button class="btn" id="b-reload" title="Reload (F5)"></button>
       <div id="addr" class="pxb" title="Search or type an address (Ctrl+L)"></div>
+      <button class="btn" id="b-shield" title="This site: blocker, dark mode, tools"><b id="bcount"></b></button>
+      <button class="btn" id="b-focus" title="Focus mode"></button>
       <span id="notice" class="pxb"></span>
       <div class="spacer" data-drag></div>
       <button class="btn" id="b-claude" title="Claude panel (Ctrl+J)"></button>
@@ -272,16 +337,16 @@
       <div class="winbtns"></div>
     </div>
     <div id="main">
-      <div id="fwrap"><div id="frame" class="pxb"></div><div id="door"><i></i><i></i><div class="mark">善狐</div></div><div id="fire"></div><span class="corner tl"><i></i></span><span class="corner tr"><i></i></span><span class="corner bl"><i></i></span><span class="corner br"><i></i></span><span class="glint"></span></div>
+      <div id="fwrap"><div id="frame" class="pxb"></div><div id="door"><i></i><i></i><div class="mark">善狐</div></div><div id="fire"></div><span class="corner tl"><i></i></span><span class="corner tr"><i></i></span><span class="corner bl"><i></i></span><span class="corner br"><i></i></span><span class="glint"></span><div id="splitbar"></div></div>
       <div id="split"></div>
       <div id="panel" class="pxb">
         <div class="phead" data-drag>
-          <span class="dia">Claude</span>
+          <div class="ptabs" id="ptabs"></div>
           <button class="btn" id="p-home" title="New chat"></button>
           <button class="btn" id="p-pop" title="Pop out into its own window"></button>
           <button class="btn" id="p-close" title="Close panel (Ctrl+J)"></button>
         </div>
-        <div id="parea"></div>
+        <div id="parea"><div id="pside"></div></div>
       </div>
     </div>
   </div>
@@ -295,6 +360,7 @@
     <div class="foot"><span><kbd>↑</kbd> <kbd>↓</kbd> choose</span><span><kbd>Enter</kbd> open</span><span><kbd>Alt+Enter</kbd> new tab</span><span id="ver"></span></div>
   </div>
   <div id="tmenu" class="pxb"></div>
+  <div id="clipbox"></div><div id="cliphint" class="pxb">Drag over the part you want to send to Zenko · Esc cancels</div>
 </div>
 <div class="edge n" data-d="n"></div><div class="edge s" data-d="s"></div><div class="edge e" data-d="e"></div><div class="edge w" data-d="w"></div>
 <div class="edge ne" data-d="ne"></div><div class="edge nw" data-d="nw"></div><div class="edge se" data-d="se"></div><div class="edge sw" data-d="sw"></div>
@@ -315,7 +381,7 @@
     document.documentElement.style.setProperty("--pw", Math.max(300, prefs.panelWidth | 0) + "px");
     placeTabs();
     send({ c: "keys", list: Object.values(keys).filter(Boolean) });
-    send({ c: "prefs", sleepAfter: prefs.sleepAfter | 0 });
+    sendPrefs();
     requestAnimationFrame(layout);
     setTimeout(indicator, 60);
     setTimeout(art, 30);
@@ -348,15 +414,46 @@
   function placeTabs() {
     const side = prefs.tabs === "side";
     const host = side ? $("#sidecol") : $("#bar");
-    const tabs = $("#tabs"), nt = $("#newtab");
-    if (side && tabs.parentNode !== $("#sidecol")) { $("#sidecol").append(tabs, nt); }
-    if (!side && tabs.parentNode !== host) { const brand = $("#bar .brand"); brand.after(tabs); tabs.after(nt); }
+    const tabs = $("#tabs"), nt = $("#newtab"), sp = $("#spaces");
+    if (side && tabs.parentNode !== $("#sidecol")) { $("#sidecol").append(sp, tabs, nt); }
+    if (!side && tabs.parentNode !== host) { const brand = $("#bar .brand"); brand.after(sp); sp.after(tabs); tabs.after(nt); }
     $("#b-side").classList.toggle("on", side);
+  }
+  function today() { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  const RKEYS = ["sleepAfter", "ads", "adsOff", "clean", "cookies", "ytAds", "sponsor", "noAutoplay", "preload", "focus", "focusBlock", "focusOnlyMode", "focusOnly",
+    "focusAllow", "sortDownloads", "gestures", "drafts", "archiveDays", "sites", "outlookSound", "battery", "profiles", "translateTo"];
+  let lastRP = "";
+  function sendPrefs() {
+    const o = { day: today() };
+    RKEYS.forEach((k) => { o[k] = prefs[k]; });
+    o.sleepAfter = prefs.sleepAfter | 0;
+    const k = JSON.stringify(o);
+    if (k !== lastRP) { lastRP = k; send({ c: "prefs", p: o }); }
+  }
+  setInterval(() => { send({ c: "day", d: today() }); }, 5 * 60 * 1000);
+  function setPref(k, v) { prefs = ZB.load(); prefs[k] = v; ZB.save(prefs); applyPrefs(); }
+  function siteOf(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return ""; } }
+  function spaceList() { const l = (prefs.spaces || []).filter(Boolean); return l.length ? l : ["Study"]; }
+  function spaceKey(i) { return i === 0 ? "" : spaceList()[i]; }
+  function curSpace() { const l = spaceList(); const i = S.space ? l.indexOf(S.space) : 0; return i < 0 ? 0 : i; }
+  function inSpace(t) { const l = spaceList(); const i = t.space ? l.indexOf(t.space) : 0; return (i < 0 ? 0 : i) === curSpace(); }
+  function renderSpaces() {
+    const box = $("#spaces"), l = spaceList();
+    const key = l.join("|") + "#" + curSpace();
+    if (box.dataset.k === key) return;
+    box.dataset.k = key; box.innerHTML = "";
+    l.forEach((name, i) => {
+      const b = document.createElement("button");
+      b.textContent = name; b.title = "Space: " + name + " (Alt+" + (i + 1) + ")";
+      b.classList.toggle("on", i === curSpace());
+      b.onclick = () => send({ c: "space", name: spaceKey(i) });
+      box.appendChild(b);
+    });
   }
   function icons() {
     const set = (id, n, s) => { const e = $(id); if (e) e.insertAdjacentHTML("afterbegin", ZB.icon(n, s)); };
     set("#newtab", "plus", 2); set("#mask1", "mask", 2); set("#mask2", "mask", 2); set("#b-back", "back", 2); set("#b-fwd", "fwd", 2); set("#b-reload", "reload", 2);
-    set("#b-claude", "claude", 2); set("#b-side", "side", 2); set("#b-menu", "menu", 2.4);
+    set("#b-claude", "claude", 2); set("#b-shield", "shield", 2); set("#b-focus", "torii", 2); set("#b-side", "side", 2); set("#b-menu", "menu", 2.4);
     set("#p-home", "plus", 2); set("#p-pop", "pop", 2); set("#p-close", "close", 2);
     set("#qi", "search", 2.4);
     document.querySelectorAll(".winbtns").forEach((w) => {
@@ -396,7 +493,11 @@
     const box = $("#tabs");
     const seen = new Set();
     let prev = $("#ind");
-    S.tabs.forEach((t) => {
+    const vis = S.tabs.filter(inSpace);
+    const ids = new Set(vis.map((t) => t.id));
+    const depth = (t) => { let d = 0, p = t.parent; while (p && ids.has(p) && d < 3) { d++; p = (S.tabs.find((x) => x.id === p) || {}).parent; } return d; };
+    const split = S.split || [];
+    vis.forEach((t) => {
       seen.add(t.id);
       let el = els.get(t.id);
       if (!el) {
@@ -404,7 +505,7 @@
         el.className = "tab";
         el.dataset.id = t.id;
         el.draggable = true;
-        el.innerHTML = `<span class="ic"></span><span class="t"></span><span class="aud"></span><button class="x" title="Close (Ctrl+W)">${ZB.icon("close", 1.4)}</button>`;
+        el.innerHTML = `<span class="ic"></span><span class="t"></span><span class="pf"></span><span class="bd"></span><span class="aud"></span><button class="x" title="Close (Ctrl+W)">${ZB.icon("close", 1.4)}</button>`;
         els.set(t.id, el);
         wireTab(el, t.id);
         if (booted) setTimeout(() => burst(el, 8, false), 120);
@@ -422,6 +523,17 @@
       el.classList.toggle("muted", !!t.muted);
       el.classList.toggle("asleep", !!t.asleep);
       el.classList.toggle("pinned", !!t.pinned);
+      const subj = t.group || t.subject || "";
+      if (subj) el.dataset.subj = subj; else delete el.dataset.subj;
+      const un = (t.title || "").match(/\((\d{1,4})\+?\)/);
+      el.classList.toggle("badge", !!un);
+      el.querySelector(".bd").textContent = un ? un[1] : "";
+      el.classList.toggle("prof", !!t.profile);
+      el.querySelector(".pf").textContent = t.profile ? t.profile[0].toUpperCase() : "";
+      if (t.profile) el.title += "\nProfile: " + t.profile;
+      el.classList.toggle("splitt", split.includes(t.id));
+      const d = prefs.tabs === "side" ? depth(t) : 0;
+      el.classList.remove("d1", "d2", "d3"); if (d) el.classList.add("d" + d);
       if (prev.nextSibling !== el) prev.after(el);
       prev = el;
     });
@@ -501,6 +613,18 @@
       a.querySelector(".host").textContent = h; a.querySelector(".path").textContent = rest;
     }
     $("#b-claude").classList.toggle("on", S.panel);
+    const sh = $("#b-shield");
+    sh.classList.toggle("has", !!S.blocked && prefs.ads && !S.adsOff);
+    sh.classList.toggle("off", !prefs.ads || !!S.adsOff);
+    $("#bcount").textContent = S.blocked > 99 ? "99+" : (S.blocked || "");
+    $("#b-focus").classList.toggle("on", !!S.focus);
+    $("#b-focus").title = S.focus ? "Focus mode is on (click to turn off)" : "Focus mode: block distracting sites";
+    document.documentElement.dataset.split = S.split ? "on" : "off";
+    document.documentElement.dataset.pmode = S.panelMode || "claude";
+    if (S.battery) document.documentElement.dataset.motion = "low";
+    renderSpaces();
+    peekNote();
+    if (S.panel && S.panelMode && S.panelMode !== "claude") renderPanel();
     document.documentElement.dataset.panel = S.panel ? "on" : "off";
     document.documentElement.dataset.max = S.max ? "on" : "off";
     document.querySelectorAll(".winbtns .mx").forEach((b) => { b.innerHTML = ZB.icon(S.max ? "rest" : "max", 1.7); b.title = S.max ? "Restore" : "Maximise"; });
@@ -529,7 +653,9 @@
   $("#b-back").onclick = () => send({ c: "back" });
   $("#b-fwd").onclick = () => send({ c: "fwd" });
   $("#b-reload").onclick = () => send({ c: (activeTab() || {}).loading ? "stop" : "reload" });
-  $("#b-claude").onclick = () => send({ c: "panel" });
+  $("#b-claude").onclick = () => { if (S.panel && S.panelMode !== "claude") panelMode("claude"); else send({ c: "panel" }); };
+  $("#b-shield").onclick = () => openSiteMenu();
+  $("#b-focus").onclick = () => toggleFocus();
   $("#b-side").onclick = () => toggleSide();
   $("#b-menu").onclick = () => openPal("new", "");
   $("#addr").onmousedown = (e) => { e.preventDefault(); openPal("here", currentUrl()); };
@@ -567,8 +693,7 @@
     build();
     if (palOpen) { q.focus(); q.select(); return; }
     palOpen = true; shownSent = false;
-    $("#shot-page").removeAttribute("src"); $("#shot-panel").removeAttribute("src");
-    $("#shot-page").style.display = $("#shot-panel").style.display = "none";
+    clearShots();
     $("#ov").classList.add("open");
     send({ c: "overlay", on: true });
     clearTimeout(shotTimer);
@@ -579,14 +704,15 @@
     shownSent = true;
     clearTimeout(shotTimer);
     send({ c: "shown" });
-    if (ovKind === "menu") { requestAnimationFrame(() => $("#ov").classList.add("show")); return; }
+    if (ovKind === "menu" || ovKind === "clip") { requestAnimationFrame(() => $("#ov").classList.add("show")); return; }
     requestAnimationFrame(() => { $("#ov").classList.add("show"); q.focus(); q.select(); });
     setTimeout(() => { q.focus(); }, 60);
   }
   function closePal(keepFocus) {
     if (!palOpen) return;
     palOpen = false;
-    $("#ov").classList.remove("show");
+    clipOn = false;
+    $("#ov").classList.remove("show", "clip", "sel");
     send({ c: "overlay", on: false });
     setTimeout(() => { if (!palOpen) $("#ov").classList.remove("open"); }, 200);
   }
@@ -595,11 +721,20 @@
     Object.assign(img.style, { left: r.left + "px", top: r.top + "px", width: r.width + "px", height: r.height + "px", display: "block" });
   }
   let shotsLeft = 0;
+  function clearShots() {
+    document.querySelectorAll("#ov .shot.dyn").forEach((i) => i.remove());
+    $("#shot-page").removeAttribute("src"); $("#shot-panel").removeAttribute("src");
+    $("#shot-page").style.display = $("#shot-panel").style.display = "none";
+  }
   window.zbShot = function (k, data) {
-    const img = k === "panel" ? $("#shot-panel") : $("#shot-page");
     if (!data) return;
-    placeShot(img, k === "panel" ? "#parea" : "#frame");
+    if (k === "panel") { const img = $("#shot-panel"); placeShot(img, "#parea"); img.src = data; return; }
+    const [kind, x, y, w, h] = k.split("|");
+    const img = document.createElement("img");
+    img.className = "shot dyn" + (kind === "page" ? " pg" : "");
+    Object.assign(img.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px", display: "block" });
     img.src = data;
+    $("#ov .dim").before(img);
   };
   function cmdList() {
     const t = activeTab() || {};
@@ -617,6 +752,30 @@
       ["Developer tools (DevTools)", "gear", () => send({ c: "devtools" })],
       ["Check for updates", "star", () => { note("Checking for updates..."); send({ c: "update" }); }],
       ["Open the browser's data folder", "home", () => send({ c: "openData" })],
+      [prefs.focus ? "Focus mode: turn off" : "Focus mode: block distracting sites", "torii", toggleFocus, "focus"],
+      [S.split ? "Exit split view" : "Split view with the previous tab", "split", splitToggle, "split"],
+      ["Notes for this page", "note", () => panelMode("notes"), "notes"],
+      ["Downloads", "down", () => panelMode("downloads")],
+      ["History timeline", "clock", () => panelMode("history")],
+      ["Media playing in tabs", "music", () => panelMode("media")],
+      ["Today's recap (time on each site)", "clock", () => panelMode("recap")],
+      ["Save page for offline", "save", () => send({ c: "page", a: "savePage" })],
+      ["Open saved pages folder", "save", () => send({ c: "openSaved" })],
+      ["Cite this page (MLA / APA)", "book", () => send({ c: "page", a: "cite" })],
+      ["Translate page to English", "globe", () => send({ c: "page", a: "translatePage" })],
+      ["Translate page to French", "globe", () => send({ c: "page", a: "translatePageFr" })],
+      ["Clip part of the page to Zenko", "clip", () => setTimeout(() => window.zb.clip(), 260), "clip"],
+      ["Link hints: click links with the keyboard", "keyb", () => send({ c: "hints" }), "hints"],
+      ["Floating video (mini player)", "pop", () => send({ c: "video", a: "pip" }), "pip"],
+      ["Video faster", "plus", () => send({ c: "video", a: "speed", v: 0.25 })], ["Video slower", "min", () => send({ c: "video", a: "speed", v: -0.25 })],
+      ["Loop video on / off", "reload", () => send({ c: "video", a: "loop" })],
+      ["This site: blocker, dark mode, zoom...", "shield", () => setTimeout(openSiteMenu, 260)],
+      ...(prefs.profiles || []).filter(Boolean).map((pf) => ["New tab in " + pf + " profile", "user", () => send({ c: "newIn", url: "", profile: pf })]),
+      ["New tab in Personal profile", "user", () => send({ c: "newIn", url: "", profile: "" })],
+      ...spaceList().map((n, i) => ["Go to space: " + n, "space", () => send({ c: "space", name: spaceKey(i) }), "space" + (i + 1)]),
+      ["Make Zenko Browser my default browser", "star", () => send({ c: "makeDefault" })],
+      ["Extensions folder (unpacked Chrome extensions)", "bolt", () => send({ c: "openExtensions" })],
+      ["Import from Edge again", "reload", () => send({ c: "importEdge", close: true })],
     ];
   }
   let zoomF = 1;
@@ -636,6 +795,14 @@
     const text = q.value.trim(), ql = text.toLowerCase();
     items = [];
     const add = (grp, o) => items.push(Object.assign({ grp }, o));
+    if (palMode === "hide") {
+      const h = siteOf((activeTab() || {}).url || "");
+      add("", { ic: ZB.icon("eye", 2), title: text ? "Hide on " + h + ": " + text : "Show everything on " + h + " again", sub: "Parts to hide as CSS selectors, split by commas (for example: #comments, .sidebar)",
+        run: () => { const all = Object.assign({}, ZB.load().sites || {}); all[h] = Object.assign({}, all[h] || {}, { hide: text }); setPref("sites", all); send({ c: "reload" }); } });
+      sel = 0; draw(); return;
+    }
+    const un = ZB.units(text);
+    if (un) add("", { cls: "calc", ic: "=", title: "= " + un.v.toLocaleString("en", { maximumFractionDigits: 6 }) + " " + un.u, sub: "Enter copies the answer", run: () => navigator.clipboard && navigator.clipboard.writeText(String(un.v)) });
     const val = ZB.calc(text);
     if (val !== null) add("", { cls: "calc", ic: "=", title: "= " + val.toLocaleString("en", { maximumFractionDigits: 10 }), sub: "Enter copies the answer", run: () => navigator.clipboard && navigator.clipboard.writeText(String(val)) });
     if (text && auto && q.value === auto.text) {
@@ -666,6 +833,14 @@
         if (!fuzzy((b.t || "") + " " + bare(b.u) + " " + (b.f || ""), typedOnly)) continue;
         add("Bookmarks", { ic: ZB.icon("star", 2), title: b.t || bare(b.u), sub: (b.f ? b.f + " · " : "") + bare(b.u), url: b.u }); n++;
       }
+    }
+    if (ql.length >= 3) {
+      if (found.q !== ql) { clearTimeout(found.t); found.t = setTimeout(() => send({ c: "search", q: ql }), 160); }
+      else found.list.forEach((f) => { const t = S.tabs.find((x) => x.id === f.id); if (t) add("Found inside open tabs", { ic: tabIcon(t), title: t.title || t.url, sub: "…" + f.snip + "…", tag: "Switch", run: () => send({ c: "activate", id: t.id }) }); });
+      SAVED.forEach((x) => { if (fuzzy(x.t, ql)) add("Saved for offline", { ic: ZB.icon("save", 2), title: x.t, sub: "Opens without internet", url: x.u }); });
+      ARCH.forEach((x, i) => { if (fuzzy((x.title || "") + " " + x.url, ql)) add("Archived tabs", { ic: ZB.icon("zzz", 2), title: x.title || x.url, sub: x.url, tag: "Restore", run: () => send({ c: "unarchive", i }) }); });
+    } else if (!ql && ARCH.length) {
+      add("Archived tabs", { ic: ZB.icon("zzz", 2), title: ARCH.length + " tab" + (ARCH.length > 1 ? "s" : "") + " archived (not opened for a while)", sub: "Type a word to find one", run: () => {} });
     }
     cmdList().forEach(([name, ic, run, k]) => {
       if (fuzzy(name, ql) || !ql) add("Commands", { ic: ZB.icon(ic, 2), title: name, run, kbd: k && keys[k] ? ZB.keyName(keys[k]) : "" });
@@ -761,18 +936,22 @@
     else if (e.key === "Enter") { e.preventDefault(); choose(sel, e.altKey); }
     else if (e.key === "Escape") { e.preventDefault(); closePal(); }
   });
-  $("#ov .dim").addEventListener("mousedown", () => closePal());
+  $("#ov .dim").addEventListener("mousedown", () => { if (!clipOn) closePal(); });
   $("#ov .dim").addEventListener("contextmenu", (e) => e.preventDefault());
 
   // ---------------------------------------------------------------- right-click menu on a tab
-  let menuSel = -1, menuItems = [];
+  let menuSel = -1, menuItems = [], menuX = 0, menuY = 0;
+  const SUBJECTS = ["Biology", "Chemistry", "Maths", "French", "Psychology", "English", "Core"];
   function openMenu(id, x, y) {
     const t = S.tabs.find((t) => t.id === id);
     if (!t) return;
-    const i = S.tabs.indexOf(t);
-    const others = S.tabs.some((o) => o.id !== id && !o.pinned);
-    const right = S.tabs.slice(i + 1).some((o) => !o.pinned);
-    menuItems = [
+    const vis = S.tabs.filter(inSpace);
+    const i = vis.indexOf(t);
+    const others = vis.some((o) => o.id !== id && !o.pinned);
+    const right = vis.slice(i + 1).some((o) => !o.pinned);
+    const split = S.split || [];
+    const otherProf = t.profile ? "" : ((prefs.profiles || [])[0] || "School");
+    menuAt([
       ["New tab to the right", "plus", () => { send({ c: "activate", id }); send({ c: "new" }); }, keys.newTab],
       "-",
       ["Reload", "reload", () => send({ c: "reload", id }), "F5"],
@@ -780,12 +959,61 @@
       [t.pinned ? "Unpin" : "Pin", "star", () => send({ c: "pin", id })],
       [t.muted ? "Unmute tab" : "Mute tab", t.muted ? "sound" : "muted", () => send({ c: "mute", id }), keys.mute],
       "-",
+      split.includes(id) ? ["Exit split view", "split", () => send({ c: "unsplit" })]
+        : ["Open in split view", "split", () => send({ c: "split", id }), "", id === S.active],
+      ["Move to space", "space", null, "›", false, () => spaceList().map((n, k) => [n, "space", () => send({ c: "moveSpace", id, name: spaceKey(k) }), "", k === spaceList().indexOf(t.space || spaceList()[0])])],
+      ["Subject group", "book", null, "›", false, () => [["Automatic" + (t.subject ? " (" + t.subject + ")" : ""), "book", () => send({ c: "group", id, name: "" })], "-"]
+        .concat(SUBJECTS.map((n) => [n, "book", () => send({ c: "group", id, name: n })]))],
+      ["Open in " + (otherProf || "Personal") + " profile", "user", () => send({ c: "newIn", url: t.url, profile: otherProf }), "", /^zenko:/.test(t.url)],
+      "-",
       ["Close tab", "close", () => send({ c: "close", id }), keys.closeTab],
       ["Close other tabs", "close", () => send({ c: "closeOthers", id }), "", !others],
       ["Close tabs to the right", "close", () => send({ c: "closeRight", id }), "", !right],
       "-",
       ["Reopen closed tab", "reload", () => send({ c: "reopen" }), keys.reopen, !S.closed],
+    ], x, y);
+  }
+  // This site: blocker, look and tools
+  function openSiteMenu() {
+    const t = activeTab() || {};
+    const h = siteOf(t.url || "");
+    const r = $("#b-shield").getBoundingClientRect();
+    if (!h || /^zenko:/.test(t.url)) { menuAt([["Nothing to set on this page", "shield", null, "", true]], r.left, r.bottom + 4); return; }
+    const sites = Object.assign({}, prefs.sites || {});
+    const cur = Object.assign({}, sites[h] || {});
+    const setSite = (k, v) => { const all = Object.assign({}, ZB.load().sites || {}); all[h] = Object.assign({}, all[h] || {}, { [k]: v }); setPref("sites", all); send({ c: "reload" }); };
+    const off = (prefs.adsOff || []).includes(h);
+    const n = S.blocked || 0;
+    const list = (S.blockedHosts || []).slice(0, 6).map((x) => ["  " + x, "shield", null, "", true]);
+    const z = cur.zoom || 1;
+    const items = [
+      [prefs.ads ? (off ? "Blocker is off on " + h : n + " ads and trackers blocked") : "Ad blocker is off", "shield", null, "", true],
+      ...list,
+      [off ? "Turn the blocker back on here" : "Turn the blocker off on " + h, "shield", () => { const l = (ZB.load().adsOff || []).filter((x) => x !== h); if (!off) l.push(h); setPref("adsOff", l); send({ c: "reload" }); }, "", !prefs.ads],
+      "-",
+      [(cur.dark ? "✓ " : "") + "Dark mode on this site", "moon", () => setSite("dark", !cur.dark)],
+      [(cur.font === "readable" ? "✓ " : "") + "Easy-to-read font", "book", () => setSite("font", cur.font === "readable" ? "" : "readable")],
+      ...(/youtube\.com$/.test(h) ? [[(cur.hideShorts ? "✓ " : "") + "Hide YouTube Shorts", "eye", () => setSite("hideShorts", !cur.hideShorts)]] : []),
+      ["Zoom for this site: " + Math.round(z * 100) + "%", "search", null, "›", false, () => [0.8, 0.9, 1, 1.1, 1.25, 1.5].map((f) => [(f === z ? "✓ " : "") + Math.round(f * 100) + "%", "search", () => { const all = Object.assign({}, ZB.load().sites || {}); all[h] = Object.assign({}, all[h] || {}, { zoom: f }); setPref("sites", all); send({ c: "zoom", f }); }])],
+      ["Hide parts of this site...", "eye", () => openPal("hide", (cur.hide || ""))],
+      "-",
+      ["Translate page to English", "globe", () => send({ c: "page", a: "translatePage" })],
+      ["Translate page to French", "globe", () => send({ c: "page", a: "translatePageFr" })],
+      ["Cite this page (MLA / APA)", "book", () => send({ c: "page", a: "cite" })],
+      ["Clip part of the page to Zenko", "clip", () => setTimeout(() => window.zb.clip(), 260), keys.clip],
+      ["Save page for offline", "save", () => send({ c: "page", a: "savePage" })],
+      ["Video tools", "music", null, "›", false, () => [
+        ["Floating video (mini player)", "pop", () => send({ c: "video", a: "pip" }), keys.pip],
+        ["Faster", "plus", () => send({ c: "video", a: "speed", v: 0.25 })],
+        ["Slower", "min", () => send({ c: "video", a: "speed", v: -0.25 })],
+        ["Normal speed", "reload", () => send({ c: "video", a: "speedSet", v: 1 })],
+        ["Loop on / off", "reload", () => send({ c: "video", a: "loop" })],
+      ]],
     ];
+    menuAt(items, r.left, r.bottom + 4);
+  }
+  function menuAt(items, x, y) {
+    menuItems = items; menuX = x; menuY = y;
     const m = $("#tmenu");
     m.innerHTML = "";
     menuItems.forEach((it, n) => {
@@ -810,8 +1038,7 @@
     m.style.top = Math.max(6, Math.min(y + 2, innerHeight - h - 8)) + "px";
     if (palOpen) { ov.classList.add("show"); return; }
     palOpen = true; shownSent = false;
-    $("#shot-page").removeAttribute("src"); $("#shot-panel").removeAttribute("src");
-    $("#shot-page").style.display = $("#shot-panel").style.display = "none";
+    clearShots();
     ov.classList.add("open");
     send({ c: "overlay", on: true });
     clearTimeout(shotTimer);
@@ -820,10 +1047,13 @@
   function runMenu(n) {
     const it = menuItems[n];
     if (!it || it === "-" || it[4]) return;
+    if (it[5]) { menuAt(it[5](), menuX, menuY); return; }
+    if (!it[2]) return;
     closePal();
     setTimeout(it[2], 40);
   }
   document.addEventListener("keydown", (e) => {
+    if (palOpen && ovKind === "clip" && e.key === "Escape") { e.preventDefault(); closePal(); return; }
     if (!palOpen || ovKind !== "menu") return;
     const live = menuItems.map((it, n) => (it !== "-" && !it[4] ? n : -1)).filter((n) => n >= 0);
     if (e.key === "Escape") { e.preventDefault(); closePal(); }
@@ -834,7 +1064,7 @@
       $("#tmenu").querySelectorAll(".mi").forEach((el) => el.classList.toggle("sel", +el.dataset.n === menuSel));
     } else if (e.key === "Enter" && menuSel >= 0) { e.preventDefault(); runMenu(menuSel); }
   });
-  $("#ov").addEventListener("mousedown", (e) => { if (e.target.classList.contains("shot")) closePal(); });
+  $("#ov").addEventListener("mousedown", (e) => { if (!clipOn && e.target.classList.contains("shot")) closePal(); });
 
   // ---------------------------------------------------------------- shortcuts (sent by Rust from any page)
   const ACT = {
@@ -848,13 +1078,24 @@
     sideTabs: toggleSide,
     mute: () => send({ c: "mute", id: S.active }),
     settings: () => send({ c: "new", url: "zenko://settings" }),
-    lastTab: () => { const t = S.tabs[S.tabs.length - 1]; if (t) send({ c: "activate", id: t.id }); },
+    lastTab: () => { const v = S.tabs.filter(inSpace); const t = v[v.length - 1]; if (t) send({ c: "activate", id: t.id }); },
+    hints: () => send({ c: "hints" }),
+    split: () => splitToggle(),
+    focus: () => toggleFocus(),
+    notes: () => panelMode("notes"),
+    pip: () => send({ c: "video", a: "pip" }),
+    clip: () => window.zb.clip(),
+    space1: () => send({ c: "space", name: spaceKey(0) }),
+    space2: () => spaceList()[1] && send({ c: "space", name: spaceKey(1) }),
+    space3: () => spaceList()[2] && send({ c: "space", name: spaceKey(2) }),
   };
-  for (let n = 1; n <= 8; n++) ACT["tab" + n] = () => { const t = S.tabs[n - 1]; if (t) send({ c: "activate", id: t.id }); };
+  for (let n = 1; n <= 8; n++) ACT["tab" + n] = () => { const t = S.tabs.filter(inSpace)[n - 1]; if (t) send({ c: "activate", id: t.id }); };
   function step(d) {
     const i = S.tabs.findIndex((t) => t.id === S.active);
-    if (i < 0 || !S.tabs.length) return;
-    const t = S.tabs[(i + d + S.tabs.length) % S.tabs.length];
+    const vis = S.tabs.filter(inSpace);
+    const j = vis.findIndex((t) => t.id === S.active);
+    if (j < 0 || !vis.length) return;
+    const t = vis[(j + d + vis.length) % vis.length];
     send({ c: "activate", id: t.id });
   }
 
@@ -863,10 +1104,226 @@
   function note(text, ms, btn) {
     const n = $("#notice");
     n.textContent = text;
-    if (btn) { const b = document.createElement("button"); b.className = "btn on"; b.style.height = "1.6rem"; b.textContent = btn[0]; b.onclick = btn[1]; n.appendChild(b); }
+    const bs = btn ? (Array.isArray(btn[0]) ? btn : [btn]) : [];
+    bs.forEach((x) => { const b = document.createElement("button"); b.className = "btn on"; b.textContent = x[0]; b.onclick = () => { x[1](); if (!x[2]) n.classList.remove("on"); }; n.appendChild(b); });
     n.classList.add("on");
     clearTimeout(noteT);
     if (ms) noteT = setTimeout(() => n.classList.remove("on"), ms);
+  }
+
+  // ---------------------------------------------------------------- focus mode, split view, peek
+  function toggleFocus() {
+    const on = !prefs.focus;
+    setPref("focus", on);
+    note(on ? "Focus mode on: distracting sites are blocked. Kon~ you've got this!" : "Focus mode off", 3500);
+  }
+  function splitToggle() {
+    if (S.split) { send({ c: "unsplit" }); return; }
+    const vis = S.tabs.filter(inSpace).filter((t) => t.id !== S.active);
+    if (!vis.length) { note("Open another tab first, then split", 2500); return; }
+    const prev = vis.slice().sort((a, b) => (b.lastUsed || 0) - (a.lastUsed || 0))[0];
+    const i = S.tabs.findIndex((t) => t.id === S.active);
+    const next = S.tabs.slice(i + 1).find(inSpace) || S.tabs.slice(0, i).reverse().find(inSpace) || prev;
+    send({ c: "split", id: next.id });
+  }
+  let peekShown = false;
+  function peekNote() {
+    if (S.peek && !peekShown) { peekShown = true; note("Peeking at a link", 0, [["Open as tab", () => send({ c: "peekOpen" })], ["Close (Esc)", () => send({ c: "peekClose" })]]); }
+    else if (!S.peek && peekShown) { peekShown = false; $("#notice").classList.remove("on"); }
+  }
+
+  // ---------------------------------------------------------------- side panels drawn by the frame
+  const PANELS = [["claude", "claude", "Claude"], ["notes", "note", "Notes"], ["downloads", "down", "Downloads"], ["history", "clock", "History"], ["media", "music", "Media"], ["recap", "star", "Today"]];
+  (function () {
+    const box = $("#ptabs");
+    PANELS.forEach(([m, ic, name]) => {
+      const b = document.createElement("button");
+      b.dataset.m = m; b.title = name;
+      b.innerHTML = ZB.icon(ic, 1.8) + "<span></span>";
+      b.querySelector("span").textContent = name;
+      b.onclick = () => panelMode(m);
+      box.appendChild(b);
+    });
+  })();
+  let DL = [], SAVED = [], ARCH = [], RECAP = [], found = { q: "", list: [], t: 0 }, pkey = "";
+  function panelMode(m) {
+    send({ c: "panelMode", m });
+    if (!S.panel) send({ c: "panel", open: true });
+    if (m === "recap") send({ c: "recap" });
+    S.panelMode = m; pkey = ""; renderPanel();
+  }
+  const notesAll = () => { try { return JSON.parse(localStorage.getItem("zb.notes") || "{}") || {}; } catch (e) { return {}; } };
+  const pageKey = (u) => { try { const x = new URL(u); return x.hostname.replace(/^www\./, "") + x.pathname.replace(/\/$/, ""); } catch (e) { return ""; } };
+  function li(ic, title, sub, onclick, btns) {
+    const d = document.createElement("div");
+    d.className = "li";
+    d.innerHTML = `<span class="ic">${/^</.test(ic) ? ic : ZB.icon(ic, 2)}</span><span class="tx"><div class="tt"></div><div class="sb"></div></span>`;
+    d.querySelector(".tt").textContent = title; d.querySelector(".sb").textContent = sub || "";
+    if (onclick) d.onclick = onclick;
+    (btns || []).forEach(([icon, tip, fn]) => { const b = document.createElement("button"); b.className = "btn"; b.title = tip; b.innerHTML = ZB.icon(icon, 1.6); b.onclick = (e) => { e.stopPropagation(); fn(); }; d.appendChild(b); });
+    return d;
+  }
+  function h4(t) { const h = document.createElement("h4"); h.textContent = t; return h; }
+  function fmtT(sec) { const m = Math.round(sec / 60); return m < 60 ? m + " min" : Math.floor(m / 60) + " h " + (m % 60) + " min"; }
+  function renderPanel() {
+    const m = S.panelMode || "claude";
+    $("#ptabs").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.m === m));
+    if (m === "claude") return;
+    const box = $("#pside"), t = activeTab() || {};
+    const k = m + "|" + (m === "notes" ? pageKey(t.url) : m === "media" ? JSON.stringify(S.tabs.filter((x) => x.audio || x.muted).map((x) => [x.id, x.muted, x.title])) : m === "downloads" ? JSON.stringify(DL) : m === "recap" ? JSON.stringify(RECAP) : "h");
+    if (k === pkey) return;
+    pkey = k;
+    box.innerHTML = "";
+    if (m === "notes") {
+      const key = pageKey(t.url);
+      if (!key) { box.innerHTML = `<div class="empty">Open a website and write notes for it here. They stay with that page, and you can send them to Zenko.</div>`; }
+      else {
+        box.appendChild(h4("Notes for " + (t.title || key)));
+        const ta = document.createElement("textarea");
+        ta.placeholder = "Write anything about this page...";
+        ta.value = (notesAll()[key] || {}).text || "";
+        ta.oninput = () => { const all = notesAll(); if (ta.value.trim()) all[key] = { t: t.title, u: t.url, text: ta.value, at: Date.now() }; else delete all[key]; try { localStorage.setItem("zb.notes", JSON.stringify(all)); } catch (e) {} };
+        box.appendChild(ta);
+        const row = document.createElement("div"); row.className = "row";
+        const b = document.createElement("button"); b.className = "obtn solid"; b.textContent = "Send to Zenko's notes";
+        b.onclick = () => { if (ta.value.trim()) send({ c: "toZenko", item: { kind: "note", text: ta.value, title: t.title, url: t.url, subject: t.group || t.subject || "" } }); };
+        row.appendChild(b); box.appendChild(row);
+      }
+      const all = Object.entries(notesAll()).sort((a, b) => b[1].at - a[1].at).filter(([kk]) => kk !== key);
+      if (all.length) { box.appendChild(h4("Other pages with notes")); all.slice(0, 40).forEach(([kk, n]) => box.appendChild(li("note", n.t || kk, n.text.slice(0, 80), () => send({ c: "new", url: n.u })))); }
+    } else if (m === "downloads") {
+      if (!DL.length) box.innerHTML = `<div class="empty">Nothing downloaded yet. Downloads for a subject go into Downloads\\Zenko\\&lt;subject&gt; by themselves.</div>`;
+      else { box.appendChild(h4("Downloads")); DL.slice().reverse().forEach((d) => {
+        const folder = (d.path.match(/[\\/]Zenko[\\/]([^\\/]+)[\\/][^\\/]+$/) || [])[1];
+        box.appendChild(li("down", d.name || d.url, (d.done ? (d.ok ? "Done" : "Failed") : "Downloading...") + (folder ? " · " + folder : ""), null,
+          d.done && d.ok ? [["pop", "Open", () => send({ c: "openPath", p: d.path })], ["home", "Show in folder", () => send({ c: "showPath", p: d.path })]] : []));
+      }); }
+      const row = document.createElement("div"); row.className = "row";
+      const b = document.createElement("button"); b.className = "obtn"; b.textContent = "Saved offline pages"; b.onclick = () => send({ c: "openSaved" });
+      row.appendChild(b); box.appendChild(row);
+    } else if (m === "history") {
+      const inp = document.createElement("input"); inp.placeholder = "Search history...";
+      const list = document.createElement("div");
+      const fill = () => {
+        list.innerHTML = "";
+        const qq = inp.value.trim().toLowerCase();
+        let day = "";
+        H.filter((e) => e.l).sort((a, b) => b.l - a.l).filter((e) => !qq || fuzzy(e.u + " " + (e.t || ""), qq)).slice(0, 250).forEach((e) => {
+          const d = new Date(e.l * 1000), now = new Date();
+          const diff = Math.floor((new Date(now.toDateString()) - new Date(d.toDateString())) / 864e5);
+          const dl = diff === 0 ? "Today" : diff === 1 ? "Yesterday" : d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+          if (dl !== day) { day = dl; const x = document.createElement("div"); x.className = "day"; x.textContent = dl; list.appendChild(x); }
+          list.appendChild(li((bare(e.u)[0] || "?").toUpperCase(), e.t || bare(e.u), d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) + " · " + bare(e.u), () => send({ c: "new", url: e.u })));
+        });
+        if (!list.children.length) list.innerHTML = `<div class="empty">No history yet.</div>`;
+      };
+      inp.oninput = fill; box.append(inp, list); fill();
+    } else if (m === "media") {
+      const ms = S.tabs.filter((x) => x.audio || x.muted);
+      if (!ms.length) box.innerHTML = `<div class="empty">Nothing is playing. Tabs with sound show up here with play, mute and mini player buttons.</div>`;
+      else { box.appendChild(h4("Playing now")); ms.forEach((x) => box.appendChild(li(tabIcon(x), x.title || x.url, x.muted ? "Muted" : "Playing", () => send({ c: "activate", id: x.id }),
+        [["stop", "Play / pause", () => send({ c: "video", id: x.id, a: "play" })], [x.muted ? "muted" : "sound", x.muted ? "Unmute" : "Mute", () => send({ c: "mute", id: x.id })], ["pop", "Mini player", () => send({ c: "video", id: x.id, a: "pip" })]]))); }
+    } else if (m === "recap") {
+      box.appendChild(h4("Today in the browser"));
+      if (!RECAP.length) { box.insertAdjacentHTML("beforeend", `<div class="empty">Nothing yet today. Time counts while this window is in front.</div>`); return; }
+      const total = RECAP.reduce((a, b) => a + b.s, 0), top = RECAP[0].s;
+      box.insertAdjacentHTML("beforeend", `<div class="empty" style="padding:.2rem .3rem .6rem">${fmtT(total)} on the web today (top sites)</div>`);
+      RECAP.forEach((x) => { const d = li(x.h[0].toUpperCase(), x.h, fmtT(x.s)); d.querySelector(".tx").insertAdjacentHTML("beforeend", `<div class="bar"><i style="width:${Math.max(4, x.s / top * 100)}%"></i></div>`); box.appendChild(d); });
+    }
+  }
+
+  // ---------------------------------------------------------------- clip part of the page for Zenko
+  let clipOn = false, c0 = null;
+  function clipStart() {
+    if (palOpen) return;
+    clipOn = true; ovKind = "clip";
+    const ov = $("#ov");
+    ov.classList.remove("menu"); ov.classList.add("clip");
+    palOpen = true; shownSent = false;
+    clearShots();
+    ov.classList.add("open");
+    send({ c: "overlay", on: true });
+    clearTimeout(shotTimer);
+    shotTimer = setTimeout(shown, 450);
+  }
+  $("#ov").addEventListener("mousedown", (e) => { if (!clipOn) return; c0 = [e.clientX, e.clientY]; $("#ov").classList.add("sel"); clipDraw(e); });
+  $("#ov").addEventListener("mousemove", (e) => { if (clipOn && c0) clipDraw(e); });
+  function clipDraw(e) { const b = $("#clipbox"); const x = Math.min(c0[0], e.clientX), y = Math.min(c0[1], e.clientY); Object.assign(b.style, { left: x + "px", top: y + "px", width: Math.abs(e.clientX - c0[0]) + "px", height: Math.abs(e.clientY - c0[1]) + "px" }); }
+  $("#ov").addEventListener("mouseup", (e) => {
+    if (!clipOn || !c0) return;
+    const x = Math.min(c0[0], e.clientX), y = Math.min(c0[1], e.clientY), w = Math.abs(e.clientX - c0[0]), h = Math.abs(e.clientY - c0[1]);
+    c0 = null;
+    const img = Array.from(document.querySelectorAll("#ov .shot.pg")).find((i) => { const r = i.getBoundingClientRect(); return x + w / 2 >= r.left && x + w / 2 <= r.right && y + h / 2 >= r.top && y + h / 2 <= r.bottom; });
+    if (w < 12 || h < 12 || !img) { closePal(); return; }
+    const r = img.getBoundingClientRect(), sx = img.naturalWidth / r.width, sy = img.naturalHeight / r.height;
+    const cv = document.createElement("canvas");
+    cv.width = Math.round(Math.min(w, r.right - x) * sx); cv.height = Math.round(Math.min(h, r.bottom - y) * sy);
+    cv.getContext("2d").drawImage(img, (Math.max(x, r.left) - r.left) * sx, (Math.max(y, r.top) - r.top) * sy, cv.width, cv.height, 0, 0, cv.width, cv.height);
+    send({ c: "clip", data: cv.toDataURL("image/png") });
+    closePal();
+  });
+
+  // ---------------------------------------------------------------- little helpers for Rust's messages
+  function copyText(t) {
+    if (navigator.clipboard) navigator.clipboard.writeText(t).catch(() => fallbackCopy(t)); else fallbackCopy(t);
+  }
+  function fallbackCopy(t) { const a = document.createElement("textarea"); a.value = t; document.body.appendChild(a); a.select(); document.execCommand("copy"); a.remove(); }
+  function chime() {
+    try {
+      const ac = new (window.AudioContext || window.webkitAudioContext)();
+      [[880, 0], [1318.5, 0.12], [1760, 0.26]].forEach(([f, at]) => {
+        const o = ac.createOscillator(), g = ac.createGain();
+        o.type = "triangle"; o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, ac.currentTime + at); g.gain.exponentialRampToValueAtTime(0.16, ac.currentTime + at + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + at + 0.9);
+        o.connect(g).connect(ac.destination); o.start(ac.currentTime + at); o.stop(ac.currentTime + at + 1);
+      });
+      setTimeout(() => ac.close(), 1800);
+    } catch (e) {}
+  }
+  const MON = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+  const WD = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  function parseWhen(text) {
+    const s = text.toLowerCase(), now = new Date();
+    let d = null, m;
+    if (/\btomorrow\b|\bdemain\b/.test(s)) { d = new Date(now); d.setDate(d.getDate() + 1); }
+    else if (/\btoday\b|\btonight\b|\baujourd/.test(s)) d = new Date(now);
+    else if ((m = s.match(/\b(\d{4})-(\d{1,2})-(\d{1,2})\b/))) d = new Date(+m[1], +m[2] - 1, +m[3]);
+    else if ((m = s.match(/\b(\d{1,2})(?:st|nd|rd|th)?\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?(?:\s+(\d{4}))?/))) d = new Date(m[3] ? +m[3] : now.getFullYear(), MON.indexOf(m[2]), +m[1]);
+    else if ((m = s.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+(\d{1,2})(?:st|nd|rd|th)?(?:,?\s+(\d{4}))?/))) d = new Date(m[3] ? +m[3] : now.getFullYear(), MON.indexOf(m[1]), +m[2]);
+    else if ((m = s.match(/\b(\d{1,2})[\/.](\d{1,2})(?:[\/.](\d{2,4}))?\b/))) { let y = m[3] ? +m[3] : now.getFullYear(); if (y < 100) y += 2000; d = new Date(y, +m[2] - 1, +m[1]); }
+    else if ((m = s.match(/\b(sun|mon|tue|wed|thu|fri|sat)[a-z]*\b/))) { d = new Date(now); const want = WD.indexOf(m[1]); let add = (want - d.getDay() + 7) % 7; if (add === 0) add = 7; d.setDate(d.getDate() + add); }
+    if (!d || isNaN(d)) return null;
+    if (d < new Date(now.toDateString()) && !/\d{4}/.test(s)) d.setFullYear(d.getFullYear() + 1);
+    let h = 8, mi = 0;
+    if ((m = s.match(/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)\b/))) { h = +m[1] % 12 + (m[3] === "pm" ? 12 : 0); mi = +(m[2] || 0); }
+    else if ((m = s.match(/\b(\d{1,2}):(\d{2})\b/))) { h = +m[1]; mi = +m[2]; }
+    else if (/\b(due|deadline|submit)\b/.test(s)) { h = 8; }
+    d.setHours(h, mi, 0, 0);
+    return d;
+  }
+  function cites(m) {
+    const d = m.date ? new Date(m.date) : null, ok = d && !isNaN(d), now = new Date();
+    const fmt = (x) => x.getDate() + " " + x.toLocaleString("en-GB", { month: "short" }) + ". " + x.getFullYear();
+    const au = (m.author || "").trim();
+    let inv = au;
+    if (au && !/,/.test(au) && au.split(" ").length >= 2) { const p = au.split(" "); inv = p.pop() + ", " + p.join(" "); }
+    const apaAu = au ? (au.includes(",") ? au : (() => { const p = au.split(" "); const last = p.pop(); return last + ", " + p.map((x) => x[0] + ".").join(" "); })()) : "";
+    const t = (m.title || "").trim(), site = (m.site || "").trim(), url = m.url;
+    const mla = (inv ? inv + ". " : "") + "“" + t + ".” " + (site ? site + ", " : "") + (ok ? fmt(d) + ", " : "") + url.replace(/^https?:\/\//, "") + ". Accessed " + fmt(now) + ".";
+    const apa = (apaAu ? apaAu + " " : (site ? site + ". " : "")) + "(" + (ok ? d.getFullYear() + ", " + d.toLocaleString("en-GB", { month: "long" }) + " " + d.getDate() : "n.d.") + "). " + t + ". " + (apaAu && site ? site + ". " : "") + url;
+    return { mla, apa };
+  }
+  // start-up routine: the sites you always open, once per launch
+  let routineDone = false;
+  function routine() {
+    if (routineDone) return;
+    routineDone = true;
+    const wd = new Date().getDay(), list = (wd === 0 || wd === 6 ? prefs.startWeekend : prefs.startWeekday) || [];
+    list.filter(Boolean).forEach((u) => {
+      const url = ZB.toUrl(u, prefs);
+      const h = siteOf(url);
+      if (!S.tabs.some((t) => siteOf(t.url) === h)) send({ c: "new", url, bg: true });
+    });
   }
 
   // ---------------------------------------------------------------- API used by Rust
@@ -874,7 +1331,8 @@
     state(s) {
       S = s;
       for (const t of S.tabs) if (/^https?:/.test(t.url) && !t.loading && !Hseen.has(t.url)) { Hseen.add(t.url); H.push({ u: t.url, t: t.title, s: 1 }); }
-      renderTabs(); renderTools(); door(); if (palOpen) build(); },
+      renderTabs(); renderTools(); door(); if (palOpen && ovKind === "pal") build();
+      if (!routineDone && booted) routine(); },
     openDoor(id) {
       const d = $("#door");
       if (id !== S.active || !d.classList.contains("on")) { send({ c: "revealed", id }); return; }
@@ -885,7 +1343,7 @@
     key(k) { for (const a in keys) if (keys[a] === k && ACT[a]) { ACT[a](); return; } },
     shot(k, data) { window.zbShot(k, data); },
     shotsDone() {
-      const imgs = [$("#shot-page"), $("#shot-panel")].filter((i) => i.getAttribute("src"));
+      const imgs = Array.from(document.querySelectorAll("#ov .shot")).filter((i) => i.getAttribute("src"));
       if (!imgs.length) return shown();
       let left = imgs.length;
       imgs.forEach((i) => { if (i.complete) { if (--left === 0) shown(); } else i.onload = i.onerror = () => { if (--left === 0) shown(); }; });
@@ -897,6 +1355,36 @@
     },
     maximized(m) { S.max = m; renderTools(); },
     focusAddress() { openPal("here", ""); },
+    toast(m) { note(m, 3500); },
+    copy(t, label) { copyText(t); note(label || "Copied", 2200); },
+    remind(text) {
+      const when = parseWhen(text);
+      const short = text.length > 60 ? text.slice(0, 57) + "..." : text;
+      if (!when) { note("No date found in that text. Try selecting something like “Due Fri 28 Nov”.", 5000); return; }
+      const t = activeTab() || {};
+      note("Remind: “" + short + "” on " + when.toLocaleString("en-GB", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + "?", 0,
+        [["Add to Zenko", () => send({ c: "toZenko", item: { kind: "reminder", text, when: Math.round(when / 1000), title: t.title, url: t.url } })], ["Cancel", () => {}]]);
+    },
+    cite(m) {
+      const c = cites(m);
+      note("Citation ready", 0, [["Copy MLA", () => { copyText(c.mla); note("MLA citation copied", 2500); }], ["Copy APA", () => { copyText(c.apa); note("APA citation copied", 2500); }], ["Close", () => {}]]);
+    },
+    mail() { if (prefs.outlookSound) { chime(); note("New mail in Outlook", 5000); } },
+    clip() { clipStart(); },
+    saved(l) { SAVED = Array.isArray(l) ? l : []; },
+    archivedList(l) { ARCH = Array.isArray(l) ? l : []; if (palOpen) build(); },
+    downloads(l) {
+      const was = new Set(DL.filter((d) => d.done).map((d) => d.path + d.at));
+      DL = Array.isArray(l) ? l : [];
+      DL.filter((d) => d.done && d.ok && !was.has(d.path + d.at)).forEach((d) => {
+        const folder = (d.path.match(/[\/]Zenko[\/]([^\/]+)[\/][^\/]+$/) || [])[1];
+        note("Downloaded " + d.name + (folder ? " into Zenko\\" + folder : ""), 6000, [["Open", () => send({ c: "openPath", p: d.path })], ["Show", () => send({ c: "showPath", p: d.path })]]);
+      });
+      if (S.panelMode === "downloads") renderPanel();
+    },
+    found(qq, l) { found = { q: qq.toLowerCase(), list: l || [], t: 0 }; if (palOpen) { const keep = sel; build(); sel = Math.min(keep, items.length - 1); mark(); } },
+    recap(l) { RECAP = l || []; if (S.panelMode === "recap") { pkey = ""; renderPanel(); } },
+    keys() { send({ c: "keys", list: Object.values(keys).filter(Boolean) }); },
     history(list) { H = Array.isArray(list) ? list : []; H.forEach((e) => Hseen.add(e.u)); rankHosts(); },
     bookmarks(list) { BM = Array.isArray(list) ? list : []; rankHosts(); },
     imported(r) {
@@ -918,6 +1406,7 @@
   ZB.starfield && ZB.starfield($("#stars"));
 
   send({ c: "ready" });
+  setTimeout(() => { if (!routineDone) routine(); }, 2500);
 })();
 </script>
 </body>

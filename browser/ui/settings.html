@@ -40,6 +40,11 @@
   kbd.rec { border-color: var(--acc); color: var(--acc); animation: blink 1s infinite; }
   @keyframes blink { 50% { opacity: .5; } }
   .small { font-size: .85rem; color: var(--grey); }
+  textarea { width: 100%; min-height: 5.2rem; background: var(--field); border: 2px solid var(--line); clip-path: var(--clips); padding: .5rem .7rem; outline: 0; font: inherit; resize: vertical; color: var(--ink); }
+  textarea:focus { border-color: var(--acc); }
+  .stack { display: block; padding: .55rem 0; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+  .stack > label { display: block; margin-bottom: .4rem; }
+  .stack > label small { display: block; color: var(--grey); font-size: .85rem; margin-top: .15rem; }
   .btn.solid { background: var(--accbg); color: var(--acc); }
   .preview { display: flex; gap: .35rem; align-items: flex-end; height: 2.6rem; padding: 0 .4rem; background: var(--night); border-radius: var(--rs); margin-top: .4rem; }
   .preview span { height: 2rem; flex: 0 0 7rem; background: var(--card); display: flex; align-items: center; padding: 0 .6rem; color: var(--ink); font-size: .85rem; border-radius: var(--r) var(--r) 0 0; }
@@ -90,6 +95,58 @@
     <div class="row"><label>Put tabs to sleep after<small>Sleeping tabs use almost no memory. Tabs playing sound stay awake.</small></label>
       <select id="sleepAfter"><option value="0">Never</option><option value="10">10 minutes</option><option value="20">20 minutes</option><option value="30">30 minutes</option><option value="60">1 hour</option></select></div>
     <div class="row"><label>Saved passwords<small>The browser offers to save passwords when you sign in, and fills them in next time.</small></label><span class="small">On</span></div>
+  </section>
+
+  <section class="card">
+    <h2>Privacy and ads</h2>
+    <div class="row"><label>Block ads and trackers<small>About 250 ad, tracking and fingerprinting services. The shield in the toolbar shows what was blocked and can switch it off for one site.</small></label><button class="tog" data-t="ads"></button></div>
+    <div class="row"><label>Say "reject" to cookie pop-ups for me</label><button class="tog" data-t="cookies"></button></div>
+    <div class="row"><label>Clean tracking bits out of links<small>utm_..., fbclid, gclid and friends.</small></label><button class="tog" data-t="clean"></button></div>
+    <div class="row"><label>Skip YouTube ads</label><button class="tog" data-t="ytAds"></button></div>
+    <div class="row"><label>Skip sponsor segments in YouTube videos<small>Uses the free SponsorBlock list.</small></label><button class="tog" data-t="sponsor"></button></div>
+    <div class="row"><label>No autoplay<small>Videos wait until you click. Takes effect fully after a restart.</small></label><button class="tog" data-t="noAutoplay"></button></div>
+    <div class="row"><label>Preload links I point at (same site)<small>Pages open faster.</small></label><button class="tog" data-t="preload"></button></div>
+  </section>
+
+  <section class="card">
+    <h2>Focus mode</h2>
+    <div class="row"><label>Focus mode<small>Also in the toolbar (torii button) and Ctrl+Shift+F.</small></label><button class="tog" data-t="focus"></button></div>
+    <div class="stack"><label>Blocked while focusing<small>One site per line.</small></label><textarea data-list="focusBlock"></textarea></div>
+    <div class="row"><label>Strict: only allow the sites below<small>Everything else is blocked while focusing.</small></label><button class="tog" data-t="focusOnlyMode"></button></div>
+    <div class="stack"><label>Only these (strict mode)</label><textarea data-list="focusOnly" placeholder="inthinking.net&#10;claude.ai"></textarea></div>
+    <div class="stack"><label>Always allowed</label><textarea data-list="focusAllow"></textarea></div>
+  </section>
+
+  <section class="card">
+    <h2>Tabs, spaces and profiles</h2>
+    <div class="stack"><label>Spaces<small>One name per line. Each space keeps its own tabs. Alt+1, Alt+2, Alt+3 switch.</small></label><textarea data-list="spaces"></textarea></div>
+    <div class="stack"><label>Extra profiles<small>A profile has its own sign-ins, so you can use two accounts side by side (right-click a link > Open link in other profile). Your main profile is "Personal".</small></label><textarea data-list="profiles"></textarea></div>
+    <div class="row"><label>Archive tabs I haven't opened for<small>They move to "Archived tabs" in Ctrl+K. Pinned tabs and tabs playing sound stay.</small></label>
+      <select data-sel="archiveDays" data-num="1"><option value="0">Never</option><option value="3">3 days</option><option value="7">7 days</option><option value="14">14 days</option><option value="30">30 days</option></select></div>
+    <div class="row"><label>Mouse gestures<small>Hold the right button and draw: left = back, right = forward, up-down = reload, down-right = close, up = new tab, down = reopen.</small></label><button class="tog" data-t="gestures"></button></div>
+    <div class="row"><label>Keep what I type in text boxes<small>If a page reloads or crashes, your unsent text comes back.</small></label><button class="tog" data-t="drafts"></button></div>
+    <div class="row"><label>Translate selections to</label><select data-sel="translateTo"><option value="en">English</option><option value="fr">French</option></select></div>
+  </section>
+
+  <section class="card">
+    <h2>New tab page</h2>
+    <div class="row"><label>Weather town<small>Free weather from Open-Meteo.</small></label><input type="text" id="city" placeholder="e.g. Mumbai"><button class="obtn" id="cityGo">Find</button></div>
+    <div class="stack"><label>Timetable<small>One line per day, e.g. "Mon: Biology 8:00, Maths 9:30". Today's line shows on the new tab page.</small></label><textarea data-txt="schedule" placeholder="Mon: Biology 8:00, Maths 9:30&#10;Tue: French 8:00"></textarea></div>
+    <div class="stack"><label>Open on start-up (school days)<small>One address per line. Opened once each time the browser starts, if not already open.</small></label><textarea data-list="startWeekday"></textarea></div>
+    <div class="stack"><label>Open on start-up (weekends)</label><textarea data-list="startWeekend"></textarea></div>
+  </section>
+
+  <section class="card">
+    <h2>Downloads, power and sounds</h2>
+    <div class="row"><label>Sort downloads into subject folders<small>Downloads\Zenko\Biology, \Chemistry... picked from the page you download from.</small></label><button class="tog" data-t="sortDownloads"></button></div>
+    <div class="row"><label>Battery saver<small>Tabs sleep after 5 minutes and animations calm down.</small></label><div class="seg" data-k="battery"><button data-v="auto">On battery</button><button data-v="on">Always</button><button data-v="off">Off</button></div></div>
+    <div class="row"><label>Zenko chime for new Outlook mail<small>Replaces Outlook's own sound (the Outlook tab is muted).</small></label><button class="tog" data-t="outlookSound"></button></div>
+  </section>
+
+  <section class="card">
+    <h2>Default browser and extensions</h2>
+    <div class="row"><label>Make Zenko Browser your default browser<small>Windows opens its settings; pick Zenko Browser there.</small></label><button class="obtn solid" id="def">Set as default</button></div>
+    <div class="row"><label>Chrome extensions<small>Put unpacked extension folders here and restart. Extensions that work in the background (dark mode, blockers) run; toolbar pop-ups can't show.</small></label><button class="obtn" id="ext">Open folder</button></div>
   </section>
 
   <section class="card">
@@ -154,6 +211,22 @@
   $("#sleepAfter").onchange = (e) => set("sleepAfter", +e.target.value);
   $("#upd").onclick = () => { send({ c: "update" }); $("#upd").textContent = "Checking (see the top bar)"; };
   $("#data").onclick = () => send({ c: "openData" });
+  $("#def").onclick = () => send({ c: "makeDefault" });
+  $("#ext").onclick = () => send({ c: "openExtensions" });
+  document.querySelectorAll("[data-list]").forEach((t) => t.onchange = () => set(t.dataset.list, t.value.split("\n").map((x) => x.trim()).filter(Boolean)));
+  document.querySelectorAll("[data-txt]").forEach((t) => t.onchange = () => set(t.dataset.txt, t.value));
+  document.querySelectorAll("select[data-sel]").forEach((t) => t.onchange = () => set(t.dataset.sel, t.dataset.num ? +t.value : t.value));
+  $("#cityGo").onclick = async () => {
+    const q = $("#city").value.trim();
+    if (!q) { set("weatherLat", null); set("weatherCity", ""); return; }
+    $("#cityGo").textContent = "...";
+    try {
+      const j = await (await fetch("https://geocoding-api.open-meteo.com/v1/search?count=1&name=" + encodeURIComponent(q))).json();
+      const r = j.results && j.results[0];
+      if (r) { set("weatherLat", r.latitude); set("weatherLon", r.longitude); set("weatherCity", r.name); $("#cityGo").textContent = "Found " + r.name; }
+      else $("#cityGo").textContent = "Not found";
+    } catch (e) { $("#cityGo").textContent = "Offline"; }
+  };
   $("#imp").onclick = () => { $("#imp").textContent = "Importing..."; send({ c: "importEdge", close: true }); };
 
   // shortcuts
@@ -195,6 +268,10 @@
     document.querySelectorAll(".tog").forEach((t) => t.classList.toggle("on", !!p[t.dataset.t]));
     $("#radius").value = p.radius; $("#uiScale").value = p.uiScale; font.value = p.font; eng.value = p.engine;
     $("#school").value = p.school || ""; $("#sleepAfter").value = String(p.sleepAfter);
+    document.querySelectorAll("[data-list]").forEach((t) => { if (document.activeElement !== t) t.value = (p[t.dataset.list] || []).join("\n"); });
+    document.querySelectorAll("[data-txt]").forEach((t) => { if (document.activeElement !== t) t.value = p[t.dataset.txt] || ""; });
+    document.querySelectorAll("select[data-sel]").forEach((t) => { t.value = String(p[t.dataset.sel]); });
+    if (document.activeElement !== $("#city")) $("#city").value = p.weatherCity || "";
     if (!rec) drawKeys();
   }
   sync();

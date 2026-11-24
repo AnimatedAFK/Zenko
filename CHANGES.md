@@ -1,5 +1,9 @@
 # Zenko changes
 
+## v2026.11.24-zenko21.3
+
+- **Zenko Browser can hand things to Zenko.** Text you send from the browser (right-click > "Send to Zenko notes", the notes side panel, the InThinking "Send key terms to Zenko" button, or a page clip) lands in your Notes scratchpad and files itself into the right subject notebook. Dates you select in the browser (right-click > "Add to Zenko reminders", e.g. "Due Fri 28 Nov") hang on the ema rack. Zenko checks every few seconds and tells you when something arrives.
+
 ## v2026.11.24-zenko21.2
 
 - **Zenko knows Zenko Browser.** She now treats the new Zenko Browser like Edge or Chrome: study time on its pages (and in its Claude panel) is logged for the right subject automatically, the screen-time page lists it as "Zenko Browser", and focus sessions can close its distracting tabs the same way.
