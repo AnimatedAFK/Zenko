@@ -1,5 +1,11 @@
 # Zenko changes
 
+## v2026.11.24-zenko19.1
+
+- Zenko is fluffy again when she walks and does her poses. She has a round, soft body with a fluffy coat edge, a big white chest ruff under her chin, round haunches, thick fluffy legs instead of thin dark "stockings", round little paws like the ones she shows when sitting, and bigger cloud-like tails.
+- The real fox skeleton and movement are unchanged: the 4-beat walk with a little hop, the stretches, the play bow, lying down, and the mousing pounce.
+- The outfits still fit over the new fluffy body.
+
 ## v2026.11.23-zenko19
 - **A brand-new walk**: she now walks on all four paws like a real fox, built from a proper skeleton (shoulder, elbow, wrist and paw in front; hip, knee, hock and paw behind), using the real four-beat fox/dog walk (left hind, left front, right hind, right front). The black "stockings" on her legs, small paws and a long brush of tails are kept, and there's a little hop in her step.
 - **Real fox poses**, all on the same skeleton: front stretch (forearms flat, rump up, big yawn), back-leg stretch, play bow with a swishing tail, lying down like a sphinx and dozing off, sniffing the ground, a shake-off, and the mousing pounce (crouch, rear up on the hind legs, leap, dive front paws first, pinned!). She does them by herself now and then when you're not focusing, or ask in chat: "stretch", "play bow", "pounce", "lie down", "sniff". Customize has buttons for each and an on/off switch.
