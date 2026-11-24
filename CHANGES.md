@@ -1,5 +1,19 @@
 # Zenko changes
 
+## v2026.11.24-zenko21
+
+Zenko 21 rebuilds the Notes tab and makes her look sharper. Your saved data and settings carry over.
+
+- **Notes tab, rebuilt.**
+  - **Scratchpad**: type anything, in a rush, with no headings. When you leave the Notes page or close the window, Zenko follows the topic line by line and files each part into the right subject notebook (French bits into French, Bio bits into Bio, and so on). A line like "Chem" or "Bio notes" starts a new subject straight away. "File it now" and "Undo last filing" buttons, and a live "Will file: French (3 lines), Bio (2 lines)" preview. Anything she can't place goes to "Unsorted". The draft is saved as you type, so nothing is lost if Zenko closes.
+  - **Notebooks**: one per IB subject (Biology HL, Chemistry HL, Math AA SL, French ab initio SL, Psychology SL, English Lang & Lit HL), with folders you can open and close, pages you can read and edit, New page, New folder, Open and Delete (Delete moves things to a .bin folder, so you can get them back).
+  - **Import a folder**: pick any folder, for example your reMarkable export. Its folder structure is copied in. A folder called Bio, Chemistry, French and so on goes straight into that subject's notebook; everything else lands under Imported. Zenko can keep checking that folder (on start and every 15 minutes) and copy in new or changed files the same way. PDFs with typed text can be read inside the app; handwriting opens in your PDF viewer.
+  - The reMarkable cloud reader moved to its own window (the reMarkable… button).
+- **Sharper pixel art.** Every sprite (her on the desktop, the clock fox, the pixel icons and more) is now enlarged with the Scale2x/Scale3x pixel-art filters instead of plain blocky squares. The designs are the same, with many more pixels and smoother edges. Settings > Pixel art quality can switch it off.
+- **Text no longer squishes.** The window has a minimum size (1120 x 700, or your screen if smaller), and labels, card titles, checkboxes and button rows that were wrapped while the window was narrow now spread back out when there is room again.
+- **Half-hour free time.** The Upcoming clock ring is now 24 half-hour pieces, so each hour has two halves you can tap or drag on their own. There's also a "Free from [16:30] to [18:00]  Add as free time / Remove" picker under the clock. The planner fits a full session into each free hour and a 25-minute session into a lone free half hour. Your old free hours are converted automatically.
+- **A real page slide.** Switching tabs now slides the pages vertically: going down the sidebar the new page rises from below, going up it comes from above, and for a moment you can see both pages. The slide is timed by the clock, not by frames, and heavy redraws (the garden, the map, text fitting) wait until the page has landed, so it stays smooth. In tests the frames came about every 9 ms. Battery saver switches pages instantly.
+
 ## v2026.11.24-zenko20
 
 Zenko 20 is the speed and ease update. Everything she could do before still works, and your saved data and settings are untouched.

@@ -53,7 +53,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.24-zenko20"
+APP_VERSION = "v2026.11.24-zenko21"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -39586,6 +39586,1663 @@ class Zenko20(Zenko19):
         self.tt_btn(row, "Clear picture cache", clear, bg=_mixhex(bg, INK, 0.08), fg=INK, size=9).pack(side="left")
 
 
+
+# =====================================================================================================================
+#  zenko21: sharper pixel art, notes that sort themselves, half-hour free time, a real vertical page slide, tidy text
+# =====================================================================================================================
+
+# ---- sharper pixel art: the same designs, many more pixels ---------------------------------------------------------
+#  Each sprite is still drawn from the same palette-letter grid. Instead of blowing every pixel up into a big square,
+#  it is enlarged with the classic Scale2x / Scale3x pixel-art filters (the ones emulators use): edges and diagonals get
+#  their staircase smoothed while every colour, outline and detail stays exactly where the artist put it.
+
+def _zk_s2x(px):
+    h, w = len(px), len(px[0])
+    out = []
+    for y in range(h):
+        up, row, dn = px[y - 1] if y else px[y], px[y], px[y + 1] if y + 1 < h else px[y]
+        r0, r1 = [], []
+        for x in range(w):
+            E = row[x]
+            B, H = up[x], dn[x]
+            D = row[x - 1] if x else E
+            F = row[x + 1] if x + 1 < w else E
+            if B != H and D != F:
+                r0.append(D if D == B else E)
+                r0.append(F if B == F else E)
+                r1.append(D if D == H else E)
+                r1.append(F if H == F else E)
+            else:
+                r0.append(E)
+                r0.append(E)
+                r1.append(E)
+                r1.append(E)
+        out.append(r0)
+        out.append(r1)
+    return out
+
+
+def _zk_s3x(px):
+    h, w = len(px), len(px[0])
+    out = []
+    for y in range(h):
+        up, row, dn = px[y - 1] if y else px[y], px[y], px[y + 1] if y + 1 < h else px[y]
+        r0, r1, r2 = [], [], []
+        for x in range(w):
+            E = row[x]
+            B, H = up[x], dn[x]
+            xl, xr = (x - 1 if x else x), (x + 1 if x + 1 < w else x)
+            D, F = row[xl], row[xr]
+            if B != H and D != F:
+                A, C, G, I = up[xl], up[xr], dn[xl], dn[xr]
+                r0 += [D if D == B else E,
+                       B if ((D == B and E != C) or (B == F and E != A)) else E,
+                       F if B == F else E]
+                r1 += [D if ((D == B and E != G) or (D == H and E != A)) else E,
+                       E,
+                       F if ((B == F and E != I) or (H == F and E != C)) else E]
+                r2 += [D if D == H else E,
+                       H if ((D == H and E != I) or (H == F and E != G)) else E,
+                       F if H == F else E]
+            else:
+                r0 += [E, E, E]
+                r1 += [E, E, E]
+                r2 += [E, E, E]
+        out += [r0, r1, r2]
+    return out
+
+
+def _zk_nearest(px, k):
+    return [[p for p in row for _ in range(k)] for row in px for _ in range(k)]
+
+
+def zk_upscale(px, zoom):
+    """Rows of RGBA tuples -> rows `zoom` times bigger, smoothed like hand-made high-res pixel art."""
+    z = int(zoom)
+    while z > 1:
+        if z % 2 == 0:
+            px, z = _zk_s2x(px), z // 2
+        elif z % 3 == 0:
+            px, z = _zk_s3x(px), z // 3
+        else:
+            return _zk_nearest(px, z)
+    return px
+
+
+def sprite_rows(layers, pal, bg=None):
+    h, w = len(layers[0]), len(layers[0][0])
+    clear = (0, 0, 0, 0) if bg is None else _hex_rgb(bg) + (255,)
+    px = [[clear] * w for _ in range(h)]
+    for rows in layers:
+        for y, row in enumerate(rows):
+            line = px[y]
+            for x, ch in enumerate(row):
+                if ch != ".":
+                    col = pal.get(ch)
+                    if col:
+                        rgb = _RGB.get(col)
+                        if rgb is None:
+                            rgb = _RGB[col] = _hex_rgb(col) + (255,)
+                        line[x] = rgb
+    return px
+
+
+def sprite_png_hd(layers, pal, zoom, bg=None):
+    """Sprite -> PNG already enlarged `zoom` times with the pixel-art filters (cached by the art cache)."""
+    z = int(zoom)
+    px = sprite_rows(layers, pal, bg)
+    if z in (5, 7):                                    # 5x = 2x smooth + nearest 5/2 isn't whole: do 4x/6x smooth
+        big = zk_upscale(px, z - 1)                    # then add one plain column/row step evenly
+        n = len(px)
+        m = len(px[0])
+        ys = [int(i * (z - 1) / float(z)) for i in range(n * z)]
+        xs = [int(i * (z - 1) / float(z)) for i in range(m * z)]
+        big = [[big[y][x] for x in xs] for y in ys]
+    else:
+        big = zk_upscale(px, z)
+    return _png(big, 1)
+
+
+sprite_png_hd = _memo_bytes(sprite_png_hd)
+HD_ART = {"on": True}
+_sprite_photo_plain = sprite_photo
+
+
+def sprite_photo(layers, pal, zoom=1, bg=None):
+    """Palette-letter grids -> a Tk image. zenko21: enlarged with pixel-art smoothing (sharp, high-res, same design)."""
+    if HD_ART["on"] and int(zoom) >= 2:
+        try:
+            return tk.PhotoImage(data=base64.b64encode(sprite_png_hd(layers, pal, int(zoom), bg)))
+        except Exception as ex:
+            zk_log_error("hd sprite: %r" % (ex,))
+    return _sprite_photo_plain(layers, pal, zoom, bg)
+
+
+_px_photo_plain = px_photo
+
+
+def px_photo(w, h, fn, zoom=1):
+    if not (HD_ART["on"] and int(zoom) >= 2) or int(zoom) in (5, 7):
+        return _px_photo_plain(w, h, fn, zoom)
+    rows = []
+    for y in range(h):
+        row = []
+        for x in range(w):
+            c = fn(x, y)
+            row.append((0, 0, 0, 0) if c is None else ((c[0], c[1], c[2], 255) if len(c) == 3 else tuple(c)))
+        rows.append(row)
+    return tk.PhotoImage(data=base64.b64encode(_png(zk_upscale(rows, int(zoom)), 1)))
+
+
+# ---- half-hour free time ----------------------------------------------------------------------------------------
+#  Free time is now a list of half-hour slots: 16.0 = 16:00-16:30, 16.5 = 16:30-17:00.
+
+def slot_hm(v):
+    v = float(v) % 24.0 if float(v) < 24 else 24.0
+    return "%02d:%02d" % (int(v), 30 if (v - int(v)) >= 0.5 else 0)
+
+
+def slots_text(slots):
+    """[16, 16.5, 17, 20.5] -> '16:00-17:30, 20:30-21:00'."""
+    ss = sorted(set(round(float(s) * 2) / 2.0 for s in slots))
+    if not ss:
+        return "none"
+    runs, a, prev = [], ss[0], ss[0]
+    for s in ss[1:] + [None]:
+        if s is not None and abs(s - (prev + 0.5)) < 1e-6:
+            prev = s
+            continue
+        runs.append("%s-%s" % (slot_hm(a), slot_hm(prev + 0.5)))
+        if s is not None:
+            a = prev = s
+    return ", ".join(runs)
+
+
+def slots_minutes(slots):
+    return int(len(set(round(float(s) * 2) for s in slots)) * 30)
+
+
+def hours_to_slots(hours):
+    """Whole hours (old style, or 'free 4-7pm') -> both half-hour slots of each hour."""
+    out = set()
+    for h in hours:
+        h = float(h)
+        if h == int(h):
+            out.update((h, h + 0.5))
+        else:
+            out.add(round(h * 2) / 2.0)
+    return sorted(s for s in out if 0 <= s < 24)
+
+
+def plan_study_slots(targets, free_slots, busy, now, session_min=50, day_cap=4, horizon=45):
+    """plan_study for half-hour free time. A run of free half hours becomes back-to-back sessions (an hour each, with
+    a short break built in); a lonely half hour becomes a short 25-minute session. Same return value as plan_study."""
+    targets = [dict(t) for t in targets if t["need"] > 0 and t["due"] > now]
+    if not targets:
+        return [], {}
+    session_min = max(15, int(session_min or 50))
+    per = max(1, int(math.ceil(session_min / 30.0)))         # half hours one full session takes
+    short_min = min(session_min, 25)
+    last = min(max(t["due"] for t in targets).date(), now.date() + datetime.timedelta(days=horizon))
+    slots = []                                                # (start datetime, minutes)
+    day = now.date()
+    while day <= last:
+        taken = busy(day)
+        ok = []
+        for s in sorted(set(round(float(v) * 2) / 2.0 for v in free_slots(day))):
+            a = int(s * 60)
+            st = datetime.datetime(day.year, day.month, day.day) + datetime.timedelta(minutes=a)
+            if st < now + datetime.timedelta(minutes=5):
+                continue
+            if any(a < e and s_ < a + 30 for s_, e in taken):
+                continue
+            ok.append(s)
+        i = 0
+        while i < len(ok):
+            j = i
+            while j + 1 < len(ok) and abs(ok[j + 1] - ok[j] - 0.5) < 1e-6:
+                j += 1
+            run = ok[i:j + 1]
+            k = 0
+            while k < len(run):
+                left = len(run) - k
+                st = datetime.datetime(day.year, day.month, day.day) + datetime.timedelta(minutes=int(run[k] * 60))
+                if left >= per:
+                    slots.append((st, session_min))
+                    k += per
+                else:
+                    slots.append((st, short_min if left * 30 < session_min else session_min))
+                    k += left
+            i = j + 1
+        day += datetime.timedelta(days=1)
+    slots.sort()
+    need = {t["id"]: int(t["need"]) for t in targets}
+    per_day = {}
+    out = []
+    pad = datetime.timedelta(minutes=30)
+    for k, (st, mins) in enumerate(slots):
+        best, best_r = None, None
+        for t in targets:
+            if need[t["id"]] <= 0 or st + datetime.timedelta(minutes=mins) > t["due"] - pad:
+                continue
+            room = sum(m for s2, m in slots[k:] if s2 + datetime.timedelta(minutes=m) <= t["due"] - pad)
+            ratio = room / float(need[t["id"]])
+            if per_day.get((st.date(), t["id"]), 0) >= day_cap * session_min and ratio > 1.0:
+                continue
+            if best is None or ratio < best_r or (ratio == best_r and t["due"] < best["due"]):
+                best, best_r = t, ratio
+        if not best:
+            continue
+        use = mins
+        if need[best["id"]] < mins:                           # the last bit: no longer than needed (15 min at least)
+            use = max(15, int(math.ceil(need[best["id"]] / 5.0)) * 5)
+        need[best["id"]] -= use
+        per_day[(st.date(), best["id"])] = per_day.get((st.date(), best["id"]), 0) + use
+        out.append({"date": st.date().isoformat(), "start": st.strftime("%H:%M"), "mins": use,
+                    "id": best["id"], "title": best["title"], "review": need[best["id"]] <= 0})
+    short = {t["id"]: need[t["id"]] for t in targets if need[t["id"]] > 0}
+    return out, short
+
+
+_plan_study_hours = plan_study
+plan_study = plan_study_slots
+
+
+# ---- notes that sort themselves --------------------------------------------------------------------------------------
+NB_DIR = os.path.join(DATA_DIR, "notebooks")
+NB_SCRATCH = os.path.join(DATA_DIR, "notes_scratch.txt")
+NB_UNSORTED = "Unsorted"
+NB_IMPORTED = "Imported"
+NB_TEXT = (".md", ".txt", ".markdown", ".text")
+_FR_ACC = re.compile(r"[àâçéèêëîïôûùüÿœæ]")
+_MATHY = re.compile(r"[=^√∫∑π≤≥]|\d\s*[x×*/+\-]\s*\d|\b(?:dy/dx|f\(x\)|sin|cos|tan|log|ln|lim)\b")
+
+
+def nb_safe(name):
+    n = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "-", (name or "").strip()).strip(". ")
+    return n[:80] or "Untitled"
+
+
+def nb_subjects(life=None):
+    """[(id, folder name, short name, colour)] for her subjects (your 6 IB ones unless you changed them)."""
+    out = []
+    for d in subject_defs(life):
+        out.append((d[0], nb_safe(d[1]), d[2], d[3]))
+    return out
+
+
+def nb_line_scores(line, life=None):
+    low = (line or "").lower()
+    sc, alias = {}, {}
+    for d in subject_defs(life):
+        sid, aliases, topics = d[0], d[4], d[5]
+        a = any(_has(low, x) for x in aliases)
+        alias[sid] = a
+        sc[sid] = (4 if a else 0) + sum(1 for w in topics if len(w.strip()) > 1 and _has(low, w.strip()))
+    for w, sid in ((life or {}).get("subj_words") or {}).items():
+        if sid in sc and isinstance(w, str) and len(w) > 3 and _has(low, w):
+            sc[sid] += 2
+    if "french" in sc:
+        words = re.findall(r"[a-zà-ÿœæ']+", low)
+        if _FR_ACC.search(low):
+            sc["french"] += 3
+        elif len(words) >= 3:
+            try:
+                if looks_french(line):
+                    sc["french"] += 3
+            except Exception:
+                pass
+    if "math" in sc and _MATHY.search(low):
+        sc["math"] += 2
+    return sc, alias
+
+
+def nb_split(text, life=None):
+    """Free notes -> [(subject id or None, text)]. Follows the topic line by line, so notes on French that run straight
+    into Biology (no heading, no blank line) are still split in the right place."""
+    lines = (text or "").replace("\r\n", "\n").split("\n")
+    info = []
+    for ln in lines:
+        if not ln.strip():
+            info.append(None)
+            continue
+        sc, alias = nb_line_scores(ln, life)
+        order = sorted(sc.items(), key=lambda kv: -kv[1])
+        best, bs = order[0] if order else (None, 0)
+        second = order[1][1] if len(order) > 1 else 0
+        words = len(re.findall(r"\w+", ln))
+        info.append((sc, best if bs > second else None, bs, second, bool(alias.get(best)) and bs > second and words <= 7))
+
+    def ahead(i, sid):
+        """Do the next couple of lines agree that we're on `sid` now?"""
+        seen = 0
+        for j in range(i + 1, len(info)):
+            if info[j] is None:
+                continue
+            seen += 1
+            sc_j, best_j = info[j][0], info[j][1]
+            if best_j == sid:
+                return True
+            if best_j is not None and best_j != sid:
+                return False
+            if seen >= 2:
+                return False
+        return False
+
+    parts, cur, pending, prev_blank = [], None, [], True
+    for i, ln in enumerate(lines):
+        it = info[i]
+        if it is None:
+            (parts[-1][1] if parts else pending).append(ln)
+            prev_blank = True
+            continue
+        sc, best, bs, second, header = it
+        switch = None
+        if best and best != cur:
+            here = sc.get(cur, 0) if cur else 0
+            if header:
+                switch = best
+            elif cur is None:
+                switch = best
+            elif here == 0 and (bs >= 3 or (bs >= 2 and bs >= second + 2) or prev_blank or ahead(i, best)):
+                switch = best
+        if switch:
+            cur = switch
+            parts.append([cur, []])
+            if pending:
+                parts[-1][1].extend(pending)
+                pending = []
+        (parts[-1][1] if parts else pending).append(ln)
+        prev_blank = False
+    if pending:
+        if parts:
+            parts[0][1][:0] = pending
+        else:
+            parts.append([None, pending])
+    merged = []
+    for sid, ls in parts:
+        body = "\n".join(ls).strip("\n")
+        if not body.strip():
+            continue
+        if merged and merged[-1][0] == sid:
+            merged[-1] = (sid, merged[-1][1] + "\n" + body)
+        else:
+            merged.append((sid, body))
+    return merged
+
+
+def nb_folder_for(sid, life=None):
+    for k, folder, short, col in nb_subjects(life):
+        if k == sid:
+            return folder
+    return NB_UNSORTED
+
+
+def nb_match_subject(name, life=None):
+    """A folder or file name like 'Bio', 'IB Chemistry' or 'French notes' -> subject id (or None)."""
+    low = re.sub(r"[_\-.]+", " ", (name or "").lower())
+    for d in subject_defs(life):
+        if any(_has(low, a) for a in d[4]) or _has(low, d[1].lower()) or _has(low, d[2].lower()):
+            return d[0]
+    return None
+
+
+def nb_ensure(life=None):
+    os.makedirs(NB_DIR, exist_ok=True)
+    for k, folder, short, col in nb_subjects(life):
+        os.makedirs(os.path.join(NB_DIR, folder), exist_ok=True)
+
+
+def nb_import_plan(src, life=None):
+    """Where each file of a folder goes: [(source file, destination file)]. Your folder structure is kept; a folder
+    named after a subject (e.g. 'Bio' or 'Chemistry') lands inside that subject's notebook."""
+    src = os.path.normpath(src)
+    root_name = nb_safe(os.path.basename(src) or "Imported folder")
+    root_sid = nb_match_subject(root_name, life)
+    plan = []
+    for dirpath, dirnames, files in os.walk(src):
+        dirnames[:] = [d for d in dirnames if not d.startswith(".")]
+        rel = os.path.relpath(dirpath, src)
+        parts = [] if rel in (".", "") else [nb_safe(p) for p in rel.split(os.sep)]
+        for fn in files:
+            if fn.startswith(".") or fn.lower() in ("thumbs.db", "desktop.ini"):
+                continue
+            sp = os.path.join(dirpath, fn)
+            try:
+                if os.path.getsize(sp) > 300 * 1024 * 1024:
+                    continue
+            except OSError:
+                continue
+            if root_sid:                               # the folder itself is a subject: its insides go in there
+                dest = [nb_folder_for(root_sid, life)] + parts
+            else:
+                top_sid = nb_match_subject(parts[0], life) if parts else nb_match_subject(os.path.splitext(fn)[0], life)
+                if top_sid:                            # 'Bio/...' -> Biology HL/... (sub-folders kept)
+                    dest = [nb_folder_for(top_sid, life)] + parts[1:]
+                else:
+                    dest = [NB_IMPORTED, root_name] + parts
+            plan.append((sp, os.path.join(NB_DIR, *(dest + [nb_safe(fn)]))))
+    return plan
+
+
+def nb_import(src, life=None, only_new=False, progress=None):
+    """Copy a folder (e.g. your reMarkable export) into the notebooks. Returns (copied, skipped, {subject folder: n})."""
+    import shutil
+    plan = nb_import_plan(src, life)
+    copied = skipped = 0
+    where = {}
+    for i, (sp, dp) in enumerate(plan):
+        try:
+            if os.path.exists(dp):
+                a, b = os.stat(sp), os.stat(dp)
+                if a.st_size == b.st_size and a.st_mtime <= b.st_mtime + 1:
+                    skipped += 1
+                    continue
+            os.makedirs(os.path.dirname(dp), exist_ok=True)
+            shutil.copy2(sp, dp)
+            copied += 1
+            top = os.path.relpath(dp, NB_DIR).split(os.sep)[0]
+            where[top] = where.get(top, 0) + 1
+        except OSError:
+            skipped += 1
+        if progress and i % 10 == 0:
+            progress(i + 1, len(plan))
+    return copied, skipped, where
+
+
+def nb_file_text(path, limit=200000):
+    ext = os.path.splitext(path)[1].lower()
+    try:
+        if ext in NB_TEXT:
+            with open(path, encoding="utf-8", errors="replace") as f:
+                return f.read(limit)
+        if ext == ".pdf":
+            return (pdf_text(path) or "")[:limit]
+    except Exception:
+        pass
+    return ""
+
+
+_ZK_SLIDE_DEBUG = bool(os.environ.get("ZK_SLIDE_DEBUG"))
+
+
+class Zenko21(Zenko20):
+    """zenko21: sharper pixel art, a free scratchpad that files itself into subject notebooks, folder import,
+    half-hour free time, a real vertical page slide and text that never squishes."""
+
+    MIN_W, MIN_H = 1120, 700
+
+    def __init__(self):
+        cfg = load_config()
+        HD_ART["on"] = bool(cfg.get("hd_art", True))
+        if HD_ART["on"] and not cfg.get("hd_art_v1"):            # first run: the old blocky pictures go
+            try:
+                ART.clear()
+            except Exception:
+                pass
+            cfg["hd_art_v1"] = True
+            save_config(cfg)
+        self._nb_ui = None
+        self._nb_last = None
+        self._nb_save_job = None
+        self._rm_win = None
+        self._z21_sliding = None
+        super().__init__()
+        try:
+            self.z21_migrate_free()
+        except Exception as ex:
+            zk_log_error("free slots migrate: %r" % (ex,))
+        try:
+            nb_ensure(self.life)
+        except Exception as ex:
+            zk_log_error("notebooks: %r" % (ex,))
+        self.root.after(20000, self.nb_watch_tick)
+
+    # =================================================================================================================
+    #  window: a sensible minimum size
+    # =================================================================================================================
+    def open_hub(self, page=None):
+        fresh = not (getattr(self, "hub", None) and self.hub["win"].winfo_exists())
+        super().open_hub(page)
+        h = getattr(self, "hub", None)
+        if not fresh or not h:
+            return
+        w = h["win"]
+        try:
+            sw, sh = w.winfo_screenwidth(), w.winfo_screenheight()
+            mw, mh = min(self.MIN_W, sw - 40), min(self.MIN_H, sh - 60)
+            w.minsize(mw, mh)
+            w.update_idletasks()
+            if w.winfo_width() < mw or w.winfo_height() < mh:
+                W, H = max(mw, w.winfo_width()), max(mh, w.winfo_height())
+                w.geometry("%dx%d+%d+%d" % (W, H, max(0, (sw - W) // 2), max(0, (sh - H) // 3)))
+        except tk.TclError:
+            pass
+
+    # =================================================================================================================
+    #  text that never stays squished: undo old wrapping when there is room again
+    # =================================================================================================================
+    def zk_wrap(self, pg):
+        try:
+            self.z21_unwrap(pg)
+        except Exception as ex:
+            zk_log_error("unwrap: %r" % (ex,))
+        r = super().zk_wrap(pg)
+        try:
+            self.z21_note_reflows(pg)
+        except Exception:
+            pass
+        return r
+
+    def _z21_room(self, w, right):
+        """How wide this widget could be where it sits (its parent's width, not its own squeezed width)."""
+        try:
+            mgr = w.winfo_manager()
+            m = w.nametowidget(w.winfo_parent())
+            x0 = w.winfo_rootx()
+            own = w.winfo_width()
+            if mgr == "pack":
+                pi = w.pack_info()
+                if pi.get("side") in ("left", "right"):     # room up to the parent's edge, minus what sits after it
+                    sibs = [k for k in m.pack_slaves()]
+                    after = sibs[sibs.index(w) + 1:] if w in sibs else []
+                    used = sum(k.winfo_reqwidth() for k in after if k.winfo_manager() == "pack"
+                               and k.pack_info().get("side") == pi.get("side"))
+                    return max(own, min(m.winfo_rootx() + m.winfo_width() - x0 - used - 6, right - x0))
+                px = pi.get("padx", 0)
+                pr = px[-1] if isinstance(px, (tuple, list)) else int(px or 0)
+                return min(m.winfo_rootx() + m.winfo_width() - x0 - int(pr), right - x0)
+            if mgr == "grid":                               # a grid cell grows with its text: let it try again
+                return max(own, right - x0 - 40)
+            return min(own, right - x0)
+        except (tk.TclError, KeyError, ValueError):
+            return 0
+
+    def z21_unwrap(self, pg):
+        pg.update_idletasks()
+        right = pg.winfo_rootx() + pg.winfo_width() - 18
+        changed = False
+        for w in self.zk_walk(pg):
+            try:
+                cls = w.winfo_class()
+                if cls in ("Label", "Checkbutton", "Radiobutton") and getattr(w, "_zk_wrapped", False):
+                    room = self._z21_room(w, right)
+                    pad = 2 * int(float(str(w.cget("padx")) or 0)) + (28 if cls != "Label" else 0)
+                    wl = room - pad - 4
+                    cur = int(float(str(w.cget("wraplength")) or 0))
+                    if wl > cur + 30:
+                        wl0 = getattr(w, "_zk_wl0", 0) or 0
+                        if wl0 and wl0 <= wl:
+                            w.configure(wraplength=wl0)
+                            w._zk_wrapped = False
+                        else:
+                            w.configure(wraplength=wl)
+                        changed = True
+                elif cls == "Frame" and getattr(w, "_zk_orig", None) and getattr(w, "_z21_need", 0):
+                    room = max(min(w.winfo_width(), right - w.winfo_rootx()), self._z21_room(w, right))
+                    if room >= w._z21_need:
+                        for k, pi in w._zk_orig:
+                            try:
+                                k.grid_forget()
+                            except tk.TclError:
+                                pass
+                            k.pack_forget()
+                        for k, pi in w._zk_orig:
+                            k.pack(**pi)
+                        for ch in list(w.winfo_children()):     # the extra line frames the flow reflow made
+                            if ch.winfo_class() == "Frame" and not ch.winfo_children():
+                                ch.destroy()
+                        w._zk_orig = None
+                        w._zk_reflowed = False
+                        w._z21_need = 0
+                        changed = True
+            except (tk.TclError, ValueError):
+                continue
+        if changed:
+            pg.update_idletasks()
+
+    def z21_note_reflows(self, pg):
+        for w in self.zk_walk(pg):
+            try:
+                if w.winfo_class() == "Frame" and getattr(w, "_zk_reflowed", False) and not getattr(w, "_z21_need", 0) \
+                        and getattr(w, "_zk_orig", None):
+                    need = 0
+                    for k, pi in w._zk_orig:
+                        px = pi.get("padx", 0)
+                        need += k.winfo_reqwidth() + (sum(px) if isinstance(px, (tuple, list)) else 2 * int(px or 0))
+                    two = len(w._zk_orig) == 2
+                    w._z21_need = max(need + 8, 860 if two else 0)
+            except (tk.TclError, ValueError, TypeError):
+                continue
+
+    def zk_flow_reflow(self, row, kids, avail):
+        """Same as before, but remembers the original row so it can go back to one line when there's room."""
+        if not getattr(row, "_zk_orig", None):
+            row._zk_orig = [(k, {kk: vv for kk, vv in k.pack_info().items() if kk != "in"}) for k in kids]
+        return super().zk_flow_reflow(row, kids, avail)
+
+    def zk_grid_reflow(self, row, kids, avail):
+        if not getattr(row, "_zk_orig", None):
+            row._zk_orig = [(k, {kk: vv for kk, vv in k.pack_info().items() if kk != "in"}) for k in kids]
+        return super().zk_grid_reflow(row, kids, avail)
+
+    # =================================================================================================================
+    #  page switching: a real vertical slide (both pages move together, nothing redraws while it moves)
+    # =================================================================================================================
+    SLIDE_MS = 230
+
+    def hub_show(self, name):
+        h = getattr(self, "hub", None)
+        if h:
+            h["z20_touch"] = time.monotonic()
+            old = h.get("page")
+            if old and old != name:
+                self._z20_hist = (self._z20_hist + [old])[-20:]
+                if old == "notes":
+                    self.nb_flush(quiet=False)
+        return self.z21_show(name)
+
+    def z20_back(self):
+        h = getattr(self, "hub", None)
+        if h and self._z20_hist:
+            p = self._z20_hist.pop()
+            if h.get("page") == "notes":
+                self.nb_flush(quiet=False)
+            self.z21_show(p)
+        return "break"
+
+    def z21_show(self, name):
+        h = self.hub
+        if not h or not h["win"].winfo_exists():
+            return
+        old = h["page"]
+        if old == name:
+            return self.hub_after_show(name)
+        _t_prep = time.perf_counter()
+        self.z21_finish_slide()
+        order = [k for k, _ in (h.get("navkeys") or [])]
+        if name in order and old in order:
+            d = 1 if order.index(name) > order.index(old) else -1
+        else:
+            d = 1
+        h["anim"] += 1
+        token = h["anim"]
+        h["page"] = name
+        if name not in h["pages"]:
+            pg = tk.Frame(h["main"], bg=PAPER)
+            h["pages"][name] = pg
+            getattr(self, "hub_build_" + name)(pg)
+        pg = h["pages"][name]
+        op = h["pages"].get(old) if old else None
+        try:
+            self.hub_side_nav()
+        except Exception:
+            pass
+        main = h["main"]
+        H = main.winfo_height()
+        smooth = self.cfg.get("page_fx", True) and self.z20_motion() != "saver" and H > 50 and op is not None
+        if not smooth:
+            if op is not None:
+                op.place_forget()
+            pg.place(x=0, y=0, relwidth=1, relheight=1)
+            tk.Misc.lift(pg)
+            self.hub_after_show(name)
+            return
+        dur = self.SLIDE_MS if self.z20_motion() == "smooth" else int(self.SLIDE_MS * 0.75)
+        pg.place(x=0, y=d * H, relwidth=1, relheight=1)
+        tk.Misc.lift(pg)
+        op.place(x=0, y=0, relwidth=1, relheight=1)
+        try:
+            main.update_idletasks()                         # lay the new page out once, before anything moves
+        except tk.TclError:
+            pass
+        t0 = time.perf_counter()
+        if _ZK_SLIDE_DEBUG:
+            print("prep", name, round((t0 - _t_prep) * 1000), flush=True)
+        st = {"op": op, "pg": pg, "name": name, "token": token, "done": False}
+        self._z21_sliding = st
+
+        def frame():
+            if st["done"]:
+                return
+            if not self.hub or self.hub["anim"] != token or not pg.winfo_exists():
+                return self.z21_finish_slide()
+            t = min(1.0, (time.perf_counter() - t0) * 1000.0 / dur)
+            if _ZK_SLIDE_DEBUG:
+                st.setdefault("ts", []).append(round((time.perf_counter() - t0) * 1000))
+            e = 1 - (1 - t) ** 3                             # ease out: quick start, soft landing
+            y = int(round(d * H * (1 - e)))
+            try:
+                pg.place_configure(y=y)
+                op.place_configure(y=y - d * H)
+                main.update_idletasks()
+            except tk.TclError:
+                return self.z21_finish_slide()
+            if t >= 1.0:
+                return self.z21_finish_slide()
+            main.after(8, frame)                             # time-based, so a busy moment skips ahead, never drags
+        frame()
+
+    def z21_finish_slide(self):
+        st = self._z21_sliding
+        if not st or st["done"]:
+            return
+        st["done"] = True
+        self._z21_sliding = None
+        if _ZK_SLIDE_DEBUG:
+            print("slide", st["name"], st.get("ts"), flush=True)
+        try:
+            if st["op"] is not st["pg"] and st["op"].winfo_exists():
+                st["op"].place_forget()
+            if st["pg"].winfo_exists():
+                st["pg"].place(x=0, y=0, relwidth=1, relheight=1)
+        except tk.TclError:
+            pass
+        if self.hub and self.hub.get("page") == st["name"]:
+            try:
+                self.hub_after_show(st["name"])
+            except Exception as ex:
+                zk_log_error("after show %s: %r" % (st["name"], ex))
+
+    def zk_fit(self, fonts=True):
+        if self._z21_sliding:                                # never re-fit text while a page is moving
+            self._zk_fit_job = self.root.after(120, lambda: self.zk_fit(fonts))
+            return
+        return super().zk_fit(fonts)
+
+    def garden_draw(self):
+        if self._z21_sliding:                                # heavy painting waits until the page has landed
+            return self.garden_draw_later()
+        return super().garden_draw()
+
+    def map_draw(self):
+        if self._z21_sliding:
+            return self.map_draw_later()
+        return super().map_draw()
+
+    def z19_wisp(self, direction):
+        return                                               # the vertical slide replaces the sideways wisp
+
+    # =================================================================================================================
+    #  Notes: a free scratchpad that files itself into subject notebooks
+    # =================================================================================================================
+    def hub_build_notes(self, pg):
+        self.hub_title(pg, "Notes", "Write anything. When you leave this page, I file each part into the right subject")
+        outer = tk.Frame(pg, bg=PAPER)
+        outer.pack(fill="both", expand=True, padx=24, pady=(10, 14))
+        bg = T["card"]
+        ui = {}
+        self._nb_ui = ui
+        nb_ensure(self.life)
+        # --- top bar
+        bar = tk.Frame(outer, bg=PAPER)
+        bar.pack(fill="x", pady=(0, 10))
+        self.tt_btn(bar, "Import a folder…", self.nb_import_ask, bg=FIELD, size=9, padx=10, pady=2).pack(side="left")
+        self.tt_btn(bar, "reMarkable…", self.rm_window, bg=FIELD, size=9, padx=10, pady=2).pack(side="left", padx=(6, 0))
+        self.tt_btn(bar, "Open notebooks folder", lambda: self.nb_open_path(NB_DIR), bg=FIELD, size=9, padx=10,
+                    pady=2).pack(side="left", padx=(6, 0))
+        ui["status"] = tk.Label(bar, text="", bg=PAPER, fg=GREY, font=(FONT_UI, 9), anchor="e", justify="right")
+        ui["status"].pack(side="right", fill="x", expand=True)
+        # --- two columns: scratchpad | notebooks
+        cols = tk.Frame(outer, bg=PAPER)
+        cols.pack(fill="both", expand=True)
+        cols.grid_columnconfigure(0, weight=5, uniform="nb")
+        cols.grid_columnconfigure(1, weight=6, uniform="nb")
+        cols.grid_rowconfigure(0, weight=1)
+        left = self.hub_card(cols, "Scratchpad")
+        left.grid(row=0, column=0, sticky="nsew", padx=(0, 6))
+        right = self.hub_card(cols, "Notebooks")
+        right.grid(row=0, column=1, sticky="nsew", padx=(6, 0))
+        tk.Label(left, text="Type in a rush, mix subjects, no headings needed. French then Bio then Chem? I'll split it "
+                            "up and put each bit in its own notebook.", bg=bg, fg=GREY, font=(FONT_UI, 9), anchor="w",
+                 justify="left", wraplength=380).pack(fill="x", padx=14)
+        tf = tk.Frame(left, bg=bg)
+        tf.pack(fill="both", expand=True, padx=14, pady=(6, 4))
+        txt = tk.Text(tf, wrap="word", font=(FONT_UI, 11), bg=FIELD, fg=INK, insertbackground=INK, relief="flat",
+                      highlightthickness=1, highlightbackground=LINE, highlightcolor=GOLD, padx=10, pady=8, undo=True,
+                      height=12, width=30)
+        sb = ZkScrollbar(tf, command=txt.yview)
+        txt.configure(yscrollcommand=sb.set)
+        sb.pack(side="right", fill="y")
+        txt.pack(side="left", fill="both", expand=True)
+        ui["scratch"] = txt
+        try:
+            with open(NB_SCRATCH, encoding="utf-8") as f:
+                txt.insert("1.0", f.read())
+        except OSError:
+            pass
+        txt.bind("<KeyRelease>", lambda e: (self.nb_draft_later(), self.nb_preview_later()))
+        ui["preview"] = tk.Label(left, text="", bg=bg, fg=GREY, font=(FONT_UI, 9), anchor="w", justify="left",
+                                 wraplength=380)
+        ui["preview"].pack(fill="x", padx=14)
+        r = tk.Frame(left, bg=bg)
+        r.pack(fill="x", padx=14, pady=(6, 12))
+        self.tt_btn(r, "File it now", lambda: self.nb_flush(quiet=False), bg=ORANGE, fg=ON_ACC, size=10, padx=14,
+                    pady=2).pack(side="left")
+        ui["undo"] = self.tt_btn(r, "Undo last filing", self.nb_undo, bg=FIELD, size=9, padx=10, pady=1)
+        ui["undo"].pack(side="left", padx=(8, 0))
+        # --- notebooks: tree + page
+        tk.Label(right, text="One notebook per subject. Imported folders keep their own folders inside.", bg=bg, fg=GREY,
+                 font=(FONT_UI, 9), anchor="w", justify="left", wraplength=440).pack(fill="x", padx=14)
+        nbw = tk.Frame(right, bg=bg)
+        nbw.pack(fill="both", expand=True, padx=14, pady=(6, 4))
+        nbw.grid_columnconfigure(0, weight=2, uniform="nbt")
+        nbw.grid_columnconfigure(1, weight=3, uniform="nbt")
+        nbw.grid_rowconfigure(0, weight=1)
+        lf = tk.Frame(nbw, bg=bg)
+        lf.grid(row=0, column=0, sticky="nsew", padx=(0, 8))
+        lb = tk.Listbox(lf, font=(FONT_UI, 10), bg=FIELD, fg=INK, relief="flat", highlightthickness=1,
+                        highlightbackground=LINE, selectbackground=ORANGE, selectforeground=ON_ACC, activestyle="none",
+                        exportselection=False, width=18)
+        lsb = ZkScrollbar(lf, command=lb.yview)
+        lb.configure(yscrollcommand=lsb.set)
+        lsb.pack(side="right", fill="y")
+        lb.pack(side="left", fill="both", expand=True)
+        ui["tree"] = lb
+        ui["open"] = set(self.cfg.get("nb_open", []) or [])
+        ui["rows"] = []
+        rf = tk.Frame(nbw, bg=bg)
+        rf.grid(row=0, column=1, sticky="nsew")
+        ui["page_title"] = tk.Label(rf, text="", bg=bg, fg=GOLD, font=(FONT_UI, 10, "bold"), anchor="w", justify="left")
+        ui["page_title"].pack(fill="x")
+        vf = tk.Frame(rf, bg=bg)
+        vf.pack(fill="both", expand=True, pady=(4, 0))
+        view = tk.Text(vf, wrap="word", font=(FONT_UI, 10), bg=FIELD, fg=INK, insertbackground=INK, relief="flat",
+                       highlightthickness=1, highlightbackground=LINE, padx=8, pady=6, height=12, width=30, undo=True)
+        vsb = ZkScrollbar(vf, command=view.yview)
+        view.configure(yscrollcommand=vsb.set)
+        vsb.pack(side="right", fill="y")
+        view.pack(side="left", fill="both", expand=True)
+        ui["view"] = view
+        ui["cur"] = None
+        view.bind("<KeyRelease>", lambda e: self.nb_page_save_later())
+        lb.bind("<<ListboxSelect>>", lambda e: self.nb_tree_click())
+        lb.bind("<Double-Button-1>", lambda e: self.nb_tree_open())
+        r2 = tk.Frame(right, bg=bg)
+        r2.pack(fill="x", padx=14, pady=(6, 12), before=nbw)
+        r2.pack_configure(after=nbw)
+        self.tt_btn(r2, "New page", self.nb_new_page, bg=FIELD, size=9, padx=10, pady=1).pack(side="left")
+        self.tt_btn(r2, "New folder", self.nb_new_folder, bg=FIELD, size=9, padx=10, pady=1).pack(side="left", padx=(6, 0))
+        self.tt_btn(r2, "Open", self.nb_tree_open, bg=FIELD, size=9, padx=10, pady=1).pack(side="left", padx=(6, 0))
+        self.tt_btn(r2, "Delete", self.nb_delete, bg=T["delbtn"], size=9, padx=10, pady=1).pack(side="left", padx=(6, 0))
+        self.nb_tree_fill()
+        self.nb_preview()
+        self.nb_status_last()
+        view.insert("1.0", "Pick a notebook on the left to open it.\n\nEverything you file from the Scratchpad lands in "
+                           "that subject's “Quick notes”. Import a folder (like your reMarkable export) and its folders "
+                           "show up here too: a folder called Bio, Chem, French... goes straight into that subject.")
+        view.config(state="disabled")
+
+    # ---- scratchpad --------------------------------------------------------------------------------------------------
+    def _nb_alive(self):
+        ui = self._nb_ui
+        try:
+            return ui if ui and ui["scratch"].winfo_exists() else None
+        except (tk.TclError, KeyError):
+            return None
+
+    def nb_draft_later(self):
+        if self._nb_save_job:
+            try:
+                self.root.after_cancel(self._nb_save_job)
+            except Exception:
+                pass
+        self._nb_save_job = self.root.after(700, self.nb_draft_save)
+
+    def nb_draft_save(self):
+        self._nb_save_job = None
+        ui = self._nb_alive()
+        if not ui:
+            return
+        try:
+            body = ui["scratch"].get("1.0", "end-1c")
+            os.makedirs(DATA_DIR, exist_ok=True)
+            with open(NB_SCRATCH, "w", encoding="utf-8") as f:
+                f.write(body)
+        except (OSError, tk.TclError):
+            pass
+
+    def nb_preview_later(self):
+        if getattr(self, "_nb_prev_job", None):
+            try:
+                self.root.after_cancel(self._nb_prev_job)
+            except Exception:
+                pass
+        self._nb_prev_job = self.root.after(500, self.nb_preview)
+
+    def nb_preview(self):
+        self._nb_prev_job = None
+        ui = self._nb_alive()
+        if not ui:
+            return
+        try:
+            body = ui["scratch"].get("1.0", "end-1c")
+            if not body.strip():
+                ui["preview"].config(text="When you leave this page (or press File it now) each part goes to its notebook.")
+                return
+            parts = nb_split(body, self.life)
+            names = []
+            for sid, t in parts:
+                n = subject_name(sid, self.life, True) if sid else NB_UNSORTED
+                n_l = len([l for l in t.split("\n") if l.strip()])
+                names.append("%s (%d line%s)" % (n, n_l, "" if n_l == 1 else "s"))
+            ui["preview"].config(text="Will file: " + ", ".join(names))
+        except (tk.TclError, Exception):
+            pass
+
+    def nb_flush(self, quiet=True):
+        """File the scratchpad into the notebooks and empty it (called when you leave Notes or close the window)."""
+        ui = self._nb_alive()
+        if ui:
+            try:
+                body = ui["scratch"].get("1.0", "end-1c")
+            except tk.TclError:
+                return
+        else:
+            try:
+                with open(NB_SCRATCH, encoding="utf-8") as f:
+                    body = f.read()
+            except OSError:
+                return
+        if not body.strip():
+            return
+        parts = nb_split(body, self.life)
+        if not parts:
+            return
+        now = datetime.datetime.now()
+        stamp = now.strftime("%a %d %b %Y, %H:%M")
+        undo = {"text": body, "files": []}
+        filed = []
+        for sid, t in parts:
+            folder = nb_folder_for(sid, self.life) if sid else NB_UNSORTED
+            path = os.path.join(NB_DIR, folder, "Quick notes.md")
+            try:
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                before = os.path.getsize(path) if os.path.exists(path) else -1
+                with open(path, "a", encoding="utf-8") as f:
+                    if before <= 0:
+                        f.write("# %s · quick notes\n" % (subject_name(sid, self.life, False) if sid else NB_UNSORTED))
+                    f.write("\n## %s\n\n%s\n" % (stamp, t.strip("\n")))
+                undo["files"].append((path, before))
+                filed.append(subject_name(sid, self.life, True) if sid else NB_UNSORTED)
+            except OSError as ex:
+                zk_log_error("nb file: %r" % (ex,))
+        self._nb_last = undo
+        self.life["nb_last"] = {"when": now.isoformat(timespec="minutes"), "to": filed}
+        try:
+            self.life_save()
+        except Exception:
+            pass
+        try:
+            with open(NB_SCRATCH, "w", encoding="utf-8") as f:
+                f.write("")
+        except OSError:
+            pass
+        if ui:
+            try:
+                ui["scratch"].delete("1.0", "end")
+                ui["scratch"].edit_reset()
+            except tk.TclError:
+                pass
+            self.nb_tree_fill()
+            self.nb_preview()
+            self.nb_status_last()
+            cur = ui.get("cur")
+            if cur and os.path.basename(cur) == "Quick notes.md":
+                self.nb_show_file(cur)
+        if not quiet:
+            uniq = []
+            for f in filed:
+                if f not in uniq:
+                    uniq.append(f)
+            try:
+                self.say("Filed your notes into %s~" % (", ".join(uniq[:-1]) + " and " + uniq[-1] if len(uniq) > 1 else uniq[0]), 5)
+            except Exception:
+                pass
+
+    def nb_status_last(self):
+        ui = self._nb_alive()
+        if not ui:
+            return
+        last = self.life.get("nb_last") or {}
+        txt = ""
+        if last.get("to"):
+            try:
+                w = datetime.datetime.fromisoformat(last["when"])
+                when = w.strftime("%H:%M") if w.date() == datetime.date.today() else w.strftime("%d %b")
+            except Exception:
+                when = ""
+            uniq = []
+            for f in last["to"]:
+                if f not in uniq:
+                    uniq.append(f)
+            txt = "Last filed %s → %s" % (when, ", ".join(uniq))
+        try:
+            ui["status"].config(text=txt)
+        except tk.TclError:
+            pass
+
+    def nb_undo(self):
+        u = self._nb_last
+        ui = self._nb_alive()
+        if not u:
+            if ui:
+                ui["status"].config(text="Nothing to undo (undo works until Zenko closes).")
+            return
+        for path, before in u["files"]:
+            try:
+                if before <= 0:
+                    os.remove(path)
+                else:
+                    with open(path, "r+b") as f:
+                        f.truncate(before)
+            except OSError:
+                pass
+        self._nb_last = None
+        self.life["nb_last"] = {}
+        if ui:
+            try:
+                ui["scratch"].delete("1.0", "end")
+                ui["scratch"].insert("1.0", u["text"])
+            except tk.TclError:
+                pass
+            ui["status"].config(text="Undone: your notes are back in the scratchpad.")
+            self.nb_tree_fill()
+            self.nb_preview()
+        self.nb_draft_save()
+
+    # ---- notebook tree -----------------------------------------------------------------------------------------------
+    def nb_tree_fill(self):
+        ui = self._nb_alive()
+        if not ui:
+            return
+        lb = ui["tree"]
+        opened = ui["open"]
+        rows = []
+        subj = [f for k, f, s, c in nb_subjects(self.life)]
+        try:
+            extra = sorted(d for d in os.listdir(NB_DIR) if os.path.isdir(os.path.join(NB_DIR, d))
+                           and d not in subj and not d.startswith("."))
+        except OSError:
+            extra = []
+        tops = subj + [d for d in (NB_UNSORTED, NB_IMPORTED) if d in extra] + \
+            [d for d in extra if d not in (NB_UNSORTED, NB_IMPORTED)]
+
+        def walk(path, depth):
+            try:
+                items = sorted(os.listdir(path), key=lambda n: (not os.path.isdir(os.path.join(path, n)), n.lower()))
+            except OSError:
+                return
+            for n in items:
+                if n.startswith("."):
+                    continue
+                p = os.path.join(path, n)
+                isdir = os.path.isdir(p)
+                rows.append((depth, p, isdir))
+                if isdir and p in opened:
+                    walk(p, depth + 1)
+        for t in tops:
+            p = os.path.join(NB_DIR, t)
+            rows.append((0, p, True))
+            if p in opened:
+                walk(p, 1)
+        ui["rows"] = rows
+        try:
+            sel = ui.get("cur")
+            lb.delete(0, "end")
+            for i, (depth, p, isdir) in enumerate(rows):
+                name = os.path.basename(p)
+                if isdir:
+                    n = self.nb_count(p)
+                    lab = "%s%s %s%s" % ("   " * depth, "▾" if p in opened else "▸", name, ("  (%d)" % n) if n else "")
+                else:
+                    lab = "%s   · %s" % ("   " * depth, os.path.splitext(name)[0] if name.lower().endswith(NB_TEXT) else name)
+                lb.insert("end", lab)
+                if depth == 0:
+                    lb.itemconfig(i, fg=GOLD)
+                if p == sel:
+                    lb.selection_set(i)
+        except tk.TclError:
+            pass
+
+    def nb_count(self, path):
+        n = 0
+        try:
+            for _dp, _dn, fs in os.walk(path):
+                n += sum(1 for f in fs if not f.startswith("."))
+        except OSError:
+            pass
+        return n
+
+    def nb_sel(self):
+        ui = self._nb_alive()
+        if not ui:
+            return None
+        s = ui["tree"].curselection()
+        if not s or s[0] >= len(ui["rows"]):
+            return None
+        return ui["rows"][s[0]]
+
+    def nb_tree_click(self):
+        r = self.nb_sel()
+        if not r:
+            return
+        depth, p, isdir = r
+        ui = self._nb_ui
+        if isdir:
+            if p in ui["open"]:
+                ui["open"].discard(p)
+            else:
+                ui["open"].add(p)
+            self.cfg["nb_open"] = sorted(ui["open"])[-60:]
+            save_config(self.cfg)
+            ui["cur_dir"] = p
+            self.nb_tree_fill()
+            for i, row in enumerate(ui["rows"]):
+                if row[1] == p:
+                    ui["tree"].selection_clear(0, "end")
+                    ui["tree"].selection_set(i)
+                    ui["tree"].see(i)
+            if not ui.get("cur") or not os.path.dirname(ui["cur"]).startswith(p):
+                self.nb_show_folder(p)
+            return
+        ui["cur_dir"] = os.path.dirname(p)
+        self.nb_show_file(p)
+
+    def nb_show_folder(self, p):
+        ui = self._nb_alive()
+        if not ui:
+            return
+        self.nb_page_save()
+        ui["cur"] = None
+        n = self.nb_count(p)
+        rel = os.path.relpath(p, NB_DIR)
+        ui["page_title"].config(text=rel.replace(os.sep, "  ›  "))
+        v = ui["view"]
+        v.config(state="normal")
+        v.delete("1.0", "end")
+        v.insert("1.0", ("%d file%s here.\n\nPick a page on the left to read or edit it. New page adds one here; "
+                         "notes you write in the Scratchpad about this subject go into “Quick notes”.") %
+                 (n, "" if n == 1 else "s"))
+        v.config(state="disabled")
+
+    def nb_show_file(self, p):
+        ui = self._nb_alive()
+        if not ui:
+            return
+        self.nb_page_save()
+        ui["cur"] = p
+        rel = os.path.relpath(p, NB_DIR)
+        ui["page_title"].config(text=rel.replace(os.sep, "  ›  "))
+        v = ui["view"]
+        ext = os.path.splitext(p)[1].lower()
+        v.config(state="normal")
+        v.delete("1.0", "end")
+        if ext in NB_TEXT:
+            v.insert("1.0", nb_file_text(p))
+            v.edit_reset()
+            ui["cur_text"] = True
+            return
+        ui["cur_text"] = False
+        v.insert("1.0", "Reading…" if ext == ".pdf" else
+                 "This is a %s file. Press Open file to open it in its own app." % (ext[1:].upper() or "plain"))
+        v.config(state="disabled")
+        if ext == ".pdf":
+            def done(res, err):
+                if not self._nb_alive() or ui.get("cur") != p:
+                    return
+                v.config(state="normal")
+                v.delete("1.0", "end")
+                t = (res or "").strip()
+                v.insert("1.0", t if t else "This PDF is handwriting or pictures, so there's no typed text to show. "
+                                            "Press Open file to see it.")
+                v.config(state="disabled")
+            self.bg(lambda: nb_file_text(p), done)
+
+    def nb_page_save_later(self):
+        if getattr(self, "_nb_page_job", None):
+            try:
+                self.root.after_cancel(self._nb_page_job)
+            except Exception:
+                pass
+        self._nb_page_job = self.root.after(800, self.nb_page_save)
+
+    def nb_page_save(self):
+        self._nb_page_job = None
+        ui = self._nb_alive()
+        if not ui or not ui.get("cur") or not ui.get("cur_text"):
+            return
+        try:
+            if not ui["view"].edit_modified():
+                return
+            body = ui["view"].get("1.0", "end-1c")
+            with open(ui["cur"], "w", encoding="utf-8") as f:
+                f.write(body)
+            ui["view"].edit_modified(False)
+        except (OSError, tk.TclError):
+            pass
+
+    def nb_target_dir(self):
+        ui = self._nb_alive()
+        r = self.nb_sel()
+        if r:
+            return r[1] if r[2] else os.path.dirname(r[1])
+        return (ui or {}).get("cur_dir") or os.path.join(NB_DIR, NB_UNSORTED)
+
+    def nb_new_page(self):
+        d = self.nb_target_dir()
+        os.makedirs(d, exist_ok=True)
+        i = 1
+        while os.path.exists(os.path.join(d, "Page %d.md" % i)):
+            i += 1
+        p = os.path.join(d, "Page %d.md" % i)
+        with open(p, "w", encoding="utf-8") as f:
+            f.write("")
+        ui = self._nb_ui
+        ui["open"].add(d)
+        self.nb_tree_fill()
+        self.nb_show_file(p)
+        try:
+            ui["view"].focus_set()
+        except tk.TclError:
+            pass
+
+    def nb_new_folder(self):
+        from tkinter import simpledialog
+        d = self.nb_target_dir()
+        name = simpledialog.askstring(APP_NAME, "Name of the new folder:", parent=self.hub["win"] if self.hub else None)
+        if not name:
+            return
+        p = os.path.join(d, nb_safe(name))
+        os.makedirs(p, exist_ok=True)
+        self._nb_ui["open"].update((d, p))
+        self.nb_tree_fill()
+
+    def nb_delete(self):
+        r = self.nb_sel()
+        if not r:
+            return
+        depth, p, isdir = r
+        if depth == 0 and os.path.basename(p) in [f for k, f, s, c in nb_subjects(self.life)]:
+            self._nb_ui["status"].config(text="Subject notebooks stay. Delete the pages inside instead.")
+            return
+        if not messagebox.askyesno(APP_NAME, "Move “%s” to the notebooks bin?\n(It goes to the .bin folder inside your "
+                                             "notebooks folder, so you can still get it back.)" % os.path.basename(p),
+                                   parent=self.hub["win"] if self.hub else None):
+            return
+        import shutil
+        binp = os.path.join(NB_DIR, ".bin", datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+        try:
+            os.makedirs(binp, exist_ok=True)
+            shutil.move(p, os.path.join(binp, os.path.basename(p)))
+        except OSError as ex:
+            self._nb_ui["status"].config(text="Couldn't move it (%s)." % ex)
+            return
+        if self._nb_ui.get("cur", "") and self._nb_ui["cur"].startswith(p):
+            self._nb_ui["cur"] = None
+            self._nb_ui["view"].config(state="normal")
+            self._nb_ui["view"].delete("1.0", "end")
+            self._nb_ui["page_title"].config(text="")
+        self.nb_tree_fill()
+
+    def nb_open_path(self, p):
+        try:
+            if IS_WIN:
+                os.startfile(p)
+            elif sys.platform == "darwin":
+                subprocess.Popen(["open", p])
+            else:
+                subprocess.Popen(["xdg-open", p])
+        except Exception as ex:
+            zk_log_error("open %s: %r" % (p, ex))
+
+    def nb_tree_open(self):
+        r = self.nb_sel()
+        if r:
+            self.nb_open_path(r[1])
+
+    # ---- import a folder (your reMarkable export, a USB stick, anything) ---------------------------------------------
+    def nb_import_ask(self):
+        from tkinter import filedialog
+        d = filedialog.askdirectory(title="Pick the folder to bring into your notebooks",
+                                    parent=self.hub["win"] if self.hub else None, mustexist=True)
+        if not d:
+            return
+        self.nb_import_run(d, ask_watch=True)
+
+    def nb_import_run(self, d, ask_watch=False, quiet=False):
+        ui = self._nb_alive()
+        if ui and not quiet:
+            ui["status"].config(text="Bringing in “%s”…" % os.path.basename(d))
+
+        def done(res, err):
+            ui2 = self._nb_alive()
+            if err:
+                if ui2:
+                    ui2["status"].config(text="Couldn't import that folder (%s)." % err)
+                return
+            copied, skipped, where = res
+            if ui2:
+                for top in where:
+                    ui2["open"].add(os.path.join(NB_DIR, top))
+                self.nb_tree_fill()
+                if not quiet or copied:
+                    ui2["status"].config(text="Imported %d file%s%s%s." % (
+                        copied, "" if copied == 1 else "s",
+                        (" into " + ", ".join("%s (%d)" % kv for kv in sorted(where.items()))) if where else "",
+                        ("  ·  %d already here" % skipped) if skipped else ""))
+            if ask_watch:
+                watch = list(self.cfg.get("nb_watch", []) or [])
+                nd = os.path.normpath(d)
+                if nd not in watch and messagebox.askyesno(
+                        APP_NAME, "Keep bringing in new notes from this folder?\n\n%s\n\nEach time Zenko starts (and every "
+                                  "15 minutes) new or changed files there are copied into your notebooks the same way. "
+                                  "Handy for the folder your reMarkable exports to." % nd,
+                        parent=self.hub["win"] if self.hub else None):
+                    watch.append(nd)
+                    self.cfg_set("nb_watch", watch[-8:])
+        self.bg(lambda: nb_import(d, self.life), done)
+
+    def nb_watch_tick(self):
+        for d in list(self.cfg.get("nb_watch", []) or []):
+            if os.path.isdir(d):
+                self.nb_import_run(d, quiet=True)
+        self.root.after(15 * 60 * 1000, self.nb_watch_tick)
+
+    # ---- the old reMarkable page, now in its own window --------------------------------------------------------------
+    def rm_window(self):
+        w = self._rm_win
+        if w is not None:
+            try:
+                if w.winfo_exists():
+                    w.deiconify()
+                    w.lift()
+                    return
+            except tk.TclError:
+                pass
+        parent = self.hub["win"] if self.hub else self.root
+        w = tk.Toplevel(parent)
+        w.title("reMarkable · Zenko")
+        w.configure(bg=PAPER)
+        sw, sh = w.winfo_screenwidth(), w.winfo_screenheight()
+        W, H = min(1000, sw - 80), min(720, sh - 100)
+        w.geometry("%dx%d+%d+%d" % (W, H, (sw - W) // 2, max(0, (sh - H) // 4)))
+        w.minsize(min(760, sw - 40), min(520, sh - 60))
+        self._rm_win = w
+        box = tk.Frame(w, bg=PAPER)
+        box.pack(fill="both", expand=True)
+        cv = tk.Canvas(box, bg=PAPER, highlightthickness=0)
+        sb = ZkScrollbar(box, command=cv.yview)
+        cv.configure(yscrollcommand=sb.set)
+        sb.pack(side="right", fill="y")
+        cv.pack(side="left", fill="both", expand=True)
+        inner = tk.Frame(cv, bg=PAPER)
+        wid = cv.create_window((0, 0), window=inner, anchor="nw")
+        cv.bind("<Configure>", lambda e: cv.itemconfigure(wid, width=e.width))
+        inner.bind("<Configure>", lambda e: cv.configure(scrollregion=cv.bbox("all")))
+        tk.Label(inner, text="reMarkable", bg=PAPER, fg=INK, font=(FONT_UI, 18, "bold"), anchor="w").pack(fill="x", padx=24, pady=(16, 0))
+        tk.Label(inner, text="Read your handwritten notebooks from the reMarkable cloud, then summarise, search or quiz "
+                             "yourself. (To bring a whole exported folder into your notebooks, use Import a folder on the "
+                             "Notes page.)", bg=PAPER, fg=GREY, font=(FONT_UI, 10), anchor="w", justify="left",
+                 wraplength=W - 80).pack(fill="x", padx=24)
+        body = tk.Frame(inner, bg=PAPER)
+        body.pack(fill="x", padx=24, pady=14)
+        self.notes_body = body
+
+        def close():
+            self.notes_body = None
+            self.notes_widgets = None
+            self._rm_win = None
+            try:
+                w.destroy()
+            except tk.TclError:
+                pass
+        w.protocol("WM_DELETE_WINDOW", close)
+        try:
+            self.notes_render()
+        except Exception as ex:
+            zk_log_error("rm window: %r" % (ex,))
+
+    def hub_close(self):
+        try:
+            self.nb_page_save()
+            self.nb_flush(quiet=True)
+        except Exception as ex:
+            zk_log_error("nb flush on close: %r" % (ex,))
+        self._nb_ui = None
+        self.z21_finish_slide()
+        return super().hub_close()
+
+    def quit(self):
+        try:
+            self.nb_page_save()
+            self.nb_flush(quiet=True)
+        except Exception:
+            pass
+        return super().quit()
+
+    # =================================================================================================================
+    #  Upcoming: half-hour free time
+    # =================================================================================================================
+    def z21_migrate_free(self):
+        L = self.life
+        if L.get("free_half"):
+            return
+        L["free"] = {k: hours_to_slots(v) for k, v in (L.get("free") or {}).items()}
+        L["free_dates"] = {k: hours_to_slots(v) for k, v in (L.get("free_dates") or {}).items()}
+        L["free_half"] = True
+        self.life_save()
+
+    def set_free(self, keys, hours, add=False):
+        return super().set_free(keys, hours_to_slots(hours), add)
+
+    def up_hours(self):
+        return set(round(float(h) * 2) / 2.0 for h in self.free_for(self.up_date()))
+
+    def up_info_default(self):
+        try:
+            hrs = self.up_hours()
+            mins = slots_minutes(hrs)
+            self.up_info.config(text="Free on %s: %s%s\nTap half an hour to mark it, or drag." % (
+                DAY_NAMES[self.up_day] + "s", slots_text(hrs) if hrs else "none yet",
+                ("  (%s)" % fmt_hm(mins)) if mins else ""))
+        except (tk.TclError, AttributeError):
+            pass
+
+    def up_hit(self, x, y):
+        cx, cy, R = self.up_geom()
+        d = math.hypot(x - cx, y - cy)
+        if not (R - 36 <= d <= R + 2):
+            return None
+        a = (math.degrees(math.atan2(x - cx, cy - y)) + 360) % 360
+        return min(23.5, int(a // 15) / 2.0 + (12 if self.up_pm else 0))
+
+    def up_set_hour(self, h, on):
+        L = self.life
+        cur = set(self.up_hours())
+        h = round(float(h) * 2) / 2.0
+        if on:
+            cur.add(h)
+        else:
+            cur.discard(h)
+        L["free"][str(self.up_day)] = sorted(cur)
+        L["free_dates"].pop(self.up_date().isoformat(), None)
+        L["free_set"] = True
+
+    def up_hover(self, e):
+        h = self.up_hit(e.x, e.y)
+        if h is None:
+            return self.up_info_default()
+        day = self.up_date()
+        a = int(h * 60)
+        what = []
+        for it in tt_today(self.tt, day):
+            try:
+                hh, mm = map(int, it["start"].split(":"))
+                s = hh * 60 + mm
+                if s < a + 30 and a < s + int(it["mins"]):
+                    what.append(it["task"])
+            except Exception:
+                continue
+        on = h in self.up_hours()
+        self.up_info.config(text="%s  %s-%s  ·  %s%s\nClick to %s." % (
+            DAY_NAMES[day.weekday()][:3], slot_hm(h), slot_hm(h + 0.5), "free for study" if on else "not free",
+            ("  ·  " + clip(", ".join(what), 40)) if what else "", "unmark" if on else "mark it free"))
+
+    def up_copy(self):
+        hrs = sorted(self.up_hours())
+        for k in range(5):
+            self.life["free"][str(k)] = list(hrs)
+        self.life["free_set"] = True
+        self.life_save()
+        self.replan()
+        self.dl_status("Copied %s to Monday-Friday." % slots_text(hrs))
+
+    def up_clock(self, c, S):
+        super().up_clock(c, S)
+        try:
+            self.z21_quick_add(c)
+        except Exception as ex:
+            zk_log_error("quick add: %r" % (ex,))
+
+    def z21_quick_add(self, c):
+        """'From [16:30] to [18:00] [Add]': the easy way to add free time, in half hours."""
+        bg = T["card"]
+        row = tk.Frame(c, bg=bg)
+        row.pack(pady=(0, 4))
+        times = ["%02d:%02d" % (m // 60, m % 60) for m in range(0, 24 * 60 + 1, 30)]
+        times[-1] = "24:00"
+        now = datetime.datetime.now()
+        start0 = "%02d:%02d" % (min(23, now.hour + 1), 0) if self.up_day == now.weekday() else "16:00"
+        v1, v2 = tk.StringVar(value=start0), tk.StringVar(value=times[min(len(times) - 1, times.index(start0) + 2)])
+
+        def menu(var):
+            om = tk.OptionMenu(row, var, *times)
+            om.config(bg=FIELD, fg=INK, activebackground=T["hover"], activeforeground=INK, highlightthickness=1,
+                      highlightbackground=LINE, relief="flat", font=(FONT_UI, 9), width=5)
+            try:
+                om["menu"].config(bg=FIELD, fg=INK, activebackground=ORANGE, activeforeground=ON_ACC)
+            except tk.TclError:
+                pass
+            return om
+        tk.Label(row, text="Free from", bg=bg, fg=GREY, font=(FONT_UI, 9)).pack(side="left")
+        menu(v1).pack(side="left", padx=(4, 4))
+        tk.Label(row, text="to", bg=bg, fg=GREY, font=(FONT_UI, 9)).pack(side="left")
+        menu(v2).pack(side="left", padx=(4, 0))
+        row2 = tk.Frame(c, bg=bg)
+        row2.pack(pady=(0, 10))
+
+        def tv(s):
+            h, m = map(int, s.split(":"))
+            return h + m / 60.0
+
+        def change(on):
+            a, b = tv(v1.get()), tv(v2.get())
+            if b <= a:
+                self.dl_status("Pick an end time after the start time.")
+                return
+            s = a
+            while s < b - 1e-6:
+                self.up_set_hour(s, on)
+                s += 0.5
+            self.life_save()
+            self.up_pm = a >= 12
+            self.root.after(50, self.replan)
+            self.root.after(60, self.dl_render)
+        self.tt_btn(row2, "Add as free time", lambda: change(True), bg=ORANGE, fg=ON_ACC, size=9, padx=10, pady=1).pack(side="left")
+        self.tt_btn(row2, "Remove", lambda: change(False), bg=FIELD, size=9, padx=8, pady=1).pack(side="left", padx=(4, 0))
+
+    def up_draw(self):
+        """The clock ring now has 24 half-hour pieces: each hour is two halves you can tap on their own."""
+        cv = self.up_cv
+        if cv is None or not cv.winfo_exists():
+            return
+        super().up_draw()
+        try:
+            cv.delete("seg")
+            cx, cy, R = self.up_geom()
+            bg = T["card"]
+            free = self.up_hours()
+            rm = R - 21
+            base = 12 if self.up_pm else 0
+            for k in range(24):
+                s = k / 2.0 + base
+                on = s in free
+                col = _mixhex(bg, GOLD, 0.62) if on else _mixhex(bg, "#000000", 0.28)
+                gap = 1.2 if k % 2 == 0 else 0.5
+                cv.create_arc(cx - rm, cy - rm, cx + rm, cy + rm, start=90 - (k + 1) * 15 + 0.5,
+                              extent=15 - 0.5 - gap, style="arc", outline=col, width=24, tags=("face", "seg"))
+            # put the hour numbers back on top of the new pieces
+            for k in range(12):
+                h = k + base
+                on = (h in free) or (h + 0.5 in free)
+                a = math.radians(k * 30 + 15)
+                cv.create_text(cx + rm * math.sin(a), cy - rm * math.cos(a), text="%02d" % h,
+                               fill=ON_ACC if (h in free and h + 0.5 in free) else (INK if on else GREY),
+                               font=(FONT_UI, 8, "bold"), tags=("face", "seglab"))
+            cv.tag_raise("seg")
+            cv.tag_raise("seglab")
+            cv.tag_raise("hands")
+        except tk.TclError:
+            pass
+
+    def z20_prewarm(self):
+        super().z20_prewarm()
+        if not HD_ART["on"] or getattr(self, "_z21_warm", False):
+            return
+        self._z21_warm = True
+        try:
+            n, acc, z = self.tail_count(), tuple(self.accessories()), int(self.Z)
+            pal = dict(self.pal)
+        except Exception:
+            return
+        jobs = []
+        for st in ("idle", "blink", "focus", "happy"):
+            for fr in (0, 1):
+                jobs.append(lambda st=st, fr=fr: sprite_png_hd([build_frame(st, "up", fr, (0, 0, 0, 0), acc, 0, 0)], pal, z))
+        for fr in range(8):
+            jobs.append(lambda fr=fr: sprite_png_hd([build_tails(n, fr, shadow=False)], pal, z))
+        for side in "RL":
+            for fr in range(8):
+                jobs.append(lambda s=side, fr=fr: sprite_png_hd([rig_rows("qwalk%s%d" % (s, fr), n, acc)], pal, z))
+
+        def work():
+            time.sleep(4)
+            for j in jobs:
+                if getattr(self, "_z20_quit", False):
+                    return
+                try:
+                    j()
+                except Exception:
+                    pass
+                time.sleep(0.05)
+            ART.save()
+        threading.Thread(target=work, name="zenko-prewarm-hd", daemon=True).start()
+
+    # =================================================================================================================
+    #  Settings: sharper pixel art toggle
+    # =================================================================================================================
+    def z20_speed_card(self, parent):
+        super().z20_speed_card(parent)
+        bg = T["card"]
+        c = self.hub_card(parent, "Pixel art quality")
+        c.pack(fill="x", pady=(12, 0))
+        v = tk.BooleanVar(value=bool(self.cfg.get("hd_art", True)))
+
+        def flip():
+            self.cfg_set("hd_art", bool(v.get()))
+            HD_ART["on"] = bool(v.get())
+            ART.clear()
+            try:
+                self.apply_look()
+            except Exception:
+                pass
+            self.say("Redrawn~ Close and reopen this window to see every page in the new quality.", 6)
+        tk.Checkbutton(c, text="High-resolution pixel art (same designs, smoother edges, many more pixels)", variable=v,
+                       command=flip, bg=bg, fg=INK, activebackground=bg, activeforeground=GOLD, selectcolor=FIELD,
+                       highlightthickness=0, font=(FONT_UI, 10), anchor="w", justify="left").pack(fill="x", padx=14, pady=(0, 12))
+
+
 def main():
     if "--make-icon" in sys.argv:
         out = sys.argv[sys.argv.index("--make-icon") + 1] if len(sys.argv) > sys.argv.index("--make-icon") + 1 \
@@ -39626,7 +41283,7 @@ def main():
         return
     started = {"ok": False}
     try:
-        app = Zenko20()
+        app = Zenko21()
 
         def mark_ok():
             started["ok"] = True
