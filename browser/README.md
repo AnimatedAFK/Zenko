@@ -7,7 +7,15 @@ A fast everyday browser in Zenko's night-shrine style that talks to Zenko.
   Chromium's GPU compositor, so animations run at your screen's full refresh rate.
 - **Built by GitHub Actions** (`.github/workflows/browser.yml`): nothing to install on your PC.
 
-## 0.3.0 (this version)
+## 0.4.0 (this version)
+
+- **Subject tab groups.** Tabs about the same subject gather after a coloured label in Zenko's subject colours (Bio green, Chem blue, Maths amber, French rose, Psych violet, English red, Core gold). Two tabs of one subject make a group by themselves; right-click a tab > Subject group to choose one or "No group". Click a label to fold the group, right-click it to fold, open a tab in it, send its pages to Zenko notes, ungroup or close it. Drag a tab onto a label or into a group to move it. Ctrl+Tab follows the order you see. Settings > Shape and layout > Group tabs by subject.
+- **A little fox lives in the tab bar.** Very discreet: every few minutes a tiny half see-through fox peeks up from the bottom of the empty part of the tab bar, strolls across it, sits and swishes her tail, or curls up for a nap. She only uses empty space and slips away when the mouse comes near. Settings > Motion and sparkle (Off / Discreet).
+- **Night shrine theme.** A very dark, low-contrast colour scheme with warm lantern light and fireflies drifting in the sky instead of foxfire. Settings > Colours, or "Night shrine after 10 pm" to switch to it automatically at night.
+- **Focus mode follows Zenko.** Starting a focus session or lock-in in Zenko turns focus mode on here at once, and off again when the session ends (unless you turned it on yourself). Settings > Focus mode > Turn on with Zenko study sessions.
+- **The shoji screen.** A blocked site now fades away as two shoji screens slide shut, lit from behind, with a hanging ema showing your Zenko session and the minutes left.
+
+## 0.3.0
 A real link with Zenko. A fox button in the toolbar glows when Zenko is open (both apps leave each other a small "I'm here"
 file in `%APPDATA%\FoxBuddy`, nothing goes online) and shows what's coming up. Right-click now has a **Zenko** submenu:
 summarize the selection or the whole page (Zenko's summary pops up in her bubble and chat; without Zenko a quick summary is

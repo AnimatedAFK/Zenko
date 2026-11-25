@@ -12,7 +12,20 @@
     sakura: ["#140914", "#1b0d1c", "#28152a", "#fff0f7", "#c89cb6", "#ff86bd", "#ffb6d8", "#f3c56b", "#ff9fd0", "Sakura"],
     mint: ["#05110d", "#0a1914", "#11261e", "#ecfff7", "#90baa9", "#3fd6a4", "#8aeecb", "#e9c46a", "#5ff0c0", "Jade"],
     silver: ["#0c0e13", "#12151c", "#1b1f28", "#f2f5fb", "#9ba4b6", "#8fb0e8", "#bfd2f6", "#d8c08a", "#a8c4ff", "Moonlight"],
+    // Night shrine: very dark and low-contrast for late study, warm lantern light and fireflies instead of foxfire
+    nightshrine: ["#060509", "#0b0910", "#121019", "#e4dccd", "#8a8190", "#cf9a56", "#e2bb8a", "#c4a062", "#b8e07a", "Night shrine"],
   };
+  // Zenko's own subject colours (the same as in Zenko's planner and notebooks)
+  const SUBJ = {
+    Biology: ["#46b37a", "Bio"], Chemistry: ["#4f8fe0", "Chem"], Maths: ["#e0a33a", "Maths"], French: ["#d65f8f", "French"],
+    Psychology: ["#a46ad8", "Psych"], English: ["#e05a4a", "English"], Core: ["#cdb98a", "Core"],
+  };
+  // The palette in use right now ("Night shrine after 10 pm" swaps it in for the night)
+  function palOf(p) {
+    const h = new Date().getHours();
+    if (p.nightAuto && (h >= 22 || h < 5)) return "nightshrine";
+    return P[p.palette] ? p.palette : "snow";
+  }
   const FONTS = {
     outfit: ['"Outfit", "Segoe UI Variable Text", "Segoe UI", sans-serif', "Outfit (clean, default)"],
     pixel: ['"Pixelify Sans", "DotGothic16", "Segoe UI", sans-serif', "Pixelify Sans (pixel)"],
@@ -60,6 +73,7 @@
     focus: false, focusBlock: ["youtube.com", "instagram.com", "tiktok.com", "reddit.com", "x.com", "twitter.com", "facebook.com", "netflix.com", "twitch.tv", "discord.com"],
     focusOnlyMode: false, focusOnly: [], focusAllow: ["claude.ai", "inthinking.net", "ibo.org", "khanacademy.org", "wikipedia.org"],
     sortDownloads: true, gestures: true, drafts: true, archiveDays: 7, sites: {}, outlookSound: true, battery: "auto",
+    autoGroups: true, groupsFolded: [], foxLife: "discreet", focusWithZenko: true, nightAuto: false,
     translateTo: "en", startWeekday: [], startWeekend: [], weatherCity: "", weatherLat: null, weatherLon: null, schedule: "",
   };
   const ENGINES = {
@@ -82,7 +96,7 @@
   }
   function apply(p, root) {
     root = root || document.documentElement;
-    const c = P[p.palette] || P.snow;
+    const pal = palOf(p), c = P[pal];
     const acc = /^#[0-9a-f]{6}$/i.test(p.accent || "") ? p.accent : c[5];
     const v = {
       "--night": c[0], "--paper": c[1], "--card": c[2], "--ink": c[3], "--grey": c[4], "--acc": acc,
@@ -95,6 +109,7 @@
       "--rs": Math.max(2, Math.round((p.radius | 0) * 0.6)) + "px",
     };
     for (const k in v) root.style.setProperty(k, v[k]);
+    root.dataset.palette = pal;
     root.dataset.shape = p.tabShape;
     root.dataset.pixel = p.pixel || "subtle";
     root.dataset.tabs = p.tabs;
@@ -338,7 +353,7 @@
     opt = Object.assign({ moon: [0.8, 0.16, 6], ridge: 0, torii: false, wisps: 5, shoot: true, fps: 24 }, opt || {});
     const ctx = cv.getContext("2d");
     const base = document.createElement("canvas"), bx = base.getContext("2d");
-    let w = 0, h = 0, u = 1, stars = [], wisps = [], shot = null, nextShot = 0, last = 0, col = {}, strong = false;
+    let w = 0, h = 0, u = 1, ff = false, stars = [], wisps = [], shot = null, nextShot = 0, last = 0, col = {}, strong = false;
     const B4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
     function colors() {
       const cs = getComputedStyle(document.documentElement), v = (k) => cs.getPropertyValue(k).trim() || "#000000";
@@ -397,7 +412,8 @@
       const n = Math.round((w / u) * (h / u) / 110);
       for (let i = 0; i < n; i++) stars.push({ x: Math.round(Math.random() * w / u) * u, y: Math.round(Math.random() * h * (opt.ridge ? 0.7 : 1) / u) * u, p: Math.random() * 6.28, s: 0.5 + Math.random() * 1.6, big: Math.random() < 0.07, g: Math.random() < 0.3 });
       wisps = [];
-      for (let i = 0; i < opt.wisps; i++) wisps.push({ x: Math.random() * w, y: h * (0.3 + Math.random() * 0.65), vx: (Math.random() - 0.5) * 0.12, ph: Math.random() * 6.28, life: Math.random() });
+      ff = document.documentElement.dataset.palette === "nightshrine";
+      for (let i = 0; i < (ff ? opt.wisps * 2 + 4 : opt.wisps); i++) wisps.push({ x: Math.random() * w, y: h * (0.3 + Math.random() * 0.65), vx: (Math.random() - 0.5) * 0.12, ph: Math.random() * 6.28, life: Math.random() });
     }
     function frame(t) {
       requestAnimationFrame(frame);
@@ -411,7 +427,24 @@
         ctx.fillRect(s.x, s.y, u, u);
         if (s.big && a > 0.75) { ctx.globalAlpha = a - 0.6; ctx.fillRect(s.x - u, s.y, 3 * u, u); ctx.fillRect(s.x, s.y - u, u, 3 * u); }
       }
-      for (const p of wisps) {
+      if (ff) {   // Night shrine: fireflies drift low and blink slowly, green-gold, never bright
+        for (const p of wisps) {
+          p.ph += 0.018; p.life += 0.0016;
+          p.x += (Math.sin(p.ph * 0.7 + p.vx * 40) * 0.12 + p.vx) * u; p.y += Math.cos(p.ph * 0.9) * 0.08 * u;
+          if (p.x < -4 * u) p.x = w + 2 * u; if (p.x > w + 4 * u) p.x = -2 * u;
+          if (p.y < h * 0.25) p.y = h * 0.25; if (p.y > h - u) p.y = h - u;
+          const blink = Math.max(0, Math.sin(p.ph * 2.2 + p.life * 9));
+          const a = blink * blink * 0.75;
+          if (a < 0.02) continue;
+          const x = Math.round(p.x / u) * u, y = Math.round(p.y / u) * u;
+          if (!strong) {
+            const gl = ctx.createRadialGradient(x, y, 0, x, y, 5 * u);
+            gl.addColorStop(0, "rgba(190,230,110,.55)"); gl.addColorStop(1, "rgba(0,0,0,0)");
+            ctx.globalAlpha = a * 0.5; ctx.fillStyle = gl; ctx.fillRect(x - 5 * u, y - 5 * u, 10 * u, 10 * u);
+          }
+          ctx.globalAlpha = a; ctx.fillStyle = "#d8f08a"; ctx.fillRect(x, y, u, u);
+        }
+      } else for (const p of wisps) {
         p.ph += 0.03; p.x += (p.vx + Math.sin(p.ph) * 0.06) * u; p.y -= 0.05 * u; p.life += 0.002;
         if (p.y < h * 0.15 || p.x < -4 * u || p.x > w + 4 * u || p.life > 1) { p.x = Math.random() * w; p.y = h * (0.55 + Math.random() * 0.4); p.life = 0; }
         const a = Math.sin(p.life * Math.PI) * (0.6 + 0.4 * Math.sin(p.ph * 3));
@@ -440,5 +473,5 @@
     requestAnimationFrame(frame);
     return build;
   }
-  window.ZB = { sky, starfield, seigaiha, landscape, PALETTES: P, FONTS, KEYS, DEFAULTS, ENGINES, load, save, apply, keymap, keyName, comboOf, toUrl, calc, units, sites, icon, mix };
+  window.ZB = { SUBJ, palOf, sky, starfield, seigaiha, landscape, PALETTES: P, FONTS, KEYS, DEFAULTS, ENGINES, load, save, apply, keymap, keyName, comboOf, toUrl, calc, units, sites, icon, mix };
 })();

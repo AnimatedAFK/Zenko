@@ -1067,7 +1067,8 @@ impl App {
         let installed = bridge::foxbuddy_dir().is_some();
         let (v, live) = bridge::zenko_link().unwrap_or((Value::Null, false));
         let d = json!({"installed": installed, "linked": live, "version": v["version"], "name": v["name"],
-                       "deadlines": v["deadlines"], "today": v["today"]});
+                       "deadlines": v["deadlines"], "today": v["today"],
+                       "session": if live { v["session"].clone() } else { Value::Null }});
         self.ui(&format!("zb.link({})", d));
     }
 

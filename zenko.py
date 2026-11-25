@@ -53,7 +53,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.25-zenko22"
+APP_VERSION = "v2026.11.25-zenko23"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -45743,6 +45743,1609 @@ Z19_ICONS["square"] = ["...........", ".#####.....", "#wwwww#....", "#w+w+w#####
 PAGE_WORDS["square"] = "town square global chat online friends message everyone community talk"
 
 
+# =====================================================================================================================
+#  zenko23: emas that plan themselves, a festival Town square, and a closer link with Zenko Browser
+# =====================================================================================================================
+_Z23_TASK_RE = re.compile(
+    r"\b(?:stud(?:y|ying)|revis(?:e|ion|ing)|review|homework|hw|essay|ia|ee|tok|cas|assignment|project|read(?:ing)?|"
+    r"write|writing|finish|complete|prepare|prep|practi[cs]e|past ?papers?|worksheet|notes?|lab|report|presentation|"
+    r"slides|draft|learn|memori[sz]e|quiz|test|exam|flashcards?|vocab|questions?|exercises?|chapter|unit|topic|"
+    r"research|commentary|reflection|portfolio|outline|paper\s?\d|p\d|textbook|problems?|problem set|journal|"
+    r"bio|biology|chem|chemistry|maths?|french|psych|psychology|english|lang ?& ?lit)\b", re.I)
+_Z23_LONG = [(r"\b(?:essay|ia|ee|project|report|presentation|portfolio|research|commentary|draft)\b", 120),
+             (r"\bpast ?papers?\b|\bpaper\s?\d\b|\bp\d\b|\bmock\b", 90),
+             (r"\b(?:homework|hw|worksheet|assignment|exercises?|problems?|problem set|lab)\b", 45),
+             (r"\b(?:stud(?:y|ying)|revis(?:e|ion|ing)|review|practi[cs]e|prepare|prep|chapter|unit|topic|exam|test)\b", 60),
+             (r"\b(?:read(?:ing)?|notes?|flashcards?|vocab|quiz|learn|memori[sz]e|questions?|outline)\b", 30)]
+
+
+def z23_ema_minutes(text):
+    """How long an ema's task takes: what it says ('for 2 hours', '45 min'), else a guess from the kind of task."""
+    t = (text or "").lower()
+    m = re.search(r"(\d+(?:\.\d+)?|half an?|an?|one|two|three|four)\s*(hours?|hrs?|h|minutes?|mins?)\b", t)
+    if m:
+        n = {"half a": 0.5, "half an": 0.5, "a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4}.get(m.group(1))
+        n = float(n if n is not None else m.group(1))
+        mins = n * 60 if m.group(2).startswith("h") else n
+        return int(max(10, min(600, mins)))
+    for rx, mins in _Z23_LONG:
+        if re.search(rx, t):
+            return mins
+    return 30
+
+
+def z23_ema_task(E, now=None):
+    """What the planner makes of an ema:
+       None                               not something to plan (a daily routine, 'call mum'...)
+       ("task", minutes, due datetime)    homework-like: find free time for it before it is due
+       ("block", minutes, start datetime) something at a set time: keep that time free of other plans."""
+    now = now or datetime.datetime.now()
+    if E.get("done") or E.get("repeat") == "daily" or E.get("noplan"):
+        return None
+    text = E.get("text") or ""
+    task = bool(_Z23_TASK_RE.search(text)) or bool(re.search(r"\d+\s*(?:hours?|hrs?|minutes?|mins?)\b", text, re.I)) \
+        or bool(E.get("mins"))
+    mins = int(E.get("mins") or z23_ema_minutes(text))
+    at = E.get("at")
+    dt = datetime.datetime.fromtimestamp(at) if at else None
+    if not task:
+        if dt and dt > now:
+            return ("block", 30, dt)
+        return None
+    if dt is None:                                     # 'anytime': plan it within the next three days
+        end = (now + datetime.timedelta(days=3)).replace(hour=23, minute=30, second=0, microsecond=0)
+        return ("task", mins, end)
+    if dt <= now:                                      # overdue: catch up within two days
+        return ("task", mins, (now + datetime.timedelta(days=2)).replace(hour=23, minute=0, second=0, microsecond=0))
+    if dt - now < datetime.timedelta(hours=20) and not (dt.hour == 8 and dt.minute == 0):
+        return ("block", mins, dt)                     # 'study chem at 5pm': you already picked the time
+    return ("task", mins, dt)                          # 'finish bio IA by friday': that's the deadline
+
+
+# ---- the festival street (Town square) ---------------------------------------------------------------------------
+#  A side view of a little country town on festival night: machiya houses with lit lattices, strings of chochin lanterns,
+#  yatai stalls, a yagura tower with a taiko drum, a walking crowd in yukata and fireworks. The street dresses up for
+#  real dates (New Year, Setsubun, Valentine's, Hina-matsuri, Holi, hanami, Children's Day, Tanabata, summer matsuri,
+#  Obon, Tsukimi, Halloween, Diwali, Christmas, New Year's Eve) and follows the seasons in between.
+_Z23_DIWALI = {2026: (11, 8), 2027: (10, 29), 2028: (10, 17), 2029: (11, 5), 2030: (10, 26)}
+_Z23_HOLI = {2026: (3, 4), 2027: (3, 22), 2028: (3, 11), 2029: (3, 1), 2030: (3, 20)}
+_Z23_TSUKIMI = {2026: (9, 25), 2027: (9, 15), 2028: (10, 3), 2029: (9, 22), 2030: (9, 12)}
+
+#  key: (Japanese name, English name, lantern colours, stalls, ambient particles, fireworks per minute)
+Z23_FEST = {
+    "newyear": ("お正月", "New Year at the shrine", ["#e8e2d0", "#d9472b"], ["amazake", "omikuji", "omamori", "dango", "takoyaki"], "", 4),
+    "setsubun": ("節分", "Setsubun", ["#d9472b", "#e8a23a"], ["mame", "ehomaki", "omen", "takoyaki", "omikuji"], "", 2),
+    "valentine": ("バレンタイン", "Valentine's Day", ["#ff7aa8", "#d9472b"], ["choco", "ringo", "wataame", "kakigori", "shateki"], "hearts", 6),
+    "hina": ("ひな祭り", "Hina-matsuri", ["#ff9fc6", "#f4e6d2"], ["hina", "dango", "amazake", "wataame", "omen"], "peach", 2),
+    "holi": ("Holi", "Holi, the festival of colours", ["#ff5fa2", "#ffd23a", "#4fc3ff", "#7be07a"], ["gulal", "mithai", "lassi", "takoyaki", "yoyo"], "colour", 3),
+    "hanami": ("花見", "Hanami, cherry blossom night", ["#ffd6e8", "#ff9fc6"], ["dango", "sakuramochi", "yakisoba", "amazake", "ringo"], "sakura", 3),
+    "kodomo": ("こどもの日", "Children's Day", ["#4f8fe0", "#d9472b"], ["kashiwa", "yoyo", "wataame", "shateki", "kingyo"], "", 3),
+    "tanabata": ("七夕", "Tanabata, the star festival", ["#7fd8ff", "#ffd27a", "#ff9fc6"], ["somen", "kakigori", "wataame", "kingyo", "ringo"], "fireflies", 4),
+    "summer": ("夏祭り", "Summer festival", ["#d9472b", "#ffb347"], ["takoyaki", "kingyo", "ringo", "kakigori", "yakisoba", "omen", "shateki", "wataame"], "fireflies", 7),
+    "obon": ("お盆", "Obon, bon-odori night", ["#f4ead8", "#ffcf6a"], ["yakisoba", "kakigori", "takoyaki", "kingyo", "omen"], "fireflies", 5),
+    "tsukimi": ("お月見", "Tsukimi, the moon festival", ["#ffd27a", "#e8e2d0"], ["tsukidango", "imo", "amazake", "omen", "ringo"], "leaves", 2),
+    "halloween": ("ハロウィン", "Halloween night", ["#ff8a2a", "#9a5ad8"], ["pumpkin", "candy", "omen", "ringo", "wataame", "shateki"], "", 6),
+    "diwali": ("Diwali", "Diwali, the festival of lights", ["#ffb347", "#ff5fa2", "#ffe066"], ["mithai", "diya", "lassi", "takoyaki", "omikuji"], "", 9),
+    "christmas": ("クリスマス", "Christmas market", ["#d9472b", "#3fae6a", "#ffd27a"], ["cocoa", "cake", "present", "imo", "ringo", "wataame"], "snow", 3),
+    "omisoka": ("大晦日", "New Year's Eve", ["#e8e2d0", "#d9472b"], ["soba", "amazake", "omikuji", "takoyaki", "omamori"], "snow", 9),
+    "spring": ("春祭り", "Spring festival", ["#ff9fc6", "#e8e2d0"], ["dango", "ringo", "takoyaki", "kingyo", "omen", "yakisoba"], "petals", 4),
+    "autumn": ("秋祭り", "Autumn festival", ["#e8642a", "#d9472b", "#ffcf6a"], ["imo", "takoyaki", "ringo", "omen", "shateki", "yakisoba", "amazake"], "leaves", 5),
+    "winter": ("冬祭り", "Winter lantern festival", ["#ffcf6a", "#e8e2d0"], ["amazake", "imo", "oden", "takoyaki", "omikuji", "ringo"], "snow", 3),
+}
+#  stall: (sign, what it is, what clicking it does, goods colours)
+Z23_STALLS = {
+    "takoyaki": ("たこ焼き", "Takoyaki", "food", ["#8a4a20", "#c9772f"]),
+    "kingyo": ("金魚すくい", "Goldfish scooping", "kingyo", ["#3f8fd8", "#ff7a2a"]),
+    "ringo": ("りんご飴", "Candy apples", "food", ["#e0312a", "#ff5a4a"]),
+    "kakigori": ("かき氷", "Shaved ice", "food", ["#ff5a7a", "#4fc3ff", "#7be07a"]),
+    "yakisoba": ("焼きそば", "Yakisoba", "food", ["#c98a3a", "#7a4a20"]),
+    "omen": ("お面", "Festival masks", "mask", ["#f4ead8", "#d9472b"]),
+    "shateki": ("射的", "Shooting gallery", "game", ["#ffd23a", "#d9472b", "#4f8fe0"]),
+    "wataame": ("わたあめ", "Cotton candy", "food", ["#ffc0dc", "#fff0f6"]),
+    "omikuji": ("おみくじ", "Fortunes", "omikuji", ["#f4ead8", "#d9472b"]),
+    "omamori": ("お守り", "Charms", "charm", ["#d9472b", "#4f8fe0", "#ffd23a"]),
+    "dango": ("団子", "Dango", "food", ["#ffc0dc", "#f4ead8", "#7be07a"]),
+    "amazake": ("甘酒", "Amazake", "food", ["#f4ead8", "#c9a76a"]),
+    "mame": ("豆まき", "Lucky beans", "game", ["#d8b46a", "#a07a3a"]),
+    "ehomaki": ("恵方巻", "Ehomaki rolls", "food", ["#1a1a1a", "#f4ead8"]),
+    "choco": ("チョコ", "Chocolate", "food", ["#5a2a1a", "#ff7aa8"]),
+    "hina": ("ひなあられ", "Hina-arare", "food", ["#ff9fc6", "#7be07a", "#f4ead8"]),
+    "gulal": ("Gulal", "Holi colours", "colour", ["#ff5fa2", "#ffd23a", "#4fc3ff", "#7be07a"]),
+    "mithai": ("Mithai", "Sweets", "food", ["#ffb347", "#f4ead8", "#ff7aa8"]),
+    "lassi": ("Lassi", "Mango lassi", "food", ["#ffcf3a", "#f4ead8"]),
+    "diya": ("Diya", "Clay lamps", "game", ["#c0602a", "#ffd23a"]),
+    "sakuramochi": ("桜餅", "Sakura mochi", "food", ["#ff9fc6", "#5a8a3a"]),
+    "kashiwa": ("柏餅", "Kashiwa mochi", "food", ["#f4ead8", "#5a8a3a"]),
+    "yoyo": ("ヨーヨー", "Water balloons", "game", ["#4fc3ff", "#ff7aa8", "#ffd23a"]),
+    "somen": ("流しそうめん", "Flowing noodles", "food", ["#f4ead8", "#7fd8ff"]),
+    "tsukidango": ("月見団子", "Moon dango", "food", ["#f4ead8", "#fff8e8"]),
+    "imo": ("焼き芋", "Roasted sweet potato", "food", ["#8a3a6a", "#ffcf6a"]),
+    "pumpkin": ("かぼちゃ", "Pumpkin sweets", "food", ["#ff8a2a", "#3a2a1a"]),
+    "candy": ("お菓子", "Trick or treat", "food", ["#ff8a2a", "#9a5ad8", "#7be07a"]),
+    "cocoa": ("ココア", "Hot cocoa", "food", ["#6a3a24", "#f4ead8"]),
+    "cake": ("ケーキ", "Christmas cake", "food", ["#f4ead8", "#e0312a"]),
+    "present": ("プレゼント", "Presents", "charm", ["#e0312a", "#3fae6a", "#ffd23a"]),
+    "soba": ("年越しそば", "New Year soba", "food", ["#8a6a4a", "#f4ead8"]),
+    "oden": ("おでん", "Oden", "food", ["#e8c27a", "#f4ead8"]),
+}
+Z23_FORTUNES = [
+    ("大吉", "Great blessing! Whatever you revise today will stick."), ("中吉", "Middle blessing. One past paper today pays off twice."),
+    ("小吉", "Small blessing. Start with the topic you've been avoiding."), ("吉", "Blessing. A short session now beats a long one later."),
+    ("末吉", "Future blessing. Your hard work is about to bloom."), ("大吉", "Great blessing! The exam question you hoped for is coming."),
+    ("中吉", "Middle blessing. Teach it to Zenko and you'll remember it."), ("小吉", "Small blessing. Drink water, then do 25 minutes."),
+]
+
+
+def z23_fest_calendar(year):
+    """All festival days of a year: [(key, first date, last date)], most special first."""
+    D = datetime.date
+    out = [("omisoka", D(year, 12, 31), D(year, 12, 31)), ("newyear", D(year, 1, 1), D(year, 1, 3)),
+           ("christmas", D(year, 12, 20), D(year, 12, 26)), ("halloween", D(year, 10, 25), D(year, 10, 31)),
+           ("setsubun", D(year, 2, 2), D(year, 2, 3)), ("valentine", D(year, 2, 13), D(year, 2, 14)),
+           ("hina", D(year, 3, 1), D(year, 3, 3)), ("tanabata", D(year, 7, 5), D(year, 7, 7)),
+           ("kodomo", D(year, 5, 3), D(year, 5, 5)), ("obon", D(year, 8, 13), D(year, 8, 16)),
+           ("hanami", D(year, 3, 25), D(year, 4, 8)), ("summer", D(year, 7, 20), D(year, 8, 12))]
+    for key, tab, before, after in (("diwali", _Z23_DIWALI, 1, 2), ("holi", _Z23_HOLI, 1, 0), ("tsukimi", _Z23_TSUKIMI, 1, 1)):
+        md = tab.get(year)
+        if md:
+            d = D(year, md[0], md[1])
+            out.insert(0, (key, d - datetime.timedelta(days=before), d + datetime.timedelta(days=after)))
+    return out
+
+
+def z23_fest_today(day=None):
+    """Which festival the street is dressed for on a day: a real date first, else the season."""
+    day = day or datetime.date.today()
+    for key, a, b in z23_fest_calendar(day.year):
+        if a <= day <= b:
+            return key
+    m = day.month
+    return "spring" if m in (3, 4, 5) else ("summer" if m in (6, 7, 8) else ("autumn" if m in (9, 10, 11) else "winter"))
+
+
+def z23_fest_next(day=None):
+    """The next special festival after today: (key, date)."""
+    day = day or datetime.date.today()
+    best = None
+    for y in (day.year, day.year + 1):
+        for key, a, b in z23_fest_calendar(y):
+            if a > day and (best is None or a < best[1]):
+                best = (key, a)
+    return best
+
+
+def z23_sky_mode(now=None):
+    h = (now or datetime.datetime.now()).hour
+    return "day" if 7 <= h < 16 else ("dusk" if 16 <= h < 19 else "night")
+
+
+def _z23_rgb(h):
+    h = h.lstrip("#")
+    return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16))
+
+
+def z23_street(aw, ah, ev, mode, seed=1):
+    """Paint the street at art size aw x ah. Returns (_Ras, layout). layout: ground y, the skyline (fireworks stay
+    above it), lantern lights, twinkles, stalls (for clicks and signs), the yagura/tree position and lanes."""
+    rnd = random.Random(seed * 7919 + aw * 31 + ah)
+    R = _Ras(aw, ah)
+    gy = int(ah * 0.78)
+    night = mode == "night"
+    dusk = mode == "dusk"
+    F = Z23_FEST.get(ev) or Z23_FEST["summer"]
+    lcols = [_z23_rgb(c) for c in F[2]]
+    snowy = ev in ("christmas", "omisoka", "winter")
+    # ---- sky
+    if night:
+        stops = [(0.0, (10, 12, 34)), (0.55, (28, 24, 66)), (0.85, (72, 40, 78)), (1.0, (120, 62, 70))]
+    elif dusk:
+        stops = [(0.0, (42, 44, 104)), (0.45, (150, 80, 120)), (0.8, (244, 140, 96)), (1.0, (255, 190, 120))]
+    else:
+        stops = [(0.0, (96, 156, 222)), (0.6, (170, 200, 232)), (0.9, (246, 214, 176)), (1.0, (255, 226, 186))]
+    sky_h = gy
+    for y in range(gy):
+        f = y / float(max(1, sky_h))
+        for i in range(len(stops) - 1):
+            if stops[i][0] <= f <= stops[i + 1][0]:
+                t = (f - stops[i][0]) / max(1e-6, stops[i + 1][0] - stops[i][0])
+                a, b = stops[i][1], stops[i + 1][1]
+                break
+        for x in range(aw):
+            tt = t + ((_BAYER[y & 3][x & 3] + 0.5) / 16.0 - 0.5) * 0.18
+            c = _lerp3(a, b, tt)
+            i3 = (y * aw + x) * 3
+            R.b[i3], R.b[i3 + 1], R.b[i3 + 2] = c
+    if night or dusk:
+        nstar = int(aw * gy / (90 if night else 260))
+        if ev == "tanabata" and night:          # the Milky Way
+            for k in range(aw * 3):
+                x = rnd.random() * aw
+                y = gy * 0.75 - x * 0.45 * gy / aw + rnd.gauss(0, gy * 0.07)
+                R.put(x, y, (230, 225, 255), 0.35 + rnd.random() * 0.4)
+        for k in range(nstar):
+            R.put(rnd.randrange(aw), rnd.randrange(int(gy * 0.6)), (255, 248, 230), 0.3 + rnd.random() * 0.6)
+    # moon (big and golden for Tsukimi, orange for Halloween) or a low sun
+    if night or ev == "tsukimi":
+        mr = max(4, int(ah * (0.12 if ev in ("tsukimi", "halloween") else 0.06)))
+        mx, my = int(aw * 0.84), int(ah * 0.16) + mr
+        mcol = (255, 170, 80) if ev == "halloween" else ((255, 236, 180) if ev == "tsukimi" else (250, 238, 205))
+        for r in range(mr * 3, mr, -1):
+            R.disc(mx, my, r, mcol, 0.018)
+        R.disc(mx, my, mr, mcol)
+        R.disc(mx - mr * 0.3, my - mr * 0.25, mr * 0.22, _shade(mcol, 0.9))
+        R.disc(mx + mr * 0.35, my + mr * 0.3, mr * 0.16, _shade(mcol, 0.9))
+        if ev == "tsukimi":                      # the moon rabbit
+            for (dx, dy) in ((0, 0), (1, 0), (0, -1), (-1, -2), (-1, -3), (1, 1), (2, 1)):
+                R.put(mx + dx, my + dy + 1, _shade(mcol, 0.78))
+    elif dusk:
+        R.disc(int(aw * 0.78), int(gy * 0.78), max(5, int(ah * 0.07)), (255, 214, 150), 0.95)
+    # ---- far hills with a pagoda and a shrine gate
+    far = (40, 34, 70) if night else ((120, 70, 100) if dusk else (128, 150, 178))
+    far2 = (26, 24, 50) if night else ((86, 50, 80) if dusk else (98, 120, 150))
+    ph = rnd.random() * 6
+    for x in range(aw):
+        h1 = gy * (0.36 + 0.07 * math.sin(x / (aw / 5.0) + ph) + 0.03 * math.sin(x / 9.0))
+        h2 = gy * (0.24 + 0.05 * math.sin(x / (aw / 3.3) + ph * 2) + 0.02 * math.sin(x / 5.0))
+        for y in range(int(gy - h1), gy):
+            R.put(x, y, far if y < gy - h2 else far2)
+    px = int(aw * (0.18 + rnd.random() * 0.12))
+    pbase = int(gy - gy * 0.33)
+    for k in range(5):                           # the pagoda's roofs
+        w = 13 - k * 2
+        yk = pbase - k * 5
+        R.rect(px - w, yk - 1, px + w + 1, yk + 1, far2)
+        R.rect(px - w + 3, yk + 1, px + w - 2, yk + 5, far2)
+    R.rect(px, pbase - 30, px + 1, pbase - 24, far2)
+    if night:
+        for k in range(4):
+            R.put(px, pbase - k * 5 + 3, (255, 190, 110), 0.8)
+    # ---- the back row of machiya houses
+    sky_line = [gy] * aw
+    lit = (255, 196, 110) if (night or dusk) else (70, 48, 36)
+    wood, wood2 = ((62, 38, 28), (44, 28, 22)) if night else ((96, 60, 40), (70, 44, 30))
+    plaster = (120, 104, 94) if night else ((206, 182, 160) if dusk else (226, 214, 192))
+    roof, roof2 = ((44, 48, 62), (30, 32, 44)) if night else ((66, 72, 90), (48, 52, 66))
+    x = -rnd.randint(0, 20)
+    houses = []
+    while x < aw:
+        w = rnd.randint(46, 72)
+        hh = rnd.randint(int(ah * 0.36), int(ah * 0.46))
+        top = gy - hh
+        houses.append((x, w, top))
+        R.rect(x, top + 10, x + w, gy, wood)
+        R.rect(x + 2, top + 12, x + w - 2, top + 22, plaster)
+        for sx in range(x + 5, x + w - 5, 3):                 # mushiko windows
+            if (sx // 3) % 5 not in (0,):
+                R.rect(sx, top + 14, sx + 1, top + 20, wood2)
+        R.rect(x - 2, top + 22, x + w + 2, top + 25, roof)     # the little eave between floors
+        R.rect(x - 2, top + 25, x + w + 2, top + 26, roof2)
+        R.rect(x + 3, top + 28, x + w - 3, gy - 2, lit)        # lattice over a warm room
+        for sx in range(x + 3, x + w - 3, 2):
+            R.rect(sx, top + 28, sx + 1, gy - 2, wood2)
+        if night or dusk:
+            for k in range(3):
+                R.rect(x + 3, top + 28 + k, x + w - 3, top + 29 + k, (255, 220, 160), 0.15)
+        if rnd.random() < 0.6:                                  # a noren curtain
+            nc = rnd.choice([(46, 64, 120), (150, 40, 40), (60, 90, 70), (110, 60, 120)])
+            dx = x + rnd.randint(6, max(7, w - 24))
+            for k in range(3):
+                R.rect(dx + k * 6, top + 27, dx + k * 6 + 5, top + 37, nc)
+            R.disc(dx + 9, top + 31, 2, (240, 232, 214))
+        R.poly([(x - 4, top + 11), (x + w + 4, top + 11), (x + w - 3, top), (x + 3, top)], roof)
+        for sx in range(x - 2, x + w + 3, 3):
+            R.line(sx, top + 10, sx + (2 if sx > x + w / 2 else -1), top + 2, roof2)
+        R.rect(x + 2, top - 1, x + w - 2, top + 1, roof2)
+        if snowy:
+            R.rect(x + 2, top - 2, x + w - 2, top, (236, 240, 250))
+            R.rect(x - 3, top + 10, x + w + 3, top + 11, (236, 240, 250))
+            R.rect(x - 2, top + 22, x + w + 2, top + 23, (236, 240, 250))
+        for sx in range(max(0, x - 4), min(aw, x + w + 4)):
+            sky_line[sx] = min(sky_line[sx], top)
+        x += w + rnd.randint(0, 3)
+    # trees between houses for hanami (sakura) and autumn (momiji)
+    trees = []
+    if ev in ("hanami", "autumn", "tsukimi", "spring"):
+        cols = [(255, 190, 214), (255, 214, 230), (240, 150, 190)] if ev in ("hanami", "spring") else \
+            [(214, 70, 40), (240, 120, 40), (190, 40, 40), (250, 170, 60)]
+        for k in range(max(2, aw // 120)):
+            tx = int((k + 0.5) * aw / max(2, aw // 120)) + rnd.randint(-15, 15)
+            trees.append(tx)
+            R.rect(tx - 1, gy - 32, tx + 2, gy, (70, 44, 34))
+            R.line(tx, gy - 26, tx - 7, gy - 34, (70, 44, 34), 1.5)
+            R.line(tx + 1, gy - 28, tx + 8, gy - 36, (70, 44, 34), 1.5)
+            for b in range(70):
+                ang, rr = rnd.random() * 6.28, rnd.random() ** 0.6 * 14
+                R.disc(tx + math.cos(ang) * rr * 1.3, gy - 40 + math.sin(ang) * rr * 0.75, 2.2, rnd.choice(cols),
+                       0.9 if night else 1.0)
+    # ---- the yagura (or a Christmas tree) in the middle
+    cxm = aw // 2 + rnd.randint(-10, 10)
+    lanterns, twinkles = [], []
+    ytop = gy - 54
+    if ev == "christmas":
+        R.rect(cxm - 2, gy - 10, cxm + 3, gy, (80, 50, 34))
+        for k in range(5):
+            w = 22 - k * 4
+            yk = gy - 10 - k * 9
+            R.poly([(cxm - w, yk), (cxm + w + 1, yk), (cxm + 1, yk - 14), (cxm, yk - 14)], (34, 110, 70) if k % 2 else (40, 128, 80))
+            R.rect(cxm - w + 2, yk - 1, cxm + w - 1, yk, (236, 240, 250))
+            for j in range(6):
+                twinkles.append((cxm - w + 3 + j * (2 * w - 6) / 5.0, yk - 3 - (j % 2) * 4, rnd.choice(["#ffd27a", "#ff5a5a", "#7fd8ff", "#7be07a"])))
+        R.disc(cxm, gy - 60, 3, (255, 220, 110))
+        twinkles.append((cxm, gy - 60, "#fff2b0"))
+        ytop = gy - 62
+    else:
+        red, white = (200, 52, 40), (240, 232, 214)
+        R.rect(cxm - 20, gy - 30, cxm + 21, gy - 27, wood)
+        for k in range(cxm - 19, cxm + 20):                    # kohaku striped skirt
+            R.rect(k, gy - 27, k + 1, gy - 14, red if ((k - cxm) // 4) % 2 else white)
+        for lx in (cxm - 18, cxm + 16):
+            R.rect(lx, gy - 30, lx + 3, gy, wood2)
+        R.rect(cxm - 14, gy - 46, cxm - 12, gy - 30, wood2)
+        R.rect(cxm + 12, gy - 46, cxm + 14, gy - 30, wood2)
+        R.poly([(cxm - 22, gy - 46), (cxm + 23, gy - 46), (cxm + 14, gy - 54), (cxm - 13, gy - 54)], roof)
+        R.disc(cxm, gy - 37, 5, (120, 60, 30))                 # the taiko drum
+        R.disc(cxm, gy - 37, 3.5, (226, 200, 160))
+        if ev == "newyear" or ev == "omisoka":
+            R.line(cxm - 20, gy - 44, cxm + 20, gy - 44, (230, 200, 120), 1.6)   # shimenawa rope
+            for k in range(-15, 16, 10):
+                R.rect(cxm + k, gy - 43, cxm + k + 2, gy - 38, (250, 250, 250))
+        if ev == "kodomo":                                     # koinobori on a pole
+            R.rect(cxm + 30, gy - 74, cxm + 31, gy, (120, 90, 60))
+            for k, cc in enumerate([(30, 30, 40), (210, 50, 50), (60, 110, 200)]):
+                yk = gy - 70 + k * 9
+                R.poly([(cxm + 31, yk), (cxm + 50 - k * 2, yk + 1), (cxm + 54 - k * 2, yk + 4), (cxm + 50 - k * 2, yk + 6),
+                        (cxm + 31, yk + 6)], cc)
+                R.disc(cxm + 34, yk + 3, 1.2, (250, 250, 250))
+        if ev == "diwali":                                     # a rangoli in front
+            for r, cc in ((14, (255, 90, 160)), (11, (255, 210, 60)), (8, (80, 190, 255)), (5, (120, 220, 120)), (2, (255, 140, 40))):
+                R.disc(cxm, gy + (ah - gy) * 0.5, r, cc, 0.85, sy=0.3)
+    # ---- lantern ropes: from the yagura roof out to the houses, and along the street
+    def rope(x0, y0, x1, y1, sag, every=8):
+        n = max(2, int(abs(x1 - x0)))
+        pts = []
+        for i in range(n + 1):
+            t = i / float(n)
+            xx = x0 + (x1 - x0) * t
+            yy = y0 + (y1 - y0) * t + sag * 4 * t * (1 - t)
+            pts.append((xx, yy))
+            R.put(xx, yy, (30, 22, 20) if night else (60, 40, 30))
+        k = rnd.randint(2, every)
+        while k < len(pts) - 2:
+            lx, ly = pts[k]
+            lanterns.append((lx, ly + 1, lcols[len(lanterns) % len(lcols)]))
+            k += every
+    rope(cxm, ytop + 1, -4, gy - 70 + rnd.randint(-4, 4), 14, 11)
+    rope(cxm, ytop + 1, aw + 4, gy - 72 + rnd.randint(-4, 4), 14, 11)
+    for hx, hw, htop in houses:
+        if rnd.random() < 0.3:
+            rope(hx + 4, htop + 25, hx + hw - 4, htop + 25, 2, 12)
+    for lx, ly, col in lanterns:                                # draw the lanterns (their light is a canvas item)
+        body = _z23_rgb(col) if isinstance(col, str) else col
+        if night or dusk:
+            for r in (6, 5, 4):
+                R.disc(lx, ly + 4, r, body, 0.06)
+        R.rect(lx - 1, ly, lx + 2, ly + 1, (30, 24, 20))
+        R.rect(lx - 2, ly + 1, lx + 3, ly + 7, _shade(body, 0.85 if night else 1.0))
+        R.rect(lx - 2, ly + 3, lx + 3, ly + 4, _shade(body, 0.7))
+        R.rect(lx - 1, ly + 7, lx + 2, ly + 8, (30, 24, 20))
+    # ---- yatai stalls along the street
+    order = list(F[3])
+    rnd.shuffle(order)
+    pitch = 62
+    n = max(2, (aw - 30) // pitch)
+    slots = [int(15 + (k + 0.5) * (aw - 30) / float(n)) for k in range(n)]
+    slots = [s for s in slots if abs(s - cxm) > 34]
+    stalls = []
+    for k, sx in enumerate(slots):
+        key = order[k % len(order)]
+        st = Z23_STALLS[key]
+        x0, x1 = sx - 22, sx + 22
+        top = gy - 34
+        aw_c = [(200, 52, 40), (240, 232, 214)] if k % 3 == 0 else ([(46, 80, 150), (240, 232, 214)] if k % 3 == 1 else [(240, 150, 40), (240, 232, 214)])
+        R.rect(x0, top, x0 + 2, gy, wood2)
+        R.rect(x1 - 2, top, x1, gy, wood2)
+        R.rect(x0 + 2, top + 8, x1 - 2, gy - 12, (52, 36, 30) if night else (84, 60, 44))
+        if night or dusk:
+            R.rect(x0 + 3, top + 8, x1 - 3, gy - 12, (255, 200, 120), 0.35)
+            R.disc(sx, top + 10, 2, (255, 236, 180))
+            for r in (16, 12, 8):
+                R.disc(sx, gy - 4, r, (255, 190, 110), 0.05, sy=0.35)
+        # the stall keeper with a hachimaki
+        kc = rnd.choice([(250, 220, 190), (230, 190, 150), (190, 140, 100)])
+        R.rect(sx - 3, gy - 22, sx + 3, gy - 16, kc)
+        R.rect(sx - 4, gy - 24, sx + 4, gy - 21, (30, 24, 24))
+        R.rect(sx - 4, gy - 22, sx + 4, gy - 21, (240, 240, 240))
+        R.rect(sx - 5, gy - 16, sx + 6, gy - 12, rnd.choice([(60, 80, 140), (150, 50, 40), (70, 110, 80)]))
+        for a in range(x0 - 1, x1 + 1):                        # striped awning with a scalloped edge
+            c = aw_c[((a - x0) // 4) % 2]
+            R.rect(a, top + 1, a + 1, top + 7 + (1 if ((a - x0) % 4) in (1, 2) else 0), c)
+        R.rect(x0 - 2, top - 1, x1 + 2, top + 1, wood2)
+        R.rect(x0 + 2, top - 9, x1 - 2, top - 1, (240, 228, 200) if not night else (226, 206, 170))   # sign board
+        R.rect(x0 + 2, top - 10, x1 - 2, top - 9, wood2)
+        R.rect(x0 - 1, gy - 12, x1 + 1, gy - 6, (130, 84, 52) if not night else (96, 62, 40))     # counter
+        R.rect(x0 - 1, gy - 12, x1 + 1, gy - 11, (170, 116, 72) if not night else (130, 86, 56))
+        gc = [_z23_rgb(c) for c in st[3]]
+        if st[2] == "kingyo":
+            R.rect(x0 + 4, gy - 15, x1 - 4, gy - 12, gc[0])
+            for j in range(7):
+                R.put(x0 + 6 + j * 5, gy - 14 + (j % 2), gc[1])
+        elif key in ("ringo", "dango", "tsukidango", "wataame", "takoyaki", "pumpkin", "mithai"):
+            for j in range(6):
+                bx = x0 + 6 + j * 6
+                if key in ("ringo", "wataame"):
+                    R.line(bx, gy - 12, bx, gy - 17, (220, 200, 160))
+                R.disc(bx, gy - (18 if key in ("ringo", "wataame") else 14), 2.4 if key == "wataame" else 1.8, gc[j % len(gc)])
+        elif key == "omen":
+            for j in range(4):
+                bx = x0 + 8 + j * 9
+                R.disc(bx, top + 13, 3, gc[0])
+                R.put(bx - 1, top + 12, gc[1])
+                R.put(bx + 1, top + 12, gc[1])
+                R.put(bx - 2, top + 10, gc[1])
+                R.put(bx + 2, top + 10, gc[1])
+        else:
+            for j in range(7):
+                R.rect(x0 + 5 + j * 5, gy - 15 - (j % 2), x0 + 8 + j * 5, gy - 12, gc[j % len(gc)])
+        if ev == "halloween" and k % 2 == 0:                    # a jack-o'-lantern by the stall
+            R.disc(x1 + 3, gy + 2, 3, (240, 120, 30), sy=0.8)
+            R.rect(x1 + 2, gy - 1, x1 + 3, gy, (60, 40, 20))
+            twinkles.append((x1 + 3, gy + 2, "#ffd060"))
+        if ev in ("newyear", "omisoka") and k % 2 == 1:         # kadomatsu
+            for j, hh in enumerate((14, 11, 9)):
+                R.rect(x1 + 1 + j * 2, gy - hh, x1 + 2 + j * 2, gy, (90, 160, 80))
+            R.rect(x1, gy - 4, x1 + 8, gy, (180, 140, 80))
+        if ev == "diwali":
+            for j in range(4):
+                twinkles.append((x0 + 4 + j * 12, gy + 1, "#ffcf5a"))
+                R.rect(x0 + 3 + j * 12, gy + 1, x0 + 6 + j * 12, gy + 3, (170, 80, 40))
+        if ev == "tanabata" and k % 2 == 0:                     # bamboo with wishes
+            R.rect(x0 - 5, top - 30, x0 - 4, gy, (90, 150, 70))
+            for j in range(9):
+                R.rect(x0 - 10 + rnd.randint(0, 10), top - 26 + j * 4, x0 - 8 + rnd.randint(0, 10), top - 22 + j * 4,
+                       rnd.choice([(255, 120, 160), (120, 200, 255), (255, 220, 90), (140, 230, 140)]))
+        stalls.append({"key": key, "x0": x0, "x1": x1, "sign_y": top - 5, "top": top})
+    if ev == "tsukimi":                                         # susuki grass
+        for k in range(aw // 18):
+            bx = rnd.randrange(aw)
+            for j in range(4):
+                R.line(bx + j, gy + 2, bx + j * 2 - 2, gy - 8 - j, (200, 180, 130), 1)
+    # ---- the street
+    stone = (72, 66, 76) if night else ((132, 112, 112) if dusk else (162, 150, 136))
+    stone2 = _shade(stone, 0.82)
+    for y in range(gy, ah):
+        f = (y - gy) / float(max(1, ah - gy))
+        c = _shade(stone, 1.0 - 0.25 * f)
+        for x in range(aw):
+            R.put(x, y, c)
+        if (y - gy) % 6 == 5:
+            R.rect(0, y, aw, y + 1, stone2)
+    for y in range(gy, ah, 6):
+        off = ((y - gy) // 6) * 7
+        for x in range(-off % 14, aw, 14):
+            R.rect(x, y, x + 1, min(ah, y + 6), stone2)
+    if snowy:
+        for x in range(aw):
+            for y in range(gy, gy + 3 + int(2 * math.sin(x / 7.0) + 1)):
+                R.put(x, y, (232, 236, 246))
+        for k in range(aw * 2):
+            R.put(rnd.randrange(aw), rnd.randrange(gy, ah), (236, 240, 250), 0.6)
+    if night or dusk:                                           # warm reflections of the stalls
+        for s in stalls:
+            for r in (20, 14):
+                R.disc((s["x0"] + s["x1"]) / 2.0, gy + 6, r, (255, 180, 100), 0.05, sy=0.3)
+    return R, {"gy": gy, "sky": sky_line, "lanterns": lanterns, "twinkles": twinkles, "stalls": stalls, "mid": cxm,
+               "trees": trees, "lanes": (gy + int((ah - gy) * 0.30), gy + int((ah - gy) * 0.78))}
+
+
+# a person in the crowd: 13 x 26 art pixels, front-ish view, two walking frames
+_Z23_HAIR = ["#1d1a20", "#2a1f1a", "#3a2a1e", "#5a3a24", "#1a1a2a", "#7a4a2a"]
+_Z23_SKIN = ["#f6dcc4", "#eec9a6", "#d9a57a", "#b8805a", "#8a5a3a"]
+_Z23_YUKATA = [("#2f4a8a", "#e8eefc"), ("#c83a3a", "#ffe6d0"), ("#f08ab0", "#ffffff"), ("#f4f0e6", "#3a5ab0"),
+               ("#6a4aa0", "#ffd6f0"), ("#2f7a5a", "#f4f0d0"), ("#e0803a", "#fff0d0"), ("#1f2a3a", "#ffd27a"),
+               ("#3a8ab0", "#ffffff"), ("#a83a6a", "#ffd6e6")]
+_Z23_OBI = ["#ffd27a", "#d9472b", "#f4f0e6", "#2f4a8a", "#ff8ab0", "#7be07a"]
+
+
+def z23_person_rows(look, frame):
+    """Palette rows for one person. look: dict(h, s, y, p, o, acc, hat, kid, fox)."""
+    rows = [
+        ".............", ".............", ".............", ".............", ".............",
+        "....hhhhh....", "...hhhhhhh...", "...hffffffh..", "...ffkffkf...", "....fffff....", ".....fff.....",
+        "....yywyy....", "...yyywyyy...", "..fyyyyyyyf..", "...ooooooo...", "...yyyyyyy...", "...yypyyyy...",
+        "...yyyyypy...", "...yyyyyyy...", "....yyyyy....", "....yy.yy....", "....ff.ff....", "....gg.gg....",
+        ".............", ".............", "............."]
+    rows = [list(r) for r in rows]
+    if frame == 1:
+        rows[19] = list("....yyyyy....")
+        rows[20] = list("...yy...yy...")
+        rows[21] = list("...ff...ff...")
+        rows[22] = list("...gg...gg...")
+    if look.get("long"):
+        for r in (8, 9, 10, 11):
+            rows[r][3] = "h"
+            rows[r][9] = "h"
+    if look.get("bun"):
+        rows[4][5], rows[4][6], rows[4][7] = "h", "h", "h"
+        rows[3][6] = "h"
+    if look.get("fox"):                          # the player's fox: orange hair with fox ears
+        for r, s in ((3, "...h.....h..."), (4, "...hh...hh...")):
+            for i, ch in enumerate(s):
+                if ch == "h":
+                    rows[r][i] = "h"
+    acc = look.get("acc")
+    if acc == "mask":                            # a fox mask pushed to the side of the head
+        for (r, c, ch) in ((5, 9, "m"), (5, 10, "m"), (6, 9, "m"), (6, 10, "m"), (6, 11, "m"), (7, 10, "r"), (4, 9, "m"), (4, 11, "m")):
+            rows[r][c] = ch
+    elif acc == "apple":
+        rows[12][1], rows[11][1], rows[10][1], rows[9][1] = "f", "l", "a", "a"
+        rows[9][0] = "a"
+    elif acc == "fan":
+        for (r, c) in ((10, 11), (10, 12), (11, 11), (11, 12), (12, 11), (9, 12)):
+            rows[r][c] = "u"
+        rows[13][10] = "f"
+    elif acc == "fish":
+        rows[14][11], rows[15][11], rows[15][12], rows[16][11], rows[16][12] = "l", "b", "b", "b", "b"
+        rows[16][12] = "q"
+    elif acc == "balloon":
+        for (r, c) in ((1, 0), (1, 1), (0, 0), (0, 1), (2, 0), (2, 1)):
+            rows[r][c] = "q"
+        for r in range(3, 13):
+            rows[r][1] = "l" if r % 2 else "."
+        rows[13][1] = "f"
+    hat = look.get("hat")
+    if hat == "santa":
+        for (r, s) in ((2, ".....rrr....."), (3, "....rrrrr...."), (4, "...wwwwwww..."), (1, "......rr....."), (0, ".......w.....")):
+            for i, ch in enumerate(s):
+                if ch != ".":
+                    rows[r][i] = "R" if ch == "r" else "W"
+    elif hat == "witch":
+        for (r, s) in ((0, "......k......"), (1, ".....kk......"), (2, ".....kkk....."), (3, "....kkkk....."), (4, "..kkkkkkkkk..")):
+            for i, ch in enumerate(s):
+                if ch != ".":
+                    rows[r][i] = "K"
+    elif hat == "horns":
+        rows[4][4], rows[4][8], rows[3][4], rows[3][8] = "Y", "Y", "Y", "Y"
+    elif hat == "band":
+        for c in range(3, 10):
+            rows[6][c] = "B"
+    if look.get("ghost"):                       # a little sheet ghost (Halloween)
+        g = [".............", ".............", ".............", ".............", ".............",
+             "....WWWWW....", "...WWWWWWW...", "..WWWWWWWWW..", "..WWkWWWkWW..", "..WWWWWWWWW..", "..WWWWkWWWW..",
+             "..WWWWWWWWW..", "..WWWWWWWWW..", "..WWWWWWWWW..", "..WWWWWWWWW..", "..WWWWWWWWW..", "..WWWWWWWWW..",
+             "..WWWWWWWWW..", "..WWWWWWWWW..", "..WWWWWWWWW..", "..W.WWW.WW...", ".............", ".............",
+             ".............", ".............", "............."]
+        if frame:
+            g[20] = "...WW.WWW.W.."
+        rows = [list(r) for r in g]
+    if look.get("kid"):                          # kids are shorter: drop the top rows
+        rows = [list(".............")] * 4 + [r for i, r in enumerate(rows) if i not in (12, 16, 17, 18)]
+        rows = rows[:26]
+    return ["".join(r) for r in rows]
+
+
+def z23_person_pal(look):
+    y, p = look["y"]
+    return {"h": look["h"], "f": look["s"], "k": "#1a1414", "y": y, "w": "#f4f0e6", "p": p, "o": look["o"], "g": "#5a3a24",
+            "m": "#f6f2ea", "r": "#d9472b", "a": "#e0312a", "l": "#d8c8a8", "u": "#4f8fe0", "b": "#bfe4ff", "q": "#ff7a2a",
+            "R": "#d93a3a", "W": "#f6f4ee", "K": "#2a1e36", "Y": "#ffd23a", "B": "#f6f4ee"}
+
+
+def z23_look(rnd, ev, fox=False):
+    look = {"h": rnd.choice(_Z23_HAIR), "s": rnd.choice(_Z23_SKIN), "y": rnd.choice(_Z23_YUKATA), "o": rnd.choice(_Z23_OBI),
+            "long": rnd.random() < 0.45, "bun": rnd.random() < 0.2, "kid": rnd.random() < 0.16,
+            "acc": rnd.choice([None, None, "mask", "apple", "fan", "fish", "balloon"])}
+    if ev == "christmas" and rnd.random() < 0.4:
+        look["hat"] = "santa"
+    elif ev == "halloween":
+        r = rnd.random()
+        if r < 0.18:
+            look["ghost"] = True
+        elif r < 0.45:
+            look["hat"] = "witch"
+    elif ev == "setsubun" and rnd.random() < 0.3:
+        look["hat"] = "horns"
+    elif ev in ("summer", "obon") and rnd.random() < 0.15:
+        look["hat"] = "band"
+    if ev == "holi":
+        look["y"] = (rnd.choice(["#f4f0e6", "#ffffff"]), rnd.choice(["#ff5fa2", "#ffd23a", "#4fc3ff", "#7be07a"]))
+    if fox:
+        look.update({"h": "#e2843f", "fox": True, "kid": False, "ghost": False, "long": False, "bun": False})
+    return look
+
+
+class SquareLink23(SquareLink):
+    """The same square, but each message also carries the sender's festival look (yukata colour, mask), so everyone's
+    little person in the crowd looks the way they chose. Older Zenkos simply ignore it."""
+    look = None
+
+    def take(self, ev):
+        before = len(self.msgs)
+        super().take(ev)
+        try:
+            if len(self.msgs) > before:
+                body = json.loads(ev.get("message") or "{}")
+                a = body.get("a")
+                if isinstance(a, dict):
+                    self.msgs[-1]["look"] = {"y": int(a.get("y", -1)) % len(_Z23_YUKATA), "m": bool(a.get("m")),
+                                             "h": int(a.get("h", -1)) % len(_Z23_HAIR)}
+        except Exception:
+            pass
+
+    def post(self, uid, name, text, rep=None):
+        if rep or not self.look:
+            return super().post(uid, name, text, rep)
+        body = {"z": 1, "u": uid, "n": name, "t": text, "a": self.look}
+        req = urllib.request.Request("%s/%s" % (self.server, self.topic), data=json.dumps(body).encode("utf-8"), method="POST",
+                                     headers={"User-Agent": "Zenko/" + APP_VERSION, "Content-Type": "text/plain"})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            r.read()
+        return True
+
+
+class Zenko23(Zenko22):
+    """zenko23: emas that find their own study time, a festival Town square that follows real dates, and focus
+    sessions that switch Zenko Browser's focus mode on."""
+
+    def __init__(self):
+        self._z23_ses = None
+        self._z23_fest = None             # the festival scene while the Town square is open
+        self._z23_announce = set()
+        super().__init__()
+        self.root.after(4000, self.z23_session_watch)
+
+    # =================================================================================================================
+    #  Zenko Browser: share the running study session, at once when it starts or stops
+    # =================================================================================================================
+    def z23_session_info(self):
+        try:
+            if self.lockin:
+                L = self.lockin
+                return {"on": True, "kind": "lockin", "task": "Lock-in", "until": float(L.get("until") or 0),
+                        "started": "l%x" % id(L)}
+            if self.session and not getattr(self, "brk", None):
+                s = self.session
+                left = max(0.0, float(s.get("planned", 0)) - float(s.get("elapsed", 0)))
+                return {"on": True, "kind": "focus", "task": clip(s.get("task") or "", 50), "until": time.time() + left,
+                        "started": "s%x" % id(s)}
+        except Exception:
+            pass
+        return {"on": False}
+
+    def z22_link_payload(self):
+        d = super().z22_link_payload()
+        d["session"] = self.z23_session_info()
+        try:
+            d["ema_plan"] = [{"task": clip(i.get("task") or "", 60), "date": i.get("date"), "start": i.get("start"),
+                              "mins": i.get("mins")} for i in self.tt if str(i.get("plan", "")).startswith("ema:")
+                             and i.get("date", "") >= datetime.date.today().isoformat()][:12]
+        except Exception:
+            pass
+        return d
+
+    def z23_session_watch(self):
+        try:
+            info = self.z23_session_info()
+            key = info.get("started") if info.get("on") else None
+            if key != self._z23_ses:
+                self._z23_ses = key
+                if self.cfg.get("zb_link_on", True):
+                    os.makedirs(DATA_DIR, exist_ok=True)
+                    path = os.path.join(DATA_DIR, "zenko_link.json")
+                    with open(path + ".tmp", "w", encoding="utf-8") as f:
+                        json.dump(self.z22_link_payload(), f)
+                    os.replace(path + ".tmp", path)
+        except Exception as ex:
+            zk_log_error("z23 session link: %r" % (ex,))
+        self.root.after(2000, self.z23_session_watch)
+
+    # =================================================================================================================
+    #  emas that plan themselves
+    # =================================================================================================================
+    def plan_sig(self):
+        sig = super().plan_sig()
+        try:
+            em = tuple((e.get("id"), e.get("at"), e.get("done"), e.get("mins"), e.get("noplan"), e.get("text"))
+                       for e in self.ema_list() if not e.get("done"))
+        except Exception:
+            em = ()
+        return sig + (em, self.cfg.get("ema_plan", True))
+
+    def replan(self):
+        r = super().replan()
+        try:
+            self.z23_plan_emas()
+        except Exception as ex:
+            zk_log_error("ema plan: %r" % (ex,))
+        return r
+
+    def z23_plan_emas(self):
+        """Fit every homework-like ema into free half hours before it's due, around exams already planned and around
+        emas that happen at a set time."""
+        self.life["ema_short"] = {}
+        if not self.cfg.get("ema_plan", True) or not self.cfg.get("planner", True):
+            return []
+        now = datetime.datetime.now()
+        targets, blocks = [], {}
+        for E in self.ema_active():
+            info = z23_ema_task(E, now)
+            if not info:
+                continue
+            kind, mins, when = info
+            if kind == "block":
+                blocks.setdefault(when.date(), []).append((when.hour * 60 + when.minute, when.hour * 60 + when.minute + mins))
+                continue
+            pid = "ema:" + E["id"]
+            need = max(0, int(mins) - int(self.life["studied"].get(pid, 0)))
+            if need >= 10:
+                targets.append({"id": pid, "title": E.get("text") or "Ema", "due": when, "need": need})
+
+        def busy(day):
+            out = []
+            for it in tt_today(self.tt, day):
+                try:
+                    h, m = map(int, it["start"].split(":"))
+                except Exception:
+                    continue
+                out.append((h * 60 + m, h * 60 + m + int(it.get("mins", 30))))
+            return out + blocks.get(day, [])
+        sess, short = plan_study_slots(targets, self.free_for, busy, now,
+                                       min(50, int(self.cfg.get("plan_session", 50) or 50)), 2, 21)
+        for s in sess:
+            self.tt.append({"task": "Ema: " + clip(s["title"], 48),
+                            "start": s["start"], "mins": s["mins"], "daily": False, "date": s["date"], "done": [],
+                            "plan": s["id"], "ema": s["id"][4:]})
+        save_tt(self.tt)
+        self.life["ema_short"] = short
+        self.life_save()
+        try:
+            self.tt_refresh()
+        except Exception:
+            pass
+        try:
+            self.up_refresh()
+        except Exception:
+            pass
+        return sess
+
+    def z23_ema_rows(self, eid):
+        today = datetime.date.today().isoformat()
+        return sorted([i for i in self.tt if i.get("plan") == "ema:" + eid and not i.get("done")
+                       and i.get("date", "") >= today], key=lambda i: (i["date"], i["start"]))
+
+    def z23_when(self, it):
+        d = datetime.date.fromisoformat(it["date"])
+        h, m = map(int, it["start"].split(":"))
+        t = datetime.time(h, m).strftime("%I:%M %p").lstrip("0")
+        days = (d - datetime.date.today()).days
+        return ("today " if days == 0 else ("tomorrow " if days == 1 else d.strftime("%a "))) + t
+
+    def ema_add(self, text, at=None, repeat=None, quiet=False):
+        E = super().ema_add(text, at, repeat, quiet)
+        if not quiet and self.cfg.get("ema_plan", True):
+            self.root.after(900, lambda: self.z23_announce(E))
+        return E
+
+    def z23_announce(self, E):
+        try:
+            if E.get("id") in self._z23_announce or not z23_ema_task(E):
+                return
+            self._z23_announce.add(E["id"])
+            self._plan_sig = None
+            self.plan_maybe()
+            rows = self.z23_ema_rows(E["id"])
+            if not rows:
+                if ("ema:" + E["id"]) in (self.life.get("ema_short") or {}):
+                    self.say("Uu~ I couldn't find free time for “%s” before it's due. Mark more free hours on the "
+                             "Upcoming clock?" % clip(E.get("text"), 30), 12)
+                return
+            when = ", ".join(self.z23_when(i) for i in rows[:3]) + (" and more" if len(rows) > 3 else "")
+            total = sum(int(i["mins"]) for i in rows)
+            self.say("I planned %s for “%s”: %s~" % (fmt_hm(total), clip(E.get("text"), 32), when), 12,
+                     [("Looks good", lambda: None), ("Don't plan this one", lambda e=E: self.z23_noplan(e))])
+        except Exception as ex:
+            zk_log_error("ema announce: %r" % (ex,))
+
+    def z23_noplan(self, E, on=True):
+        E["noplan"] = bool(on)
+        self.ema_save()
+        self._plan_sig = None
+        self.plan_maybe()
+
+    def ema_set_done(self, E, done=True):
+        super().ema_set_done(E, done)
+        self._plan_sig = None
+        self.root.after(600, self.plan_maybe)
+
+    def ema_remove(self, E):
+        super().ema_remove(E)
+        self._plan_sig = None
+        self.root.after(600, self.plan_maybe)
+
+    def life_tt_marked(self, it, done, day):
+        super().life_tt_marked(it, done, day)
+        pid = str(it.get("plan") or "")
+        if done and pid.startswith("ema:"):
+            E = self.ema_get(pid[4:])
+            left = [i for i in self.tt if i.get("plan") == pid and not i.get("done") and not tt_done(i)
+                    and i.get("date", "") >= datetime.date.today().isoformat() and i is not it]
+            if E and not E.get("done") and not left:
+                self.root.after(500, lambda: self.say("That was the last planned bit of “%s”. Take its ema down?" %
+                                                      clip(E.get("text"), 30), 15,
+                                                      [("Yes, done!", lambda: self.ema_set_done(E, True)),
+                                                       ("Not yet", lambda: None)]))
+
+    def up_plan(self, c):
+        keep = self.life.get("plan_short") or {}
+        self.life["plan_short"] = dict((k, v) for k, v in keep.items() if not str(k).startswith("ema:"))
+        try:
+            super().up_plan(c)
+        finally:
+            self.life["plan_short"] = keep
+        short = self.life.get("ema_short") or {}
+        bg = T["card"]
+        for pid, m in list(short.items())[:3]:
+            E = self.ema_get(pid[4:])
+            if E:
+                tk.Label(c, text="Uu~ %s for the ema “%s” didn't fit before it's due." % (fmt_hm(m), clip(E.get("text"), 22)),
+                         bg=bg, fg=T["bad"], font=(FONT_UI, 8), anchor="w", wraplength=260, justify="left").pack(fill="x", padx=16, pady=(2, 0))
+
+    def z23_ema_plan_reply(self):
+        self._plan_sig = None
+        self.replan()
+        lines = []
+        for E in self.ema_active():
+            info = z23_ema_task(E)
+            if not info:
+                continue
+            if info[0] == "block":
+                lines.append("• %s: kept %s free for it" % (clip(E.get("text"), 34), ema_when(E.get("at"))))
+                continue
+            rows = self.z23_ema_rows(E["id"])
+            if rows:
+                lines.append("• %s (%s): %s" % (clip(E.get("text"), 34), fmt_hm(sum(int(i["mins"]) for i in rows)),
+                                                ", ".join(self.z23_when(i) for i in rows[:3])))
+            elif ("ema:" + E["id"]) in (self.life.get("ema_short") or {}):
+                lines.append("• %s: no free time left before it's due" % clip(E.get("text"), 34))
+        if not lines:
+            return "None of your emas look like homework to plan~ Hang one like 'finish bio IA draft by friday'."
+        tip = "" if self.life.get("free_set") else "\n(I used my guess of your free time. Mark the real one on the Upcoming clock.)"
+        return "Kon! Here's when I fit your emas in:\n" + "\n".join(lines[:10]) + tip
+
+    def gym_route(self, text):
+        lw = re.sub(r"^(?:hey |hi |ok |okay )?(?:zenko[, ]+)?(?:please |pls |can you |could you )?", "",
+                    (text or "").lower().strip(" .!?~"))
+        try:
+            if re.match(r"^(?:auto ?)?plan (?:my |the )?(?:emas?|reminders?|tasks?|homework)$|^when (?:should|do) i do (?:my )?(?:emas?|homework|tasks)$", lw):
+                return self.z23_ema_plan_reply()
+            m = re.match(r"^(?:don'?t|do not|stop) (?:auto ?)?plan(?:ning)? (.+)$", lw)
+            if m:
+                E = self.ema_find(m.group(1))
+                if E:
+                    self.z23_noplan(E)
+                    return "Okay, I won't plan time for “%s”~" % clip(E.get("text"), 40)
+            m = re.match(r"^(.+?) (?:takes|will take|needs|should take) (?:about |around )?(.+)$", lw)
+            if m and re.search(r"\d|an? hour|half", m.group(2)):
+                E = self.ema_find(m.group(1))
+                if E:
+                    E["mins"] = z23_ema_minutes(m.group(2))
+                    E.pop("noplan", None)
+                    self.ema_save()
+                    self._plan_sig = None
+                    self.plan_maybe()
+                    rows = self.z23_ema_rows(E["id"])
+                    return "Got it, %s for “%s”.%s" % (fmt_hm(E["mins"]), clip(E.get("text"), 36),
+                                                       (" Planned: " + ", ".join(self.z23_when(i) for i in rows[:3])) if rows else "")
+            if re.match(r"^(?:open |go to )?(?:the )?(?:town square|square|festival|matsuri)$", lw):
+                self.open_hub("square")
+                F = Z23_FEST[z23_fest_today()]
+                return "To the %s~ (%s)" % (F[1].lower(), F[0])
+        except Exception as ex:
+            zk_log_error("z23 route: %r" % (ex,))
+        return super().gym_route(text)
+
+    # =================================================================================================================
+    #  Settings
+    # =================================================================================================================
+    def hub_settings_extras(self, left, right, check, radios, label, cfg_set):
+        super().hub_settings_extras(left, right, check, radios, label, cfg_set)
+        try:
+            bg = T["card"]
+            c = self.hub_card(right, "Emas that plan themselves")
+            c.pack(fill="x", pady=(12, 0))
+            v = tk.BooleanVar(value=bool(self.cfg.get("ema_plan", True)))
+
+            def tog():
+                self.cfg_set("ema_plan", v.get())
+                self._plan_sig = None
+                self.plan_maybe()
+            tk.Checkbutton(c, text="Find study time for homework-like emas", variable=v, command=tog, bg=bg, fg=INK,
+                           activebackground=bg, activeforeground=GOLD, selectcolor=FIELD, highlightthickness=0,
+                           font=(FONT_UI, 10), anchor="w").pack(fill="x", padx=14)
+            tk.Label(c, text="An ema like “finish bio IA by friday” or “revise chem” gets sessions in your free half hours "
+                     "(from the Upcoming clock) before it's due, around your exam plan. Emas at a set time keep that time "
+                     "free. Say “plan my emas”, “bio IA takes 3 hours” or “don't plan call mum”.",
+                     bg=bg, fg=GREY, font=(FONT_UI, 8), anchor="w", justify="left", wraplength=320).pack(fill="x", padx=14, pady=(2, 10))
+        except Exception as ex:
+            zk_log_error("z23 settings: %r" % (ex,))
+
+    # =================================================================================================================
+    #  the Town square: a festival street
+    # =================================================================================================================
+    def square_connect(self):
+        if not self.cfg.get("square_on"):
+            return
+        srv = (self.cfg.get("square_server") or SQUARE_SERVER).strip()
+        if self._sq and self._sq.server == srv.rstrip("/") and isinstance(self._sq, SquareLink23):
+            self._sq.look = self.z23_my_look_wire()
+            self._sq.start()
+            return
+        if self._sq:
+            self._sq.stop()
+        self._sq = SquareLink23(srv, SQUARE_TOPIC)
+        self._sq.look = self.z23_my_look_wire()
+        self._sq.start()
+
+    def z23_my_look_wire(self):
+        return {"y": int(self.cfg.get("z23_yukata", 3)), "m": bool(self.cfg.get("z23_mask", False)),
+                "h": int(self.cfg.get("z23_hair", 0))}
+
+    def hub_build_square(self, pg):
+        super().hub_build_square(pg)
+        ui = self._sq_ui
+        try:
+            board = ui["txt"].master
+            ui["txt"].configure(height=7)
+            h = 300
+            try:
+                h = int(max(220, min(340, (self.hub["win"].winfo_height() or 760) * 0.40)))
+            except Exception:
+                pass
+            st = Z23Street(self, board.master, h)
+            st.cv.pack(fill="x", pady=(10, 0), before=board)
+            self._z23_fest = st
+        except Exception as ex:
+            zk_log_error("festival street: %r" % (ex,))
+
+    def z23_my_look(self):
+        look = z23_look(random.Random(self.square_uid()), z23_fest_today(), fox=True)
+        look["y"] = _Z23_YUKATA[int(self.cfg.get("z23_yukata", 3)) % len(_Z23_YUKATA)]
+        look["acc"] = "mask" if self.cfg.get("z23_mask") else None
+        return look
+
+    def z23_set_look(self, **kw):
+        for k, v in kw.items():
+            self.cfg_set("z23_" + k, v)
+        if self._sq is not None and isinstance(self._sq, SquareLink23):
+            self._sq.look = self.z23_my_look_wire()
+        st = self._z23_fest
+        if st:
+            st.restyle_me()
+
+    def z23_stall(self, key):
+        st = Z23_STALLS.get(key)
+        if not st:
+            return
+        sign, name, kind = st[0], st[1], st[2]
+        last = self.life.setdefault("z23_stalls", {})
+        now = time.time()
+        if kind == "food":
+            if now - float(last.get(key, 0)) < 600:
+                self.say("Mmh, still full from the %s~ Maybe another stall?" % name.lower(), 6)
+                return
+            last[key] = now
+            try:
+                self.feed(12)
+            except Exception:
+                pass
+            self.life_save()
+            self.say(random.choice(["Itadakimasu! %s, my favourite~", "Kon kon! The %s here is the best~",
+                                    "*munch* ...%s at a festival just tastes better~"]) % name.lower()
+                     if random.random() < 0.67 else "%s! Thank you~ (%s)" % (name, sign), 7)
+        elif kind == "kingyo":
+            if random.random() < 0.38:
+                try:
+                    F = self.fishing()
+                    F["bait"] = min(99.0, float(F.get("bait", 0)) + 1)
+                    self.life_save()
+                except Exception:
+                    pass
+                self.say("You scooped a goldfish! It swims home to the pond... and leaves you +1 koi bait~", 8)
+            else:
+                self.say("Ah, the paper scoop tore~ One more try?", 5)
+        elif kind == "omikuji":
+            day = datetime.date.today().isoformat()
+            if last.get("omikuji") == day:
+                self.say("One fortune a day~ Today's was: %s" % self.life.get("z23_fortune", "大吉"), 7)
+                return
+            f = random.choice(Z23_FORTUNES)
+            last["omikuji"] = day
+            self.life["z23_fortune"] = "%s %s" % f
+            self.life_save()
+            self.say("おみくじ… %s! %s" % f, 12)
+        elif kind == "mask":
+            on = not self.cfg.get("z23_mask")
+            self.z23_set_look(mask=on)
+            self.say("A fox mask, just like me~ Kon!" if on else "Mask off~ I can see your face again.", 6)
+        elif kind == "charm":
+            self.say(random.choice(["You got a 学業成就 charm: success in study~", "A 合格 charm: for passing exams! "
+                                    "I'll keep it on my ema~", "A 健康 charm: for good health and good sleep~"]), 8)
+        elif kind == "colour":
+            if self._z23_fest:
+                self._z23_fest.puffs()
+            self.say("Splash! Happy Holi~ Now we're both pink and yellow.", 7)
+        else:
+            self.say(random.choice(["Hit! You won a little %s plush~", "So close! The cork bounced off~",
+                                    "You won a pixel %s keychain~"]) % random.choice(["fox", "tanuki", "koi", "daruma"]), 6)
+
+
+_Z23_SPRITES = {}
+
+
+def z23_sprite(look, frame, Z):
+    key = (json.dumps(look, sort_keys=True, default=str), frame, Z)
+    img = _Z23_SPRITES.get(key)
+    if img is None:
+        rows = z23_person_rows(look, frame)
+        pal = z23_person_pal(look)
+        rgb = dict((k, _z23_rgb(v)) for k, v in pal.items())
+
+        def fn(x, y):
+            ch = rows[y][x] if y < len(rows) and x < len(rows[y]) else "."
+            return None if ch == "." else rgb.get(ch, (255, 0, 255))
+        img = _px_photo_plain(13, 26, fn, Z)
+        if len(_Z23_SPRITES) > 400:
+            _Z23_SPRITES.clear()
+        _Z23_SPRITES[key] = img
+    return img
+
+
+class Z23Street:
+    """The animated festival street above the Town square chat."""
+    Z = 2
+    FPS_MS = 90
+
+    def __init__(self, app, parent, height):
+        self.app = app
+        self.cv = tk.Canvas(parent, height=height, bg="#120c18", highlightthickness=0, cursor="arrow")
+        self.ev = getattr(app, "_z23_preview", None) or z23_fest_today()
+        self.mode = z23_sky_mode()
+        self.L = None
+        self.aw = self.ah = 0
+        self.people = []
+        self.named = {}
+        self.parts = []
+        self.lights = []
+        self.seen = None
+        self.size_job = None
+        self.frame_n = 0
+        self.next_fw = time.time() + 2
+        self.rnd = random.Random()
+        self.cv.bind("<Configure>", self.on_size)
+        self.cv.bind("<Button-1>", self.click)
+        self.cv.bind("<Button-3>", self.menu)
+        self.cv.bind("<Motion>", self.hover)
+        self.cv.after(self.FPS_MS, self.tick)
+
+    # ---- building -----------------------------------------------------------------------------------------------
+    def on_size(self, e):
+        if self.size_job:
+            self.cv.after_cancel(self.size_job)
+        self.size_job = self.cv.after(250, self.build)
+
+    def build(self):
+        self.size_job = None
+        cw, ch = self.cv.winfo_width(), self.cv.winfo_height()
+        if cw < 60 or ch < 60:
+            return
+        Z = self.Z
+        aw, ah = cw // Z + 1, ch // Z + 1
+        if (aw, ah) == (self.aw, self.ah) and self.L and self.mode == z23_sky_mode() and \
+                self.ev == (getattr(self.app, "_z23_preview", None) or z23_fest_today()):
+            return
+        self.ev = getattr(self.app, "_z23_preview", None) or z23_fest_today()
+        self.mode = z23_sky_mode()
+        t0 = time.time()
+        R, L = z23_street(aw, ah, self.ev, self.mode, seed=datetime.date.today().toordinal())
+        self.aw, self.ah, self.L = aw, ah, L
+        self.img = R.photo(Z)
+        cv = self.cv
+        cv.delete("all")
+        self.parts = []
+        cv.create_image(0, 0, image=self.img, anchor="nw", tags=("bg",))
+        lit = self.mode != "day"
+        self.lights = []
+        for lx, ly, col in L["lanterns"]:
+            if not lit:
+                break
+            hexc = "#%02x%02x%02x" % tuple(min(255, int(v * 0.4 + 255 * 0.6)) for v in col)
+            i = cv.create_rectangle((lx - 1) * Z, (ly + 2) * Z, (lx + 2) * Z, (ly + 5) * Z, fill=hexc, outline="", tags=("lit",))
+            self.lights.append((i, hexc, "#%02x%02x%02x" % tuple(min(255, int(v * 0.7 + 255 * 0.3)) for v in col)))
+        for tx, ty, col in L["twinkles"]:
+            i = cv.create_rectangle(tx * Z, ty * Z, (tx + 1) * Z, (ty + 1) * Z, fill=col, outline="", tags=("lit",))
+            self.lights.append((i, col, _mixhex(col, "#1a1020", 0.6)))
+        jp = _jp_font(self.app.root) or FONT_UI
+        for s in L["stalls"]:
+            sign = Z23_STALLS[s["key"]][0]
+            size = 9 if len(sign) <= 3 else (8 if len(sign) <= 4 else 7)
+            if re.match(r"^[A-Za-z]", sign):
+                cv.create_text((s["x0"] + s["x1"]) / 2.0 * Z, s["sign_y"] * Z, text=sign, fill="#3a2414",
+                               font=(FONT_UI, size, "bold"), tags=("sign",))
+            else:
+                cv.create_text((s["x0"] + s["x1"]) / 2.0 * Z, s["sign_y"] * Z, text=sign, fill="#3a2414",
+                               font=(jp, size, "bold"), tags=("sign",))
+        # the crowd
+        old_named = self.named
+        self.people, self.named = [], {}
+        n = max(6, min(26, aw // 24))
+        for k in range(n):
+            self.spawn(x=self.rnd.uniform(0, aw))
+        if self.ev == "obon":
+            for k in range(6):
+                p = self.spawn(x=L["mid"])
+                p["dance"] = k * 6.283 / 6
+        me = self.app.square_uid()
+        self.person_for(me, self.app.cfg.get("square_name") or "you", None, mine=True)
+        for uid, p in old_named.items():
+            if uid != me:
+                self.person_for(uid, p["name"], p.get("wire"))
+        self.banner()
+        cv.tag_raise("p0")
+        cv.tag_raise("p1")
+        cv.tag_raise("named")
+        cv.tag_raise("tag")
+        cv.tag_raise("bub")
+        cv.tag_raise("banner")
+        if time.time() - t0 > 1.2:
+            zk_log_error("festival street build %.2fs" % (time.time() - t0))
+
+    def banner(self):
+        cv, Z = self.cv, self.Z
+        cv.delete("banner")
+        F = Z23_FEST[self.ev]
+        jp = _jp_font(self.app.root) or FONT_UI
+        preview = getattr(self.app, "_z23_preview", None)
+        for dx, dy, col in ((1, 1, "#1a1020"), (0, 0, "#ffe7b0")):
+            cv.create_text(14 + dx, 12 + dy, text=F[0], anchor="nw", fill=col, font=(jp, 15, "bold"), tags=("banner",))
+        sub = F[1] + (" (preview, right-click to go back)" if preview else "")
+        nx = z23_fest_next()
+        if nx and not preview:
+            days = (nx[1] - datetime.date.today()).days
+            sub += "   ·   next: %s in %d day%s" % (Z23_FEST[nx[0]][1].split(",")[0], days, "" if days == 1 else "s")
+        for dx, dy, col in ((1, 1, "#1a1020"), (0, 0, "#f4ead8")):
+            cv.create_text(15 + dx, 42 + dy, text=sub, anchor="nw", fill=col, font=(FONT_UI, 9), tags=("banner",))
+        self.count_id = cv.create_text(self.cv.winfo_width() - 14, 14, text="", anchor="ne", fill="#f4ead8",
+                                       font=(FONT_UI, 9), tags=("banner",))
+
+    # ---- people -------------------------------------------------------------------------------------------------
+    def spawn(self, x=None, look=None, lane=None, name=None, uid=None):
+        cv, Z, L = self.cv, self.Z, self.L
+        lane = self.rnd.randint(0, 1) if lane is None else lane
+        d = self.rnd.choice((-1, 1))
+        p = {"x": x if x is not None else (-12 if d > 0 else self.aw + 1), "dir": d, "lane": lane,
+             "speed": self.rnd.uniform(0.35, 0.8), "look": look or z23_look(self.rnd, self.ev), "f": 0, "stop": 0,
+             "name": name, "uid": uid, "bub": None, "bub_t": 0, "dance": None}
+        p["y"] = L["lanes"][lane] + self.rnd.randint(-1, 1)
+        img = z23_sprite(p["look"], 0, Z)
+        p["id"] = cv.create_image(int(p["x"] * Z), int((p["y"] - 26) * Z), image=img, anchor="nw",
+                                  tags=("p%d" % lane, "named" if name else "npc"))
+        self.people.append(p)
+        return p
+
+    def look_from_wire(self, uid, wire):
+        look = z23_look(random.Random(uid), self.ev)
+        look["ghost"] = False
+        if wire:
+            look["y"] = _Z23_YUKATA[wire.get("y", 0) % len(_Z23_YUKATA)]
+            look["h"] = _Z23_HAIR[wire.get("h", 0) % len(_Z23_HAIR)]
+            look["acc"] = "mask" if wire.get("m") else None
+        return look
+
+    def person_for(self, uid, name, wire, mine=False):
+        p = self.named.get(uid)
+        if p:
+            if wire and wire != p.get("wire"):
+                p["wire"] = wire
+                p["look"] = self.look_from_wire(uid, wire)
+            return p
+        look = self.app.z23_my_look() if mine else self.look_from_wire(uid, wire)
+        x = self.aw * (0.42 + self.rnd.random() * 0.16) if mine else self.rnd.uniform(self.aw * 0.1, self.aw * 0.9)
+        p = self.spawn(x=x, look=look, lane=1, name=name, uid=uid)
+        p["wire"], p["mine"] = wire, mine
+        p["speed"] = 0.3 if mine else p["speed"]
+        Z = self.Z
+        cx = (p["x"] + 6.5) * Z
+        ty = (p["y"] - 27) * Z
+        fg = "#ffb066" if mine else "#ffe7b0"
+        p["tag_ids"] = [self.cv.create_text(cx + 1, ty + 1, text=name, fill="#1a1020", font=(FONT_UI, 8, "bold"), tags=("tag",)),
+                        self.cv.create_text(cx, ty, text=name, fill=fg, font=(FONT_UI, 8, "bold"), tags=("tag",))]
+        self.named[uid] = p
+        self.cv.tag_raise("tag")
+        self.cv.tag_raise("bub")
+        self.cv.tag_raise("banner")
+        return p
+
+    def restyle_me(self):
+        me = self.named.get(self.app.square_uid())
+        if me:
+            me["look"] = self.app.z23_my_look()
+
+    def say(self, p, text):
+        cv, Z = self.cv, self.Z
+        if p.get("bub"):
+            cv.delete(p["bub"])
+        tag = "bub%d" % p["id"]
+        p["bub"] = tag
+        p["bub_t"] = time.time() + 9
+        cx = (p["x"] + 6.5) * Z
+        top = (p["y"] - 30) * Z
+        t = cv.create_text(cx, top - 6, text=clip(text, 90), width=170, fill="#2a1a10", font=(FONT_UI, 8),
+                           anchor="s", tags=(tag, "bub"))
+        x0, y0, x1, y1 = cv.bbox(t)
+        x0, y0, x1, y1 = x0 - 7, y0 - 4, x1 + 7, y1 + 4
+        r = 6
+        pts = [x0 + r, y0, x1 - r, y0, x1, y0, x1, y0 + r, x1, y1 - r, x1, y1, x1 - r, y1, cx + 5, y1, cx, y1 + 6, cx - 5, y1,
+               x0 + r, y1, x0, y1, x0, y1 - r, x0, y0 + r, x0, y0]
+        b = cv.create_polygon(pts, smooth=True, fill="#fff6e6", outline="#5a3a22", width=1, tags=(tag, "bub"))
+        cv.tag_raise(t, b)
+        shift = 0
+        if x0 < 4:
+            shift = 4 - x0
+        elif x1 > cv.winfo_width() - 4:
+            shift = cv.winfo_width() - 4 - x1
+        if shift:
+            cv.move(t, shift, 0)
+            cv.move(b, shift, 0)
+        for _ in range(4):                       # don't sit on top of someone else's bubble: float above it
+            bb = cv.bbox(b)
+            hit = None
+            for o in self.people:
+                if o is p or not o.get("bub"):
+                    continue
+                ob = cv.bbox(o["bub"])
+                if ob and ob[0] < bb[2] and bb[0] < ob[2] and ob[1] < bb[3] and bb[1] < ob[3]:
+                    hit = ob
+                    break
+            if not hit or hit[1] - (bb[3] - bb[1]) < 2:
+                break
+            dy = hit[1] - 3 - bb[3]
+            cv.move(t, 0, dy)
+            cv.move(b, 0, dy)
+        cv.tag_raise("bub")
+        cv.tag_raise("banner")
+        p["stop"] = max(p["stop"], 40)
+
+    # ---- the square's messages ----------------------------------------------------------------------------------
+    def feed(self):
+        app = self.app
+        on = bool(app.cfg.get("square_on"))
+        try:
+            hid = set(app.cfg.get("square_hidden") or [])
+            msgs = [m for m in app.square_visible() if m["id"] not in hid] if on else []
+        except Exception:
+            msgs = []
+        if self.seen is None:
+            self.seen = set(m["id"] for m in msgs)
+            recent, got = [], set()
+            for m in reversed(msgs):
+                if m["uid"] not in got and time.time() - m["ts"] < 3 * 3600:
+                    got.add(m["uid"])
+                    recent.append(m)
+                if len(recent) >= 7:
+                    break
+            for m in reversed(recent):
+                self.person_for(m["uid"], m["name"], m.get("look"), mine=m["uid"] == app.square_uid())
+            if recent:
+                last = recent[0]
+                self.say(self.named[last["uid"]], last["text"])
+        else:
+            for m in msgs:
+                if m["id"] in self.seen:
+                    continue
+                self.seen.add(m["id"])
+                mine = m["uid"] == app.square_uid()
+                p = self.person_for(m["uid"], m["name"], m.get("look"), mine=mine)
+                self.say(p, m["text"])
+        cutoff = time.time() - 3600
+        n = len(set(m["uid"] for m in msgs if m["ts"] > cutoff))
+        try:
+            self.cv.itemconfigure(self.count_id, text=("%d chatting in the last hour" % n) if on and n else
+                                  ("Online" if on else "Offline · press Go online to join the crowd"))
+        except Exception:
+            pass
+
+    # ---- fireworks and the air ----------------------------------------------------------------------------------
+    def firework(self):
+        Z, cv, aw, L = self.Z, self.cv, self.aw, self.L
+        F = Z23_FEST[self.ev]
+        cols = list(F[2]) + ["#fff4d0", "#ffd27a"]
+        if self.ev == "halloween":
+            cols = ["#ff8a2a", "#9a5ad8", "#7be07a", "#ffd27a"]
+        elif self.ev in ("diwali", "holi"):
+            cols = ["#ffd23a", "#ff5fa2", "#4fc3ff", "#7be07a", "#ff8a2a", "#ffffff"]
+        x = self.rnd.uniform(aw * 0.12, aw * 0.88)
+        y = self.rnd.uniform(L["gy"] * 0.14, L["gy"] * 0.42)
+        kind = self.rnd.choice(["peony", "peony", "ring", "willow"] + (["heart"] * 3 if self.ev == "valentine" else []))
+        col = self.rnd.choice(cols)
+        col2 = self.rnd.choice(cols)
+        n = 30 if kind != "ring" else 22
+        sp = self.rnd.uniform(1.1, 1.7)
+        for k in range(n):
+            a = k * 6.2832 / n
+            if kind == "heart":
+                t = a
+                vx = 16 * math.sin(t) ** 3 / 16.0 * sp
+                vy = -(13 * math.cos(t) - 5 * math.cos(2 * t) - 2 * math.cos(3 * t) - math.cos(4 * t)) / 16.0 * sp
+            else:
+                s = sp * (1.0 if kind == "ring" else self.rnd.uniform(0.55, 1.05))
+                vx, vy = math.cos(a) * s, math.sin(a) * s
+            c = col if (k % 3 or kind == "willow") else col2
+            if kind == "willow":
+                c = "#ffcf6a"
+            i = cv.create_rectangle(0, 0, 0, 0, fill=c, outline="", tags=("fw",))
+            self.parts.append({"k": "fw", "x": x, "y": y, "vx": vx, "vy": vy, "life": 1.0, "dec": 0.022 if kind != "willow" else 0.012,
+                               "g": 0.03 if kind != "willow" else 0.02, "c": c, "id": i, "sz": 1.3})
+        cv.tag_lower("fw", "lit")
+
+    def ambient(self):
+        kind = Z23_FEST[self.ev][4]
+        if not kind or (kind == "fireflies" and self.mode == "day"):
+            return
+        live = sum(1 for p in self.parts if p["k"] == "amb")
+        if live >= (26 if kind != "colour" else 10):
+            return
+        Z, aw, ah, gy = self.Z, self.aw, self.ah, self.L["gy"]
+        cols = {"snow": ["#f4f8ff", "#e4ecff"], "sakura": ["#ffc6de", "#ffe0ee", "#ff9fc6"], "petals": ["#ffd0e4", "#fff0f6"],
+                "peach": ["#ff9fc6", "#ffc6de"], "leaves": ["#e0502a", "#f08a2a", "#c8372d", "#f2b33a"],
+                "fireflies": ["#d8f08a", "#f4ff9a"], "colour": ["#ff5fa2", "#ffd23a", "#4fc3ff", "#7be07a"], "hearts": ["#ff7aa8"]}[kind]
+        c = self.rnd.choice(cols)
+        if kind == "fireflies":
+            p = {"k": "amb", "kind": kind, "x": self.rnd.uniform(0, aw), "y": self.rnd.uniform(gy - 30, ah - 4),
+                 "vx": self.rnd.uniform(-0.15, 0.15), "vy": self.rnd.uniform(-0.08, 0.05), "life": 1.0, "c": c, "ph": self.rnd.random() * 6}
+        elif kind == "colour":
+            p = {"k": "amb", "kind": kind, "x": self.rnd.uniform(0, aw), "y": ah - 2, "vx": self.rnd.uniform(-0.2, 0.2),
+                 "vy": -self.rnd.uniform(0.15, 0.35), "life": 1.0, "c": c, "ph": 0, "r": self.rnd.uniform(4, 9)}
+        else:
+            p = {"k": "amb", "kind": kind, "x": self.rnd.uniform(-10, aw), "y": -2, "vx": self.rnd.uniform(0.05, 0.35),
+                 "vy": self.rnd.uniform(0.25, 0.5) if kind == "snow" else self.rnd.uniform(0.3, 0.6), "life": 1.0, "c": c,
+                 "ph": self.rnd.random() * 6}
+        if kind == "colour":
+            p["id"] = self.cv.create_oval(0, 0, 0, 0, fill=c, outline="", stipple="gray50", tags=("amb",))
+        else:
+            p["id"] = self.cv.create_rectangle(0, 0, 0, 0, fill=c, outline="", tags=("amb",))
+        self.cv.tag_raise("amb", "p1")
+        self.parts.append(p)
+
+    def puffs(self):
+        for k in range(8):
+            c = self.rnd.choice(["#ff5fa2", "#ffd23a", "#4fc3ff", "#7be07a", "#b07aff"])
+            p = {"k": "amb", "kind": "colour", "x": self.aw * self.rnd.uniform(0.3, 0.7), "y": self.L["gy"] + 10,
+                 "vx": self.rnd.uniform(-0.6, 0.6), "vy": -self.rnd.uniform(0.3, 0.7), "life": 1.0, "c": c, "ph": 0,
+                 "r": self.rnd.uniform(5, 11)}
+            p["id"] = self.cv.create_oval(0, 0, 0, 0, fill=c, outline="", stipple="gray50", tags=("amb",))
+            self.parts.append(p)
+
+    # ---- every frame ----------------------------------------------------------------------------------------------
+    def tick(self):
+        cv = self.cv
+        try:
+            if not cv.winfo_exists():
+                return
+        except tk.TclError:
+            return
+        if self.app._z23_fest is not self:
+            return
+        try:
+            if not cv.winfo_ismapped() or getattr(self.app, "_z21_sliding", None) or not self.L:
+                cv.after(400, self.tick)
+                return
+            self.step()
+        except tk.TclError:
+            return
+        except Exception as ex:
+            zk_log_error("festival frame: %r" % (ex,))
+        cv.after(self.FPS_MS, self.tick)
+
+    def step(self):
+        cv, Z, L = self.cv, self.Z, self.L
+        self.frame_n += 1
+        fn = self.frame_n
+        now = time.time()
+        if fn % 11 == 1:
+            self.feed()
+        if fn % 600 == 0 and (self.mode != z23_sky_mode() or self.ev != (getattr(self.app, "_z23_preview", None) or z23_fest_today())):
+            self.build()
+            return
+        # lantern flicker
+        if self.lights and fn % 3 == 0:
+            for k in range(max(1, len(self.lights) // 6)):
+                i, a, b = self.rnd.choice(self.lights)
+                cv.itemconfigure(i, fill=b if self.rnd.random() < 0.35 else a)
+        # people
+        for p in self.people:
+            if p["dance"] is not None:
+                p["dance"] += 0.035
+                nx = L["mid"] - 6 + math.cos(p["dance"]) * 26
+                p["dir"] = 1 if nx > p["x"] else -1
+                dx = nx - p["x"]
+                p["x"] = nx
+                walking = True
+            elif p["stop"] > 0:
+                p["stop"] -= 1
+                dx, walking = 0, False
+            else:
+                dx = p["dir"] * p["speed"]
+                p["x"] += dx
+                walking = True
+                if self.rnd.random() < (0.006 if not p.get("mine") else 0.012):
+                    p["stop"] = self.rnd.randint(20, 70)
+                if p.get("mine") and abs(p["x"] - self.aw * 0.5) > self.aw * 0.3 and (p["x"] - self.aw * 0.5) * p["dir"] > 0:
+                    p["dir"] = -p["dir"]
+                if p["x"] < -14 or p["x"] > self.aw + 2:
+                    if p["name"]:
+                        p["dir"] = -p["dir"]
+                        p["x"] = max(-13, min(self.aw + 1, p["x"]))
+                    else:                                 # a new visitor walks in
+                        p["dir"] = self.rnd.choice((-1, 1))
+                        p["x"] = -12 if p["dir"] > 0 else self.aw + 1
+                        p["look"] = z23_look(self.rnd, self.ev)
+                        dx = None
+            fr = (fn // 3) % 2 if walking else 0
+            img = z23_sprite(p["look"], fr, Z)
+            cv.itemconfigure(p["id"], image=img)
+            bob = Z if (walking and fr) else 0
+            cv.coords(p["id"], int(p["x"] * Z), int((p["y"] - 26) * Z) - bob)
+            if p["name"]:
+                cx = (p["x"] + 6.5) * Z
+                ty = (p["y"] - 27) * Z - bob
+                cv.coords(p["tag_ids"][0], cx + 1, ty + 1)
+                cv.coords(p["tag_ids"][1], cx, ty)
+                if p["bub"]:
+                    if now > p["bub_t"]:
+                        cv.delete(p["bub"])
+                        p["bub"] = None
+                    elif dx:
+                        cv.move(p["bub"], dx * Z, 0)
+        # fireworks
+        F = Z23_FEST[self.ev]
+        rate = F[5] * {"night": 1.0, "dusk": 0.6, "day": 0.25}[self.mode]
+        if now > self.next_fw and rate > 0:
+            self.firework()
+            self.next_fw = now + self.rnd.expovariate(rate / 60.0) + 0.6
+        if fn % 4 == 0:
+            self.ambient()
+        sky = L["sky"]
+        alive = []
+        for q in self.parts:
+            q["x"] += q["vx"]
+            q["y"] += q["vy"]
+            if q["k"] == "fw":
+                q["vy"] += q["g"]
+                q["vx"] *= 0.97
+                q["vy"] *= 0.985
+                q["life"] -= q["dec"]
+                xi = int(q["x"])
+                hide = q["life"] <= 0 or xi < 0 or xi >= self.aw or q["y"] >= sky[xi] - 1
+                if q["life"] <= 0:
+                    cv.delete(q["id"])
+                    continue
+                s = q["sz"] * Z
+                if hide:
+                    cv.coords(q["id"], 0, 0, 0, 0)
+                else:
+                    cv.coords(q["id"], q["x"] * Z, q["y"] * Z, q["x"] * Z + s, q["y"] * Z + s)
+                    if fn % 2 == 0 and q["life"] < 0.6:
+                        cv.itemconfigure(q["id"], fill=_mixhex(q["c"], "#2a1830", 1 - q["life"] / 0.6))
+                alive.append(q)
+                continue
+            kind = q["kind"]
+            q["ph"] += 0.08
+            if kind == "fireflies":
+                q["vx"] += self.rnd.uniform(-0.02, 0.02)
+                q["vy"] += self.rnd.uniform(-0.015, 0.015)
+                q["vx"] = max(-0.25, min(0.25, q["vx"]))
+                q["vy"] = max(-0.15, min(0.15, q["vy"]))
+                q["life"] -= 0.004
+                on = math.sin(q["ph"] * 0.6) > 0.2
+                cv.coords(q["id"], q["x"] * Z, q["y"] * Z, (q["x"] + 1) * Z, (q["y"] + 1) * Z)
+                cv.itemconfigure(q["id"], state="normal" if on else "hidden")
+            elif kind == "colour":
+                q["life"] -= 0.012
+                r = q["r"] * (1.6 - q["life"] * 0.6) * Z
+                cv.coords(q["id"], q["x"] * Z - r, q["y"] * Z - r, q["x"] * Z + r, q["y"] * Z + r)
+            else:
+                q["x"] += math.sin(q["ph"]) * (0.25 if kind != "snow" else 0.12)
+                sz = Z if kind == "snow" else (Z * 1.5 if kind == "leaves" else Z)
+                w2 = sz * (1 if kind == "snow" else (1.6 if math.sin(q["ph"] * 1.7) > 0 else 0.8))
+                cv.coords(q["id"], q["x"] * Z, q["y"] * Z, q["x"] * Z + w2, q["y"] * Z + sz)
+                if q["y"] > self.ah - self.rnd.uniform(0, 8):
+                    q["life"] = 0
+            if q["life"] <= 0 or q["x"] < -20 or q["x"] > self.aw + 20 or q["y"] < -20:
+                cv.delete(q["id"])
+                continue
+            alive.append(q)
+        self.parts = alive
+        if self.ev == "halloween" and fn % 2 == 0:
+            self.bats(fn)
+
+    def bats(self, fn):
+        cv, Z = self.cv, self.Z
+        if not hasattr(self, "_bats"):
+            self._bats = []
+        if len(self._bats) < 3 and self.rnd.random() < 0.02:
+            self._bats.append({"x": -6, "y": self.rnd.uniform(8, self.L["gy"] * 0.4), "v": self.rnd.uniform(0.5, 0.9),
+                               "id": cv.create_line(0, 0, 0, 0, 0, 0, fill="#1a1020", width=Z, tags=("fw",))})
+        keep = []
+        for b in self._bats:
+            b["x"] += b["v"] * 2
+            b["y"] += math.sin(b["x"] / 6.0) * 0.6
+            flap = 2 if (fn // 2) % 2 else -1
+            x, y = b["x"] * Z, b["y"] * Z
+            cv.coords(b["id"], x - 4 * Z, y - flap * Z, x, y, x + 4 * Z, y - flap * Z)
+            if b["x"] > self.aw + 8:
+                cv.delete(b["id"])
+            else:
+                keep.append(b)
+        self._bats = keep
+
+    # ---- the mouse ------------------------------------------------------------------------------------------------
+    def at(self, e):
+        if not self.L:
+            return None
+        ax, ay = e.x / float(self.Z), e.y / float(self.Z)
+        for s in self.L["stalls"]:
+            if s["x0"] - 1 <= ax <= s["x1"] + 1 and s["top"] - 11 <= ay <= self.L["gy"]:
+                return s
+        return None
+
+    def hover(self, e):
+        s = self.at(e)
+        self.cv.configure(cursor="hand2" if s else "arrow")
+
+    def click(self, e):
+        s = self.at(e)
+        if s:
+            self.app.z23_stall(s["key"])
+
+    def menu(self, e):
+        app = self.app
+        bg = T["card"]
+        pm = tk.Menu(self.cv, tearoff=0, bg=bg, fg=INK, activebackground=GOLD, activeforeground=ON_ACC, font=(FONT_UI, 10),
+                     relief="flat", bd=1)
+        ym = tk.Menu(pm, tearoff=0, bg=bg, fg=INK, activebackground=GOLD, activeforeground=ON_ACC, font=(FONT_UI, 10))
+        names = ["Indigo", "Crimson", "Sakura pink", "White and blue", "Wisteria", "Pine green", "Persimmon", "Night and gold",
+                 "Sky blue", "Plum"]
+        for i, n in enumerate(names):
+            ym.add_radiobutton(label=n, value=i, variable=tk.IntVar(value=int(app.cfg.get("z23_yukata", 3))),
+                               command=lambda i=i: app.z23_set_look(yukata=i))
+        pm.add_cascade(label="My yukata", menu=ym)
+        pm.add_command(label=("Take off my fox mask" if app.cfg.get("z23_mask") else "Wear a fox mask"),
+                       command=lambda: app.z23_set_look(mask=not app.cfg.get("z23_mask")))
+        fm = tk.Menu(pm, tearoff=0, bg=bg, fg=INK, activebackground=GOLD, activeforeground=ON_ACC, font=(FONT_UI, 10))
+        for key in ("newyear", "setsubun", "valentine", "hina", "holi", "hanami", "kodomo", "tanabata", "summer", "obon",
+                    "tsukimi", "halloween", "diwali", "christmas", "omisoka", "spring", "autumn", "winter"):
+            fm.add_command(label="%s  %s" % (Z23_FEST[key][1], self.when_text(key)), command=lambda k=key: self.preview(k))
+        pm.add_cascade(label="Preview a festival", menu=fm)
+        if getattr(app, "_z23_preview", None):
+            pm.add_command(label="Back to today's street", command=lambda: self.preview(None))
+        try:
+            pm.tk_popup(e.x_root, e.y_root)
+        finally:
+            pm.grab_release()
+
+    def when_text(self, key):
+        today = datetime.date.today()
+        for y in (today.year, today.year + 1):
+            for k, a, b in z23_fest_calendar(y):
+                if k == key and b >= today:
+                    return "(%s)" % ("now" if a <= today else a.strftime("%d %b").lstrip("0"))
+        return ""
+
+    def preview(self, key):
+        self.app._z23_preview = key
+        self.aw = 0
+        self.build()
+
+
 
 def main():
     if "--make-icon" in sys.argv:
@@ -45784,7 +47387,7 @@ def main():
         return
     started = {"ok": False}
     try:
-        app = Zenko22()
+        app = Zenko23()
 
         def mark_ok():
             started["ok"] = True

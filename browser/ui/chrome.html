@@ -245,6 +245,7 @@
   #ov.menu #tmenu { display: block; }
   #ov.menu.show #tmenu { opacity: 1; animation: unfold .2s cubic-bezier(.2,.8,.2,1); }
   #tmenu .mi { display: flex; align-items: center; gap: .7rem; padding: .45rem .7rem; color: var(--ink); font-size: .98rem; cursor: default; clip-path: var(--clips); }
+  #tmenu .mi.on > span:nth-child(2)::after { content: "  ✓"; color: var(--gold); font-weight: 700; }
   #tmenu .mi .ic { width: 1.3rem; display: grid; place-items: center; color: var(--gold); }
   #tmenu .mi kbd { margin-left: auto; padding-left: 1.4rem; color: var(--grey); font-size: .82rem; background: none; border: 0; box-shadow: none; clip-path: none; }
   #tmenu .mi:hover, #tmenu .mi.sel { background: color-mix(in srgb, var(--accbg) 75%, var(--panel)); box-shadow: inset 2px 0 0 var(--gold); }
@@ -267,8 +268,36 @@
   /* subject stripe, tree, badges, profile, split */
   .tab[data-subj]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 1px; height: 2px; background: var(--sc); opacity: .9; }
   [data-tabs="side"] .tab[data-subj]::after { left: 1px; right: auto; top: 22%; bottom: 22%; width: 3px; height: auto; }
-  .tab[data-subj="Biology"] { --sc: #5fcf7b; } .tab[data-subj="Chemistry"] { --sc: #c58cff; } .tab[data-subj="Maths"] { --sc: #4fb3ff; }
-  .tab[data-subj="French"] { --sc: #ff6f8c; } .tab[data-subj="Psychology"] { --sc: #ffb347; } .tab[data-subj="English"] { --sc: #f2e36b; } .tab[data-subj="Core"] { --sc: #e8e2d0; }
+  .tab[data-subj="Biology"] { --sc: #46b37a; } .tab[data-subj="Chemistry"] { --sc: #4f8fe0; } .tab[data-subj="Maths"] { --sc: #e0a33a; }
+  .tab[data-subj="French"] { --sc: #d65f8f; } .tab[data-subj="Psychology"] { --sc: #a46ad8; } .tab[data-subj="English"] { --sc: #e05a4a; } .tab[data-subj="Core"] { --sc: #cdb98a; }
+  /* the little fox who lives in the empty part of the tab bar (discreet: rare, small, soft) */
+  #kit { position: fixed; z-index: 2; pointer-events: none; image-rendering: pixelated; opacity: 0; transition: opacity .6s ease; }
+  #kit.on { opacity: .62; }
+  [data-palette="nightshrine"] #kit.on { opacity: .45; }
+  /* subject tab groups: a coloured ema label, then its tabs joined by one coloured cord */
+  .gchip { position: relative; flex: none; align-self: flex-end; height: 1.75rem; margin: 0 2px .3rem 4px; padding: 0 .55rem 0 .5rem; display: flex; align-items: center; gap: .4rem;
+    font-size: .84rem; font-weight: 700; letter-spacing: .02em; color: color-mix(in srgb, var(--gc) 30%, #fff); cursor: default;
+    background: color-mix(in srgb, var(--gc) 26%, var(--night)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gc) 55%, transparent);
+    clip-path: var(--clips); transition: background .16s, transform .2s cubic-bezier(.2,.8,.2,1), opacity .2s; animation: tabIn .32s cubic-bezier(.2,.9,.25,1.25); }
+  .gchip:hover { background: color-mix(in srgb, var(--gc) 40%, var(--night)); }
+  .gchip:active { transform: translateY(1px); }
+  .gchip i { width: 7px; height: 7px; background: var(--gc); box-shadow: 0 0 6px color-mix(in srgb, var(--gc) 70%, transparent); flex: none; transition: transform .25s cubic-bezier(.2,.8,.2,1); }
+  .gchip.folded i { transform: rotate(45deg) scale(.85); }
+  .gchip .n { display: none; font-size: .72rem; font-weight: 700; color: var(--night); background: var(--gc); padding: 0 .3rem; line-height: 1.05rem; clip-path: var(--clips); }
+  .gchip.folded .n { display: block; }
+  .gchip.over { box-shadow: inset 0 0 0 2px var(--gc), 0 0 10px color-mix(in srgb, var(--gc) 60%, transparent); }
+  .gchip.leave { max-width: 0; padding: 0; margin: 0; opacity: 0; overflow: hidden; }
+  .tab.ing { background: color-mix(in srgb, var(--gc) 9%, transparent); }
+  .tab.ing:hover { background: color-mix(in srgb, var(--gc) 16%, var(--panel)); }
+  .tab.ing.active { background: color-mix(in srgb, var(--gc) 10%, var(--panel)); }
+  .tab.ing[data-subj]::after { left: -2px; right: -2px; bottom: 0; height: 2px; background: var(--gc); opacity: 1; }
+  .tab.ing.gend[data-subj]::after { right: 8px; }
+  .tab.ing.fold { max-width: 0 !important; min-width: 0; padding: 0; opacity: 0; pointer-events: none; overflow: hidden; }
+  [data-tabs="side"] .gchip { align-self: stretch; margin: .35rem .3rem .1rem 0; height: 1.9rem; }
+  [data-tabs="side"] .tab.ing { margin-left: .7rem !important; }
+  [data-tabs="side"] .tab.ing[data-subj]::after { left: -.45rem; right: auto; top: -2px; bottom: -2px; width: 2px; height: auto; }
+  [data-tabs="side"] .tab.ing.gend[data-subj]::after { bottom: 25%; }
+  [data-tabs="side"] .tab.ing.fold { height: 0; max-height: 0; margin-top: -3px; }
   [data-tabs="side"] .tab.d1 { margin-left: 1rem !important; } [data-tabs="side"] .tab.d2 { margin-left: 2rem !important; } [data-tabs="side"] .tab.d3 { margin-left: 2.8rem !important; }
   [data-tabs="side"] .tab.d1::before, [data-tabs="side"] .tab.d2::before, [data-tabs="side"] .tab.d3::before { content: ""; position: absolute; left: -.6rem; top: 50%; width: .45rem; height: 2px; background: var(--line); }
   .tab .bd { display: none; min-width: 1.05rem; height: 1.05rem; padding: 0 .25rem; font-size: .72rem; font-weight: 700; line-height: 1.05rem; text-align: center; background: #d9472b; color: #fff; clip-path: var(--clips); flex: none; }
@@ -328,6 +357,7 @@
 </head>
 <body>
 <canvas id="sky"></canvas>
+<canvas id="kit"></canvas>
 <div id="app">
   <div id="sidecol">
     <div id="sidetop" data-drag><div class="brand"><span class="mask" id="mask2"></span><b>ZENKO</b></div></div>
@@ -454,6 +484,7 @@
     if (k !== lastRP) { lastRP = k; send({ c: "prefs", p: o }); }
   }
   setInterval(() => { send({ c: "day", d: today() }); }, 5 * 60 * 1000);
+  setInterval(() => { if (ZB.palOf(ZB.load()) !== document.documentElement.dataset.palette) applyPrefs(); }, 60 * 1000);
   function setPref(k, v) { prefs = ZB.load(); prefs[k] = v; ZB.save(prefs); applyPrefs(); }
   function siteOf(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return ""; } }
   function spaceList() { const l = (prefs.spaces || []).filter(Boolean); return l.length ? l : ["Study"]; }
@@ -512,15 +543,98 @@
     return (h.replace(/^www\./, "")[0] || "?").toUpperCase().replace(/[^A-Z0-9]/, "•");
   }
   function host(u) { try { return new URL(u).hostname; } catch (e) { return ""; } }
+  // ---- subject tab groups: tabs of one subject gather after a coloured label (visual order only)
+  const gels = new Map();   // group name -> label element
+  let visOrder = [];        // tab ids in the order they are shown (Ctrl+Tab follows it)
+  function groupNames(vis) {
+    const cnt = {};
+    vis.forEach((t) => { if (!t.pinned && !t.group && t.subject) cnt[t.subject] = (cnt[t.subject] || 0) + 1; });
+    const g = new Map();
+    vis.forEach((t) => {
+      let n = "";
+      if (!t.pinned && t.group !== "-") {
+        if (t.group && ZB.SUBJ[t.group]) n = t.group;
+        else if (!t.group && prefs.autoGroups !== false && t.subject && ZB.SUBJ[t.subject] && cnt[t.subject] >= 2) n = t.subject;
+      }
+      g.set(t.id, n);
+    });
+    return g;
+  }
+  function groupChip(name) {
+    let el = gels.get(name);
+    if (el) return el;
+    el = document.createElement("div");
+    el.className = "gchip";
+    el.dataset.g = name;
+    el.style.setProperty("--gc", ZB.SUBJ[name][0]);
+    el.innerHTML = `<i></i><b>${ZB.SUBJ[name][1]}</b><span class="n"></span>`;
+    el.addEventListener("click", () => foldGroup(name));
+    el.addEventListener("contextmenu", (e) => { e.preventDefault(); groupMenu(name, e.clientX, e.clientY); });
+    el.addEventListener("dragover", (e) => { if (dragId) { e.preventDefault(); el.classList.add("over"); } });
+    el.addEventListener("dragleave", () => el.classList.remove("over"));
+    el.addEventListener("drop", (e) => { e.preventDefault(); el.classList.remove("over"); if (dragId) { send({ c: "group", id: dragId, name }); dragId = 0; } });
+    gels.set(name, el);
+    return el;
+  }
+  function foldedSet() { return new Set(prefs.groupsFolded || []); }
+  function foldGroup(name, want) {
+    const f = foldedSet();
+    const on = want === undefined ? !f.has(name) : want;
+    if (on) f.add(name); else f.delete(name);
+    setPref("groupsFolded", [...f]);
+    renderTabs();
+  }
+  function groupMenu(name, x, y) {
+    const vis = S.tabs.filter(inSpace), G = groupNames(vis), ids = vis.filter((t) => G.get(t.id) === name).map((t) => t.id);
+    const folded = foldedSet().has(name);
+    menuAt([
+      [ZB.SUBJ[name][1] + " · " + ids.length + " tab" + (ids.length === 1 ? "" : "s"), "book", null, "", true],
+      "-",
+      [folded ? "Unfold group" : "Fold group", "side", () => foldGroup(name)],
+      ["New tab in this group", "plus", () => { pendingGroup = name; send({ c: "new" }); }],
+      ["Send the group's pages to Zenko notes", "save", () => ids.forEach((id) => send({ c: "tabCmd", id, a: "pageNote" }))],
+      ["Ungroup", "close", () => ids.forEach((id) => send({ c: "group", id, name: "-" }))],
+      ["Close the group", "close", () => ids.forEach((id) => send({ c: "close", id }))],
+    ], x, y);
+  }
+  let pendingGroup = "", knownIds = new Set();
   function renderTabs() {
     const box = $("#tabs");
     const seen = new Set();
     let prev = $("#ind");
-    const vis = S.tabs.filter(inSpace);
+    const vis0 = S.tabs.filter(inSpace);
+    if (pendingGroup) {   // "New tab in this group": the tab that just appeared joins it
+      const nu = S.tabs.find((t) => !knownIds.has(t.id));
+      if (nu) { send({ c: "group", id: nu.id, name: pendingGroup }); nu.group = pendingGroup; pendingGroup = ""; }
+    }
+    knownIds = new Set(S.tabs.map((t) => t.id));
+    const G = groupNames(vis0), folded = foldedSet(), gseen = new Set(), done = new Set();
+    const vis = [], gInfo = new Map();
+    vis0.forEach((t) => {
+      if (done.has(t.id)) return;
+      const g = G.get(t.id);
+      if (!g) { vis.push(t); done.add(t.id); return; }
+      const mem = vis0.filter((o) => G.get(o.id) === g);
+      gInfo.set(g, mem);
+      vis.push({ chip: g });
+      mem.forEach((o) => { vis.push(o); done.add(o.id); });
+    });
+    visOrder = vis.filter((t) => !t.chip && !(G.get(t.id) && folded.has(G.get(t.id)) && t.id !== S.active)).map((t) => t.id);
     const ids = new Set(vis.map((t) => t.id));
     const depth = (t) => { let d = 0, p = t.parent; while (p && ids.has(p) && d < 3) { d++; p = (S.tabs.find((x) => x.id === p) || {}).parent; } return d; };
     const split = S.split || [];
     vis.forEach((t) => {
+      if (t.chip) {
+        const ch = groupChip(t.chip), mem = gInfo.get(t.chip) || [];
+        gseen.add(t.chip);
+        ch.classList.remove("leave");
+        ch.classList.toggle("folded", folded.has(t.chip));
+        ch.querySelector(".n").textContent = mem.length;
+        ch.title = SUBJ_FULL(t.chip) + " · " + mem.length + " tab" + (mem.length === 1 ? "" : "s") + (folded.has(t.chip) ? " (folded, click to open)" : " (click to fold)");
+        if (prev.nextSibling !== ch) prev.after(ch);
+        prev = ch;
+        return;
+      }
       seen.add(t.id);
       let el = els.get(t.id);
       if (!el) {
@@ -546,8 +660,13 @@
       el.classList.toggle("muted", !!t.muted);
       el.classList.toggle("asleep", !!t.asleep);
       el.classList.toggle("pinned", !!t.pinned);
-      const subj = t.group || t.subject || "";
+      const grp = G.get(t.id) || "";
+      const subj = grp || (t.group === "-" ? "" : (t.group || t.subject || ""));
       if (subj) el.dataset.subj = subj; else delete el.dataset.subj;
+      el.classList.toggle("ing", !!grp);
+      if (grp) { el.style.setProperty("--gc", ZB.SUBJ[grp][0]); const mem = gInfo.get(grp) || []; el.classList.toggle("gend", mem[mem.length - 1] === t); }
+      else { el.style.removeProperty("--gc"); el.classList.remove("gend"); }
+      el.classList.toggle("fold", !!grp && folded.has(grp) && t.id !== S.active);
       const un = (t.title || "").match(/\((\d{1,4})\+?\)/);
       el.classList.toggle("badge", !!un);
       el.querySelector(".bd").textContent = un ? un[1] : "";
@@ -560,6 +679,9 @@
       if (prev.nextSibling !== el) prev.after(el);
       prev = el;
     });
+    for (const [g, el] of gels) {
+      if (!gseen.has(g)) { gels.delete(g); el.classList.add("leave"); setTimeout(() => { if (!gels.has(g) || gels.get(g) !== el) el.remove(); }, 260); }
+    }
     for (const [id, el] of els) {
       if (!seen.has(id)) {
         els.delete(id);
@@ -601,6 +723,9 @@
     el.addEventListener("drop", (e) => {
       e.preventDefault(); el.classList.remove("over");
       if (!dragId || dragId === id) return;
+      const vis = S.tabs.filter(inSpace), G = groupNames(vis), src = S.tabs.find((t) => t.id === dragId) || {};
+      const tg = G.get(id) || "", sg = G.get(dragId) || "";
+      if (tg !== sg) send({ c: "group", id: dragId, name: tg || (src.group || src.subject ? "-" : "") });
       const from = S.tabs.findIndex((t) => t.id === dragId);
       let to = S.tabs.findIndex((t) => t.id === id);
       if (from < to) to -= 1;
@@ -966,6 +1091,7 @@
   // ---------------------------------------------------------------- right-click menu on a tab
   let menuSel = -1, menuItems = [], menuX = 0, menuY = 0;
   const SUBJECTS = ["Biology", "Chemistry", "Maths", "French", "Psychology", "English", "Core"];
+  function SUBJ_FULL(n) { return n === "Core" ? "Core (TOK, EE, CAS)" : n; }
   function openMenu(id, x, y) {
     const t = S.tabs.find((t) => t.id === id);
     if (!t) return;
@@ -987,8 +1113,9 @@
       split.includes(id) ? ["Exit split view", "split", () => send({ c: "unsplit" })]
         : ["Open in split view", "split", () => send({ c: "split", id }), "", id === S.active],
       ["Move to space", "space", null, "›", false, () => spaceList().map((n, k) => [n, "space", () => send({ c: "moveSpace", id, name: spaceKey(k) }), "", k === spaceList().indexOf(t.space || spaceList()[0])])],
-      ["Subject group", "book", null, "›", false, () => [["Automatic" + (t.subject ? " (" + t.subject + ")" : ""), "book", () => send({ c: "group", id, name: "" })], "-"]
-        .concat(SUBJECTS.map((n) => [n, "book", () => send({ c: "group", id, name: n })]))],
+      ["Subject group", "book", null, "›", false, () => [["Automatic" + (t.subject ? " (" + t.subject + ")" : ""), "book", () => send({ c: "group", id, name: "" }), "", false, null, !t.group],
+        ["No group", "close", () => send({ c: "group", id, name: "-" }), "", false, null, t.group === "-"], "-"]
+        .concat(SUBJECTS.map((n) => [SUBJ_FULL(n), "book", () => send({ c: "group", id, name: n }), "", false, null, t.group === n]))],
       ["Open in " + (otherProf || "Personal") + " profile", "user", () => send({ c: "newIn", url: t.url, profile: otherProf }), "", /^zenko:/.test(t.url)],
       "-",
       ["Copy link", "clip", () => send({ c: "tabCmd", id, a: "copyLink" }), "", !web],
@@ -1052,7 +1179,7 @@
     menuItems.forEach((it, n) => {
       if (it === "-") { const d = document.createElement("div"); d.className = "sep"; m.appendChild(d); return; }
       const d = document.createElement("div");
-      d.className = "mi" + (it[4] ? " off" : "");
+      d.className = "mi" + (it[4] ? " off" : "") + (it[6] ? " on" : "");
       d.dataset.n = n;
       d.innerHTML = `<span class="ic">${ZB.icon(it[1], 1.7)}</span><span></span>`;
       d.children[1].textContent = it[0];
@@ -1126,12 +1253,10 @@
   };
   for (let n = 1; n <= 8; n++) ACT["tab" + n] = () => { const t = S.tabs.filter(inSpace)[n - 1]; if (t) send({ c: "activate", id: t.id }); };
   function step(d) {
-    const i = S.tabs.findIndex((t) => t.id === S.active);
-    const vis = S.tabs.filter(inSpace);
-    const j = vis.findIndex((t) => t.id === S.active);
+    const vis = visOrder.length ? visOrder : S.tabs.filter(inSpace).map((t) => t.id);
+    const j = vis.indexOf(S.active);
     if (j < 0 || !vis.length) return;
-    const t = vis[(j + d + vis.length) % vis.length];
-    send({ c: "activate", id: t.id });
+    send({ c: "activate", id: vis[(j + d + vis.length) % vis.length] });
   }
 
   // ---------------------------------------------------------------- notices
@@ -1149,8 +1274,27 @@
   // ---------------------------------------------------------------- focus mode, split view, peek
   function toggleFocus() {
     const on = !prefs.focus;
+    if (prefs.focusAuto) setPref("focusAuto", "");
     setPref("focus", on);
     note(on ? "Focus mode on: distracting sites are blocked. Kon~ you've got this!" : "Focus mode off", 3500);
+  }
+  // A study session or lock-in in Zenko turns focus mode on here, once per session; it turns off again when the
+  // session ends (only if it was Zenko that turned it on). Turning it off by hand mid-session is respected.
+  function zenkoFocus() {
+    const s = ZL.session, on = !!(ZL.linked && s && s.on), key = on ? String(s.started || s.task || "1") : "";
+    if (prefs.focusWithZenko === false) return;
+    if (on && prefs.focusAutoKey !== key) {
+      prefs = ZB.load(); prefs.focusAutoKey = key;
+      if (!prefs.focus) { prefs.focus = true; prefs.focusAuto = key; ZB.save(prefs); applyPrefs();
+        note("Zenko started " + (s.kind === "lockin" ? "a lock-in" : "a study session") + ", so focus mode is on. Distracting sites wait behind the shoji~", 6000); }
+      else ZB.save(prefs);
+    } else if (!on && prefs.focusAuto) {
+      prefs = ZB.load();
+      const was = prefs.focus; prefs.focusAuto = ""; prefs.focusAutoKey = "";
+      if (was) prefs.focus = false;
+      ZB.save(prefs); applyPrefs();
+      if (was) note("Session over, focus mode is off. Otsukare~", 4500);
+    }
   }
   function splitToggle() {
     if (S.split) { send({ c: "unsplit" }); return; }
@@ -1484,6 +1628,7 @@
       b.classList.toggle("linked", !!ZL.linked);
       const n = (ZL.deadlines || []).length;
       b.title = ZL.linked ? "Linked to Zenko" + (n ? " · " + n + " coming up" : "") : "Zenko isn't open right now";
+      zenkoFocus();
     },
     summary(d) { zkSummary(d || {}); },
     addTo(text) { zkAddTo(String(text || "")); },
@@ -1537,6 +1682,144 @@
   };
   window.addEventListener("storage", (e) => { if (e.key === "zb.prefs") applyPrefs(); });
 
+
+  // ---------------------------------------------------------------- the little fox in the tab bar
+  // Zenko's desktop life, but discreet: every few minutes (never in the first two), a tiny fox peeks up from the
+  // bottom of the tab bar, strolls across its empty part, sits and swishes her tail, or curls up for a nap. She only
+  // uses the empty space (never over a tab, a button or a page), is half see-through, and slips away if the mouse
+  // comes close. Off in Settings > Motion and sparkle, and with reduced motion.
+  (function kit() {
+    const cv = $("#kit"), cx = cv.getContext("2d");
+    const PAL = { o: "#e2843f", d: "#a85826", w: "#f2e4cc", k: "#2a1a14", t: "#fff6e8", p: "#e8a0a0" };
+    const WALK = [[
+      "............d...d.", "............od.od.", "w...........ooooo.", "ww.........ookooko", "wo.........oooooww",
+      ".oo.ooooooooowwwk.", "..oooooooooooww...", "...ooowwwwwooo....", "...oo.......oo....", "...d........d.....", "..dd.......dd....."],
+      ["............d...d.", "............od.od.", "w...........ooooo.", "ww.........ookooko", "wo.........oooooww",
+      ".oo.ooooooooowwwk.", "..oooooooooooww...", "...ooowwwwwooo....", ".....oo...oo......", ".....d.....d......", "....dd....dd......"]];
+    const SIT = [
+      "........d...d.", "........od.od.", "........ooooo.", ".......ookooko", ".......oooooww", "w.......ooowwk", "ww.....ooww...",
+      "wo....oooww...", ".oo..ooooww...", "..ooooooowww..", "...oooooooo...", "....dd..dd...."];
+    const SIT2 = SIT.map((r, i) => i === 5 ? ".w......ooowwk" : i === 6 ? "ww.....ooww..." : i === 7 ? "oo....oooww..." : r);
+    const NAP = [
+      ".......d.d....", "......ooooo...", "....oooookkooww", "..ooooooooooowww", ".oooooooooooowww", ".wwooooooooowww.", "..wwwwwwwwwww..."];
+    const st = { mode: "", t0: 0, x: 0, dir: 1, tx: 0, until: 0, next: performance.now() + 120000 + Math.random() * 120000, mx: -999, my: -999, flee: false, zz: 0 };
+    let u = 2, area = null, last = 0;
+    function enabled() { return prefs.foxLife !== "off" && document.documentElement.dataset.motion !== "reduced"; }
+    function free() {   // the empty strip she may use, in css px: {x, y (floor), w}
+      if (prefs.tabs === "side") {
+        const c = $("#sidecol").getBoundingClientRect(), n = $("#newtab").getBoundingClientRect();
+        const floor = c.bottom - 4;
+        if (floor - n.bottom < 34) return null;
+        return { x: c.left + 6, y: floor, w: c.width - 14 };
+      }
+      const g = $("#bar .grow").getBoundingClientRect(), b = $("#bar").getBoundingClientRect();
+      if (g.width < 90) return null;
+      return { x: g.left + 6, y: b.bottom - 1, w: g.width - 12 };
+    }
+    function size() {
+      area = free();
+      if (!area) return false;
+      const dpr = window.devicePixelRatio || 1;
+      cv.style.left = area.x + "px"; cv.style.top = (area.y - 30) + "px";
+      cv.style.width = area.w + "px"; cv.style.height = "30px";
+      cv.width = Math.round(area.w * dpr); cv.height = Math.round(30 * dpr);
+      u = Math.max(1, Math.round(1.6 * dpr));
+      return true;
+    }
+    function draw(rows, x, yb, flip, blink, lift) {   // yb = bottom of the sprite in canvas px
+      const h = rows.length, w = rows[0].length;
+      for (let r = 0; r < h; r++) for (let c = 0; c < w; c++) {
+        let ch = rows[r][c];
+        if (ch === "." || ch === undefined) continue;
+        if (blink && ch === "k" && r < 5) ch = "o";
+        const X = Math.round(x + (flip ? (w - 1 - c) : c) * u), Y = Math.round(yb - (h - r) * u - (lift || 0));
+        if (Y + u > cv.height) continue;
+        cx.fillStyle = PAL[ch] || PAL.o; cx.fillRect(X, Y, u, u);
+      }
+    }
+    function start(now, force) {
+      if (!size()) { st.next = now + 60000; return; }
+      const W = cv.width, roll = force != null ? force : Math.random();
+      st.t0 = now; st.flee = false;
+      if (roll < 0.34) { st.mode = "peek"; st.x = Math.random() * (W - 20 * u); st.dir = Math.random() < 0.5 ? 1 : -1; st.until = now + 4200; }
+      else if (roll < 0.7) { st.mode = "stroll"; st.dir = Math.random() < 0.5 ? -1 : 1; st.x = st.dir > 0 ? -20 * u : W + 2 * u; st.tx = W * (0.25 + Math.random() * 0.5); st.until = now + 26000; }
+      else if (roll < 0.9) { st.mode = "nap"; st.dir = Math.random() < 0.5 ? -1 : 1; st.x = st.dir > 0 ? -20 * u : W + 2 * u; st.tx = W * (0.2 + Math.random() * 0.6); st.until = now + 70000 + Math.random() * 60000; }
+      else { st.mode = "tail"; st.x = Math.random() < 0.5 ? 0 : W - 8 * u; st.until = now + 2600; }
+      st.phase = "in";
+      cv.classList.add("on");
+    }
+    function stop(now) {
+      st.mode = ""; cv.classList.remove("on");
+      cx.clearRect(0, 0, cv.width, cv.height);
+      st.next = now + (240000 + Math.random() * 360000) * (prefs.focus ? 2 : 1);
+    }
+    document.addEventListener("mousemove", (e) => { st.mx = e.clientX; st.my = e.clientY; }, { passive: true });
+    function near() {
+      if (!area || !st.mode) return false;
+      const fx = area.x + st.x / (window.devicePixelRatio || 1) + 14, fy = area.y - 10;
+      return Math.abs(st.mx - fx) < 60 && Math.abs(st.my - fy) < 40;
+    }
+    function frame(now) {
+      requestAnimationFrame(frame);
+      if (now - last < 66 || document.hidden) return;   // ~15 frames a second is plenty for her
+      last = now;
+      if (!st.mode) { if (enabled() && now > st.next && !palOpen) start(now); else if (now > st.next) st.next = now + 60000; return; }
+      if (!enabled() || palOpen || now > st.until + 20000) { stop(now); return; }
+      if ((st.chk = (st.chk || 0) + 1) % 8 === 0) {   // tabs opened and filled her strip: she slips away
+        const a = free();
+        if (!a || Math.abs(a.x - area.x) > 2 || Math.abs(a.w - area.w) > 2) { stop(now); st.next = performance.now() + 90000; return; }
+      }
+      cx.clearRect(0, 0, cv.width, cv.height);
+      const W = cv.width, H = cv.height, t = (now - st.t0) / 1000, flip = st.dir < 0;
+      const blink = Math.sin(now / 1900) > 0.97;
+      if (near() && !st.flee) { st.flee = true; st.until = Math.min(st.until, now); st.dir = st.x > W / 2 ? 1 : -1; }
+      if (st.mode === "peek") {
+        const left = (st.until - now) / 1000;
+        const up = st.flee ? 0 : Math.min(1, t / 0.8, Math.max(0, left / 0.8));
+        if (up <= 0 && (st.flee || left <= 0)) { stop(now); return; }
+        const lift = -(1 - up) * 8 * u;
+        draw(SIT.slice(0, 6), st.x, H + 3 * u, flip, blink, lift + (t > 1.6 && t < 2.2 ? u : 0));
+        return;
+      }
+      if (st.mode === "tail") {
+        const k = Math.min(1, t / 0.5, Math.max(0, (st.until - now) / 500));
+        if (k <= 0) { stop(now); return; }
+        const wag = Math.sin(t * 7) * u;
+        cx.fillStyle = PAL.o; cx.fillRect(st.x + 2 * u + wag, H - k * 5 * u, 3 * u, 5 * u);
+        cx.fillStyle = PAL.t; cx.fillRect(st.x + 2 * u + wag, H - k * 5 * u, 3 * u, 2 * u);
+        return;
+      }
+      // stroll / nap: walk in, stay a while, walk out
+      const speed = (st.flee ? 3.2 : 0.75) * u;
+      if (st.phase === "in") {
+        if (st.flee) st.phase = "out";
+        else if (Math.abs(st.x - st.tx) <= speed) { st.phase = "stay"; st.stay0 = now; }
+        else st.x += Math.sign(st.tx - st.x) * speed;
+      }
+      if (st.phase === "stay" && (now > st.until || st.flee)) { st.phase = "out"; st.dir = Math.random() < 0.5 ? -1 : 1; }
+      if (st.phase === "out") {
+        st.x += st.dir * speed;
+        if (st.x < -22 * u || st.x > W + 4 * u) { stop(now); return; }
+      }
+      const fl = st.dir < 0;
+      if (st.phase === "stay") {
+        if (st.mode === "nap" && now - st.stay0 > 2500) {
+          draw(NAP, st.x, H, fl, false, Math.sin(now / 900) > 0 ? 0 : 0);
+          const zt = ((now - st.stay0) / 1600) % 1;
+          cx.globalAlpha = Math.sin(zt * Math.PI) * 0.8; cx.fillStyle = PAL.w;
+          const zx = st.x + (fl ? 2 : 12) * u + zt * 4 * u, zy = H - 9 * u - zt * 8 * u;
+          cx.fillRect(zx, zy, 3 * u, u * 0.7); cx.fillRect(zx + u, zy + u * 0.7, u, u * 0.7); cx.fillRect(zx, zy + 1.4 * u, 3 * u, u * 0.7);
+          cx.globalAlpha = 1;
+        } else draw(Math.sin(now / 420) > 0.2 ? SIT2 : SIT, st.x, H, fl, blink);
+      } else {
+        const f = Math.floor(now / 170) % 2;
+        draw(WALK[f], st.x, H, fl, blink, f ? u * 0.5 : 0);
+      }
+    }
+    window.addEventListener("resize", () => { if (st.mode) size(); });
+    window.zbKit = (r) => start(performance.now(), r);   // for testing: 0.1 peek, 0.5 stroll, 0.8 nap, 0.95 tail
+    requestAnimationFrame(frame);
+  })();
   icons();
   applyPrefs();
   ZB.starfield && ZB.starfield($("#stars"));

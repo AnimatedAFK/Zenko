@@ -66,11 +66,13 @@
     <div class="sw" id="pal"></div>
     <div class="row"><label>Your own accent colour<small>Leave it on the theme colour or pick any colour.</small></label>
       <input type="color" id="accent"><button class="obtn" id="accReset">Theme colour</button></div>
+    <div class="row"><label>Night shrine after 10 pm<small>Switches to the calm Night shrine colours with fireflies from 10 pm to 5 am, then back to your colours.</small></label><button class="tog" data-t="nightAuto"></button></div>
   </section>
 
   <section class="card">
     <h2>Shape and layout</h2>
     <div class="row"><label>Tabs</label><div class="seg" data-k="tabs"><button data-v="top">On top</button><button data-v="side">On the side</button></div></div>
+    <div class="row"><label>Group tabs by subject<small>Tabs about the same subject gather under a coloured label (Zenko's subject colours). Click the label to fold the group. Right-click a tab > Subject group to choose one yourself.</small></label><button class="tog" data-t="autoGroups"></button></div>
     <div class="row"><label>Tab shape<div class="preview"><span>Active tab</span><span>Other tab</span></div></label>
       <div class="seg" data-k="tabShape"><button data-v="ema">Ema plaque</button><button data-v="round">Rounded</button><button data-v="pill">Pill</button><button data-v="square">Square</button></div></div>
     <div class="row"><label>Pixel flair<small>Subtle: tiny pixel corners and pixel stars, still crisp. Strong: chunky retro pixels.</small></label>
@@ -84,6 +86,7 @@
   <section class="card">
     <h2>Motion and sparkle</h2>
     <div class="row"><label>Animations<small>Reduced turns most movement off.</small></label><div class="seg" data-k="motion"><button data-v="full">Full</button><button data-v="reduced">Reduced</button></div></div>
+    <div class="row"><label>A little fox lives in the tab bar<small>Discreet: now and then a tiny fox peeks out, wanders along the empty part of the bar or naps there. Easy to miss unless you look for her. She never covers a page or a button.</small></label><div class="seg" data-k="foxLife"><button data-v="off">Off</button><button data-v="discreet">Discreet</button></div></div>
     <div class="row"><label>Twinkling stars in the sky</label><button class="tog" data-t="stars"></button></div>
     <div class="row"><label>Foxfire glow around the page</label><button class="tog" data-t="glow"></button></div>
   </section>
@@ -111,6 +114,7 @@
   <section class="card">
     <h2>Focus mode</h2>
     <div class="row"><label>Focus mode<small>Also in the toolbar (torii button) and Ctrl+Shift+F.</small></label><button class="tog" data-t="focus"></button></div>
+    <div class="row"><label>Turn on with Zenko study sessions<small>When you start a focus session or lock-in in Zenko, focus mode turns on here too, and off again when it ends.</small></label><button class="tog" data-t="focusWithZenko"></button></div>
     <div class="stack"><label>Blocked while focusing<small>One site per line.</small></label><textarea data-list="focusBlock"></textarea></div>
     <div class="row"><label>Strict: only allow the sites below<small>Everything else is blocked while focusing.</small></label><button class="tog" data-t="focusOnlyMode"></button></div>
     <div class="stack"><label>Only these (strict mode)</label><textarea data-list="focusOnly" placeholder="inthinking.net&#10;claude.ai"></textarea></div>
