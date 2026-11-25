@@ -1,0 +1,122 @@
+name: Prepare draft releases
+
+# Every merge to main that changes zenko.py or browser/ builds the new version and leaves a DRAFT release with
+# everything attached and the notes filled in. Open github.com/AnimatedAFK/Zenko/releases, open the draft and
+# press Publish. Zenko's draft is a normal (latest) release, so Zenko updates itself once you publish it.
+# The browser's draft is a pre-release, so Zenko's updater never mistakes it for a Zenko update.
+# A version that is already published is left alone; an existing draft gets fresh files.
+on:
+  push:
+    branches: [main]
+    paths: ["zenko.py", "CHANGES.md", "browser/**", ".github/workflows/draft-release.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: draft-release
+  cancel-in-progress: false
+
+jobs:
+  zenko:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Which version, and is it published yet?
+        id: v
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          V=$(grep -m1 -oP '^APP_VERSION = "\K[^"]+' zenko.py)
+          echo "tag=$V" >> "$GITHUB_OUTPUT"
+          STATE=$(gh release view "$V" --json isDraft -q '.isDraft' 2>/dev/null || echo none)
+          echo "Zenko $V: release state $STATE"
+          if [ "$STATE" = "false" ]; then echo "go=no" >> "$GITHUB_OUTPUT"; else echo "go=yes" >> "$GITHUB_OUTPUT"; fi
+          echo "state=$STATE" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        if: steps.v.outputs.go == 'yes'
+        with:
+          python-version: "3.12"
+      - name: Build Zenko.exe
+        if: steps.v.outputs.go == 'yes'
+        shell: cmd
+        run: |
+          python zenko.py --make-icon zenko.ico
+          python -m pip install --upgrade pyinstaller rmscene pypdf ddgs
+          python -m PyInstaller --noconfirm --clean --onefile --windowed --name Zenko --icon zenko.ico --add-data "zenko.ico;." --collect-submodules rmscene --collect-submodules pypdf --hidden-import ddgs --collect-submodules ddgs.engines --collect-submodules primp zenko.py
+      - name: Make or refresh the draft
+        if: steps.v.outputs.go == 'yes'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.v.outputs.tag }}
+          STATE: ${{ steps.v.outputs.state }}
+        run: |
+          mkdir out
+          cp dist/Zenko.exe out/Zenko.exe
+          cp zenko.py out/zenko.py
+          (cd out && sha256sum Zenko.exe | cut -d' ' -f1 > Zenko.exe.sha256 && sha256sum zenko.py | cut -d' ' -f1 > zenko.py.sha256)
+          awk '/^## /{if(p)exit} /^## '"$TAG"'/{p=1;next} p' CHANGES.md > notes.md || true
+          [ -s notes.md ] || echo "Zenko $TAG" > notes.md
+          NUM=$(echo "$TAG" | grep -oP 'zenko\K[0-9.]+' || echo "$TAG")
+          if [ "$STATE" = "true" ]; then
+            gh release upload "$TAG" out/* --clobber
+            gh release edit "$TAG" --notes-file notes.md --title "Zenko $NUM"
+          else
+            gh release create "$TAG" out/* --draft --target "$GITHUB_SHA" --title "Zenko $NUM" --notes-file notes.md
+          fi
+          gh release view "$TAG" --json url -q .url
+
+  browser:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Which version, and is it published yet?
+        id: v
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          V=$(grep -m1 -oP '^version = "\K[^"]+' browser/Cargo.toml)
+          T="browser-v$V"
+          echo "tag=$T" >> "$GITHUB_OUTPUT"
+          echo "ver=$V" >> "$GITHUB_OUTPUT"
+          STATE=$(gh release view "$T" --json isDraft -q '.isDraft' 2>/dev/null || echo none)
+          echo "Browser $T: release state $STATE"
+          if [ "$STATE" = "false" ]; then echo "go=no" >> "$GITHUB_OUTPUT"; else echo "go=yes" >> "$GITHUB_OUTPUT"; fi
+          echo "state=$STATE" >> "$GITHUB_OUTPUT"
+      - name: Rust
+        if: steps.v.outputs.go == 'yes'
+        shell: bash
+        run: rustup toolchain install stable --profile minimal && rustup default stable
+      - uses: Swatinem/rust-cache@v2
+        if: steps.v.outputs.go == 'yes'
+        with:
+          workspaces: browser
+      - name: Build ZenkoBrowser.exe
+        if: steps.v.outputs.go == 'yes'
+        working-directory: browser
+        run: cargo build --release
+      - name: Make or refresh the draft
+        if: steps.v.outputs.go == 'yes'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.v.outputs.tag }}
+          VER: ${{ steps.v.outputs.ver }}
+          STATE: ${{ steps.v.outputs.state }}
+        run: |
+          mkdir out
+          cp browser/target/release/ZenkoBrowser.exe out/ZenkoBrowser.exe
+          (cd out && sha256sum ZenkoBrowser.exe | cut -d' ' -f1 > ZenkoBrowser.exe.sha256)
+          awk '/^## /{if(p)exit} /^## '"$VER"'/{p=1;next} p' browser/README.md > notes.md || true
+          [ -s notes.md ] || echo "Zenko Browser $VER" > notes.md
+          if [ "$STATE" = "true" ]; then
+            gh release upload "$TAG" out/* --clobber
+            gh release edit "$TAG" --notes-file notes.md --prerelease
+          else
+            gh release create "$TAG" out/* --draft --prerelease --target "$GITHUB_SHA" --title "Zenko Browser $VER" --notes-file notes.md
+          fi
+          gh release view "$TAG" --json url -q .url
