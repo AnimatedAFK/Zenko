@@ -304,7 +304,8 @@ pub fn extras(wv: &WebView, id: u32, proxy: EventLoopProxy<Ev>, guard: Rc<RefCel
                     let items = a.MenuItems()?;
                     let t = a.ContextMenuTarget()?;
                     let mut b = Default::default();
-                    let mut add: Vec<(String, String, String)> = vec![];
+                    // (label, command, data, in the Zenko submenu)
+                    let mut add: Vec<(String, String, String, bool)> = vec![];
                     let _ = t.HasSelection(&mut b);
                     if b.as_bool() {
                         let sel = s_of(|p| t.SelectionText(p)).trim().to_string();
@@ -312,11 +313,16 @@ pub fn extras(wv: &WebView, id: u32, proxy: EventLoopProxy<Ev>, guard: Rc<RefCel
                             let short: String = sel.chars().take(24).collect();
                             let short = if sel.chars().count() > 24 { format!("{}...", short.trim_end()) } else { short };
                             if sel.split_whitespace().count() <= 4 {
-                                add.push((format!("Look up \u{201c}{}\u{201d}", short), "lookup".into(), sel.clone()));
+                                add.push((format!("Look up \u{201c}{}\u{201d}", short), "lookup".into(), sel.clone(), false));
                             }
-                            add.push(("Translate selection".into(), "translateSel".into(), sel.clone()));
-                            add.push(("Send to Zenko notes".into(), "toZenko".into(), sel.clone()));
-                            add.push(("Add to Zenko reminders".into(), "remind".into(), sel.clone()));
+                            add.push((format!("Search the web for \u{201c}{}\u{201d}", short), "webSearch".into(), sel.clone(), false));
+                            add.push(("Translate selection".into(), "translateSel".into(), sel.clone(), false));
+                            add.push(("Copy as plain text".into(), "copyText".into(), sel.clone(), false));
+                            add.push(("Count words".into(), "words".into(), sel.clone(), false));
+                            add.push(("Summarize selection".into(), "sumSel".into(), sel.clone(), true));
+                            add.push(("Make a flashcard".into(), "card".into(), sel.clone(), true));
+                            add.push(("Add to Zenko (deadline or reminder)...".into(), "addZenko".into(), sel.clone(), true));
+                            add.push(("Send to Zenko notes".into(), "toZenko".into(), sel.clone(), true));
                         }
                     }
                     let mut bl = Default::default();
@@ -324,28 +330,37 @@ pub fn extras(wv: &WebView, id: u32, proxy: EventLoopProxy<Ev>, guard: Rc<RefCel
                     if bl.as_bool() {
                         let link = s_of(|p| t.LinkUri(p));
                         if link.starts_with("http") {
-                            add.push(("Peek at link".into(), "peek".into(), link.clone()));
-                            add.push(("Open link in split view".into(), "splitLink".into(), link.clone()));
-                            add.push(("Open link in other profile".into(), "otherProfile".into(), link.clone()));
-                            add.push(("Copy clean link".into(), "cleanLink".into(), link.clone()));
+                            add.push(("Peek at link".into(), "peek".into(), link.clone(), false));
+                            add.push(("Open link in split view".into(), "splitLink".into(), link.clone(), false));
+                            add.push(("Open link in other profile".into(), "otherProfile".into(), link.clone(), false));
+                            add.push(("Copy clean link".into(), "cleanLink".into(), link.clone(), false));
+                            add.push(("Send link to Zenko notes".into(), "linkNote".into(), link.clone(), true));
+                        }
+                    }
+                    let mut bs = Default::default();
+                    let _ = t.HasSourceUri(&mut bs);
+                    if bs.as_bool() && !b.as_bool() {
+                        let src = s_of(|p| t.SourceUri(p));
+                        if src.starts_with("http") {
+                            add.push(("Open image in new tab".into(), "imgTab".into(), src, false));
                         }
                     }
                     let page = s_of(|p| t.PageUri(p));
                     if page.starts_with("http") && !bl.as_bool() && !b.as_bool() {
-                        add.push(("Translate page".into(), "translatePage".into(), page.clone()));
-                        add.push(("Cite this page (MLA / APA)".into(), "cite".into(), page.clone()));
-                        add.push(("Clip part of this page to Zenko".into(), "clip".into(), page.clone()));
-                        add.push(("Save page for offline".into(), "savePage".into(), page.clone()));
+                        add.push(("Translate page".into(), "translatePage".into(), page.clone(), false));
+                        add.push(("Cite this page (MLA / APA)".into(), "cite".into(), page.clone(), false));
+                        add.push(("Copy page link".into(), "copyLink".into(), page.clone(), false));
+                        add.push(("Save page for offline".into(), "savePage".into(), page.clone(), false));
+                        add.push(("Summarize this page".into(), "sumPage".into(), page.clone(), true));
+                        add.push(("Quiz me on this page".into(), "quizPage".into(), page.clone(), true));
+                        add.push(("Clip part of this page".into(), "clip".into(), page.clone(), true));
+                        add.push(("Send page to Zenko notes".into(), "pageNote".into(), page.clone(), true));
                     }
                     if add.is_empty() {
                         return Ok(());
                     }
-                    let mut at = 0u32;
-                    for (label, cmd, data) in add {
-                        let Ok(item) = env9.CreateContextMenuItem(&HSTRING::from(label), None, COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_COMMAND)
-                        else {
-                            continue;
-                        };
+                    let make = |label: &str, cmd: String, data: String| -> Option<ICoreWebView2ContextMenuItem> {
+                        let item = env9.CreateContextMenuItem(&HSTRING::from(label), None, COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_COMMAND).ok()?;
                         let p2 = p.clone();
                         let mut tk = Default::default();
                         let _ = item.add_CustomItemSelected(
@@ -355,8 +370,30 @@ pub fn extras(wv: &WebView, id: u32, proxy: EventLoopProxy<Ev>, guard: Rc<RefCel
                             })),
                             &mut tk,
                         );
-                        let _ = items.InsertValueAtIndex(at, &item);
-                        at += 1;
+                        Some(item)
+                    };
+                    let mut at = 0u32;
+                    let mut zk: Vec<ICoreWebView2ContextMenuItem> = vec![];
+                    for (label, cmd, data, in_zenko) in add {
+                        let Some(item) = make(&label, cmd, data) else { continue };
+                        if in_zenko {
+                            zk.push(item);
+                        } else {
+                            let _ = items.InsertValueAtIndex(at, &item);
+                            at += 1;
+                        }
+                    }
+                    // the Zenko submenu: everything that goes to Zenko in one place
+                    if !zk.is_empty() {
+                        if let Ok(sub) = env9.CreateContextMenuItem(&HSTRING::from("Zenko"), None, COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_SUBMENU) {
+                            if let Ok(kids) = sub.Children() {
+                                for (k, it) in zk.iter().enumerate() {
+                                    let _ = kids.InsertValueAtIndex(k as u32, it);
+                                }
+                                let _ = items.InsertValueAtIndex(at, &sub);
+                                at += 1;
+                            }
+                        }
                     }
                     if let Ok(sep) = env9.CreateContextMenuItem(&HSTRING::from(""), None, COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_SEPARATOR) {
                         let _ = items.InsertValueAtIndex(at, &sep);

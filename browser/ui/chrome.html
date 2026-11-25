@@ -135,6 +135,27 @@
   #notice.on { display: inline-flex; align-items: center; gap: .5rem; }
   @keyframes pop { from { transform: scale(.4); opacity: 0; } }
   #b-claude.on { animation: breathe 2.6s ease-in-out infinite; }
+  /* ---------- the Zenko link light */
+  #b-zenko { position: relative; opacity: .5; transition: opacity .3s, color .3s; }
+  #b-zenko.none { display: none; }
+  #b-zenko.linked { opacity: 1; color: var(--gold); background: color-mix(in srgb, var(--gold) 16%, transparent); animation: zglow 3.2s ease-in-out infinite; }
+  #b-zenko::after { content: ""; position: absolute; right: .28rem; bottom: .3rem; width: 5px; height: 5px; background: var(--grey); box-shadow: 0 0 0 1px var(--night); }
+  #b-zenko.linked::after { background: #5fd38a; box-shadow: 0 0 0 1px var(--night), 0 0 6px #5fd38a; }
+  @keyframes zglow { 50% { filter: drop-shadow(0 0 5px color-mix(in srgb, var(--gold) 70%, transparent)); } }
+  /* ---------- a card over the page (summaries) */
+  #zcard { position: absolute; display: none; left: 50%; top: 9vh; width: min(40rem, calc(100vw - 2rem)); max-height: 78vh; overflow-y: auto; transform: translateX(-50%);
+    padding: 1.1rem 1.3rem 1rem; color: var(--ink); opacity: 0; --b: color-mix(in srgb, var(--gold) 80%, var(--line)); --c: var(--panel); }
+  #ov.card #pal, #ov.card #tmenu { display: none; }
+  #ov.card #zcard { display: block; }
+  #ov.card.show #zcard { opacity: 1; animation: unfold .26s cubic-bezier(.2,.8,.2,1); }
+  #zcard h3 { margin: 0; color: var(--gold); font-size: 1.15rem; display: flex; align-items: center; gap: .55rem; }
+  #zcard .sub { color: var(--grey); font-size: .85rem; margin: .2rem 0 .8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #zcard ul { margin: 0; padding: 0; list-style: none; }
+  #zcard li { position: relative; padding: .38rem 0 .38rem 1.2rem; line-height: 1.45; border-bottom: 1px dashed color-mix(in srgb, var(--line) 70%, transparent); }
+  #zcard li::before { content: "✦"; position: absolute; left: 0; color: var(--gold); font-size: .8rem; top: .5rem; }
+  #zcard .foot { color: var(--grey); font-size: .8rem; margin-top: .7rem; }
+  #zcard .row { display: flex; gap: .5rem; margin-top: .9rem; flex-wrap: wrap; }
+  #zcard .row .btn { height: 2rem; padding: 0 .85rem; }
   @keyframes breathe { 50% { box-shadow: inset 0 0 0 2px #fff6; } }
 
   /* ---------- page + Claude panel */
@@ -331,6 +352,7 @@
       <button class="btn" id="b-focus" title="Focus mode"></button>
       <span id="notice" class="pxb"></span>
       <div class="spacer" data-drag></div>
+      <button class="btn none" id="b-zenko" title="Zenko link"></button>
       <button class="btn" id="b-claude" title="Claude panel (Ctrl+J)"></button>
       <button class="btn" id="b-side" title="Side or top tabs"></button>
       <button class="btn" id="b-menu" title="Everything (Ctrl+K)"></button>
@@ -360,6 +382,7 @@
     <div class="foot"><span><kbd>↑</kbd> <kbd>↓</kbd> choose</span><span><kbd>Enter</kbd> open</span><span><kbd>Alt+Enter</kbd> new tab</span><span id="ver"></span></div>
   </div>
   <div id="tmenu" class="pxb"></div>
+  <div id="zcard" class="pxb"></div>
   <div id="clipbox"></div><div id="cliphint" class="pxb">Drag over the part you want to send to Zenko · Esc cancels</div>
 </div>
 <div class="edge n" data-d="n"></div><div class="edge s" data-d="s"></div><div class="edge e" data-d="e"></div><div class="edge w" data-d="w"></div>
@@ -453,7 +476,7 @@
   function icons() {
     const set = (id, n, s) => { const e = $(id); if (e) e.insertAdjacentHTML("afterbegin", ZB.icon(n, s)); };
     set("#newtab", "plus", 2); set("#mask1", "mask", 2); set("#mask2", "mask", 2); set("#b-back", "back", 2); set("#b-fwd", "fwd", 2); set("#b-reload", "reload", 2);
-    set("#b-claude", "claude", 2); set("#b-shield", "shield", 2); set("#b-focus", "torii", 2); set("#b-side", "side", 2); set("#b-menu", "menu", 2.4);
+    set("#b-zenko", "fox", 2); set("#b-claude", "claude", 2); set("#b-shield", "shield", 2); set("#b-focus", "torii", 2); set("#b-side", "side", 2); set("#b-menu", "menu", 2.4);
     set("#p-home", "plus", 2); set("#p-pop", "pop", 2); set("#p-close", "close", 2);
     set("#qi", "search", 2.4);
     document.querySelectorAll(".winbtns").forEach((w) => {
@@ -656,6 +679,7 @@
   $("#b-claude").onclick = () => { if (S.panel && S.panelMode !== "claude") panelMode("claude"); else send({ c: "panel" }); };
   $("#b-shield").onclick = () => openSiteMenu();
   $("#b-focus").onclick = () => toggleFocus();
+  $("#b-zenko").onclick = () => openZenkoMenu();
   $("#b-side").onclick = () => toggleSide();
   $("#b-menu").onclick = () => openPal("new", "");
   $("#addr").onmousedown = (e) => { e.preventDefault(); openPal("here", currentUrl()); };
@@ -687,7 +711,7 @@
   let ovKind = "pal";
   function openPal(mode, text) {
     if (palOpen && ovKind === "menu") { closePal(); setTimeout(() => openPal(mode, text), 220); return; }
-    ovKind = "pal"; $("#ov").classList.remove("menu");
+    ovKind = "pal"; $("#ov").classList.remove("menu", "card");
     palMode = mode;
     q.value = text || "";
     build();
@@ -704,7 +728,7 @@
     shownSent = true;
     clearTimeout(shotTimer);
     send({ c: "shown" });
-    if (ovKind === "menu" || ovKind === "clip") { requestAnimationFrame(() => $("#ov").classList.add("show")); return; }
+    if (ovKind === "menu" || ovKind === "clip" || ovKind === "card") { requestAnimationFrame(() => $("#ov").classList.add("show")); return; }
     requestAnimationFrame(() => { $("#ov").classList.add("show"); q.focus(); q.select(); });
     setTimeout(() => { q.focus(); }, 60);
   }
@@ -714,7 +738,7 @@
     clipOn = false;
     $("#ov").classList.remove("show", "clip", "sel");
     send({ c: "overlay", on: false });
-    setTimeout(() => { if (!palOpen) $("#ov").classList.remove("open"); }, 200);
+    setTimeout(() => { if (!palOpen) $("#ov").classList.remove("open", "card"); }, 200);
   }
   function placeShot(img, sel) {
     const r = $(sel).getBoundingClientRect();
@@ -951,6 +975,7 @@
     const right = vis.slice(i + 1).some((o) => !o.pinned);
     const split = S.split || [];
     const otherProf = t.profile ? "" : ((prefs.profiles || [])[0] || "School");
+    const web = /^https?:/.test(t.url || "");
     menuAt([
       ["New tab to the right", "plus", () => { send({ c: "activate", id }); send({ c: "new" }); }, keys.newTab],
       "-",
@@ -965,6 +990,14 @@
       ["Subject group", "book", null, "›", false, () => [["Automatic" + (t.subject ? " (" + t.subject + ")" : ""), "book", () => send({ c: "group", id, name: "" })], "-"]
         .concat(SUBJECTS.map((n) => [n, "book", () => send({ c: "group", id, name: n })]))],
       ["Open in " + (otherProf || "Personal") + " profile", "user", () => send({ c: "newIn", url: t.url, profile: otherProf }), "", /^zenko:/.test(t.url)],
+      "-",
+      ["Copy link", "clip", () => send({ c: "tabCmd", id, a: "copyLink" }), "", !web],
+      ["Copy clean link", "clip", () => send({ c: "tabCmd", id, a: "cleanLink" }), "", !web],
+      ["Zenko", "fox", null, "›", !web, () => [
+        ["Summarize this page", "note", () => send({ c: "tabCmd", id, a: "sumPage" })],
+        ["Quiz me on this page", "book", () => send({ c: "tabCmd", id, a: "quizPage" })],
+        ["Send page to Zenko notes", "save", () => send({ c: "tabCmd", id, a: "pageNote" })],
+      ]],
       "-",
       ["Close tab", "close", () => send({ c: "close", id }), keys.closeTab],
       ["Close other tabs", "close", () => send({ c: "closeOthers", id }), "", !others],
@@ -1030,6 +1063,7 @@
     menuSel = -1;
     ovKind = "menu";
     const ov = $("#ov");
+    ov.classList.remove("card");
     ov.classList.add("menu");
     m.style.left = "0px"; m.style.top = "0px"; m.style.display = "block";
     const w = m.offsetWidth, h = m.offsetHeight;
@@ -1054,6 +1088,7 @@
   }
   document.addEventListener("keydown", (e) => {
     if (palOpen && ovKind === "clip" && e.key === "Escape") { e.preventDefault(); closePal(); return; }
+    if (palOpen && ovKind === "card" && e.key === "Escape") { e.preventDefault(); closePal(); return; }
     if (!palOpen || ovKind !== "menu") return;
     const live = menuItems.map((it, n) => (it !== "-" && !it[4] ? n : -1)).filter((n) => n >= 0);
     if (e.key === "Escape") { e.preventDefault(); closePal(); }
@@ -1326,6 +1361,92 @@
     });
   }
 
+  // ---------------------------------------------------------------- Zenko link
+  let ZL = {};
+  function openZenkoMenu() {
+    const r = $("#b-zenko").getBoundingClientRect();
+    const t = activeTab() || {}, web = /^https?:/.test(t.url || "");
+    const dl = (ZL.deadlines || []).slice(0, 4);
+    const day = (iso) => { const d = new Date(iso + "T00:00"); const n = Math.round((d - new Date(new Date().toDateString())) / 864e5); return n === 0 ? "today" : n === 1 ? "tomorrow" : "in " + n + " days"; };
+    menuAt([
+      [ZL.linked ? "● Linked to Zenko" + (ZL.version ? " (" + ZL.version.replace(/^v[\d.]+-/, "") + ")" : "") : "○ Zenko isn't open right now", "fox", null, "", true],
+      ...(dl.length ? ["-", ...dl.map((x) => ["  " + x.title + " · " + day(x.date), "clock", () => send({ c: "new" })])] : []),
+      "-",
+      ["Summarize this page", "note", () => send({ c: "page", a: "sumPage" }), "", !web],
+      ["Quiz me on this page", "book", () => send({ c: "page", a: "quizPage" }), "", !web],
+      ["Send page to Zenko notes", "save", () => send({ c: "page", a: "pageNote" }), "", !web],
+      ["Clip part of the page to Zenko", "clip", () => setTimeout(() => window.zb.clip(), 260), keys.clip, !web],
+      "-",
+      ["Zenko's calendar (new tab)", "clock", () => send({ c: "new" })],
+    ], r.left, r.bottom + 4);
+  }
+  // a quick offline summary (when Zenko isn't open): the sentences that carry the page's most used words
+  const STOP = new Set("the a an and or but if of to in on at by for with from as is are was were be been being it its this that these those which who whom what when where why how not no so than then there their they them he she his her we our you your i me my can could will would should may might must do does did have has had also into about over after before more most such only other some any each very just".split(" "));
+  function summarise(text, n) {
+    const clean = String(text).replace(/\s+/g, " ");
+    const sents = (clean.match(/[^.!?]+[.!?]+(\s|$)/g) || []).map((x) => x.trim()).filter((x) => x.length > 40 && x.length < 400 && x.split(" ").length > 6);
+    if (!sents.length) return [];
+    const freq = {};
+    clean.toLowerCase().match(/[a-zà-ÿ][a-zà-ÿ'-]{2,}/g)?.forEach((w) => { if (!STOP.has(w)) freq[w] = (freq[w] || 0) + 1; });
+    const score = sents.map((s, i) => {
+      const ws = s.toLowerCase().match(/[a-zà-ÿ][a-zà-ÿ'-]{2,}/g) || [];
+      const sc = ws.reduce((a, w) => a + (freq[w] || 0), 0) / Math.max(6, ws.length);
+      return { s, i, sc: sc * (i < 3 ? 1.25 : 1) };
+    });
+    const seen = new Set();
+    return score.sort((a, b) => b.sc - a.sc).filter((x) => { const k = x.s.slice(0, 40); if (seen.has(k)) return false; seen.add(k); return true; })
+      .slice(0, n).sort((a, b) => a.i - b.i).map((x) => x.s);
+  }
+  function zkCard(html, buttons) {
+    const c = $("#zcard");
+    c.innerHTML = html;
+    const row = document.createElement("div"); row.className = "row";
+    (buttons || []).concat([["Close", () => {}]]).forEach(([label, fn], k) => {
+      const b = document.createElement("button"); b.className = "btn" + (k === 0 ? " on" : ""); b.textContent = label;
+      b.onclick = () => { closePal(); setTimeout(fn, 40); };
+      row.appendChild(b);
+    });
+    c.appendChild(row);
+    ovKind = "card";
+    const ov = $("#ov");
+    ov.classList.remove("menu");
+    ov.classList.add("card");
+    if (palOpen) { ov.classList.add("show"); return; }
+    palOpen = true; shownSent = false;
+    clearShots();
+    ov.classList.add("open");
+    send({ c: "overlay", on: true });
+    clearTimeout(shotTimer);
+    shotTimer = setTimeout(shown, 450);
+  }
+  function zkSummary(d) {
+    const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const pts = summarise(d.text || "", 6);
+    if (!pts.length) { note("I couldn't find sentences to summarise here", 4000); return; }
+    const words = String(d.text || "").split(/\s+/).length;
+    const plain = "Summary: " + (d.title || "") + "\n" + pts.map((x) => "• " + x).join("\n") + (d.url ? "\n(" + d.url + ")" : "");
+    zkCard(`<h3>${ZB.icon("fox", 2)} Key points</h3><div class="sub">${esc(d.title || "")}</div><ul>${pts.map((x) => "<li>" + esc(x) + "</li>").join("")}</ul>` +
+      `<div class="foot">A quick summary made on this PC from ${words.toLocaleString()} words.${ZL.installed ? " Open Zenko for a smarter one." : ""}</div>`,
+      [["Copy", () => { copyText(plain); note("Summary copied", 2200); }]].concat(ZL.installed ? [["Send to Zenko notes", () => send({ c: "toZenko", item: { kind: "note", title: "Summary: " + (d.title || ""), text: plain, url: d.url } })]] : []));
+  }
+  function zkAddTo(text) {
+    const when = parseWhen(text);
+    const short = text.length > 50 ? text.slice(0, 47) + "..." : text;
+    const t = activeTab() || {};
+    if (!when) {
+      note("No date in “" + short + "”. Send it to Zenko's notes instead?", 0, [["Send to notes", () => send({ c: "toZenko", item: { kind: "note", text, title: t.title, url: t.url } })], ["Cancel", () => {}]]);
+      return;
+    }
+    const iso = when.getFullYear() + "-" + String(when.getMonth() + 1).padStart(2, "0") + "-" + String(when.getDate()).padStart(2, "0");
+    const hasTime = /\d{1,2}(:\d{2})?\s*(am|pm)|\b\d{1,2}:\d{2}\b/i.test(text);
+    const tm = hasTime ? String(when.getHours()).padStart(2, "0") + ":" + String(when.getMinutes()).padStart(2, "0") : "";
+    const nice = when.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" }) + (tm ? " " + tm : "");
+    note("“" + short + "” on " + nice + ". Add to Zenko as:", 0, [
+      ["Upcoming deadline", () => send({ c: "toZenko", item: { kind: "deadline", text, date: iso, time: tm, title: t.title, url: t.url } })],
+      ["Ema reminder", () => send({ c: "toZenko", item: { kind: "reminder", text, when: Math.round(when / 1000), title: t.title, url: t.url } })],
+      ["Cancel", () => {}]]);
+  }
+
   // ---------------------------------------------------------------- API used by Rust
   window.zb = {
     state(s) {
@@ -1356,6 +1477,21 @@
     maximized(m) { S.max = m; renderTools(); },
     focusAddress() { openPal("here", ""); },
     toast(m) { note(m, 3500); },
+    link(d) {
+      ZL = d || {};
+      const b = $("#b-zenko");
+      b.classList.toggle("none", !ZL.installed);
+      b.classList.toggle("linked", !!ZL.linked);
+      const n = (ZL.deadlines || []).length;
+      b.title = ZL.linked ? "Linked to Zenko" + (n ? " · " + n + " coming up" : "") : "Zenko isn't open right now";
+    },
+    summary(d) { zkSummary(d || {}); },
+    addTo(text) { zkAddTo(String(text || "")); },
+    search(text) { const u = ZB.toUrl(String(text || ""), prefs); if (u) send({ c: "new", url: u }); },
+    words(text) {
+      const t = String(text || "").trim(), w = t ? t.split(/\s+/).length : 0;
+      note(w.toLocaleString() + " words · " + t.length.toLocaleString() + " characters · about " + Math.max(1, Math.round(w / 230)) + " min to read", 6000);
+    },
     copy(t, label) { copyText(t); note(label || "Copied", 2200); },
     remind(text) {
       const when = parseWhen(text);

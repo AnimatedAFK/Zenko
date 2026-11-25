@@ -53,7 +53,7 @@ except ImportError:  # pragma: no cover
 
 IS_WIN = sys.platform.startswith("win")
 APP_NAME = "Zenko"
-APP_VERSION = "v2026.11.24-zenko21.3"
+APP_VERSION = "v2026.11.25-zenko22"
 
 # ----------------------------------------------------------------------------------
 #  Pixel-art sprites: Zenko, a little zenko (a good fox who serves Inari), drawn in code.
@@ -41668,6 +41668,4082 @@ class Zenko21(Zenko20):
                  justify="left", wraplength=560).pack(fill="x", padx=16, pady=(2, 12))
 
 
+
+# ==================================================================================================================
+#  zenko22: koi fishing, journeys beyond Japan, more ema badges, a bubble that grows with her, the Town square,
+#  and a stronger link with Zenko Browser
+# ==================================================================================================================
+# ==================================================================================================================
+#  zenko22: koi fishing in the Zen garden, journeys beyond Japan, many more ema badges, a bubble that grows with her,
+#  the Town square (global chat) and a stronger link with Zenko Browser.
+# ==================================================================================================================
+
+# ---- fishing questions: (subject, difficulty 1-3, question, right answer, three wrong answers) ---------------------
+FISH_QS = [
+    # Biology HL
+    ("bio", 1, "Which organelle makes most of a cell's ATP?", "Mitochondrion", ("Ribosome", "Golgi apparatus", "Nucleolus")),
+    ("bio", 1, "Which base pairs with adenine in DNA?", "Thymine", ("Uracil", "Guanine", "Cytosine")),
+    ("bio", 1, "What is the monomer of a protein?", "Amino acid", ("Nucleotide", "Monosaccharide", "Fatty acid")),
+    ("bio", 1, "Where do the light-dependent reactions of photosynthesis happen?", "Thylakoid membranes",
+     ("Stroma", "Cytoplasm", "Mitochondrial matrix")),
+    ("bio", 1, "Which molecule carries amino acids to the ribosome?", "tRNA", ("mRNA", "rRNA", "DNA polymerase")),
+    ("bio", 1, "What kind of bond holds the two strands of DNA together?", "Hydrogen bonds",
+     ("Peptide bonds", "Ionic bonds", "Glycosidic bonds")),
+    ("bio", 2, "In which phase of mitosis do sister chromatids separate?", "Anaphase", ("Metaphase", "Prophase", "Telophase")),
+    ("bio", 2, "Which enzyme unwinds the DNA double helix during replication?", "Helicase",
+     ("Ligase", "DNA polymerase III", "Primase")),
+    ("bio", 2, "Where does the Krebs cycle take place?", "Mitochondrial matrix",
+     ("Inner membrane cristae", "Cytoplasm", "Thylakoid lumen")),
+    ("bio", 2, "Which hormone lowers blood glucose?", "Insulin", ("Glucagon", "Adrenaline", "Thyroxin")),
+    ("bio", 2, "Crossing over happens during…", "Prophase I of meiosis", ("Anaphase II", "Metaphase of mitosis", "Interphase")),
+    ("bio", 2, "Which blood vessels have valves to stop backflow?", "Veins", ("Arteries", "Capillaries", "Arterioles")),
+    ("bio", 2, "What does a competitive inhibitor bind to?", "The enzyme's active site",
+     ("An allosteric site", "The substrate", "The product")),
+    ("bio", 3, "What is the final electron acceptor in aerobic respiration?", "Oxygen", ("NAD+", "FAD", "Pyruvate")),
+    ("bio", 3, "Which enzyme fixes CO2 in the Calvin cycle?", "Rubisco", ("ATP synthase", "Helicase", "Lactase")),
+    ("bio", 3, "In the nephron, most glucose is reabsorbed in the…", "Proximal convoluted tubule",
+     ("Loop of Henle", "Collecting duct", "Bowman's capsule")),
+    ("bio", 3, "What does the Hardy-Weinberg term 2pq represent?", "Heterozygote frequency",
+     ("Homozygous dominant frequency", "Recessive allele frequency", "Mutation rate")),
+    ("bio", 3, "Which ion rushes in during the depolarisation of a neuron?", "Sodium (Na+)",
+     ("Potassium (K+)", "Chloride (Cl-)", "Calcium (Ca2+)")),
+    ("bio", 3, "Okazaki fragments form on which strand?", "The lagging strand",
+     ("The leading strand", "The template mRNA", "Both strands equally")),
+    # Chemistry HL
+    ("chem", 1, "What is the pH of a neutral solution at 25 °C?", "7", ("0", "1", "14")),
+    ("chem", 1, "Avogadro's constant is about…", "6.02 × 10^23 per mol", ("3.00 × 10^8 per mol", "9.81 per mol", "1.38 × 10^-23 per mol")),
+    ("chem", 1, "Which particle has a negative charge?", "Electron", ("Proton", "Neutron", "Alpha particle")),
+    ("chem", 1, "What is the chemical formula of methane?", "CH4", ("C2H6", "CO2", "CH3OH")),
+    ("chem", 1, "Group 17 elements are called…", "Halogens", ("Noble gases", "Alkali metals", "Transition metals")),
+    ("chem", 2, "What shape is a water molecule?", "Bent (V-shaped)", ("Linear", "Trigonal planar", "Tetrahedral")),
+    ("chem", 2, "Oxidation is…", "Loss of electrons", ("Gain of electrons", "Gain of protons", "Loss of neutrons")),
+    ("chem", 2, "What is the bond angle in methane?", "109.5°", ("90°", "120°", "104.5°")),
+    ("chem", 2, "A catalyst speeds up a reaction by…", "Lowering the activation energy",
+     ("Raising the temperature", "Shifting the equilibrium", "Increasing ΔH")),
+    ("chem", 2, "Which type of reaction do alkenes undergo with bromine water?", "Electrophilic addition",
+     ("Nucleophilic substitution", "Free-radical substitution", "Elimination")),
+    ("chem", 2, "What is the conjugate base of NH4+?", "NH3", ("NH2-", "H3O+", "OH-")),
+    ("chem", 3, "Which hybridisation does carbon have in ethene?", "sp2", ("sp", "sp3", "sp3d")),
+    ("chem", 3, "An SN1 reaction goes through…", "A carbocation intermediate",
+     ("A single concerted step", "A free radical", "A carbanion")),
+    ("chem", 3, "For a spontaneous reaction, ΔG is…", "Negative", ("Positive", "Zero", "Equal to ΔH")),
+    ("chem", 3, "What is the electron configuration of Cr?", "[Ar] 3d5 4s1", ("[Ar] 3d4 4s2", "[Ar] 3d6", "[Ar] 4s2 4p4")),
+    ("chem", 3, "In a buffer of a weak acid and its salt, pH = pKa when…", "[HA] = [A-]",
+     ("[H+] = 1 mol/dm3", "The acid is fully dissociated", "Ka = 1")),
+    ("chem", 3, "How many sigma bonds are in ethyne, C2H2?", "3", ("2", "4", "5")),
+    # Math AA SL
+    ("math", 1, "What is the derivative of x²?", "2x", ("x", "x³/3", "2")),
+    ("math", 1, "log₁₀(1000) = ?", "3", ("2", "10", "30")),
+    ("math", 1, "What is sin(90°)?", "1", ("0", "-1", "0.5")),
+    ("math", 1, "The gradient of y = 3x - 5 is…", "3", ("-5", "5", "-3")),
+    ("math", 1, "What is the sum of the interior angles of a triangle?", "180°", ("360°", "90°", "270°")),
+    ("math", 2, "∫ 2x dx = ?", "x² + C", ("2 + C", "x + C", "2x² + C")),
+    ("math", 2, "The nth term of an arithmetic sequence is…", "u₁ + (n - 1)d", ("u₁ rⁿ⁻¹", "n(u₁ + d)", "u₁ + nd²")),
+    ("math", 2, "What is the derivative of eˣ?", "eˣ", ("xeˣ⁻¹", "ln x", "1/x")),
+    ("math", 2, "If P(A) = 0.3, what is P(A')?", "0.7", ("0.3", "0.09", "1.3")),
+    ("math", 2, "The discriminant of ax² + bx + c is…", "b² - 4ac", ("b² + 4ac", "4ac - b", "-b/2a")),
+    ("math", 2, "What is the derivative of sin x?", "cos x", ("-cos x", "-sin x", "tan x")),
+    ("math", 3, "Sum to infinity of a geometric series with |r| < 1:", "u₁ / (1 - r)", ("u₁ / (r - 1)", "u₁ rⁿ", "n/2 (2u₁ + (n-1)r)")),
+    ("math", 3, "d/dx of ln(3x) is…", "1/x", ("3/x", "1/(3x)", "ln 3")),
+    ("math", 3, "For a normal distribution, about what fraction lies within one standard deviation of the mean?", "68%",
+     ("50%", "95%", "99.7%")),
+    ("math", 3, "The product rule: d/dx (uv) = ?", "u'v + uv'", ("u'v'", "u'v - uv'", "(u'v - uv')/v²")),
+    ("math", 3, "What is ∫ cos(2x) dx?", "½ sin(2x) + C", ("2 sin(2x) + C", "-½ sin(2x) + C", "sin(2x) + C")),
+    # French ab initio SL
+    ("french", 1, "How do you say 'thank you' in French?", "Merci", ("Bonjour", "Pardon", "S'il vous plaît")),
+    ("french", 1, "What does 'le chat' mean?", "The cat", ("The dog", "The chat room", "The hat")),
+    ("french", 1, "'Je suis' means…", "I am", ("I have", "I go", "I want")),
+    ("french", 1, "Which word means 'red'?", "Rouge", ("Bleu", "Vert", "Jaune")),
+    ("french", 1, "'Bonne nuit' means…", "Good night", ("Good morning", "See you soon", "Good luck")),
+    ("french", 2, "What is the past participle of 'faire'?", "Fait", ("Faisé", "Fais", "Fit")),
+    ("french", 2, "Which verb takes 'être' in the passé composé?", "Aller", ("Manger", "Finir", "Parler")),
+    ("french", 2, "'Nous avons' is from which verb?", "Avoir", ("Être", "Aller", "Savoir")),
+    ("french", 2, "How do you say 'the weekend' in French?", "Le week-end", ("La semaine", "Le jour férié", "Le samedi")),
+    ("french", 2, "Which is the correct plural of 'un journal'?", "Des journaux", ("Des journals", "Des journales", "Des journauxs")),
+    ("french", 3, "'Il faut que tu …' needs which mood?", "Subjunctive", ("Indicative", "Conditional", "Imperative")),
+    ("french", 3, "Future tense of 'je vais' (aller) is…", "J'irai", ("J'allerai", "J'allais", "J'aille")),
+    ("french", 3, "'Si j'avais le temps, je …' (voyager)", "voyagerais", ("voyagerai", "voyage", "voyageais")),
+    ("french", 3, "Which pronoun replaces 'à Paris' in 'Je vais à Paris'?", "y", ("en", "le", "lui")),
+    # Psychology SL
+    ("psych", 1, "Which part of the brain is key for forming new long-term memories?", "Hippocampus",
+     ("Cerebellum", "Brainstem", "Occipital lobe")),
+    ("psych", 1, "Who carried out the famous obedience study in 1963?", "Stanley Milgram",
+     ("Solomon Asch", "Philip Zimbardo", "Elizabeth Loftus")),
+    ("psych", 1, "Asch's line study looked at…", "Conformity", ("Obedience", "Memory", "Attachment")),
+    ("psych", 2, "Loftus and Palmer (1974) studied…", "Leading questions and eyewitness memory",
+     ("Flashbulb memories", "Working memory capacity", "Bystander effect")),
+    ("psych", 2, "Which neurotransmitter is closely linked to reward?", "Dopamine", ("GABA", "Acetylcholine", "Melatonin")),
+    ("psych", 2, "Glanzer and Cunitz (1966) is evidence for…", "The multi-store model",
+     ("Schema theory", "Social identity theory", "The working memory model")),
+    ("psych", 2, "Which hormone is released in the stress response?", "Cortisol", ("Oxytocin", "Insulin", "Serotonin")),
+    ("psych", 3, "Baddeley and Hitch's model has a central executive and…", "A phonological loop and visuospatial sketchpad",
+     ("A sensory register only", "A long-term store only", "Episodic and semantic stores")),
+    ("psych", 3, "Tajfel's minimal group studies support…", "Social identity theory",
+     ("Cognitive dissonance", "Social learning theory", "Attachment theory")),
+    ("psych", 3, "A study's ecological validity is about…", "How well it reflects real life",
+     ("How repeatable it is", "How large the sample is", "Whether it was ethical")),
+    # English Lang & Lit HL
+    ("english", 1, "A comparison using 'like' or 'as' is a…", "Simile", ("Metaphor", "Hyperbole", "Pun")),
+    ("english", 1, "Giving human traits to things is…", "Personification", ("Onomatopoeia", "Alliteration", "Irony")),
+    ("english", 1, "The repetition of starting consonant sounds is…", "Alliteration", ("Assonance", "Rhyme", "Sibilance")),
+    ("english", 2, "Who is speaking in a text is the…", "Narrative voice", ("Setting", "Theme", "Motif")),
+    ("english", 2, "A recurring image or idea in a text is a…", "Motif", ("Caesura", "Stanza", "Foil")),
+    ("english", 2, "A pause in the middle of a line of poetry is a…", "Caesura", ("Enjambment", "Volta", "Couplet")),
+    ("english", 2, "In Paper 1, you analyse…", "An unseen non-literary text", ("A text you studied", "Your IO", "An essay prompt")),
+    ("english", 3, "A line that runs on into the next without punctuation is…", "Enjambment", ("End-stopping", "Anaphora", "Chiasmus")),
+    ("english", 3, "A character who contrasts with another to highlight their traits is a…", "Foil",
+     ("Narrator", "Antagonist", "Persona")),
+    ("english", 3, "The turn of thought in a sonnet is the…", "Volta", ("Coda", "Refrain", "Couplet")),
+    # general knowledge
+    ("general", 1, "What is the largest planet in our solar system?", "Jupiter", ("Saturn", "Neptune", "Earth")),
+    ("general", 1, "How many continents are there?", "7", ("5", "6", "8")),
+    ("general", 1, "What do bees make?", "Honey", ("Silk", "Wax paper", "Milk")),
+    ("general", 1, "Which is the longest river in Africa?", "The Nile", ("The Congo", "The Niger", "The Zambezi")),
+    ("general", 2, "Who painted the Mona Lisa?", "Leonardo da Vinci", ("Michelangelo", "Raphael", "Vermeer")),
+    ("general", 2, "What is the speed of light in a vacuum, roughly?", "300,000 km/s", ("30,000 km/s", "3,000 km/s", "300 km/s")),
+    ("general", 2, "Which ocean is the largest?", "The Pacific", ("The Atlantic", "The Indian", "The Arctic")),
+    ("general", 2, "How many bones are in an adult human body?", "206", ("186", "212", "300")),
+    ("general", 3, "In what year did the Berlin Wall fall?", "1989", ("1991", "1985", "1961")),
+    ("general", 3, "Which element has the chemical symbol W?", "Tungsten", ("Tin", "Titanium", "Vanadium")),
+    ("general", 3, "What is the hardest natural mineral?", "Diamond", ("Quartz", "Corundum", "Topaz")),
+    # Japan and East Asia
+    ("japan", 1, "What is the capital of Japan?", "Tokyo", ("Kyoto", "Osaka", "Nara")),
+    ("japan", 1, "Inari's messengers are…", "Foxes (kitsune)", ("Deer", "Cranes", "Cats")),
+    ("japan", 1, "What is Japan's highest mountain?", "Mount Fuji", ("Mount Aso", "Mount Kita", "Mount Takao")),
+    ("japan", 2, "What does 'arigatou' mean?", "Thank you", ("Good morning", "Excuse me", "Goodbye")),
+    ("japan", 2, "Koi are a coloured variety of which fish?", "Carp", ("Goldfish", "Trout", "Catfish")),
+    ("japan", 2, "Which city was Japan's capital for over 1,000 years before Tokyo?", "Kyoto", ("Nara", "Osaka", "Kamakura")),
+    ("japan", 3, "In legend, a koi that swims up the Dragon Gate waterfall becomes a…", "Dragon",
+     ("Phoenix", "Golden fox", "Turtle")),
+    ("japan", 3, "Hangul, the Korean alphabet, was created under which king?", "King Sejong the Great",
+     ("King Gwanggaeto", "Emperor Meiji", "Kublai Khan")),
+    ("japan", 3, "The Silk Road's eastern starting city, the old capital Chang'an, is today called…", "Xi'an",
+     ("Beijing", "Shanghai", "Nanjing")),
+]
+FISH_Q_SUBJECTS = [("any", "Any subject"), ("bio", "Biology"), ("chem", "Chemistry"), ("math", "Maths"),
+                   ("french", "French"), ("psych", "Psychology"), ("english", "English"), ("general", "General knowledge"),
+                   ("japan", "Japan and Asia")]
+
+
+# ---- the fish: id, kanji, name, rarity 1-5, body, pattern, where/when (cond), size range cm, note ------------------
+# cond keys: night, day, rain, snow, season (spring/summer/autumn/winter), lantern (1 paper, 2 stone, 3 foxfire),
+#            rod (0 bamboo, 1 lacquer, 2 silver, 3 dragon), depth (1-3), place (a world map place you have reached)
+FISH = [
+    ("kohaku", "紅白", "Kohaku", 1, "koi", "kohaku", {}, (24, 62),
+     "Snow-white with bold red patches: the first koi most people fall in love with."),
+    ("higoi", "緋鯉", "Higoi", 1, "koi", "higoi", {}, (22, 55), "A plain red-orange koi, one of the oldest coloured carp."),
+    ("chagoi", "茶鯉", "Chagoi", 1, "koi", "chagoi", {}, (30, 75),
+     "A big, friendly bronze koi. Keepers say it's the first to eat from your hand."),
+    ("karashi", "芥子", "Karashi", 1, "koi", "karashi", {}, (25, 60), "Mustard yellow, named after Japanese karashi."),
+    ("magoi", "真鯉", "Magoi", 1, "koi", "magoi", {}, (30, 70), "The dark wild carp that all koi came from."),
+    ("wakin", "和金", "Wakin", 1, "gold", "wakin", {}, (8, 18), "The everyday goldfish of Japanese festival stalls."),
+    ("medaka", "目高", "Medaka", 1, "medaka", "medaka", {"day": True}, (2, 4),
+     "A tiny rice fish. Medaka have even been to space, on the ISS!"),
+    ("sanke", "大正三色", "Taishō Sanke", 2, "koi", "sanke", {}, (28, 65),
+     "White with red, plus small black sumi spots. First shown in the Taishō era (1912-1926)."),
+    ("showa", "昭和三色", "Shōwa Sanshoku", 2, "koi", "showa", {}, (28, 68),
+     "A black koi wrapped with red and white, bred in the Shōwa era."),
+    ("bekko", "鼈甲", "Shiro Bekko", 2, "koi", "bekko", {}, (24, 58), "White with neat black spots, like a tortoiseshell comb."),
+    ("utsuri", "白写り", "Shiro Utsuri", 2, "koi", "utsuri", {}, (26, 62), "Black and white, like ink on paper."),
+    ("asagi", "浅黄", "Asagi", 2, "koi", "asagi", {}, (28, 66),
+     "Pale blue with a net of scales and orange cheeks: one of the oldest koi varieties."),
+    ("shusui", "秋翠", "Shūsui", 2, "koi", "shusui", {}, (28, 66),
+     "'Autumn green': a scaleless Asagi with one line of dark blue scales down its back."),
+    ("goshiki", "五色", "Goshiki", 2, "koi", "goshiki", {}, (26, 62), "'Five colours': red over a blue-black net."),
+    ("ochiba", "落葉時雨", "Ochiba Shigure", 2, "koi", "ochiba", {}, (30, 70),
+     "'Falling leaves on autumn rain': grey-blue with bronze leaf patches."),
+    ("tancho", "丹頂", "Tanchō", 3, "koi", "tancho", {"depth": 2}, (30, 70),
+     "Pure white with one red circle on the head, like the red-crowned crane and Japan's flag."),
+    ("ogon", "黄金", "Ogon", 3, "koi", "ogon", {}, (30, 75), "Metallic gold all over. Sugoi~"),
+    ("platinum", "プラチナ", "Platinum Ogon", 3, "koi", "platinum", {}, (30, 75), "A shining platinum-white metallic koi."),
+    ("kujaku", "孔雀", "Kujaku", 3, "koi", "kujaku", {"depth": 2}, (30, 70), "'Peacock': metallic white, orange and a dark net."),
+    ("ginrin", "銀鱗", "Gin-rin Kohaku", 3, "koi", "ginrin", {}, (30, 70), "A Kohaku with scales that sparkle like glitter."),
+    ("hirenaga", "鰭長", "Butterfly koi", 3, "koi", "butterfly", {"rod": 1}, (30, 70),
+     "Hirenaga: long, flowing fins like silk sleeves."),
+    ("ryukin", "琉金", "Ryūkin", 3, "gold", "ryukin", {}, (10, 22), "A round fancy goldfish with a long veil tail."),
+    ("yuki", "雪鯉", "Snow koi", 4, "koi", "yuki", {"snow_or_winter": True}, (35, 80),
+     "Only bites in snow or winter. Frost glitters on its scales."),
+    ("ame", "雨鯉", "Rain koi", 4, "koi", "ame", {"rain": True}, (35, 80), "Rises when rain dimples the pond."),
+    ("sakura", "桜鯉", "Sakura koi", 4, "koi", "sakura", {"season": "spring"}, (35, 78), "Pale pink with petals. Spring only."),
+    ("momiji", "紅葉鯉", "Momiji koi", 4, "koi", "momiji", {"season": "autumn"}, (35, 78), "Maple-leaf red. Autumn only."),
+    ("hotaru", "蛍鯉", "Firefly koi", 4, "koi", "hotaru", {"season": "summer", "night": True, "lantern": 1}, (35, 78),
+     "Summer nights with a lantern lit: tiny lights glow along its sides."),
+    ("tsuki", "月鯉", "Moon koi", 4, "koi", "tsuki", {"night": True, "lantern": 2}, (40, 85),
+     "Deep indigo with a silver crescent on its head. Only by stone-lantern light at night."),
+    ("namazu", "大鯰", "Ōnamazu", 5, "catfish", "namazu", {"rain": True, "depth": 3}, (90, 160),
+     "The giant catfish of legend, said to cause earthquakes when it thrashes."),
+    ("kitsunebi", "狐火鯉", "Foxfire koi", 5, "koi", "kitsunebi", {"night": True, "lantern": 3}, (45, 90),
+     "Blue foxfire flickers on its sides. Inari's own koi, ehehe~"),
+    ("ryu", "登龍鯉", "Dragon Gate koi", 5, "koi", "ryu", {"depth": 3, "rod": 3}, (60, 95),
+     "The koi that climbed the waterfall of the Dragon Gate. It's halfway to becoming a dragon."),
+    ("ryugu", "竜宮の使い", "Oarfish", 5, "oar", "ryugu", {"depth": 3, "place": "ryugu"}, (150, 320),
+     "'Messenger from the Dragon Palace': a silver ribbon of a fish with a red crest."),
+]
+FISH_BY_ID = dict((f[0], f) for f in FISH)
+FISH_RARITY = ["", "Common", "Uncommon", "Rare", "Epic", "Legendary"]
+FISH_RCOL = ["", "#b9c2cf", "#7fd8a0", "#6fb6ff", "#c48cff", "#ffcf5a"]
+FISH_RODS = [("竹", "Bamboo rod", 0), ("漆", "Lacquer rod", 10), ("銀", "Silver rod", 30), ("龍", "Dragon rod", 80)]
+FISH_LANTERNS = [("", "No lantern", 0), ("紙", "Paper lantern", 5), ("石", "Stone lantern", 20), ("狐", "Foxfire lantern", 50)]
+FISH_DEPTHS = [("浅", "Shallows", "easy questions"), ("淵", "Deep pool", "medium questions"),
+               ("瀧", "Dragon Gate falls", "hard questions")]
+
+
+def _fh(*a):
+    """A small stable hash in 0..1 (patterns must look the same every time a fish is drawn)."""
+    h = 2166136261
+    for x in a:
+        for ch in str(x):
+            h = ((h ^ ord(ch)) * 16777619) & 0xffffffff
+    return (h % 100003) / 100003.0
+
+
+def fish_pattern(pid, seed):
+    """Blobs for one individual: [(u, v, ru, rv, colour)], plus extra flags. Same seed = same fish."""
+    rnd = random.Random("%s/%s" % (pid, seed))
+    RED, WHITE, BLACK = (214, 52, 40), (246, 243, 236), (30, 30, 36)
+    blobs = []
+
+    def red_patches(n0, n1, col=RED, u0=0.3, u1=0.92):
+        for _ in range(rnd.randint(n0, n1)):
+            blobs.append((rnd.uniform(u0, u1), rnd.uniform(-0.45, 0.45), rnd.uniform(0.07, 0.15), rnd.uniform(0.45, 1.1), col))
+        if rnd.random() < 0.7:
+            blobs.append((rnd.uniform(0.82, 0.9), rnd.uniform(-0.15, 0.15), rnd.uniform(0.06, 0.09), rnd.uniform(0.45, 0.8), col))
+
+    def spots(n0, n1, col, r0=0.025, r1=0.05, u0=0.25, u1=0.78):
+        for _ in range(rnd.randint(n0, n1)):
+            r = rnd.uniform(r0, r1)
+            blobs.append((rnd.uniform(u0, u1), rnd.uniform(-0.75, 0.75), r, r * 6.0, col))
+    P = {"base": WHITE, "blobs": blobs, "net": 0.0, "metal": 0.0, "ginrin": 0.0, "glow": None, "fin": None,
+         "head": None, "spine": None, "sides": None, "long": False, "dots": None}
+    if pid in ("kohaku", "ginrin", "butterfly"):
+        red_patches(2, 4)
+        if pid == "ginrin":
+            P["ginrin"] = 0.9
+        if pid == "butterfly":
+            P["long"] = True
+            kind = rnd.choice(("kohaku", "ogon", "showa"))
+            if kind == "ogon":
+                blobs[:] = []
+                P["base"], P["metal"] = (236, 182, 52), 0.9
+            elif kind == "showa":
+                P["base"] = BLACK
+                red_patches(2, 3)
+                blobs.append((rnd.uniform(0.4, 0.7), rnd.uniform(-0.3, 0.3), 0.09, 0.8, WHITE))
+    elif pid == "sanke":
+        red_patches(2, 4)
+        spots(3, 6, BLACK, u0=0.25, u1=0.72)
+    elif pid == "showa":
+        P["base"] = BLACK
+        red_patches(2, 3)
+        for _ in range(rnd.randint(1, 3)):
+            blobs.append((rnd.uniform(0.3, 0.75), rnd.uniform(-0.5, 0.5), rnd.uniform(0.06, 0.11), rnd.uniform(0.4, 0.9), WHITE))
+    elif pid == "bekko":
+        spots(4, 8, BLACK)
+    elif pid == "utsuri":
+        P["base"] = BLACK
+        for _ in range(rnd.randint(2, 4)):
+            blobs.append((rnd.uniform(0.3, 0.88), rnd.uniform(-0.5, 0.5), rnd.uniform(0.07, 0.14), rnd.uniform(0.5, 1.0), WHITE))
+    elif pid == "tancho":
+        blobs.append((0.845, 0.0, 0.062, 0.7, (220, 30, 34)))
+    elif pid == "higoi":
+        P["base"] = (226, 92, 40)
+    elif pid == "chagoi":
+        P["base"], P["net"] = (150, 104, 62), 0.5
+    elif pid == "karashi":
+        P["base"], P["net"] = (222, 178, 48), 0.25
+    elif pid == "magoi":
+        P["base"], P["net"] = (72, 74, 58), 0.45
+    elif pid == "asagi":
+        P["base"], P["net"], P["head"], P["sides"] = (118, 150, 182), 0.65, (204, 216, 226), (226, 104, 48)
+    elif pid == "shusui":
+        P["base"], P["head"], P["sides"], P["spine"] = (166, 196, 218), (214, 226, 234), (226, 104, 48), (40, 70, 130)
+    elif pid == "goshiki":
+        P["base"], P["net"] = (200, 206, 216), 0.85
+        red_patches(2, 3, col=(200, 46, 46))
+    elif pid == "ochiba":
+        P["base"] = (150, 164, 182)
+        for _ in range(rnd.randint(2, 4)):
+            blobs.append((rnd.uniform(0.3, 0.85), rnd.uniform(-0.4, 0.4), rnd.uniform(0.07, 0.13), rnd.uniform(0.5, 1.0),
+                          (176, 116, 62)))
+    elif pid == "ogon":
+        P["base"], P["metal"] = (236, 182, 52), 1.0
+    elif pid == "platinum":
+        P["base"], P["metal"] = (226, 230, 236), 1.0
+    elif pid == "kujaku":
+        P["base"], P["metal"], P["net"] = (232, 232, 230), 0.8, 0.55
+        red_patches(2, 3, col=(236, 122, 40))
+    elif pid == "wakin":
+        P["base"] = (240, 104, 30)
+        if rnd.random() < 0.5:
+            blobs.append((rnd.uniform(0.35, 0.7), rnd.uniform(-0.3, 0.3), 0.12, 0.9, WHITE))
+    elif pid == "ryukin":
+        P["base"], P["long"] = (232, 62, 40), True
+        for _ in range(rnd.randint(1, 3)):
+            blobs.append((rnd.uniform(0.35, 0.85), rnd.uniform(-0.5, 0.5), rnd.uniform(0.08, 0.14), 0.9, WHITE))
+    elif pid == "medaka":
+        P["base"] = (236, 196, 120)
+    elif pid == "yuki":
+        P["base"], P["metal"], P["dots"] = (232, 240, 255), 0.7, ((255, 255, 255), 0.06)
+        for _ in range(2):
+            blobs.append((rnd.uniform(0.35, 0.8), rnd.uniform(-0.3, 0.3), 0.12, 0.9, (190, 214, 246)))
+    elif pid == "ame":
+        P["base"], P["metal"], P["dots"], P["spine"] = (118, 140, 170), 0.35, ((214, 230, 248), 0.07), (60, 78, 110)
+    elif pid == "sakura":
+        P["base"] = (250, 222, 232)
+        for _ in range(rnd.randint(5, 8)):
+            r = rnd.uniform(0.035, 0.055)
+            blobs.append((rnd.uniform(0.3, 0.9), rnd.uniform(-0.6, 0.6), r, r * 7, (238, 132, 172)))
+    elif pid == "momiji":
+        P["base"] = (232, 108, 44)
+        for _ in range(rnd.randint(3, 5)):
+            blobs.append((rnd.uniform(0.3, 0.85), rnd.uniform(-0.5, 0.5), rnd.uniform(0.05, 0.08), 0.8, (170, 32, 26)))
+    elif pid == "hotaru":
+        P["base"], P["dots"], P["glow"] = (24, 32, 52), ((220, 255, 120), 0.08), (190, 255, 110)
+    elif pid == "tsuki":
+        P["base"], P["metal"], P["dots"] = (36, 40, 92), 0.4, ((220, 226, 255), 0.04)
+        P["crescent"] = True
+    elif pid == "kitsunebi":
+        P["base"], P["glow"], P["flame"] = (52, 28, 86), (110, 200, 255), True
+    elif pid == "ryu":
+        P["base"], P["metal"], P["net"], P["long"] = (232, 176, 46), 0.9, 0.7, True
+        P["netcol"] = (40, 150, 110)
+        P["spine"] = (200, 40, 40)
+    elif pid == "namazu":
+        P["base"], P["net"] = (82, 78, 60), 0.0
+        for _ in range(rnd.randint(6, 10)):
+            blobs.append((rnd.uniform(0.2, 0.9), rnd.uniform(-0.8, 0.8), rnd.uniform(0.03, 0.06), 1.2, (52, 50, 40)))
+    elif pid == "ryugu":
+        P["base"], P["metal"], P["spine"] = (210, 220, 232), 0.8, (226, 40, 52)
+    return P
+
+
+def _fish_hw(body, u):
+    """Half-width of the body (in units of the widest point) at u (0 = tail tip, 1 = nose)."""
+    if body == "oar":
+        if u < 0.02:
+            return 0.0
+        return 1.0 if u < 0.93 else max(0.0, math.sqrt(max(0.0, 1 - ((u - 0.93) / 0.07) ** 2)))
+    if body == "gold":
+        a = 0.3
+        if u < a:
+            return 0.0
+        t = (u - a) / (1 - a)
+        return math.sqrt(max(0.0, 1 - ((t - 0.48) / 0.52) ** 2)) * (0.35 + 0.65 * min(1.0, t * 3))
+    a = 0.17
+    if u < a:
+        return 0.0
+    t = (u - a) / (1 - a)
+    if body == "catfish":
+        return 0.22 + 0.78 * math.sin(min(1.0, t / 0.8) * math.pi / 2) if t < 0.8 else math.sqrt(max(0.0, 1 - ((t - 0.8) / 0.2) ** 1.6))
+    if t < 0.62:
+        return 0.25 + 0.75 * math.sin(math.pi / 2 * t / 0.62) ** 1.1
+    s = (t - 0.62) / 0.38
+    return math.sqrt(max(0.0, 1 - s ** 2.2))
+
+
+FISH_SHAPE = {"koi": (0.17, 0.2), "gold": (0.22, 0.3), "medaka": (0.11, 0.18), "catfish": (0.16, 0.17),
+              "oar": (0.045, 0.04)}       # (half width / length, tail fin length in u)
+
+
+def fish_rgba(fid, seed, L, angle=0.0, squash=1.0):
+    """Draw one fish, seen from above and pointing right (angle in radians turns it, squash flattens it for a pond seen
+    at a slant). Returns rows of (r, g, b, a). Every fish of a kind shares its colours; the seed picks its patches."""
+    f = FISH_BY_ID[fid]
+    body, pid = f[4], f[5]
+    P = fish_pattern(pid, seed)
+    wr, tail = FISH_SHAPE[body]
+    W = max(1.5, L * wr)
+    long_ = P.get("long")
+    if long_:
+        tail *= 1.45
+    pad = 2
+    S = int(L * (1.2 if body == "catfish" else 1.08)) + 2 * pad
+    Hh = max(4, int(math.ceil(S * squash)) + 2) if angle or squash != 1.0 else int(W * (3.4 if long_ else 2.8)) + 2 * pad
+    ca, sa = math.cos(angle), math.sin(angle)
+    base = P["base"]
+    small = L < 34
+    tiny = L < 18
+    netc = P.get("netcol")
+    out = []
+    solid = []
+    for py in range(Hh):
+        row, srow = [], []
+        for px in range(S):
+            dx = px + 0.5 - S / 2.0
+            dy = (py + 0.5 - Hh / 2.0) / (squash or 1.0)
+            lx = dx * ca + dy * sa
+            ly = -dx * sa + dy * ca
+            u = lx / L + 0.5
+            v = ly / W
+            c, a, kind = None, 0.0, 0
+            if 0.0 <= u <= 1.02:
+                hw = _fish_hw(body, min(1.0, u))
+                av = abs(v)
+                if hw > 0 and av <= hw:
+                    kind = 1
+                elif u < tail + 0.02:                               # tail fin
+                    s = max(0.0, (tail + 0.02 - u) / (tail + 0.02))
+                    span = 0.25 + (1.5 if long_ else 1.05) * s
+                    if body == "oar":
+                        span = 0.9
+                    wav = 0.12 * math.sin(u * 40 + v * 3) if long_ else 0.0
+                    if av <= span + wav and not (s > 0.6 and av < (s - 0.6) * (0.9 if long_ else 1.3)):
+                        kind = 2
+                elif body != "oar":
+                    pu0, pu1 = (0.5, 0.74) if long_ else (0.56, 0.71)
+                    if body == "gold":
+                        pu0, pu1 = 0.55, 0.7
+                    if pu0 <= u <= pu1:                              # pectoral fins
+                        k = (pu1 - u) / (pu1 - pu0)
+                        ext = (1.25 if long_ else 0.72) * math.sin(math.pi * k) ** 0.8
+                        if hw < av <= hw + ext:
+                            kind = 2
+                    if 0.37 <= u <= 0.45:                            # pelvic fins
+                        k = (0.45 - u) / 0.08
+                        if hw < av <= hw + 0.34 * math.sin(math.pi * k):
+                            kind = 2
+            if kind == 1:
+                c = base
+                if P["head"] and u > 0.8:
+                    c = _lerp3(c, P["head"], min(1.0, (u - 0.8) / 0.06))
+                if P["sides"] and av / max(0.01, hw) > 0.62 and u > 0.25:
+                    c = _lerp3(c, P["sides"], min(1.0, (av / hw - 0.62) * 3.2))
+                for (bu, bv, ru, rv, col) in P["blobs"]:
+                    du, dv = (u - bu) / ru, (v - bv) / rv
+                    wob = 1.0 + 0.16 * math.sin(math.atan2(dv, du) * 3 + bu * 17)
+                    if du * du + dv * dv < wob * wob:
+                        c = col
+                if P.get("crescent") and 0.8 < u < 0.95:
+                    d1 = math.hypot((u - 0.87) / 0.06, v / 0.6)
+                    d2 = math.hypot((u - 0.89) / 0.06, (v - 0.12) / 0.6)
+                    if d1 < 1 and d2 >= 1:
+                        c = (236, 238, 250)
+                if P.get("flame") and u > 0.2:
+                    fl = abs(v) / max(0.01, hw)
+                    tongue = 0.55 + 0.3 * math.sin(u * 34 + (1 if v > 0 else 0)) + 0.1 * math.sin(u * 71)
+                    if fl > tongue:
+                        c = _lerp3((70, 150, 255), (190, 240, 255), (fl - tongue) * 2)
+                if P["spine"] and av < (0.08 if pid == "ryu" else 0.13) and 0.3 < u < 0.93:
+                    if pid == "shusui":
+                        if int(u * 30) % 2 == 0:
+                            c = P["spine"]
+                    else:
+                        c = P["spine"]
+                if P["net"] and not tiny and u < 0.8:
+                    cu = u * (12 if not small else 9)
+                    cv = v * (1.9 if not small else 1.3) + (0.5 if int(cu) % 2 else 0.0)
+                    fu, fv = cu - int(cu), cv - math.floor(cv)
+                    xe = 0.18 + 0.6 * (2 * fv - 1) ** 2             # scalloped scale edges, open toward the tail
+                    if xe - 0.3 < fu < xe:
+                        c = _lerp3(c, netc or _shade(c, 0.55), P["net"] * (0.75 if netc else 0.6))
+                if P["dots"] and _fh(fid, seed, int(u * 60), int(v * 6)) < P["dots"][1]:
+                    c = P["dots"][0]
+                if P["ginrin"] and not tiny:
+                    cu, cv = u * 22, v * 3.2 + 0.5 * (int(u * 22) % 2)
+                    if _fh(seed, int(cu), int(cv)) < 0.4 and abs(cu - int(cu) - 0.5) < 0.2 and abs(cv - math.floor(cv) - 0.5) < 0.22:
+                        c = _lerp3(c, (255, 255, 255), 0.75)
+                rel = av / max(0.01, hw)
+                lit = 1.0 - 0.3 * rel ** 3 + 0.1 * max(0.0, 1 - abs(v + 0.35) / 0.35)
+                if P["metal"]:
+                    lit += P["metal"] * (0.14 * max(0.0, math.sin(u * 13 + v * 2.5)) + 0.16 * max(0.0, 1 - abs(v + 0.3) / 0.22))
+                c = tuple(max(0, min(255, int(ch * lit))) for ch in c)
+                if abs(abs(v) - 0.74 * _fish_hw(body, 0.9)) < (0.2 if small else 0.11) and \
+                        abs(u - 0.9) < (0.012 if L > 50 else 0.03):
+                    c = (16, 16, 22)                               # eyes
+                if body == "catfish" and u > 0.97:
+                    c = _shade(c, 0.6)
+                a = 1.0
+            elif kind == 2:
+                fb = P["fin"] or _lerp3(base, (255, 255, 255), 0.25)
+                if P["glow"]:
+                    fb = _lerp3(fb, P["glow"], 0.45)
+                ray = 0.82 + 0.18 * (1 if int((u * 50 + v * 4)) % 3 else 0)
+                c = tuple(max(0, min(255, int(ch * ray))) for ch in fb)
+                a = 0.78 if not long_ else 0.7
+            elif body in ("koi", "catfish") and not small and 0.985 < u < (1.07 if body == "catfish" else 1.03):
+                # barbels (whiskers) at the corners of the mouth
+                bv = 0.32 if body == "koi" else 0.42
+                curl = (u - 0.985) * (9.0 if body == "catfish" else 3.0)
+                if abs(abs(v) - bv - curl) < 0.09:
+                    c, a, kind = _shade(base, 0.7), 1.0, 3
+            if c is None:
+                row.append((0, 0, 0, 0))
+                srow.append(0)
+            else:
+                row.append((c[0], c[1], c[2], int(255 * a)))
+                srow.append(kind)
+        out.append(row)
+        solid.append(srow)
+    # outline: a darker rim where the fish meets the water
+    H2, W2 = len(out), len(out[0])
+    for y in range(H2):
+        for x in range(W2):
+            k = solid[y][x]
+            if k in (1, 2):
+                edge = (x == 0 or not solid[y][x - 1]) or (x == W2 - 1 or not solid[y][x + 1]) or \
+                       (y == 0 or not solid[y - 1][x]) or (y == H2 - 1 or not solid[y + 1][x])
+                if edge:
+                    r, g, b, a = out[y][x]
+                    f_ = 0.55 if k == 1 else 0.72
+                    out[y][x] = (int(r * f_), int(g * f_), int(b * f_), max(a, 230))
+    return out
+
+
+def fish_glow(fid):
+    return fish_pattern(FISH_BY_ID[fid][5], 0).get("glow")
+
+
+# ---- journeys beyond Japan --------------------------------------------------------------------------------------
+# Same shape as JMAP_PLACES: (id, kanji, name, area, lon, lat, hours, story, did-you-know, Zenko's line).
+# Legends have no real place on Earth, so their "lon/lat" are spots on the painted sky (0..1).
+JOURNEY_REGIONS = [
+    ("japan", "日本", "Japan", "Zenko's home: shrines, mountains and islands"),
+    ("kyoto", "京都", "Kyoto seasons", "One city through spring, summer, autumn and winter"),
+    ("korea", "韓国", "Korea", "Palaces, temples and a volcano island"),
+    ("china", "中国", "China", "Palaces, sacred mountains and karst rivers"),
+    ("silk", "絲綢之路", "Silk Road", "Oasis cities from Xi'an to Bukhara"),
+    ("myth", "神話", "Legends", "Places from the old stories"),
+]
+JOURNEY_MORE = [
+    # ---- Kyoto through the seasons
+    ("kiyomizu", "清水寺", "Kiyomizu-dera", "Kyoto · spring", 135.785, 34.995, 94,
+     "A hillside temple founded in 778. Its great wooden stage juts out over the trees and was built without a single "
+     "nail. In spring it floats over a sea of cherry blossom.",
+     "'To jump off the stage of Kiyomizu' is a Japanese saying for taking a bold leap, like starting a big project.",
+     "Sakura everywhere! Let's take the plunge into Chapter 5~"),
+    ("arashiyama", "嵐山", "Arashiyama", "Kyoto · summer", 135.672, 35.015, 100,
+     "Green hills on Kyoto's west side, with the famous bamboo grove and the Togetsukyō bridge over the river.",
+     "Togetsukyō means 'Moon Crossing Bridge': an emperor in the 1200s said the moon looked like it was walking across it.",
+     "The bamboo whispers. I think it's saying 'study, study'~"),
+    ("tofukuji", "東福寺", "Tōfuku-ji", "Kyoto · autumn", 135.774, 34.976, 106,
+     "A great Zen temple founded in 1236. In November, the Tsūten-kyō bridge crosses a valley that turns red and gold "
+     "with about 2,000 maple trees.",
+     "Its gate, the Sanmon, is the oldest Zen main gate in Japan.",
+     "Momiji season! My fur matches the leaves, ehehe~"),
+    ("kinkakuji", "金閣寺", "Kinkaku-ji", "Kyoto · winter", 135.729, 35.039, 112,
+     "The Golden Pavilion: the retirement villa of shogun Ashikaga Yoshimitsu, turned into a Zen temple. Its top two "
+     "floors are covered in gold leaf.",
+     "It burned down in 1950 and was rebuilt in 1955. Seeing it under snow is rare, and very lucky.",
+     "Gold and snow... it's like a winter dream~"),
+    ("gion", "祇園", "Gion", "Kyoto", 135.778, 35.004, 118,
+     "Kyoto's old geisha district, where geiko and maiko still walk the stone lanes between wooden teahouses.",
+     "The Gion Matsuri in July began in 869, as a prayer to end an epidemic. It's one of Japan's biggest festivals.",
+     "Lanterns, wooden lanes, the sound of geta... so pretty at dusk."),
+    # ---- Korea
+    ("gyeongbok", "景福宮", "Gyeongbokgung", "Seoul", 126.977, 37.58, 126,
+     "The main royal palace of the Joseon dynasty, built in 1395. Its name means 'palace greatly blessed by heaven'.",
+     "It was burned in the war of 1592 and rebuilt in 1867. You can still watch the colourful changing of the guard.",
+     "Royal guards in red and blue! I'm standing very straight now."),
+    ("bulguksa", "佛國寺", "Bulguksa", "Gyeongju", 129.332, 35.79, 134,
+     "A temple of the Silla kingdom, finished in 774, with two famous stone pagodas, Dabotap and Seokgatap.",
+     "With the Seokguram grotto on the hill above, it became a UNESCO World Heritage site in 1995.",
+     "Stone pagodas older than a thousand years. Very patient stones~"),
+    ("haeinsa", "海印寺", "Haeinsa", "Gayasan", 128.098, 35.801, 142,
+     "A mountain temple that keeps the Tripitaka Koreana: over 81,000 wooden printing blocks of Buddhist scripture, "
+     "carved in the 1200s.",
+     "The halls that store them are built so air flows through naturally, which has kept the wood safe for centuries.",
+     "81,000 blocks with no mistakes... the best revision notes ever."),
+    ("jeju", "漢拏山", "Hallasan, Jeju", "Jeju Island", 126.533, 33.362, 150,
+     "South Korea's highest mountain (1,947 m): a volcano that makes up most of Jeju Island, with a crater lake on top.",
+     "Jeju's haenyeo, women who free-dive for seafood without air tanks, are on UNESCO's list of living heritage.",
+     "A whole island made by one volcano. The sea breeze is so nice!"),
+    ("yonggung", "龍宮寺", "Haedong Yonggungsa", "Busan", 129.223, 35.188, 158,
+     "One of Korea's few temples by the sea, first built in 1376 on rocks where the waves crash right below.",
+     "Its name means 'Dragon Palace Temple', for the Dragon King of the sea.",
+     "A temple on the waves. I hope the Dragon King says hello~"),
+    # ---- China
+    ("forbidden", "紫禁城", "The Forbidden City", "Beijing", 116.397, 39.917, 168,
+     "The imperial palace of the Ming and Qing dynasties from 1420 to 1912: home to 24 emperors.",
+     "Legend says it has 9,999 rooms, one fewer than the 10,000 of the palace of heaven.",
+     "So many golden roofs! I'll need a map just for the palace."),
+    ("greatwall", "長城", "The Great Wall", "Mutianyu", 116.568, 40.432, 178,
+     "Not one wall but many, built and rebuilt over about 2,000 years. The stone sections near Beijing are from the Ming "
+     "dynasty.",
+     "A popular myth says you can see it from the Moon with your eyes. You can't; it's long, but far too narrow.",
+     "My paws are tired... but the view from the watchtower is worth it."),
+    ("taishan", "泰山", "Mount Tai", "Shandong", 117.1, 36.25, 188,
+     "The most honoured of China's sacred mountains. For over 2,000 years emperors climbed it to offer sacrifices to "
+     "heaven.",
+     "Pilgrims climb over 6,000 stone steps to the summit to watch the sunrise.",
+     "6,000 steps. Leg day again. Exercise tab, are you watching?"),
+    ("westlake", "西湖", "West Lake", "Hangzhou", 120.15, 30.25, 198,
+     "A lake of willows, pagodas and causeways that inspired poets and painters for over a thousand years.",
+     "The Su Causeway is named after the poet Su Dongpo, who had it built in the 1000s from mud dredged from the lake.",
+     "A poet built a whole causeway. I just want to write one good essay~"),
+    ("shaolin", "少林寺", "Shaolin Temple", "Mount Song", 112.938, 34.507, 208,
+     "A temple founded in 495, famous for kung fu and, by tradition, as the cradle of Chan Buddhism, which became Zen in "
+     "Japan.",
+     "The monks' training mixes martial arts with meditation: focus of the body and the mind together.",
+     "Zen started here? Then our focus sessions are a little bit Shaolin~"),
+    ("huangshan", "黄山", "Huangshan", "Anhui", 118.167, 30.133, 218,
+     "The Yellow Mountains: granite peaks, twisted pines and a 'sea of clouds' that inspired centuries of ink painting.",
+     "It has been a UNESCO World Heritage site since 1990, both for its nature and its culture.",
+     "Mountains floating in clouds, like a painting come alive."),
+    ("leshan", "樂山大佛", "Leshan Giant Buddha", "Sichuan", 103.773, 29.545, 228,
+     "Carved into a cliff from 713 to 803, it's 71 m tall: the largest stone Buddha in the world.",
+     "A monk started it hoping to calm the dangerous waters where three rivers meet below its feet.",
+     "His toenail is bigger than me. I checked."),
+    ("guilin", "桂林", "Guilin and the Li River", "Guangxi", 110.29, 25.27, 238,
+     "Hundreds of steep green karst peaks rising along a calm river, a classic view of southern China.",
+     "The Li River scenery is printed on the back of China's 20-yuan note.",
+     "Mountains like sleeping dragons. Shh, don't wake them~"),
+    # ---- the Silk Road
+    ("xian", "西安", "Xi'an", "Shaanxi", 108.94, 34.34, 250,
+     "As Chang'an it was the capital of many dynasties and the eastern start of the Silk Road. Nearby stands the "
+     "Terracotta Army of the first emperor, Qin Shi Huang.",
+     "The terracotta warriors were found in 1974 by farmers digging a well. Each of the thousands of soldiers has its own face.",
+     "Thousands of clay soldiers... and not one of them is studying. Hmph."),
+    ("jiayuguan", "嘉峪關", "Jiayu Pass", "Gansu", 98.217, 39.8, 262,
+     "The fortress at the western end of the Ming Great Wall, built in 1372, where the green lands meet the desert.",
+     "Legend says its builders planned the bricks so exactly that only one was left over. It still sits on a gate.",
+     "One spare brick. Now that's planning! Like your study planner~"),
+    ("dunhuang", "敦煌", "Dunhuang", "Gansu", 94.8, 40.04, 274,
+     "The Mogao Caves: hundreds of cave temples filled with Buddhist paintings made over a thousand years, beside dunes "
+     "and the Crescent Lake.",
+     "A hidden library cave found in 1900 held the Diamond Sutra of 868, the oldest dated printed book in the world.",
+     "The sand dunes sing when the wind blows. Really!"),
+    ("turpan", "吐魯番", "Turpan", "Xinjiang", 89.19, 42.95, 286,
+     "An oasis in one of the hottest and lowest places in China, kept green by karez: hand-dug underground water channels.",
+     "Nearby are the Flaming Mountains, which a famous story says the Monkey King had to cross in Journey to the West.",
+     "So hot! My tails are fanning me as fast as they can."),
+    ("kashgar", "喀什", "Kashgar", "Xinjiang", 75.99, 39.47, 298,
+     "An ancient oasis city at the western edge of the Taklamakan Desert, where the Silk Road's northern and southern "
+     "routes met.",
+     "Traders crossed the Pamir mountains from here, carrying silk west and bringing glass, horses and spices east.",
+     "A market full of spices and melons. I smell everything at once!"),
+    ("samarkand", "撒馬爾罕", "Samarkand", "Uzbekistan", 66.975, 39.655, 310,
+     "One of the oldest cities in Central Asia. Its Registan square is framed by three blue-tiled madrasas from the "
+     "1400s to 1600s.",
+     "Ulugh Beg built an observatory here in the 1420s and made one of the best star catalogues of his time.",
+     "Turquoise domes under the desert sky... and an astronomer who studied the stars!"),
+    ("bukhara", "布哈拉", "Bukhara", "Uzbekistan", 64.42, 39.775, 322,
+     "A holy city of the Silk Road with hundreds of old buildings. The Kalyan Minaret has towered over it since 1127.",
+     "A story says Genghis Khan destroyed much of the city in 1220 but spared the minaret because it amazed him.",
+     "The end of the road... for now. We walked all the way from Kyoto!"),
+    # ---- legends (spots on a painted sky, 0..1)
+    ("penglai", "蓬萊", "Mount Penglai", "Eastern Sea", 0.17, 0.62, 340,
+     "A mountain island of the immortals in Chinese legend, hidden in mist in the eastern sea.",
+     "The first emperor sent Xu Fu to find its elixir of life. One legend says he sailed on and settled in Japan.",
+     "If I find the elixir, I'll share it with you. Promise."),
+    ("kunlun", "崑崙", "Kunlun", "Western mountains", 0.34, 0.36, 360,
+     "A paradise mountain in the far west, home of Xiwangmu, the Queen Mother of the West.",
+     "Her peaches of immortality ripen only once every 3,000 years, as Journey to the West tells it.",
+     "3,000 years for one peach? I'd rather have inari sushi now~"),
+    ("ryugu", "竜宮城", "Ryūgū-jō", "Under the sea", 0.52, 0.8, 380,
+     "The Dragon King's palace under the sea, from the tale of Urashima Tarō, who saved a turtle and was invited there.",
+     "He stayed three days, but 300 years had passed when he got home. The box he was told never to open made him old.",
+     "We can visit, but let's not stay too long. Your exams are this year, not in 300 years!"),
+    ("takamagahara", "高天原", "Takamagahara", "High heaven", 0.66, 0.24, 400,
+     "The High Plain of Heaven, where the kami live, in the Kojiki, Japan's oldest chronicle (712).",
+     "When the sun goddess Amaterasu hid in a cave, the goddess Ame-no-Uzume danced until everyone laughed, and the "
+     "light came back out.",
+     "When you feel dark, I'll dance for you too. Kon kon~"),
+    ("guanghan", "廣寒宮", "The Moon Palace", "The Moon", 0.82, 0.16, 425,
+     "Guanghan Palace on the Moon, home of Chang'e, who drank the elixir of life and floated up to the sky.",
+     "Her friend the Jade Rabbit pounds medicine there. China named its Moon missions Chang'e and its rover Yutu, Jade Rabbit.",
+     "We made it to the Moon! The Jade Rabbit says hello~"),
+    ("kyubi", "九尾の里", "Village of Nine Tails", "Beyond the clouds", 0.9, 0.52, 450,
+     "In fox legends, a kitsune grows a new tail every hundred years. With nine tails and a thousand years, its fur "
+     "turns gold and it becomes a heavenly fox.",
+     "Kitsune are said to make foxfire, kitsunebi, with their tails. That's where my glow comes from!",
+     "Here is where every fox dreams of going. And I came here... with you. Arigatou."),
+]
+JOURNEY_REGION_OF = {}
+for _p in JMAP_PLACES:
+    JOURNEY_REGION_OF[_p[0]] = "japan"
+for _ids, _r in ((("kiyomizu", "arashiyama", "tofukuji", "kinkakuji", "gion"), "kyoto"),
+                 (("gyeongbok", "bulguksa", "haeinsa", "jeju", "yonggung"), "korea"),
+                 (("forbidden", "greatwall", "taishan", "westlake", "shaolin", "huangshan", "leshan", "guilin"), "china"),
+                 (("xian", "jiayuguan", "dunhuang", "turpan", "kashgar", "samarkand", "bukhara"), "silk"),
+                 (("penglai", "kunlun", "ryugu", "takamagahara", "guanghan", "kyubi"), "myth")):
+    for _i in _ids:
+        JOURNEY_REGION_OF[_i] = _r
+JOURNEY_ALL = list(JMAP_PLACES) + JOURNEY_MORE
+JOURNEY_BY_ID = dict((p[0], p) for p in JOURNEY_ALL)
+
+# One small quiz per place (question, right answer, two wrong answers). Pass it to fully unlock the place's stamp.
+JOURNEY_QUIZ = {
+    "inari": ("What colour are the thousands of torii gates at Fushimi Inari?", "Vermilion", ("Gold", "White")),
+    "nara": ("What animals roam free in Nara Park?", "Sika deer", ("Monkeys", "Cranes")),
+    "ise": ("How often are Ise's shrine buildings rebuilt?", "Every 20 years", ("Every 100 years", "Every year")),
+    "tokyo": ("What was Tokyo called before 1868?", "Edo", ("Heian-kyō", "Naniwa")),
+    "fuji": ("How tall is Mount Fuji?", "3,776 m", ("2,776 m", "4,776 m")),
+    "kumano": ("Which bird guides pilgrims on the Kumano Kodō?", "Yatagarasu, a three-legged crow", ("A white heron", "A golden phoenix")),
+    "kusatsu": ("What is 'yumomi' at Kusatsu?", "Stirring hot spring water with paddles to cool it",
+                ("A hot spring bun", "A bath at midnight")),
+    "nikko": ("Which famous carving is at Nikkō Tōshō-gū?", "The three wise monkeys", ("The sleeping lion", "The laughing Buddha")),
+    "kanazawa": ("Kanazawa makes almost all of Japan's…", "Gold leaf", ("Green tea", "Paper lanterns")),
+    "izumo": ("What does Izumo call the tenth lunar month?", "Kamiarizuki, the month with gods",
+              ("Kannazuki, the month without gods", "Shimotsuki, the frost month")),
+    "miyajima": ("What is special about Itsukushima's great torii?", "It seems to float on the sea at high tide",
+                 ("It is made of gold", "It is the oldest stone torii")),
+    "konpira": ("How many steps lead to Konpira-san's inner shrine?", "1,368", ("365", "3,000")),
+    "aso": ("Mount Aso is famous for one of the world's largest…", "Volcanic calderas", ("Waterfalls", "Bamboo forests")),
+    "yakushima": ("What is Jōmon Sugi?", "An ancient cedar tree", ("A hot spring", "A mountain shrine")),
+    "osorezan": ("Osorezan is said in folklore to be a gateway to…", "The afterlife", ("The Dragon Palace", "The Moon")),
+    "sapporo": ("Who built the first Sapporo snow statues in 1950?", "High school students", ("Monks", "The emperor")),
+    "shiretoko": ("Shiretoko's name comes from the Ainu for…", "The end of the earth", ("The fox's home", "The great river")),
+    "shuri": ("Shuri Castle was the seat of which kingdom?", "The Ryūkyū Kingdom", ("The Silla Kingdom", "The Joseon dynasty")),
+    "kiyomizu": ("Kiyomizu-dera's wooden stage was built…", "Without a single nail", ("From bamboo", "In one night")),
+    "arashiyama": ("What does Togetsukyō mean?", "Moon Crossing Bridge", ("Bamboo Bridge", "Dragon Bridge")),
+    "tofukuji": ("Tōfuku-ji is most famous in autumn for its…", "Maple leaves", ("Cherry blossom", "Snow lanterns")),
+    "kinkakuji": ("What covers Kinkaku-ji's top floors?", "Gold leaf", ("Silver paint", "Red lacquer")),
+    "gion": ("The Gion Matsuri began in 869 as a prayer to…", "End an epidemic", ("Bring rain", "Win a war")),
+    "gyeongbok": ("Which dynasty built Gyeongbokgung?", "Joseon", ("Silla", "Ming")),
+    "bulguksa": ("Bulguksa was built by which kingdom?", "Silla", ("Joseon", "Goguryeo")),
+    "haeinsa": ("What does Haeinsa keep safe?", "The Tripitaka Koreana woodblocks", ("A golden crown", "The first Hangul book")),
+    "jeju": ("Who are Jeju's haenyeo?", "Women who free-dive for seafood", ("Mountain monks", "Palace guards")),
+    "yonggung": ("Haedong Yonggungsa is a temple built…", "Right by the sea", ("On a volcano crater", "Underground")),
+    "forbidden": ("How many emperors lived in the Forbidden City?", "24", ("8", "99")),
+    "greatwall": ("Can you see the Great Wall from the Moon with your eyes?", "No, it's far too narrow",
+                  ("Yes, easily", "Only at night")),
+    "taishan": ("Why did emperors climb Mount Tai?", "To offer sacrifices to heaven", ("To find gold", "To build a fortress")),
+    "westlake": ("The Su Causeway is named after…", "The poet Su Dongpo", ("An emperor", "A dragon")),
+    "shaolin": ("Chan Buddhism from Shaolin became what in Japan?", "Zen", ("Shinto", "Bushidō")),
+    "huangshan": ("Huangshan is famous for its pines and its…", "Sea of clouds", ("Hot deserts", "Giant statues")),
+    "leshan": ("How tall is the Leshan Giant Buddha?", "71 m", ("17 m", "171 m")),
+    "guilin": ("The Li River appears on which banknote?", "The 20-yuan note", ("The 100-yen note", "The 1-dollar note")),
+    "xian": ("How was the Terracotta Army found?", "Farmers digging a well in 1974", ("A flood in 1900", "A map in a temple")),
+    "jiayuguan": ("Legend says how many bricks were left over at Jiayu Pass?", "Just one", ("A thousand", "None at all")),
+    "dunhuang": ("What was found in Dunhuang's library cave?", "The Diamond Sutra, the oldest dated printed book",
+                 ("The first compass", "A golden throne")),
+    "turpan": ("What are karez?", "Underground water channels", ("Desert tents", "Camel saddles")),
+    "kashgar": ("Kashgar sits at the edge of which desert?", "The Taklamakan", ("The Sahara", "The Gobi")),
+    "samarkand": ("Ulugh Beg built what in Samarkand?", "An observatory", ("A great wall", "A harbour")),
+    "bukhara": ("Which tower did Genghis Khan spare in Bukhara?", "The Kalyan Minaret", ("The Leaning Tower", "The Iron Pagoda")),
+    "penglai": ("The first emperor sent Xu Fu to Penglai to find…", "The elixir of life", ("A dragon's pearl", "A sword")),
+    "kunlun": ("How often do the peaches of immortality ripen?", "Every 3,000 years", ("Every spring", "Every 100 years")),
+    "ryugu": ("How long had passed when Urashima Tarō got home?", "300 years", ("3 days", "30 years")),
+    "takamagahara": ("Who danced to bring Amaterasu out of the cave?", "Ame-no-Uzume", ("Susanoo", "Inari")),
+    "guanghan": ("Who lives with Chang'e on the Moon?", "The Jade Rabbit", ("A golden crow", "A white tiger")),
+    "kyubi": ("In legend, how does a kitsune get a new tail?", "One every hundred years", ("By eating a peach", "By winning a race")),
+}
+
+# ---- rewards for reaching places: bubble styles, garden decor, sidebar scenes, accents and travel outfits ---------
+MAP_REWARDS = [
+    ("nara", "decor", "deer", "A sika deer for your garden"),
+    ("ise", "bubble", "shinto", "Shrine-white speech bubble"),
+    ("fuji", "scene", "fuji", "Mount Fuji in your sidebar"),
+    ("kanazawa", "accent", "kinpaku", "Gold-leaf accent colour"),
+    ("miyajima", "decor", "seatorii", "A floating torii in the pond"),
+    ("sapporo", "outfit", "snowcoat", "Snow festival coat"),
+    ("shuri", "outfit", "bingata", "Ryūkyū bingata robe"),
+    ("tofukuji", "decor", "momiji", "A little maple tree"),
+    ("kinkakuji", "scene", "kinkaku", "The Golden Pavilion in your sidebar"),
+    ("gion", "outfit", "furisode", "Gion furisode"),
+    ("gyeongbok", "outfit", "hanbok", "Hanbok"),
+    ("bulguksa", "scene", "pagoda", "A stone pagoda in your sidebar"),
+    ("haeinsa", "bubble", "hanji", "Hanji paper speech bubble"),
+    ("jeju", "accent", "dancheong", "Dancheong accent colour"),
+    ("yonggung", "decor", "cheong", "A blue and red Korean lantern"),
+    ("forbidden", "accent", "imperial", "Imperial yellow accent colour"),
+    ("greatwall", "scene", "greatwall", "The Great Wall in your sidebar"),
+    ("westlake", "bubble", "lacquer", "Red lacquer speech bubble"),
+    ("shaolin", "outfit", "hanfu", "Hanfu"),
+    ("huangshan", "decor", "pine", "A Huangshan pine"),
+    ("jiayuguan", "bubble", "silk", "Indigo silk speech bubble"),
+    ("dunhuang", "scene", "dunes", "Desert dunes and camels in your sidebar"),
+    ("kashgar", "decor", "camel", "A Bactrian camel"),
+    ("samarkand", "accent", "lapis", "Samarkand turquoise accent colour"),
+    ("bukhara", "outfit", "traveller", "Silk Road traveller's coat"),
+    ("penglai", "bubble", "cloud", "Cloud speech bubble"),
+    ("takamagahara", "outfit", "hagoromo", "Hagoromo, the celestial robe"),
+    ("guanghan", "scene", "moon", "The Moon Palace in your sidebar"),
+    ("guanghan", "decor", "rabbit", "The Jade Rabbit"),
+    ("guanghan", "accent", "moonsilver", "Moon silver accent colour"),
+    ("kyubi", "bubble", "foxfire", "Foxfire speech bubble"),
+    ("kyubi", "decor", "kitsune", "A nine-tailed fox statue"),
+]
+Z22_ACCENTS = [("kinpaku", "Gold leaf", ("#e8b830", "#f8dc7c", "#f2c94c", "#ffe08a")),
+               ("dancheong", "Dancheong", ("#2fa37a", "#7fd3b0", "#e0573e", "#5fe0b0")),
+               ("imperial", "Imperial", ("#f0b72f", "#ffd36b", "#d9482c", "#ffcc4d")),
+               ("lapis", "Turquoise", ("#2fb7c9", "#86e0ea", "#e3b04b", "#5fe3f0")),
+               ("moonsilver", "Moon silver", ("#b8c4dc", "#e2e8f4", "#d8c08a", "#d0dcf8"))]
+# bubble styles: (name, fill, ink, rim, inner rim)
+Z22_BUBBLES = {
+    "": ("Zenko's lacquer (default)", None, None, None, None),
+    "shinto": ("Shrine white", "#fbf8f1", "#2a1c18", "#d23b2a", "#efb6a8"),
+    "kinpaku": ("Gold leaf", "#2b2112", "#fff1cc", "#f2c94c", "#a8842e"),
+    "hanji": ("Hanji paper", "#f1e6cf", "#2f2418", "#8a6a44", "#d4c09a"),
+    "lacquer": ("Red lacquer", "#5a1410", "#ffe9d6", "#e0b43a", "#9a3a22"),
+    "silk": ("Indigo silk", "#1d2452", "#eef0ff", "#e0b43a", "#4d5aa0"),
+    "cloud": ("Cloud", "#e9f1ff", "#1f2a44", "#a9c4f0", "#ffffff"),
+    "foxfire": ("Foxfire", "#1c1238", "#e6f4ff", "#7fd8ff", "#4a4aa8"),
+}
+Z22_SCENES = {"": "None", "fuji": "Mount Fuji", "kinkaku": "Golden Pavilion", "pagoda": "Stone pagoda",
+              "greatwall": "The Great Wall", "dunes": "Desert dunes", "moon": "Moon Palace"}
+Z22_DECOR = {"deer": "Sika deer", "seatorii": "Floating torii", "momiji": "Maple tree", "cheong": "Korean lantern",
+             "pine": "Huangshan pine", "camel": "Bactrian camel", "rabbit": "Jade Rabbit", "kitsune": "Nine-tailed fox statue"}
+
+# ---- travel outfits (worn like the seasonal kimono; unlocked by the world map instead of study hours) -------------
+ROBES.update({
+    "snowcoat": {"name": "Snow festival coat", "hours": 0, "motif": "snow", "travel": True,
+                 "a": "#c9d8ee", "c": "#93a8c8", "f": "#ffffff", "u": "#e8f0ff", "h": "#ffffff", "i": "#c8283c", "r": "#ffffff"},
+    "bingata": {"name": "Ryūkyū bingata", "hours": 0, "motif": "bingata", "travel": True,
+                "a": "#f2c13a", "c": "#c8902a", "f": "#e0443a", "u": "#2f7fd0", "h": "#fff4d8", "i": "#2a6a8a", "r": "#e0443a"},
+    "furisode": {"name": "Gion furisode", "hours": 0, "motif": "fan", "travel": True,
+                 "a": "#7a2a5a", "c": "#541a3e", "f": "#f2c94c", "u": "#f7a8c8", "h": "#fff4ee", "i": "#e0b43a", "r": "#d23b2a"},
+    "hanbok": {"name": "Hanbok", "hours": 0, "motif": "hanbok", "travel": True,
+               "a": "#e8506e", "c": "#b8304e", "f": "#ffd35a", "u": "#5fb87a", "h": "#fff6e8", "i": "#4a7ad0", "r": "#e8506e"},
+    "hanfu": {"name": "Hanfu", "hours": 0, "motif": "cloud", "travel": True,
+              "a": "#e9f0f2", "c": "#a9c2c8", "f": "#4a8a96", "u": "#c8dde0", "h": "#ffffff", "i": "#3a6a7a", "r": "#d4a63a"},
+    "traveller": {"name": "Silk Road traveller's coat", "hours": 0, "motif": "ikat", "travel": True,
+                  "a": "#8a3a2a", "c": "#5e2418", "f": "#f2c94c", "u": "#2fb7c9", "h": "#f3e6cc", "i": "#2a5a7a", "r": "#f2c94c"},
+    "hagoromo": {"name": "Hagoromo (celestial robe)", "hours": 0, "motif": "cloud", "travel": True,
+                 "a": "#dfe8ff", "c": "#a8b8e8", "f": "#ffffff", "u": "#f7d8f0", "h": "#ffffff", "i": "#9a8ae8", "r": "#f2c94c"},
+})
+OUTFIT_BODY = tuple(ROBES)
+_motif_z21 = _motif
+
+
+def _motif(x, y, motif):
+    """zenko22: extra cloth patterns for the travel outfits."""
+    a = (x * 7 + y * 13) % 23
+    if motif == "bingata":                       # bright scattered flowers in two colours
+        return "f" if a in (0, 1) else ("u" if a in (11, 12) else None)
+    if motif == "fan":                           # little gold fans
+        return "f" if (x % 8, y % 7) in ((3, 2), (2, 3), (3, 3), (4, 3)) else ("u" if a == 5 else None)
+    if motif == "hanbok":                        # saekdong rainbow stripes on the upper part, plain skirt below
+        if y < 58:
+            return ("f", "u", None, "h", None)[(y // 2) % 5]
+        return None
+    if motif == "cloud":                         # soft cloud swirls
+        return "f" if (x + int(3 * _m.sin(y * 0.5))) % 9 == 0 and y % 3 else None
+    if motif == "ikat":                          # zigzag ikat bands
+        return "f" if (x + abs((y % 8) - 4)) % 8 == 0 else ("u" if (x + abs((y % 8) - 4)) % 8 == 4 else None)
+    return _motif_z21(x, y, motif)
+
+
+# ---- more ema badges: tiered (bronze, silver, gold), single and secret -------------------------------------------
+BADGE_TIERED = [  # id, kanji, name, what is counted, (bronze, silver, gold), how
+    ("t_angler", "釣", "Angler", "fish", (10, 50, 150), "Catch {n} fish in the Zen garden pond"),
+    ("t_collector", "鑑", "Koi Collector", "species", (8, 18, 32), "Find {n} kinds of fish"),
+    ("t_wanderer", "旅", "Wanderer", "places", (6, 24, 48), "Reach {n} places on the world map"),
+    ("t_story", "話", "Storyteller", "quizzes", (5, 20, 48), "Pass {n} place quizzes on the world map"),
+    ("t_cards", "札", "Card Master", "reviews", (100, 500, 2000), "Review {n} flashcards"),
+    ("t_lantern", "燈", "Lantern Keeper", "sessions", (25, 100, 300), "Finish {n} focus sessions"),
+    ("t_lock", "錠", "Iron Focus", "lockins", (5, 25, 100), "Finish {n} lock-ins"),
+    ("t_streak", "暦", "Steady Fox", "beststreak", (14, 60, 150), "A {n}-day focus streak"),
+    ("t_hours", "時", "Long Road", "hours", (200, 500, 1000), "{n} hours of focus in total"),
+    ("t_grove", "樹", "Gardener", "trees", (1, 3, 7), "Grow {n} sacred trees in the garden"),
+    ("t_calm", "静", "Still Water", "breaths", (5, 25, 75), "Finish {n} breathing exercises"),
+    ("t_diary", "日", "Diary Fox", "checkins", (30, 100, 300), "Do {n} daily check-ins"),
+    ("t_notes", "筆", "Brush and Ink", "notes", (10, 50, 150), "Keep {n} pages in your notebooks"),
+    ("t_paths", "六", "Six Paths", "subjects", (5, 20, 50), "{n} hours in every one of your six subjects"),
+    ("t_quiz", "問", "Sharp Mind", "fishq", (25, 100, 400), "Answer {n} fishing questions right"),
+]
+BADGE_NEW = [
+    ("koi1", "鯉", "First Catch", "Catch your first fish"),
+    ("golden", "金", "Golden Scales", "Catch an Ogon koi"),
+    ("bigfish", "大", "The Big One", "Catch a fish over 80 cm"),
+    ("rainfish", "雨", "Rain Angler", "Catch a fish while it's raining"),
+    ("snowfish", "雪", "Snow Angler", "Catch a fish while it's snowing"),
+    ("hotq", "連", "Hot Streak", "Answer 10 fishing questions right in a row"),
+    ("dragon", "龍", "Dragon Gate", "Catch the Dragon Gate koi"),
+    ("japan", "和", "All of Japan", "Reach every place in Japan"),
+    ("kyoto4", "京", "Four Seasons", "Reach all of Kyoto's seasons"),
+    ("korea", "韓", "Across the Sea", "Reach Korea"),
+    ("china", "華", "Middle Kingdom", "Reach China"),
+    ("silk", "絹", "Silk Road", "Reach Bukhara, the end of the Silk Road"),
+    ("moon", "嫦", "To the Moon", "Reach the Moon Palace"),
+    ("passport", "券", "Full Passport", "Pass the quiz of every place in one region"),
+    ("weekend", "週", "Weekend Warrior", "Focus on both days of one weekend"),
+    ("allsix", "彩", "Well-Rounded", "Study all six subjects in one week"),
+]
+BADGE_SECRET_LIST = [
+    ("s_3am", "丑", "Witching Hour", "Study at 3 am (then please go to sleep!)"),
+    ("s_newyear", "元", "First Light", "Focus on New Year's Day"),
+    ("s_fullmoon", "望", "Full Moon Scholar", "Focus on a full-moon night"),
+    ("s_fri13", "吉", "Lucky Fox", "Focus on a Friday the 13th"),
+    ("s_meow", "猫", "Wrong Animal", "Say 'meow' to a fox"),
+    ("s_rainbow", "虹", "Rainbow Pond", "Catch fish of four different rarities in one day"),
+    ("s_dawn", "暁", "Dawn Patrol", "Start five focus sessions before 7 am"),
+    ("s_birthday", "祝", "Birthday Scholar", "Focus on your birthday"),
+    ("s_iron", "鉄", "Iron Fox", "Focus for 6 hours in one day"),
+    ("s_comeback", "帰", "Welcome Back", "Come back after a week away and focus again"),
+    ("s_legend", "伝", "Living Legend", "Catch a legendary fish"),
+    ("s_kyubi", "尾", "Nine Tails", "Reach the Village of Nine Tails"),
+]
+BADGE_TIER_BY_ID = dict((b[0], b) for b in BADGE_TIERED)
+BADGE_SECRET = set(b[0] for b in BADGE_SECRET_LIST)
+for _b in BADGE_TIERED:
+    BADGES.append((_b[0], _b[1], _b[2], _b[5].replace("{n}", "%d / %d / %d" % _b[4])))
+BADGES.extend(BADGE_NEW)
+BADGES.extend(BADGE_SECRET_LIST)
+BADGE_BY_ID.update((b[0], b) for b in BADGES)
+BADGE_TIER_COL = ["#5a5048", "#c27a3a", "#c9d1dc", "#f2c94c"]           # wood (none), bronze, silver, gold
+BADGE_TIER_NAME = ["", "Bronze", "Silver", "Gold"]
+
+
+# ---- painted maps for the new regions -----------------------------------------------------------------------------
+Z22_VIEWS = {"kyoto": (135.64, 135.83, 34.945, 35.075), "korea": (124.0, 131.6, 32.9, 39.4),
+             "china": (100.0, 125.5, 21.8, 43.2), "silk": (61.5, 113.5, 29.0, 47.0)}
+Z22_SEA = [(134.5, 43.6), (134.5, 17.0), (108.4, 17.0), (108.0, 21.6), (109.7, 21.5), (110.4, 20.3), (111.0, 21.5),
+           (113.5, 22.2), (114.3, 22.3), (116.5, 22.9), (118.2, 24.5), (119.6, 25.6), (120.0, 26.8), (121.0, 28.2),
+           (121.9, 29.9), (121.0, 30.6), (121.9, 31.0), (121.3, 32.2), (120.5, 33.5), (119.4, 34.6), (120.3, 36.0),
+           (121.0, 36.6), (122.6, 37.3), (121.2, 37.6), (119.5, 37.2), (118.9, 37.8), (117.8, 38.5), (117.7, 39.1),
+           (118.9, 39.1), (120.3, 40.0), (121.3, 40.8), (122.2, 40.4), (121.3, 39.6), (121.2, 38.8), (122.0, 39.1),
+           (123.6, 39.8), (124.4, 40.0), (125.0, 39.55), (125.4, 38.7), (124.8, 38.1), (125.5, 37.75), (126.3, 37.7),
+           (126.6, 37.2), (126.1, 36.7), (126.5, 36.0), (126.4, 35.3), (126.3, 34.6), (126.5, 34.3), (127.4, 34.5),
+           (128.4, 34.85), (129.0, 35.05), (129.35, 35.5), (129.5, 36.0), (129.4, 36.8), (129.2, 37.5), (128.6, 38.3),
+           (128.0, 39.0), (127.5, 39.3), (127.6, 39.8), (128.5, 40.0), (129.7, 40.8), (129.8, 41.4), (130.6, 42.3),
+           (131.0, 42.6), (131.8, 43.1), (132.6, 43.3)]
+Z22_ISLANDS = [
+    [(120.1, 23.0), (120.7, 22.0), (121.0, 22.6), (121.9, 24.5), (121.6, 25.3), (121.0, 25.0), (120.2, 23.8)],
+    [(108.6, 19.2), (109.6, 18.2), (110.8, 18.7), (111.0, 19.7), (110.3, 20.1), (109.2, 19.9)],
+    [(126.15, 33.3), (126.55, 33.2), (126.95, 33.45), (126.55, 33.57)],
+    [(129.6, 33.3), (130.3, 33.9), (131.0, 33.9), (131.9, 33.3), (131.6, 32.4), (131.3, 31.4), (130.6, 31.1),
+     (130.2, 31.5), (130.2, 32.4), (129.8, 32.8)],
+    [(130.9, 34.0), (131.4, 34.4), (132.5, 35.4), (134.5, 35.6), (134.5, 34.3), (132.0, 33.9)],
+    [(129.2, 34.1), (129.45, 34.7), (129.35, 34.15)],
+]
+Z22_LAKES = [(100.2, 36.9, 0.45, 0.2), (76.0, 46.5, 2.6, 0.35), (77.3, 42.4, 0.8, 0.2), (120.15, 31.2, 0.35, 0.25),
+             (116.3, 29.1, 0.3, 0.35)]
+Z22_DESERTS = [(83.5, 38.9, 6.8, 1.8), (105.0, 42.6, 8.5, 2.4), (63.8, 42.0, 3.0, 1.6), (101.0, 39.5, 3.0, 1.2)]
+Z22_HIGH = [(89.0, 32.5, 11.5, 3.6)]
+Z22_RANGES = [[(70.0, 41.3), (75.0, 41.8), (80.0, 42.3), (85.0, 43.0), (90.0, 43.3), (95.0, 43.2)],
+              [(75.5, 36.6), (80.0, 36.2), (85.0, 35.9), (90.0, 35.8), (95.0, 35.6), (100.0, 35.2)],
+              [(73.0, 38.6), (74.0, 37.6)], [(79.0, 30.2), (83.0, 29.0), (87.0, 28.0), (92.0, 27.8), (96.0, 28.6)],
+              [(104.0, 33.8), (107.0, 33.8), (110.0, 33.9), (112.0, 33.8)], [(127.5, 38.5), (128.3, 37.5), (128.9, 36.5)],
+              [(118.0, 30.1), (118.4, 30.2)], [(110.2, 25.3), (110.6, 25.0)], [(126.53, 33.36)]]
+Z22_RIVERS = [[(96, 35), (101, 36), (103.5, 36.1), (106, 37.5), (106.5, 39.5), (108, 40.8), (111, 40.4), (110.6, 38),
+               (110.4, 35.5), (113, 34.9), (116, 35.8), (118.8, 37.7)],
+              [(91, 33.5), (97, 32.5), (100, 29), (102.5, 26.5), (104.6, 28.8), (106.5, 29.6), (108.5, 30.8), (111.3, 30.7),
+               (113, 30), (114.3, 30.6), (116.9, 30.4), (118.8, 32), (121.5, 31.4)],
+              [(126.9, 37.6), (127.3, 37.5), (127.8, 37.6)], [(110.29, 25.27), (110.5, 24.8)]]
+Z22_MEMO = {}
+
+
+class RMap:
+    """lon/lat -> scene pixels for a rectangular view (equirectangular, squashed by latitude)."""
+
+    def __init__(self, w, h, view):
+        self.w, self.h = w, h
+        lo0, lo1, la0, la1 = view
+        self.LON0, self.LON1, self.LAT0, self.LAT1 = lo0, lo1, la0, la1
+        kx = math.cos(math.radians((la0 + la1) / 2.0))
+        gw, gh = (lo1 - lo0) * kx, (la1 - la0)
+        s = min((w - 4) / gw, (h - 4) / gh)
+        self.s, self.kx = s, kx
+        self.ox = (w - gw * s) / 2.0
+        self.oy = (h - gh * s) / 2.0
+        self.inset = (-99, -99, -98, -98)
+
+    def xy(self, lon, lat):
+        return self.ox + (lon - self.LON0) * self.kx * self.s, self.oy + (self.LAT1 - lat) * self.s
+
+    def ll(self, x, y):
+        return self.LON0 + (x - self.ox) / (self.kx * self.s), self.LAT1 - (y - self.oy) / self.s
+
+
+class SkyMap:
+    """The legends map: places sit at fractions of the painting."""
+
+    def __init__(self, w, h):
+        self.w, self.h, self.s = w, h, min(w, h) / 20.0
+        self.inset = (-99, -99, -98, -98)
+
+    def xy(self, x, y):
+        return x * self.w, y * self.h
+
+
+def _scan_fill(mask, w, h, pts, val=1):
+    ys = [p[1] for p in pts]
+    n = len(pts)
+    for y in range(max(0, int(min(ys))), min(h, int(max(ys)) + 1)):
+        yc = y + 0.5
+        xs = []
+        for k in range(n):
+            x0, y0 = pts[k]
+            x1, y1 = pts[(k + 1) % n]
+            if (y0 <= yc < y1) or (y1 <= yc < y0):
+                xs.append(x0 + (yc - y0) * (x1 - x0) / (y1 - y0))
+        xs.sort()
+        for k in range(0, len(xs) - 1, 2):
+            for x in range(max(0, int(round(xs[k]))), min(w, int(round(xs[k + 1])))):
+                mask[y * w + x] = val
+
+
+def z22_season_now():
+    try:
+        return z19_season()
+    except Exception:
+        m = datetime.date.today().month
+        return "winter" if m in (12, 1, 2) else ("spring" if m < 6 else ("summer" if m < 9 else "autumn"))
+
+
+def asia_scene(w, h, region):
+    """A painted map of Korea, China or the Silk Road: seigaiha sea, coasts with foam, deserts, the high plateau,
+    mountain ranges, the Yellow River and the Yangtze."""
+    key = ("asia", w, h, region)
+    if key in Z22_MEMO:
+        return Z22_MEMO[key]
+    R = _Ras(w, h)
+    P = RMap(w, h, Z22_VIEWS[region])
+    cell = max(8, int(min(w, h) / 26))
+    for y in range(h):
+        t = y / float(max(1, h - 1))
+        base = _lerp3((14, 20, 54), (20, 36, 82), t)
+        row = y // (cell // 2)
+        for x in range(w):
+            ox = (x + (cell // 2 if row % 2 else 0)) % cell - cell / 2.0
+            oy = (y % (cell // 2)) - cell / 2.0
+            d = math.sqrt(ox * ox + oy * oy) / (cell / 2.0)
+            c = base
+            if d <= 1.0 and (d * 3.0) % 1.0 < 0.22:
+                c = _lerp3(base, (60, 92, 150), 0.32)
+            i = (y * w + x) * 3
+            R.b[i], R.b[i + 1], R.b[i + 2] = c
+    mask = bytearray(b"\x01" * (w * h))
+    _scan_fill(mask, w, h, [P.xy(lo, la) for lo, la in Z22_SEA], 0)
+    for isl in Z22_ISLANDS:
+        _scan_fill(mask, w, h, [P.xy(lo, la) for lo, la in isl], 1)
+    for (lo, la, rx, ry) in Z22_LAKES:
+        cx, cy = P.xy(lo, la)
+        rxp, ryp = rx * P.kx * P.s, ry * P.s
+        for y in range(max(0, int(cy - ryp) - 1), min(h, int(cy + ryp) + 2)):
+            for x in range(max(0, int(cx - rxp) - 1), min(w, int(cx + rxp) + 2)):
+                if ((x + 0.5 - cx) / max(0.6, rxp)) ** 2 + ((y + 0.5 - cy) / max(0.6, ryp)) ** 2 <= 1:
+                    mask[y * w + x] = 0
+    zones = []
+    for (lo, la, rx, ry) in Z22_DESERTS:
+        cx, cy = P.xy(lo, la)
+        zones.append(("d", cx, cy, rx * P.kx * P.s, ry * P.s))
+    for (lo, la, rx, ry) in Z22_HIGH:
+        cx, cy = P.xy(lo, la)
+        zones.append(("h", cx, cy, rx * P.kx * P.s, ry * P.s))
+    for y in range(h):
+        for x in range(w):
+            i = y * w + x
+            if not mask[i]:
+                continue
+            nz = math.sin(x * 0.21 + y * 0.13) * math.sin(x * 0.07 - y * 0.19) + math.sin((x + y) * 0.05) * 0.5
+            c = (98, 142, 84) if nz < 0.2 else (84, 128, 76)
+            if _BAYER[y % 4][x % 4] < 2 and nz > 0.45:
+                c = (58, 98, 64)
+            for (k, cx, cy, rx, ry) in zones:
+                dd = ((x - cx) / max(1.0, rx)) ** 2 + ((y - cy) / max(1.0, ry)) ** 2
+                edge = 1.0 + 0.18 * math.sin(x * 0.3 + y * 0.2)
+                if dd < edge:
+                    if k == "d":
+                        c = (214, 182, 118) if (x * 3 + y * 5) % 11 else (196, 160, 96)
+                        if dd > edge * 0.8 and _BAYER[y % 4][x % 4] < 8:
+                            c = (170, 156, 96)
+                    else:
+                        c = (150, 140, 120) if nz > -0.2 else (128, 122, 112)
+                        if dd > edge * 0.85 and _BAYER[y % 4][x % 4] < 8:
+                            c = (120, 132, 96)
+            j = i * 3
+            R.b[j], R.b[j + 1], R.b[j + 2] = c
+    for y in range(1, h - 1):
+        for x in range(1, w - 1):
+            i = y * w + x
+            m = mask[i]
+            nb = mask[i - 1] + mask[i + 1] + mask[i - w] + mask[i + w]
+            if m and nb < 4:
+                R.put(x, y, (40, 46, 60))
+            elif not m and nb:
+                R.put(x, y, (150, 196, 220), 0.75)
+            elif not m and (mask[i - 2 if x > 1 else i] or mask[i + 2 if x < w - 2 else i] or
+                            (y > 1 and mask[i - 2 * w]) or (y < h - 2 and mask[i + 2 * w])):
+                if (x + y) % 2 == 0:
+                    R.put(x, y, (110, 150, 196), 0.45)
+    rw = max(1.0, P.s * 0.12)
+    for rv in Z22_RIVERS:
+        pts = [P.xy(lo, la) for lo, la in rv]
+        for k in range(len(pts) - 1):
+            R.line(pts[k][0], pts[k][1], pts[k + 1][0], pts[k + 1][1], (70, 120, 180), w=min(2.2, rw))
+    ms = max(3, int(min(9, P.s * 0.55)))
+
+    def peak(x, y, s):
+        for k in range(s):
+            yy = y - s + k
+            half = k * 0.95
+            R.rect(x - half, yy, x, yy + 1, (128, 120, 132))
+            R.rect(x, yy, x + half + 1, yy + 1, (92, 86, 104))
+            if k < s * 0.35:
+                R.rect(x - half, yy, x + half + 1, yy + 1, (240, 244, 255))
+    rnd = random.Random(region)
+    for rg in Z22_RANGES:
+        pts = [P.xy(lo, la) for lo, la in rg]
+        if len(pts) == 1:
+            peak(pts[0][0], pts[0][1], ms + 1)
+            continue
+        for k in range(len(pts) - 1):
+            (x0, y0), (x1, y1) = pts[k], pts[k + 1]
+            n = max(1, int(math.hypot(x1 - x0, y1 - y0) / (ms * 1.3)))
+            for j in range(n):
+                t = j / float(n)
+                x, y = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t + rnd.uniform(-1, 1)
+                if 0 <= int(x) < w and 0 <= int(y) < h and mask[int(y) * w + int(x)]:
+                    peak(x, y, ms + rnd.randint(-1, 1))
+    for (cx, cy, cw) in ((0.86, 0.12, 0.12), (0.10, 0.86, 0.13)):
+        x0, y0, ww = w * cx, h * cy, w * cw
+        hh = max(4, ww * 0.16)
+        for (dx, r) in ((0.0, 0.55), (0.32, 0.8), (0.62, 0.62), (0.88, 0.45)):
+            R.disc(x0 + dx * ww, y0, hh * r * 1.2, (186, 150, 82), sy=0.62)
+        for (dx, r) in ((0.0, 0.55), (0.32, 0.8), (0.62, 0.62), (0.88, 0.45)):
+            R.disc(x0 + dx * ww, y0 - 1, hh * r * 1.05, (232, 198, 120), sy=0.55)
+    Z22_MEMO[key] = (R, P)
+    lru_trim(Z22_MEMO, 8)
+    return R, P
+
+
+def kyoto_scene(w, h, season=None):
+    """Kyoto from above: the green basin with its hills, the Kamo and Katsura rivers, the old grid of streets and
+    trees in the colours of the season (sakura, green, maple or snow)."""
+    season = season or z22_season_now()
+    key = ("kyoto", w, h, season)
+    if key in Z22_MEMO:
+        return Z22_MEMO[key]
+    R = _Ras(w, h)
+    P = RMap(w, h, Z22_VIEWS["kyoto"])
+    tree = {"spring": [(246, 178, 206), (230, 140, 180), (252, 214, 228)], "summer": [(70, 132, 74), (52, 110, 62), (96, 150, 84)],
+            "autumn": [(214, 96, 46), (188, 58, 38), (232, 150, 60)], "winter": [(236, 240, 250), (206, 214, 232), (250, 252, 255)]}[season]
+    flat = (176, 168, 138) if season != "winter" else (214, 218, 228)
+    hill = (72, 110, 74) if season != "winter" else (170, 182, 200)
+    roofs = [(128, 112, 104), (112, 100, 96), (142, 122, 106), (98, 92, 96)] if season != "winter" else \
+        [(226, 230, 240), (210, 216, 230), (238, 240, 248), (200, 206, 222)]
+    street = _lerp3(flat, (236, 228, 206), 0.45) if season != "winter" else (240, 242, 248)
+    park = (96, 140, 86) if season != "winter" else (222, 228, 240)
+
+    def hsh(a, b, c=0):
+        v = (a * 73856093) ^ (b * 19349663) ^ (c * 83492791)
+        return ((v ^ (v >> 13)) * 1274126177 & 0xffffffff) / 4294967296.0
+    for y in range(h):
+        for x in range(w):
+            lon, lat = P.ll(x, y)
+            # hills: Higashiyama (east), Arashiyama (west), Kitayama (north)
+            e = max(0.0, (lon - 135.786) / 0.02) + max(0.0, (135.69 - lon) / 0.02) + max(0.0, (lat - 35.052) / 0.012)
+            e += 0.25 * math.sin(x * 0.15) * math.sin(y * 0.11)
+            if e > 0.55:
+                c = _lerp3(hill, _shade(hill, 0.72), min(1.0, (e - 0.55) * 0.6))
+                cx, cy = x // 5, y // 5
+                if hsh(cx, cy) < 0.13:                                   # tree crowns, the season's colour
+                    dx, dy = x - cx * 5 - 2, y - cy * 5 - 2
+                    if dx * dx + dy * dy <= 4:
+                        c = _lerp3(tree[int(hsh(cx, cy, 1) * 3)], hill, 0.35)
+                        if dy < 0 and dx < 0:
+                            c = _shade(c, 1.12)
+            else:
+                gx, gy = (lon - 135.64) / 0.0075, (lat - 34.945) / 0.0062
+                fx, fy = gx - math.floor(gx), gy - math.floor(gy)
+                if min(fx, 1 - fx) < 0.06 or min(fy, 1 - fy) < 0.06:
+                    c = street
+                else:
+                    bx, by = int(math.floor(gx)), int(math.floor(gy))
+                    kind = hsh(bx, by)
+                    if kind < 0.12:                                      # a temple garden
+                        c = park
+                        if hsh(x // 3, y // 3, 7) < 0.3:
+                            c = _lerp3(tree[int(hsh(x // 3, y // 3, 8) * 3)], park, 0.3)
+                    else:                                                # rows of machiya roofs
+                        sub = int(fy * 5)
+                        rc = roofs[int(hsh(bx, by, sub) * 4)]
+                        c = _shade(rc, 0.86) if (fy * 5) % 1 < 0.18 else rc
+                        if (fy * 5) % 1 > 0.82:
+                            c = _shade(rc, 1.1)
+                        if season != "winter" and hsh(x // 2, y // 2, 3) < 0.012:
+                            c = _lerp3(tree[1], rc, 0.4)
+            i = (y * w + x) * 3
+            R.b[i], R.b[i + 1], R.b[i + 2] = c
+    water = (70, 120, 180) if season != "winter" else (110, 140, 190)
+    kamo = [(135.762, 35.075), (135.768, 35.05), (135.772, 35.03), (135.771, 35.0), (135.768, 34.975), (135.762, 34.945)]
+    katsura = [(135.66, 35.03), (135.675, 35.012), (135.69, 34.99), (135.705, 34.96), (135.715, 34.945)]
+    for rv, wd in ((kamo, max(1.5, w / 170.0)), (katsura, max(2.0, w / 130.0))):
+        pts = [P.xy(lo, la) for lo, la in rv]
+        for k in range(len(pts) - 1):
+            R.line(pts[k][0], pts[k][1], pts[k + 1][0], pts[k + 1][1], water, w=wd)
+    # the palace park
+    x0, y0 = P.xy(135.758, 35.03)
+    x1, y1 = P.xy(135.765, 35.018)
+    R.rect(x0, y0, x1, y1, park)
+    # light snow or petals drifting over everything
+    rnd = random.Random(7)
+    if season in ("winter", "spring"):
+        col = (255, 255, 255) if season == "winter" else (255, 206, 226)
+        for _ in range(int(w * h / 90)):
+            R.put(rnd.randrange(w), rnd.randrange(h), col, 0.7)
+    Z22_MEMO[key] = (R, P)
+    return R, P
+
+
+def myth_scene(w, h):
+    """The legends: a night sky over a sea of clouds, the Moon and its palace, Kunlun's peaks, Penglai in the mist,
+    the glow of the Dragon Palace under the waves and a cloud plain high above."""
+    key = ("myth", w, h)
+    if key in Z22_MEMO:
+        return Z22_MEMO[key]
+    R = _Ras(w, h)
+    P = SkyMap(w, h)
+    rnd = random.Random(42)
+    sea_y = int(h * 0.74)
+    for y in range(h):
+        t = y / float(max(1, h - 1))
+        for x in range(w):
+            if y < sea_y:
+                c = _lerp3((10, 12, 38), (44, 40, 96), t / 0.74)
+                if _BAYER[y % 4][x % 4] < 2 and math.sin(x * 0.05 + y * 0.09) > 0.6:
+                    c = _shade(c, 1.12)
+            else:
+                tt = (y - sea_y) / float(max(1, h - sea_y))
+                c = _lerp3((26, 52, 104), (8, 18, 52), tt)
+                if (x + int(4 * math.sin(y * 0.6))) % 14 == 0:
+                    c = _lerp3(c, (90, 140, 200), 0.4)
+            i = (y * w + x) * 3
+            R.b[i], R.b[i + 1], R.b[i + 2] = c
+    for _ in range(int(w * h / 160)):
+        x, y = rnd.randrange(w), rnd.randrange(int(sea_y * 0.9))
+        R.put(x, y, (255, 246, 220), rnd.uniform(0.4, 1.0))
+    # the moon
+    mx, my, mr = w * 0.86, h * 0.13, max(8, min(w, h) * 0.1)
+    R.disc(mx, my, mr * 1.9, (120, 110, 160), 0.12)
+    R.disc(mx, my, mr, (244, 236, 206))
+    for (dx, dy, r) in ((-0.3, -0.2, 0.18), (0.25, 0.15, 0.14), (-0.05, 0.35, 0.1)):
+        R.disc(mx + dx * mr, my + dy * mr, r * mr, (220, 208, 176))
+    # Kunlun's peaks on the left
+    for (px, py, s) in ((0.3, 0.42, 0.22), (0.38, 0.47, 0.16), (0.22, 0.5, 0.15)):
+        cx, cy, ss = px * w, py * h, s * h
+        R.poly([(cx - ss * 0.8, cy + ss * 0.6), (cx, cy - ss * 0.6), (cx + ss * 0.8, cy + ss * 0.6)], (70, 74, 120))
+        R.poly([(cx - ss * 0.25, cy - ss * 0.2), (cx, cy - ss * 0.6), (cx + ss * 0.25, cy - ss * 0.2)], (230, 236, 255))
+    # sea of clouds, gold-trimmed (byōbu screen style)
+    for k in range(9):
+        cx, cy, cw = rnd.uniform(0.0, 1.0) * w, rnd.uniform(0.5, 0.7) * h, rnd.uniform(0.12, 0.22) * w
+        hh = max(4, cw * 0.18)
+        for (dx, r) in ((0.0, 0.55), (0.32, 0.8), (0.62, 0.62), (0.88, 0.45)):
+            R.disc(cx + dx * cw, cy, hh * r * 1.2, (186, 150, 82), sy=0.62)
+        for (dx, r) in ((0.0, 0.55), (0.32, 0.8), (0.62, 0.62), (0.88, 0.45)):
+            R.disc(cx + dx * cw, cy - 1, hh * r * 1.05, (232, 214, 170), sy=0.55)
+    # the cloud plain of Takamagahara
+    for k in range(6):
+        R.disc(w * (0.56 + k * 0.04), h * 0.27, h * 0.045, (210, 206, 236), sy=0.5)
+    # Penglai: a misty island
+    ix, iy = w * 0.17, h * 0.66
+    R.disc(ix, iy, w * 0.07, (52, 96, 86), sy=0.45)
+    R.poly([(ix - w * 0.03, iy - 2), (ix, iy - h * 0.12), (ix + w * 0.03, iy - 2)], (70, 120, 96))
+    R.disc(ix, iy - h * 0.02, w * 0.09, (220, 230, 250), 0.18, sy=0.4)
+    # the Dragon Palace glowing under the water
+    gx, gy = w * 0.52, h * 0.86
+    for r, a in ((0.12, 0.10), (0.08, 0.16), (0.045, 0.3)):
+        R.disc(gx, gy, w * r, (120, 230, 220), a, sy=0.45)
+    R.rect(gx - w * 0.03, gy - h * 0.03, gx + w * 0.03, gy, (180, 40, 40))
+    R.poly([(gx - w * 0.045, gy - h * 0.03), (gx, gy - h * 0.06), (gx + w * 0.045, gy - h * 0.03)], (40, 120, 110))
+    # foxfire over the Village of Nine Tails
+    for k in range(9):
+        fx, fy = w * (0.84 + 0.11 * math.cos(k * 0.7)), h * (0.48 + 0.08 * math.sin(k * 1.3))
+        R.disc(fx, fy, 3.2, (110, 200, 255), 0.35)
+        R.disc(fx, fy, 1.4, (220, 246, 255))
+    Z22_MEMO[key] = (R, P)
+    return R, P
+
+
+# ---- the Town square: a small global chat for Zenko users --------------------------------------------------------
+# It needs no account and no server of your own: messages go through ntfy.sh, a free public message relay (or any ntfy
+# server you type in Settings). Messages are public to every Zenko user who is online and disappear after about 12 h.
+# Safety lives in every copy of Zenko: usernames only, links and contact details are removed, rude words are
+# hidden, slow mode, block, and a report button (three reports hide a message for everyone).
+SQUARE_SERVER = "https://ntfy.sh"
+SQUARE_TOPIC = "zenko_town_square_v1_7f3c1a"
+SQUARE_SLOW = 15                     # seconds between your own messages
+SQUARE_MAX = 240                     # characters per message
+SQUARE_HIDE_AT = 3                   # reports from different people before a message is hidden for everyone
+_SQ_BAD = ["fuck", "shit", "bitch", "cunt", "dick", "pussy", "slut", "whore", "fag", "retard", "rape", "kys", "porn",
+           "kill yourself", "kill urself"]
+_SQ_STEM = ["nigg", "fuck", "porn"]
+_SQ_BAD_RE = re.compile(r"\b(?:%s)(?:s|es|ed|ing|er|ers|y)?\b|\b(?:%s)\w*" % ("|".join(re.escape(w) for w in _SQ_BAD),
+                                                                          "|".join(_SQ_STEM)), re.I)
+_SQ_CONTACT = re.compile(r"(https?://\S+|www\.\S+|\b\S+\.(?:com|net|org|io|gg|me|ly|co|xyz|app)\b\S*|"
+                         r"\b[\w.+-]+@[\w-]+\.[\w.]+\b|\+?\d[\d\s().-]{7,}\d|\b(?:snap(?:chat)?|insta(?:gram)?|discord|"
+                         r"whatsapp|telegram|tiktok)\b[:\s@]*\S*)", re.I)
+
+
+def square_clean(text):
+    """What may be posted: one line, no links, phone numbers, emails or social handles, rude words starred out."""
+    t = re.sub(r"\s+", " ", text or "").strip()[:SQUARE_MAX]
+    t = _SQ_CONTACT.sub("[removed]", t)
+    t = _SQ_BAD_RE.sub(lambda m: m.group(0)[0] + "*" * (len(m.group(0)) - 1), t)
+    return t
+
+
+def square_name_ok(name):
+    n = re.sub(r"[^A-Za-z0-9_\-. ]", "", name or "").strip()[:18]
+    if len(n) < 3:
+        return None
+    if square_clean(n) != n:
+        return None
+    return n
+
+
+def square_tag(uid):
+    import hashlib as _h
+    return _h.sha1(("zenko-square/" + (uid or "")).encode()).hexdigest()[:4]
+
+
+class SquareLink:
+    """Listens to the square in the background (one long HTTP stream) and posts messages. All state for the UI is
+    in self.msgs (newest last); the UI polls it. Nothing here touches Tk."""
+
+    def __init__(self, server, topic):
+        self.server = (server or SQUARE_SERVER).rstrip("/")
+        self.topic = topic or SQUARE_TOPIC
+        self.msgs = []                   # dicts: id, uid, name, text, ts
+        self.reports = {}                # msg id -> set of reporter uids
+        self.state = "off"               # off, connecting, live, error
+        self.err = ""
+        self.stop_ev = threading.Event()
+        self.thread = None
+        self.changed = 0
+        self.lock = threading.Lock()
+
+    def start(self):
+        if self.thread and self.thread.is_alive():
+            return
+        self.stop_ev.clear()
+        self.thread = threading.Thread(target=self.run, daemon=True)
+        self.thread.start()
+
+    def stop(self):
+        self.stop_ev.set()
+        self.state = "off"
+
+    def run(self):
+        backoff = 3
+        since = "12h"
+        while not self.stop_ev.is_set():
+            self.state = "connecting"
+            try:
+                url = "%s/%s,%s_reports/json?since=%s" % (self.server, self.topic, self.topic, since)
+                req = urllib.request.Request(url, headers={"User-Agent": "Zenko/" + APP_VERSION})
+                with urllib.request.urlopen(req, timeout=75) as r:
+                    self.state = "live"
+                    backoff = 3
+                    for raw in r:
+                        if self.stop_ev.is_set():
+                            return
+                        try:
+                            ev = json.loads(raw.decode("utf-8", "replace"))
+                        except ValueError:
+                            continue
+                        if ev.get("event") != "message":
+                            continue
+                        since = ev.get("id") or since
+                        self.take(ev)
+            except Exception as ex:
+                if self.stop_ev.is_set():
+                    return
+                self.state, self.err = "error", str(ex)[:120]
+                self.stop_ev.wait(backoff)
+                backoff = min(60, backoff * 2)
+
+    def take(self, ev):
+        try:
+            body = json.loads(ev.get("message") or "{}")
+        except ValueError:
+            return
+        if not isinstance(body, dict) or body.get("z") != 1:
+            return
+        with self.lock:
+            if body.get("rep"):
+                s = self.reports.setdefault(str(body["rep"])[:40], set())
+                s.add(str(body.get("by", ""))[:40])
+            else:
+                text = square_clean(str(body.get("t", "")))
+                name = square_name_ok(str(body.get("n", ""))) or "fox"
+                if not text:
+                    return
+                m = {"id": ev.get("id", ""), "uid": str(body.get("u", ""))[:40], "name": name, "text": text,
+                     "ts": float(ev.get("time") or time.time())}
+                if any(x["id"] == m["id"] for x in self.msgs[-50:]):
+                    return
+                self.msgs.append(m)
+                self.msgs = self.msgs[-300:]
+            self.changed += 1
+
+    def post(self, uid, name, text, rep=None):
+        body = {"z": 1, "u": uid}
+        topic = self.topic
+        if rep:
+            body.update({"rep": rep, "by": uid})
+            topic = self.topic + "_reports"
+        else:
+            body.update({"n": name, "t": text})
+        data = json.dumps(body).encode("utf-8")
+        req = urllib.request.Request("%s/%s" % (self.server, topic), data=data, method="POST",
+                                     headers={"User-Agent": "Zenko/" + APP_VERSION, "Content-Type": "text/plain"})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            r.read()
+        return True
+
+
+# ---- garden decor sprites (rewards from the world map) -------------------------------------------------------------
+Z22_DECOR_ART = {
+    "deer": (["..........b.b...", "...........bb...", "..........bBB...", ".........BBBBk..", ".........BBB....",
+              "..BBBBBBBBB.....", ".BBwBBwBBBB.....", ".BBBBBBBBBB.....", "..BBwBBBBB......", "..B.B...B.B.....",
+              "..B.B...B.B.....", "..d.d...d.d....."],
+             {"B": "#a8693a", "w": "#f1e2c6", "b": "#d8c3a0", "k": "#2a1a12", "d": "#3a2418"}),
+    "seatorii": (["############", ".##########.", "..#......#..", ".##########.", "..#......#..", "..#......#..",
+                  "..#......#..", "..#......#..", "~~#~~~~~~#~~", ".~~......~~."],
+                 {"#": "#e0442e", "~": "#9fc4ff"}),
+    "momiji": (["...rRr.Rr....", "..rRrRRrRr...", ".RrRoRrRoRr..", "rRoRrRRrRoRr.", ".rRrRoRrRrR..", "..rRrRRrRr...",
+                "....rR#Rr....", "......#......", "......#......", ".....##......", "....#..#....."],
+               {"r": "#c8372d", "R": "#e8643a", "o": "#f2a33a", "#": "#5a3a24"}),
+    "cheong": (["...KK...", "...KK...", "..KKKK..", ".BBBBBB.", ".BBBBBB.", ".RRRRRR.", ".RRYRRR.", ".RRRRRR.", "..KKKK..",
+                "...KK...", "...KK...", "...KK...", "..KKKK.."],
+               {"B": "#2f5aa8", "R": "#d0383a", "Y": "#ffe08a", "K": "#3a2a20"}),
+    "pine": (["..GGGGG.GGGG....", ".GGgGGGGGgGGG...", "...GGGG.GG......", "......##........", "....GGG##GGGG...",
+              "...GGgGGG#GgGG..", ".......#........", ".......##.......", "........#.......", ".......##.......",
+              "......####......"],
+             {"G": "#3f7a4c", "g": "#6aa86a", "#": "#6a4a30"}),
+    "camel": (["...........cc...", "..........cCC...", "..CC..CC..C.....", ".CCCCCCCCCC.....", "CCCCCCCCCCC.....",
+               ".CCCCCCCCC......", "..C.C..C.C......", "..C.C..C.C......", "..d.d..d.d......"],
+              {"C": "#c89a5a", "c": "#a8784a", "d": "#5a3a24"}),
+    "rabbit": (["..WW..........", "..WW.W........", "..WWWW........", ".WWWWWk.......", ".WWWWWW...P...", "WWWWWWW..P....",
+                "WWWWWWW.MMMM..", ".WWWWW..MMMM..", "..W..W...MM..."],
+               {"W": "#e8f4ec", "k": "#d04060", "P": "#a8784a", "M": "#3fae7a"}),
+    "kitsune": (["..S......S..", "..SS....SS..", "..SSSSSSSS..", "..SkSSSSkS..", "..SSSSSSSS..", "...SSSSSS...",
+                 "...RRRRRR...", "..SRRRRRRS..", "..SSSSSSSS..", "SSSSSSSSSSSS", "..SSSSSSSS..", "..SSSSSSSS..",
+                 ".DDDDDDDDDD.", ".DDDDDDDDDD."],
+                {"S": "#b8b4ac", "k": "#3a3a40", "R": "#d0383a", "D": "#7a766e"}),
+}
+Z22_PIN = ["..###..", ".##+##.", "##+++##", "##+++##", ".##+##.", "..###..", "...#...", "...#..."]
+
+
+def z22_moon_age(dt=None):
+    """Days since the last new moon (0..29.5), from a known new moon and the synodic month."""
+    dt = dt or datetime.datetime.now()
+    ref = datetime.datetime(2000, 1, 6, 18, 14)
+    return ((dt - ref).total_seconds() / 86400.0) % 29.530588853
+
+
+class Zenko22(Zenko21):
+    """zenko22: koi fishing, journeys beyond Japan, many more ema badges, a bubble that grows with her, the Town square
+    and a stronger link with Zenko Browser."""
+
+    def __init__(self):
+        self._z22_fish = None            # a cast in progress
+        self._z22_book = None            # the koi book window
+        self._sq = None                  # Town square connection
+        self._sq_ui = None
+        self._zb_seen = {"title": None, "t": 0.0, "noted": 0.0}
+        self._z22_metrics_t = 0.0
+        super().__init__()
+        try:
+            self.z22_migrate()
+        except Exception as ex:
+            zk_log_error("z22 migrate: %r" % (ex,))
+        try:
+            self.z22_apply_rewards()
+        except Exception as ex:
+            zk_log_error("z22 rewards: %r" % (ex,))
+        self.root.after(7000, self.z22_link_tick)
+        self.root.after(30000, self.z22_badge_tick)
+        if self.cfg.get("square_on"):
+            self.root.after(15000, self.square_connect)
+
+    # =================================================================================================================
+    #  data
+    # =================================================================================================================
+    def fishing(self):
+        F = self.life.setdefault("fishing", {})
+        F.setdefault("bait", 5.0)
+        F.setdefault("gold", 0)
+        F.setdefault("book", {})            # fish id -> {"n", "best", "first", "seed"}
+        F.setdefault("log", [])             # recent catches
+        F.setdefault("pond", [])            # [fish id, seed] swimming in the pond
+        F.setdefault("right", 0)
+        F.setdefault("asked", 0)
+        F.setdefault("row", 0)
+        F.setdefault("free_day", "")
+        F.setdefault("depth", 1)
+        F.setdefault("src", "mix")
+        F.setdefault("subj", "any")
+        return F
+
+    def z22_migrate(self):
+        L = self.life
+        st = L.setdefault("stats", {})
+        if "sessions" not in st or "lockins" not in st:
+            log = self.garden().get("log", []) if hasattr(self, "garden") else []
+            st.setdefault("sessions", sum(1 for e in log if e.get("k") == "focus"))
+            st.setdefault("lockins", sum(1 for e in log if e.get("k") == "lockin"))
+        L.setdefault("btier", {})
+        L.setdefault("badge_pins", [])
+        J = self.journey()
+        J.setdefault("quiz", [])            # places whose quiz you passed
+        self.fishing()
+        self.life_save()
+
+    # =================================================================================================================
+    #  study hooks: bait, counters, secret badges
+    # =================================================================================================================
+    def garden_add(self, minutes, kind):
+        r = super().garden_add(minutes, kind)
+        try:
+            F = self.fishing()
+            F["bait"] = min(99.0, float(F.get("bait", 0)) + max(0.0, minutes) / 10.0)   # one bait per 10 minutes
+            if kind == "lockin" and minutes >= 25:
+                F["gold"] = min(20, int(F.get("gold", 0)) + 1)
+            self.life_save()
+        except Exception as ex:
+            zk_log_error("bait: %r" % (ex,))
+        return r
+
+    def life_session_done(self, s, completed, focused):
+        r = super().life_session_done(s, completed, focused)
+        try:
+            if completed and s.get("elapsed", 0) >= 60:
+                self.stat_add("sessions")
+                now = datetime.datetime.now()
+                started = now - datetime.timedelta(seconds=s["elapsed"])
+                if started.hour < 7 and started.hour >= 4:
+                    if self.stat_add("dawn") >= 5:
+                        self.award("s_dawn")
+                for k in range(0, int(s["elapsed"]) + 1, 600):
+                    t = started + datetime.timedelta(seconds=k)
+                    if t.hour == 3:
+                        self.award("s_3am")
+                        break
+                self.z22_day_secrets(now)
+            self.z22_badge_check()
+        except Exception as ex:
+            zk_log_error("z22 session hooks: %r" % (ex,))
+        return r
+
+    def lockin_stop(self, done=False, quiet=False):
+        L = self.lockin
+        r = super().lockin_stop(done, quiet)
+        if L and done:
+            try:
+                self.stat_add("lockins")
+                self.z22_day_secrets(datetime.datetime.now())
+                self.z22_badge_check()
+            except Exception as ex:
+                zk_log_error("z22 lockin hooks: %r" % (ex,))
+        return r
+
+    def z22_day_secrets(self, now):
+        d = now.date()
+        if (d.month, d.day) == (1, 1):
+            self.award("s_newyear")
+        if d.weekday() == 4 and d.day == 13:
+            self.award("s_fri13")
+        age = z22_moon_age(now)
+        if 13.8 <= age <= 15.8 and (now.hour >= 18 or now.hour < 5):
+            self.award("s_fullmoon")
+        bd = (self.life.get("facts") or {}).get("birthday")
+        if bd and bd == now.strftime("%m-%d"):
+            self.award("s_birthday")
+
+    # =================================================================================================================
+    #  ema badges: tiers, secrets, pins
+    # =================================================================================================================
+    def z22_metrics(self):
+        L = self.life
+        st = L.get("stats", {})
+        F = self.fishing()
+        J = self.journey()
+        hrs, got, nxt = self.journey_state()
+        M = {"fish": sum(int(v.get("n", 0)) for v in F["book"].values()), "species": len(F["book"]),
+             "places": len(got), "quizzes": len(J.get("quiz", [])), "reviews": int(st.get("reviews", 0)),
+             "sessions": int(st.get("sessions", 0)), "lockins": int(st.get("lockins", 0)), "hours": hrs,
+             "breaths": int(st.get("breaths", 0)), "checkins": len(L.get("journal", [])), "fishq": int(F.get("right", 0))}
+        try:
+            M["trees"] = len(self.garden().get("grove", []))
+        except Exception:
+            M["trees"] = 0
+        try:
+            stats = load_stats()
+            days = sorted(k for k, v in stats.items() if re.match(r"^\d{4}-\d\d-\d\d$", k) and v >= 600)
+            best, run, prev = 0, 0, None
+            for k in days:
+                d = datetime.date.fromisoformat(k)
+                run = run + 1 if prev and (d - prev).days == 1 else 1
+                best, prev = max(best, run), d
+            M["beststreak"] = best
+        except Exception:
+            M["beststreak"] = 0
+        try:
+            n = 0
+            for root_, _dirs, files in os.walk(NB_DIR):
+                if os.sep + ".bin" in root_ + os.sep:
+                    continue
+                n += sum(1 for f in files if f.lower().endswith((".md", ".txt")))
+            M["notes"] = n
+        except Exception:
+            M["notes"] = 0
+        try:
+            tot = {}
+            for day in (L.get("slog") or {}).values():
+                for sid, secs in day.items():
+                    tot[sid] = tot.get(sid, 0) + secs
+            ids = [d[0] for d in SUBJECT_DEFS]
+            M["subjects"] = min(tot.get(i, 0) for i in ids) / 3600.0 if ids else 0
+        except Exception:
+            M["subjects"] = 0
+        return M
+
+    def badge_tier(self, bid):
+        return int(self.life.get("btier", {}).get(bid, 0))
+
+    def z22_badge_tick(self):
+        try:
+            self.z22_badge_check()
+        except Exception as ex:
+            zk_log_error("badge tick: %r" % (ex,))
+        self.root.after(180000, self.z22_badge_tick)
+
+    def z22_badge_check(self):
+        if time.monotonic() - self._z22_metrics_t < 5:
+            return
+        self._z22_metrics_t = time.monotonic()
+        M = self.z22_metrics()
+        T_ = self.life.setdefault("btier", {})
+        for (bid, kanji, name, key, th, how) in BADGE_TIERED:
+            v = M.get(key, 0)
+            tier = sum(1 for t in th if v >= t)
+            old = int(T_.get(bid, 0))
+            if tier > old:
+                T_[bid] = tier
+                self.life_save()
+                if old == 0:
+                    self.award(bid)
+                else:
+                    line = "Your ema 【%s】 %s turned %s! %s" % (kanji, name, BADGE_TIER_NAME[tier],
+                                                               how.replace("{n}", str(th[tier - 1])) + " ✓")
+                    self.root.after(2500, lambda l=line: (self.say(l, 9), beep("gift"), self.chat_line("Fox", l)))
+                    self.daily_refresh()
+        hrs, got, nxt = self.journey_state()
+        ids = set(p[0] for p in got)
+        if all(p[0] in ids for p in JMAP_PLACES):
+            self.award("japan")
+        reg = dict((r[0], [p[0] for p in JOURNEY_ALL if JOURNEY_REGION_OF.get(p[0]) == r[0]]) for r in JOURNEY_REGIONS)
+        if all(i in ids for i in reg["kyoto"]):
+            self.award("kyoto4")
+        if any(i in ids for i in reg["korea"]):
+            self.award("korea")
+        if any(i in ids for i in reg["china"]):
+            self.award("china")
+        if "bukhara" in ids:
+            self.award("silk")
+        if "guanghan" in ids:
+            self.award("moon")
+        if "kyubi" in ids:
+            self.award("s_kyubi")
+        quiz = set(self.journey().get("quiz", []))
+        if any(lst and all(i in quiz for i in lst) for lst in reg.values()):
+            self.award("passport")
+        try:
+            stats = load_stats()
+            today = datetime.date.today()
+            if stats.get(today.isoformat(), 0) >= 6 * 3600:
+                self.award("s_iron")
+            for back in range(0, 14):
+                d = today - datetime.timedelta(days=back)
+                if d.weekday() == 6 and stats.get(d.isoformat(), 0) >= 600 and \
+                        stats.get((d - datetime.timedelta(days=1)).isoformat(), 0) >= 600:
+                    self.award("weekend")
+                    break
+            if stats.get(today.isoformat(), 0) >= 600:
+                gap = [stats.get((today - datetime.timedelta(days=k)).isoformat(), 0) < 600 for k in range(1, 8)]
+                before = any(v >= 600 for k, v in stats.items() if k < (today - datetime.timedelta(days=7)).isoformat()
+                             and re.match(r"^\d{4}-", k))
+                if all(gap) and before:
+                    self.award("s_comeback")
+            seen = set()
+            for k in range(7):
+                for sid, secs in (self.life.get("slog") or {}).get((today - datetime.timedelta(days=k)).isoformat(), {}).items():
+                    if secs >= 300:
+                        seen.add(sid)
+            if all(d[0] in seen for d in SUBJECT_DEFS):
+                self.award("allsix")
+        except Exception:
+            pass
+
+    def award(self, bid):
+        if bid in BADGE_TIER_BY_ID and self.badge_tier(bid) < 1:
+            self.life.setdefault("btier", {})[bid] = 1
+        r = super().award(bid)
+        if r:
+            try:
+                self.hub_side_draw()
+            except Exception:
+                pass
+        return r
+
+    def daily_badges_card(self, parent):
+        bg = T["card"]
+        c = self.hub_card(parent, "Ema badges")
+        c.pack(fill="x")
+        earned = self.life["badges"]
+        pins = self.life.setdefault("badge_pins", [])
+        top = tk.Frame(c, bg=bg)
+        top.pack(fill="x", padx=16, pady=(0, 4))
+        mode = tk.StringVar(value=self.cfg.get("badge_view", "all"))
+        tk.Label(top, text="%d of %d earned  ·  click an earned plaque to pin it to the sidebar (up to 3)" % (
+            sum(1 for b in BADGES if b[0] in earned), len(BADGES)), bg=bg, fg=GREY, font=(FONT_UI, 9), anchor="w",
+            justify="left").pack(side="left", fill="x", expand=True)
+        cv = tk.Canvas(c, height=200, bg=bg, highlightthickness=0)
+        cv.pack(fill="x", padx=12, pady=(2, 4))
+        tip = tk.Label(c, text="Hover a plaque to see how to earn it.", bg=bg, fg=GREY, font=(FONT_UI, 9), anchor="w",
+                       justify="left", wraplength=520)
+        tip.pack(fill="x", padx=16, pady=(0, 6))
+        seg = tk.Frame(c, bg=bg)
+        seg.pack(fill="x", padx=14, pady=(0, 12))
+        jp = _jp_font(self.root)
+        M_ = {}
+
+        def info(bid):
+            name, how = BADGE_BY_ID[bid][2], BADGE_BY_ID[bid][3]
+            got = bid in earned
+            if bid in BADGE_SECRET and not got:
+                return "A secret badge. Keep exploring and studying, and it might find you~"
+            if bid in BADGE_TIER_BY_ID:
+                tb = BADGE_TIER_BY_ID[bid]
+                if not M_:
+                    M_.update(self.z22_metrics())
+                v = M_.get(tb[3], 0)
+                tier = self.badge_tier(bid) if got else 0
+                nxt = tb[4][tier] if tier < 3 else None
+                prog = ("%d" % v) if isinstance(v, int) else ("%.1f" % v)
+                s = "%s%s: %s." % (name, " (%s)" % BADGE_TIER_NAME[tier] if tier else "", tb[5].replace("{n}", "/".join(str(x) for x in tb[4])))
+                return s + ("  You're at %s; %s at %d." % (prog, BADGE_TIER_NAME[tier + 1], nxt) if nxt else "  Gold! The very top~")
+            return ("%s - earned %s. %s" % (name, earned[bid], how)) if got else ("%s (locked): %s" % (name, how))
+
+        def draw(_e=None):
+            W = cv.winfo_width()
+            if W < 60:
+                return
+            cv.delete("all")
+            want = mode.get()
+            items = [b for b in BADGES if want == "all" or (want == "earned" and b[0] in earned)
+                     or (want == "tiers" and b[0] in BADGE_TIER_BY_ID) or (want == "secret" and b[0] in BADGE_SECRET)]
+            cw, chh = 74, 94
+            per = max(3, int((W - 4) // cw))
+            rows = max(1, (len(items) + per - 1) // per)
+            cv.configure(height=rows * chh + 4)
+            for i, (bid, kanji, name, how) in enumerate(items):
+                x, y = (i % per) * cw + 6, (i // per) * chh + 4
+                got = bid in earned
+                secret = bid in BADGE_SECRET and not got
+                tier = self.badge_tier(bid) if (got and bid in BADGE_TIER_BY_ID) else 0
+                wood = "#c98a35" if got else _mixhex(bg, "#000000", 0.25)
+                edge = BADGE_TIER_COL[tier] if tier else ("#7a4a1c" if got else LINE)
+                pts = [x + 31, y, x + 62, y + 14, x + 62, y + 60, x, y + 60, x, y + 14]
+                tg = "b%d" % i
+                cv.create_polygon(pts, fill=wood, outline=edge, width=3 if tier else 2, tags=tg)
+                cv.create_line(x + 22, y + 7, x + 40, y + 7, fill=self.SHU if got else LINE, width=2, tags=tg)
+                if tier:
+                    for k in range(tier):
+                        cx_ = x + 31 + (k - (tier - 1) / 2.0) * 9
+                        cv.create_oval(cx_ - 3, y + 50, cx_ + 3, y + 56, fill=BADGE_TIER_COL[tier], outline="#3a2414", tags=tg)
+                if bid in pins:
+                    cv.create_text(x + 56, y + 20, text="📌" if jp else "*", font=(FONT_UI, 8), fill=INK, tags=tg)
+                label = "?" if secret else (kanji if jp else name[:1])
+                cv.create_text(x + 31, y + 34, text=label, fill="#3a2414" if got else GREY,
+                               font=(jp or FONT_UI, 20 if jp else 16, "bold"), tags=tg)
+                cv.create_text(x + 31, y + 76, text="???" if secret else name, fill=INK if got else GREY,
+                               font=(FONT_UI, 7, "bold" if got else "normal"), width=cw - 4, tags=tg)
+                msg = info(bid)
+                cv.tag_bind(tg, "<Enter>", lambda e, m=msg: tip.config(text=m))
+                cv.tag_bind(tg, "<Leave>", lambda e: tip.config(text="Hover a plaque to see how to earn it."))
+                if got:
+                    cv.tag_bind(tg, "<Button-1>", lambda e, b=bid: pin(b))
+                    cv.tag_bind(tg, "<Enter>", lambda e, m=msg: (tip.config(text=m), cv.configure(cursor="hand2")), add="+")
+                    cv.tag_bind(tg, "<Leave>", lambda e: cv.configure(cursor=""), add="+")
+
+        def pin(bid):
+            if bid in pins:
+                pins.remove(bid)
+            else:
+                if len(pins) >= 3:
+                    pins.pop(0)
+                pins.append(bid)
+            self.life_save()
+            ui_sound("tap")
+            draw()
+            try:
+                self.hub_side_draw()
+            except Exception:
+                pass
+
+        def setm(v):
+            mode.set(v)
+            self.cfg["badge_view"] = v
+            save_config(self.cfg)
+            for k, b in btns.items():
+                try:
+                    b.configure(bg=ORANGE if k == v else FIELD, fg=ON_ACC if k == v else INK)
+                except tk.TclError:
+                    pass
+            draw()
+        btns = {}
+        for k, lab in (("all", "All"), ("earned", "Earned"), ("tiers", "Bronze · Silver · Gold"), ("secret", "Secret")):
+            b = self.tt_btn(seg, lab, lambda k=k: setm(k), bg=ORANGE if mode.get() == k else FIELD,
+                            fg=ON_ACC if mode.get() == k else INK, size=9, padx=9, pady=1)
+            b.pack(side="left", padx=(0, 6))
+            btns[k] = b
+        cv.bind("<Configure>", draw)
+
+    # =================================================================================================================
+    #  koi fishing in the Zen garden pond
+    # =================================================================================================================
+    def fish_now(self):
+        """What the pond is like right now: night, rain, snow, season."""
+        code = (getattr(self, "wx", None) or {}).get("code")
+        rain = code in (51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99)
+        snow = code in (71, 73, 75, 77, 85, 86)
+        try:
+            part = z19_daypart()[0]
+        except Exception:
+            part = "night" if not 7 <= datetime.datetime.now().hour < 19 else "day"
+        return {"night": part == "night", "day": part in ("day", "dawn"), "rain": rain, "snow": snow,
+                "season": z22_season_now(), "part": part}
+
+    def fish_gear(self):
+        hrs = self.journey_hours()
+        rod = max(i for i, r in enumerate(FISH_RODS) if hrs >= r[2])
+        lan = max(i for i, l in enumerate(FISH_LANTERNS) if hrs >= l[2])
+        return rod, lan, hrs
+
+    def fish_can(self, f, now, depth, rod, lan):
+        c = f[6]
+        if c.get("night") and not now["night"]:
+            return False
+        if c.get("day") and now["night"]:
+            return False
+        if c.get("rain") and not now["rain"]:
+            return False
+        if c.get("snow_or_winter") and not (now["snow"] or now["season"] == "winter"):
+            return False
+        if c.get("season") and c["season"] != now["season"]:
+            return False
+        if lan < c.get("lantern", 0) or rod < c.get("rod", 0) or depth < c.get("depth", 1):
+            return False
+        if c.get("place"):
+            hrs, got, nxt = self.journey_state()
+            if c["place"] not in [p[0] for p in got]:
+                return False
+        return True
+
+    def fish_roll(self, depth, gold=False, row=0):
+        """Which fish bites: rarer with deeper water, a better rod, golden bait and a streak of right answers."""
+        now = self.fish_now()
+        rod, lan, hrs = self.fish_gear()
+        w = {1: [70, 24, 5, 1, 0], 2: [42, 33, 17, 6, 2], 3: [22, 28, 26, 16, 8]}[depth][:]
+        shift = rod * 4 + min(10, row * 2) + (12 if gold else 0)
+        for _ in range(shift):
+            for k in range(4):
+                if w[k] > 2:
+                    w[k] -= 1
+                    w[k + 1] += 1
+                    break
+        if gold:
+            w[3] *= 2
+            w[4] *= 2
+        rar = random.choices([1, 2, 3, 4, 5], weights=w)[0]
+        while rar >= 1:
+            pool = [f for f in FISH if f[3] == rar and self.fish_can(f, now, depth, rod, lan)]
+            if pool:
+                f = random.choice(pool)
+                lo, hi = f[7]
+                cm = round(random.triangular(lo, hi, lo + (hi - lo) * 0.4), 1)
+                return f, cm, now
+            rar -= 1
+        f = FISH_BY_ID["kohaku"]
+        return f, 30.0, now
+
+    def fish_question(self, depth, src, subj):
+        """A question for this cast: one of your flashcards (as multiple choice) or the built-in bank."""
+        F = self.fishing()
+        cards = [c for c in self.life.get("cards", []) if c.get("q") and c.get("a")]
+        use_cards = src == "cards" or (src == "mix" and len(cards) >= 4 and random.random() < 0.5)
+        if use_cards and len(cards) >= 4:
+            due = self.cards_due()
+            pool = due if due and random.random() < 0.7 else cards
+            card = random.choice(pool)
+            others = list({c["a"].strip() for c in cards if c["a"].strip().lower() != card["a"].strip().lower()})
+            random.shuffle(others)
+            if len(others) >= 3:
+                opts = [card["a"].strip()] + others[:3]
+                random.shuffle(opts)
+                return {"q": card["q"], "a": card["a"].strip(), "opts": opts, "card": card, "subj": card.get("subject", ""),
+                        "diff": depth}
+        bank = [q for q in FISH_QS if q[1] == depth and (subj in ("any", "", None) or q[0] == subj)]
+        if not bank:
+            bank = [q for q in FISH_QS if subj in ("any", "", None) or q[0] == subj] or FISH_QS
+        recent = F.setdefault("recent_q", [])
+        fresh = [q for q in bank if q[2] not in recent] or bank
+        q = random.choice(fresh)
+        recent.append(q[2])
+        del recent[:-40]
+        opts = [q[3]] + list(q[4])
+        random.shuffle(opts)
+        return {"q": q[2], "a": q[3], "opts": opts, "card": None, "subj": q[0], "diff": q[1]}
+
+    def fish_photo(self, fid, seed, L, zoom=1, angle=0.0, squash=1.0):
+        cache = self.__dict__.setdefault("_fish_img", {})
+        key = (fid, seed, L, zoom, round(angle, 3), squash)
+        img = cache.get(key)
+        if img is None:
+            px = fish_rgba(fid, seed, L, angle, squash)
+            img = tk.PhotoImage(data=base64.b64encode(_png(px, 1)))
+            if zoom > 1:
+                img = img.zoom(zoom, zoom)
+            cache[key] = img
+            if len(cache) > 600:
+                lru_trim(cache, 400)
+        return img
+
+    def fish_book_L(self, fid):
+        body = FISH_BY_ID[fid][4]
+        return {"medaka": 52, "gold": 76, "oar": 150, "catfish": 104}.get(body, 96)
+
+    # ---- the pond: your fish swimming, the decor you earned, and the cast ------------------------------------------
+    def garden_overlay_setup(self):
+        super().garden_overlay_setup()
+        ui = self.garden_ui
+        cv = ui["cv"]
+        for kq in ui.get("koi", []):                     # the old three little shapes make way for your real fish
+            for it in kq[:2]:
+                try:
+                    cv.delete(it)
+                except tk.TclError:
+                    pass
+        ui["koi"] = []
+        try:
+            self.z22_decor(ui)
+        except Exception as ex:
+            zk_log_error("garden decor: %r" % (ex,))
+        ui["swim"] = []
+        F = self.fishing()
+        pond = [p for p in F.get("pond", []) if p and p[0] in FISH_BY_ID][:6]
+        if not pond:
+            pond = [["kohaku", 1], ["higoi", 2], ["chagoi", 3]]
+        lay, z = ui["lay"], ui["z"]
+        pcx, pcy, prx, pry = lay["pond"]
+        rnd = random.Random(11)
+        for fid, seed in pond:
+            L = max(9, int(prx * (0.34 if FISH_BY_ID[fid][4] != "oar" else 0.7)))
+            if FISH_BY_ID[fid][4] == "medaka":
+                L = max(6, L // 2)
+            ui["swim"].append({"fid": fid, "seed": seed, "L": L, "x": rnd.uniform(-0.5, 0.5), "y": rnd.uniform(-0.4, 0.4),
+                               "a": rnd.uniform(0, 6.28), "turn": 0.0, "sp": rnd.uniform(0.0025, 0.0045), "item": None, "k": -1})
+        if self._z22_fish:
+            self._z22_fish["items"] = {}
+        cv.tag_raise("fx")
+
+    def z22_decor(self, ui):
+        cv, lay, z = ui["cv"], ui["lay"], ui["z"]
+        cv.delete("decor")
+        have = self.z22_unlocked("decor")
+        on = [k for k in (self.cfg.get("garden_decor") or list(have)) if k in have]
+        if not on:
+            return
+        rw, rh = ui["R"].w, ui["R"].h
+        pcx, pcy, prx, pry = lay["pond"]
+        spots = {"deer": (rw * 0.12, rh * 0.93), "seatorii": (pcx - prx * 0.45, pcy + pry * 0.2),
+                 "momiji": (rw * 0.06, lay["horizon"] + rh * 0.08), "cheong": (rw * 0.62, lay["horizon"] + rh * 0.06),
+                 "pine": (rw * 0.95, lay["horizon"] + rh * 0.07), "camel": (rw * 0.52, rh * 0.95),
+                 "rabbit": (rw * 0.25, rh * 0.96), "kitsune": (rw * 0.69, rh * 0.93)}
+        cache = ui.setdefault("decor_img", {})
+        for k in on:
+            if k not in spots:
+                continue
+            x, y = spots[k]
+            dz = max(1, z)
+            key = (k, dz, T.get("night"))
+            img = cache.get(key)
+            if img is None:
+                rows, pal = Z22_DECOR_ART[k]
+                img = cache[key] = sprite_photo([rows], pal, dz)
+            cv.create_image(x * z, y * z, image=img, anchor="s", tags=("decor", "fx"))
+
+    def garden_anim(self):
+        r = super().garden_anim()
+        ui = getattr(self, "garden_ui", None)
+        if ui and ui.get("anim_on") and ui.get("lay") is not None:
+            try:
+                self.z22_pond_frame(ui)
+            except tk.TclError:
+                pass
+            except Exception as ex:
+                zk_log_error("pond frame: %r" % (ex,))
+                ui["swim"] = []
+        return r
+
+    def z22_pond_frame(self, ui):
+        cv, lay, z = ui["cv"], ui["lay"], ui["z"]
+        pcx, pcy, prx, pry = lay["pond"]
+        t = time.monotonic()
+        fish = self._z22_fish
+        for s in ui.get("swim", []):
+            if fish and fish.get("phase") in ("wait", "bite") and fish.get("bx") is not None and not s.get("shy"):
+                dx, dy = fish["bx"] - s["x"], fish["by"] - s["y"]          # curious fish drift toward the bait
+                want = math.atan2(dy, dx)
+            else:
+                want = s["a"] + math.sin(t * 0.3 + s["seed"]) * 0.6
+            r = math.hypot(s["x"], s["y"] / 0.85)
+            if r > 0.72:
+                want = math.atan2(-s["y"], -s["x"])
+            d = (want - s["a"] + math.pi) % (2 * math.pi) - math.pi
+            s["a"] += max(-0.05, min(0.05, d * 0.06))
+            s["x"] += math.cos(s["a"]) * s["sp"]
+            s["y"] += math.sin(s["a"]) * s["sp"]
+            k = int(round((s["a"] % (2 * math.pi)) / (2 * math.pi) * 16)) % 16
+            x, y = (pcx + s["x"] * prx) * z, (pcy + s["y"] * pry) * z
+            if k != s["k"]:
+                img = self.fish_photo(s["fid"], s["seed"], s["L"], z, k * math.pi / 8, 0.5)
+                s["k"] = k
+                if s["item"] is None:
+                    s["item"] = cv.create_image(x, y, image=img, tags="fx")
+                else:
+                    cv.itemconfigure(s["item"], image=img)
+            cv.coords(s["item"], x, y)
+        if fish:
+            self.z22_cast_frame(ui, fish, t)
+
+    def z22_cast_frame(self, ui, fish, t):
+        cv, lay, z = ui["cv"], ui["lay"], ui["z"]
+        W, H = cv.winfo_width(), cv.winfo_height()
+        pcx, pcy, prx, pry = lay["pond"]
+        it = fish.setdefault("items", {})
+        tip = (W - 14, H * 0.45)
+        bx, by = (pcx + fish["bx"] * prx) * z, (pcy + fish["by"] * pry) * z
+        ph, el = fish["phase"], t - fish["t"]
+        if ph == "cast":
+            k = min(1.0, el / 0.7)
+            sx, sy = tip
+            x = sx + (bx - sx) * k
+            y = sy + (by - sy) * k - math.sin(k * math.pi) * H * 0.18
+            if k >= 1:
+                fish["phase"], fish["t"] = "wait", t
+                fish["bite_at"] = t + random.uniform(1.6, 4.2)
+                self.z22_ripple(ui, bx, by)
+                ui_sound("tap")
+        else:
+            x, y = bx, by
+            if ph == "wait":
+                y += math.sin(t * 3.2) * z * 0.6
+                if random.random() < 0.012:
+                    y += z * 1.2                                        # a nibble
+                    self.z22_ripple(ui, bx, by, small=True)
+                if t >= fish["bite_at"]:
+                    fish["phase"], fish["t"] = "bite", t
+                    self.z22_ripple(ui, bx, by)
+                    self.z22_ripple(ui, bx, by, delay=0.2)
+                    ui_sound("tap")
+                    self.root.after(380, self.fish_ask)
+            elif ph == "bite":
+                y += z * 2.4 + math.sin(t * 18) * z
+            elif ph in ("asking",):
+                y += z * 1.5 + math.sin(t * 9) * z * 0.6
+            elif ph in ("caught", "lost"):
+                y += -z * 2 * max(0.0, 1 - el * 3)
+        # the rod comes in from the bottom right, the line sags a little
+        if "rod" not in it:
+            it["rod"] = cv.create_line(0, 0, 0, 0, fill="#6a4a2a", width=max(3, z + 1), capstyle="round", tags="fx")
+            it["rod2"] = cv.create_line(0, 0, 0, 0, fill="#c9a26a", width=max(1, z - 1), capstyle="round", tags="fx")
+            it["line"] = cv.create_line(0, 0, 0, 0, 0, 0, fill="#e8eef8", width=1, smooth=True, tags="fx")
+            it["bob"] = cv.create_oval(0, 0, 0, 0, fill="#e0442e", outline="#fff6e8", width=1, tags="fx")
+            it["bob2"] = cv.create_rectangle(0, 0, 0, 0, fill="#fff6e8", outline="", tags="fx")
+            it["mark"] = cv.create_text(0, 0, text="!", fill=GOLD, font=(FONT_UI, max(12, 5 * z), "bold"), state="hidden",
+                                        tags="fx")
+        cv.coords(it["rod"], W + 6, H + 6, tip[0], tip[1])
+        cv.coords(it["rod2"], W + 6, H + 6, tip[0], tip[1])
+        sag = 0 if ph == "cast" else (H * 0.05 if ph == "wait" else H * 0.01)
+        cv.coords(it["line"], tip[0], tip[1], (tip[0] + x) / 2, (tip[1] + y) / 2 + sag, x, y)
+        r = max(2.5, z * 1.6)
+        under = ph == "bite" and int(t * 6) % 2 == 0
+        cv.coords(it["bob"], x - r, y - r, x + r, y + r)
+        cv.coords(it["bob2"], x - r * 0.9, y - r * 0.2, x + r * 0.9, y + r * 0.2)
+        cv.itemconfigure(it["bob"], state="hidden" if under else "normal")
+        cv.itemconfigure(it["bob2"], state="hidden" if under else "normal")
+        cv.coords(it["mark"], x, y - r - 6 * z)
+        cv.itemconfigure(it["mark"], state="normal" if ph in ("bite", "asking") else "hidden")
+        keep = []
+        for rp in fish.setdefault("ripples", []):
+            item, x0, y0, t0, big = rp
+            a = t - t0
+            if a < 0:
+                keep.append(rp)
+                continue
+            if a > 1.2:
+                cv.delete(item)
+                continue
+            rr = (3 + a * (16 if big else 7)) * z
+            cv.coords(item, x0 - rr, y0 - rr * 0.35, x0 + rr, y0 + rr * 0.35)
+            cv.itemconfigure(item, outline=_mixhex("#cfe2ff", "#0e1436", min(1.0, a / 1.2)))
+            keep.append(rp)
+        fish["ripples"] = keep
+        jump = fish.get("jump")
+        if jump:
+            a = t - jump["t"]
+            if a > 1.1:
+                cv.delete(jump["item"])
+                fish["jump"] = None
+            else:
+                k = a / 1.1
+                jx = bx + (jump["dx"] * k)
+                jy = by - math.sin(k * math.pi) * H * 0.22
+                cv.coords(jump["item"], jx, jy)
+                cv.tag_raise(jump["item"])
+
+    def z22_ripple(self, ui, x, y, small=False, delay=0.0):
+        fish = self._z22_fish
+        if not fish:
+            return
+        it = ui["cv"].create_oval(x, y, x, y, outline="#cfe2ff", width=1, tags="fx")
+        fish.setdefault("ripples", []).append([it, x, y, time.monotonic() + delay, not small])
+
+    def fish_cast(self):
+        ui = getattr(self, "garden_ui", None)
+        h = getattr(self, "hub", None)
+        if not ui or not h or h.get("page") != "garden" or ui.get("lay") is None:
+            self.open_hub("garden")
+            self.root.after(900, self.fish_cast)
+            return
+        if self._z22_fish and self._z22_fish.get("phase") not in ("done",):
+            return
+        F = self.fishing()
+        today = datetime.date.today().isoformat()
+        if F.get("free_day") != today:
+            F["free_day"], F["free_used"] = today, 0
+        free = int(F.get("free_used", 0)) < 3
+        gold = bool(self.cfg.get("fish_gold", False)) and int(F.get("gold", 0)) > 0
+        if not free and float(F.get("bait", 0)) < 1:
+            self.say("Out of bait~ Every 10 minutes of focus earns one, and you get 3 free casts each day.", 7)
+            return
+        if gold:
+            F["gold"] = int(F["gold"]) - 1
+        elif free:
+            F["free_used"] = int(F.get("free_used", 0)) + 1
+        else:
+            F["bait"] = float(F["bait"]) - 1
+        self.life_save()
+        depth = int(F.get("depth", 1) or 1)
+        a, rr = random.uniform(0, 6.28), random.uniform(0.1, 0.55)
+        self._z22_fish = {"phase": "cast", "t": time.monotonic(), "bx": math.cos(a) * rr, "by": math.sin(a) * rr * 0.8,
+                          "depth": depth, "gold": gold, "q": self.fish_question(depth, F.get("src", "mix"), F.get("subj", "any")),
+                          "items": {}, "ripples": []}
+        ui_sound("tap")
+        self.garden_panel()
+
+    def fish_clear(self):
+        ui = getattr(self, "garden_ui", None)
+        fish, self._z22_fish = self._z22_fish, None
+        if ui and fish:
+            cv = ui["cv"]
+            for v in list(fish.get("items", {}).values()):
+                try:
+                    cv.delete(v)
+                except tk.TclError:
+                    pass
+            for rp in fish.get("ripples", []):
+                try:
+                    cv.delete(rp[0])
+                except tk.TclError:
+                    pass
+            if fish.get("jump"):
+                try:
+                    cv.delete(fish["jump"]["item"])
+                except tk.TclError:
+                    pass
+        self.fish_card_close()
+
+    def fish_card_close(self):
+        ui = getattr(self, "garden_ui", None)
+        if ui and ui.get("fcard"):
+            try:
+                ui["cv"].delete(ui["fcard_item"])
+                ui["fcard"].destroy()
+            except tk.TclError:
+                pass
+            ui["fcard"] = None
+
+    def fish_card(self, build):
+        """A lacquer card in the middle of the garden picture (question, catch or escape)."""
+        ui = self.garden_ui
+        self.fish_card_close()
+        cv = ui["cv"]
+        bg = T["card"]
+        outer = tk.Frame(cv, bg=GOLD, padx=2, pady=2)
+        f = tk.Frame(outer, bg=bg, padx=18, pady=14)
+        f.pack(fill="both", expand=True)
+        build(f, bg)
+        W, H = cv.winfo_width(), cv.winfo_height()
+        ui["fcard"] = outer
+        ui["fcard_item"] = cv.create_window(W / 2, H * 0.46, window=outer, anchor="center")
+        try:
+            outer.focus_set()
+        except tk.TclError:
+            pass
+
+    def fish_ask(self):
+        fish = self._z22_fish
+        if not fish or fish["phase"] != "bite":
+            return
+        fish["phase"] = "asking"
+        q = fish["q"]
+        serif = _serif_font(self.root)
+        wl = 380
+
+        def build(f, bg):
+            top = tk.Frame(f, bg=bg)
+            top.pack(fill="x")
+            tk.Label(top, text="Bite! 掛かった", bg=bg, fg=GOLD, font=(FONT_TITLE or FONT_UI, 13, "bold")).pack(side="left")
+            stars = "★" * int(q.get("diff", 1)) + "☆" * (3 - int(q.get("diff", 1)))
+            sub = (self.sname(q["subj"], False) if q.get("subj") in [d[0] for d in SUBJECT_DEFS] else
+                   dict(FISH_Q_SUBJECTS).get(q.get("subj"), "")) or ("Your flashcards" if q.get("card") else "")
+            tk.Label(top, text="%s  %s" % (sub, stars), bg=bg, fg=GREY, font=(FONT_UI, 9)).pack(side="right")
+            tk.Label(f, text="Answer right to reel it in:", bg=bg, fg=GREY, font=(serif, 10, "italic"), anchor="w").pack(
+                fill="x", pady=(6, 2))
+            tk.Label(f, text=q["q"], bg=bg, fg=INK, font=(FONT_UI, 12, "bold"), wraplength=wl, justify="left",
+                     anchor="w").pack(fill="x", pady=(0, 10))
+            for i, o in enumerate(q["opts"]):
+                b = self.tt_btn(f, "%d   %s" % (i + 1, clip(o, 60)), lambda o=o: self.fish_answer(o), bg=FIELD, size=10,
+                                padx=12, pady=3)
+                b.pack(fill="x", pady=2)
+            tk.Label(f, text="Keys 1-4 work too  ·  Esc lets it go", bg=bg, fg=GREY, font=(FONT_UI, 8)).pack(pady=(8, 0))
+            f.master.bind("<Key>", lambda e: (self.fish_answer(q["opts"][int(e.char) - 1])
+                                              if e.char in "1234" and e.char and int(e.char) <= len(q["opts"]) else
+                                              (self.fish_answer(None) if e.keysym == "Escape" else None)))
+        self.fish_card(build)
+
+    def fish_answer(self, choice):
+        fish = self._z22_fish
+        if not fish or fish["phase"] != "asking":
+            return
+        q = fish["q"]
+        F = self.fishing()
+        ok = choice is not None and choice.strip().lower() == q["a"].strip().lower()
+        F["asked"] = int(F.get("asked", 0)) + 1
+        if q.get("card"):
+            try:
+                self.srs_update(q["card"], ok, from_deck=True)
+            except Exception:
+                pass
+        ui = self.garden_ui
+        if not ok:
+            F["row"] = 0
+            fish["phase"], fish["t"] = "lost", time.monotonic()
+            self.life_save()
+            beep("pet")
+
+            def build(f, bg):
+                tk.Label(f, text="It got away… 逃げた", bg=bg, fg=GOLD, font=(FONT_TITLE or FONT_UI, 13, "bold")).pack()
+                tk.Label(f, text=q["q"], bg=bg, fg=GREY, font=(FONT_UI, 9), wraplength=360, justify="center").pack(pady=(8, 2))
+                tk.Label(f, text="Answer: " + q["a"], bg=bg, fg=INK, font=(FONT_UI, 11, "bold"), wraplength=360,
+                         justify="center").pack(pady=(0, 4))
+                tk.Label(f, text="I saved it to your flashcards so it comes back~" if q.get("card") or self.z22_save_miss(q)
+                         else "", bg=bg, fg=GREY, font=(FONT_UI, 9)).pack()
+                self.z22_after_buttons(f, bg)
+            self.fish_card(build)
+            self.garden_panel()
+            return
+        F["right"] = int(F.get("right", 0)) + 1
+        F["row"] = int(F.get("row", 0)) + 1
+        if F["row"] >= 10:
+            self.award("hotq")
+        f_, cm, now = self.fish_roll(fish["depth"], fish["gold"], F["row"])
+        seed = random.randint(1, 999999)
+        fid = f_[0]
+        book = F["book"].setdefault(fid, {"n": 0, "best": 0.0, "first": datetime.date.today().isoformat(), "seed": seed})
+        new = book["n"] == 0
+        book["n"] += 1
+        if cm > float(book.get("best", 0)):
+            book["best"], book["seed"] = cm, seed
+        F["log"] = (F.get("log", []) + [{"f": fid, "cm": cm, "d": datetime.date.today().isoformat(), "seed": seed,
+                                          "w": "rain" if now["rain"] else ("snow" if now["snow"] else "")}])[-60:]
+        pond = [p for p in F.get("pond", []) if p[0] != fid]
+        F["pond"] = ([[fid, seed]] + pond)[:6]
+        self.life_save()
+        fish["phase"], fish["t"] = "caught", time.monotonic()
+        try:
+            img = self.fish_photo(fid, seed, max(12, int(ui["lay"]["pond"][2] * 0.5)), ui["z"], 0.0, 1.0)
+            fish["jump"] = {"t": time.monotonic(), "dx": random.choice((-1, 1)) * 40,
+                            "item": ui["cv"].create_image(0, -100, image=img, tags="fx")}
+        except Exception:
+            pass
+        self.z22_ripple(ui, (ui["lay"]["pond"][0] + fish["bx"] * ui["lay"]["pond"][2]) * ui["z"],
+                        (ui["lay"]["pond"][1] + fish["by"] * ui["lay"]["pond"][3]) * ui["z"])
+        beep("gift" if f_[3] >= 3 else "happy")
+        self.award("koi1")
+        if fid == "ogon":
+            self.award("golden")
+        if fid == "ryu":
+            self.award("dragon")
+        if f_[3] == 5:
+            self.award("s_legend")
+        if cm >= 80 and f_[4] != "oar":
+            self.award("bigfish")
+        if now["rain"]:
+            self.award("rainfish")
+        if now["snow"]:
+            self.award("snowfish")
+        today = datetime.date.today().isoformat()
+        rars = {FISH_BY_ID[e["f"]][3] for e in F["log"] if e.get("d") == today and e["f"] in FISH_BY_ID}
+        if len(rars) >= 4:
+            self.award("s_rainbow")
+        self.root.after(900, lambda: self.fish_show_catch(fid, seed, cm, new))
+        self.root.after(1200, self.z22_badge_check)
+
+    def z22_save_miss(self, q):
+        try:
+            if not any(c.get("q") == q["q"] for c in self.life.get("cards", [])):
+                self.card_add(q["q"], q["a"])
+            return True
+        except Exception:
+            return False
+
+    def z22_after_buttons(self, f, bg):
+        F = self.fishing()
+        r = tk.Frame(f, bg=bg)
+        r.pack(pady=(12, 0))
+        left = (3 - int(F.get("free_used", 0)) if F.get("free_day") == datetime.date.today().isoformat() else 3)
+        can = left > 0 or float(F.get("bait", 0)) >= 1 or (self.cfg.get("fish_gold") and F.get("gold"))
+        self.tt_btn(r, "Cast again", lambda: (self.fish_clear(), self.fish_cast()), bg=ORANGE if can else FIELD,
+                    fg=ON_ACC if can else GREY, size=10, padx=12, pady=2, enabled=bool(can)).pack(side="left", padx=4)
+        self.tt_btn(r, "Koi book", lambda: (self.fish_clear(), self.koi_book()), bg=FIELD, size=10, padx=12,
+                    pady=2).pack(side="left", padx=4)
+        self.tt_btn(r, "Done", lambda: (self.fish_clear(), self.garden_refresh(rebuild=False)), bg=FIELD, size=10,
+                    padx=12, pady=2).pack(side="left", padx=4)
+        f.master.bind("<Key>", lambda e: (self.fish_clear(), self.garden_refresh()) if e.keysym in ("Escape", "Return") else None)
+
+    def fish_show_catch(self, fid, seed, cm, new):
+        if not self._z22_fish:
+            return
+        f_ = FISH_BY_ID[fid]
+        jp = _mincho_font(self.root) or _jp_font(self.root) or FONT_UI
+        serif = _serif_font(self.root)
+        L = self.fish_book_L(fid)
+        img = self.fish_photo(fid, seed, L, 2 if L <= 110 else 1)
+
+        def build(f, bg):
+            if new:
+                tk.Label(f, text="✦ NEW for your koi book ✦", bg=bg, fg=GOLD, font=(FONT_UI, 9, "bold")).pack()
+            tk.Label(f, image=img, bg=_mixhex(bg, "#0e1a3a", 0.5), padx=14, pady=10).pack(pady=(6, 8))
+            tk.Label(f, text=f_[1], bg=bg, fg=_mixhex(GOLD, INK, 0.25), font=(jp, 20)).pack()
+            tk.Label(f, text=f_[2], bg=bg, fg=INK, font=(serif, 13)).pack()
+            tk.Label(f, text="%s  ·  %s cm" % (FISH_RARITY[f_[3]], ("%.1f" % cm).rstrip("0").rstrip(".")), bg=bg,
+                     fg=FISH_RCOL[f_[3]], font=(FONT_UI, 10, "bold")).pack(pady=(2, 4))
+            tk.Label(f, text=f_[8], bg=bg, fg=GREY, font=(FONT_UI, 9), wraplength=340, justify="center").pack()
+            self.z22_after_buttons(f, bg)
+        self.fish_card(build)
+        self.garden_panel()
+        try:
+            ui = self.garden_ui
+            ui["key"] = None                                            # repaint so the new fish joins the pond
+            self.root.after(2200, lambda: self._z22_fish and self._z22_fish.get("phase") == "caught" and None)
+        except Exception:
+            pass
+
+    def garden_panel(self):
+        super().garden_panel()
+        ui = self.garden_ui
+        if not ui:
+            return
+        p = ui["panel"]
+        try:
+            kids = p.winfo_children()
+            c = self.fish_panel_card(p)
+            if len(kids) >= 2:
+                c.pack(fill="x", pady=(12, 0), before=kids[1])
+            else:
+                c.pack(fill="x", pady=(12, 0))
+        except Exception as ex:
+            zk_log_error("fishing card: %r" % (ex,))
+
+    def fish_panel_card(self, p):
+        bg = T["card"]
+        F = self.fishing()
+        jp = _jp_font(self.root) or FONT_UI
+        c = self.hub_card(p, "釣り · Koi fishing")
+        rod, lan, hrs = self.fish_gear()
+        today = datetime.date.today().isoformat()
+        free = 3 - (int(F.get("free_used", 0)) if F.get("free_day") == today else 0)
+        try:
+            wl = max(180, int(self.garden_ui["side"].cget("width")) - 60)
+        except (tk.TclError, ValueError, KeyError):
+            wl = 220
+        tk.Label(c, text="Cast into the pond, answer the question when a fish bites, and it's yours. Harder water, "
+                         "rarer fish.", bg=bg, fg=GREY, font=(FONT_UI, 9), wraplength=wl, justify="left",
+                 anchor="w").pack(fill="x", padx=16)
+        tk.Label(c, text="🍙 %d bait  ·  ✨ %d golden  ·  %d free today" % (int(F.get("bait", 0)), int(F.get("gold", 0)), max(0, free)),
+                 bg=bg, fg=INK, font=(FONT_UI, 10, "bold"), anchor="w", wraplength=wl, justify="left").pack(fill="x", padx=16, pady=(6, 0))
+        nrod = next((r for r in FISH_RODS if r[2] > hrs), None)
+        nlan = next((l for l in FISH_LANTERNS if l[2] > hrs), None)
+        gear = "%s %s  ·  %s" % (FISH_RODS[rod][0], FISH_RODS[rod][1], ("%s %s" % FISH_LANTERNS[lan][:2]) if lan else "no lantern yet")
+        tk.Label(c, text=gear, bg=bg, fg=INK, font=(FONT_UI, 9), anchor="w").pack(fill="x", padx=16)
+        nxt = [x for x in ((nrod and "%s at %d h" % (nrod[1], nrod[2])), (nlan and "%s at %d h" % (nlan[1], nlan[2]))) if x]
+        if nxt:
+            tk.Label(c, text="Next: " + ", ".join(nxt) + " (you have %.1f h)" % hrs, bg=bg, fg=GREY, font=(FONT_UI, 8),
+                     anchor="w", wraplength=wl, justify="left").pack(fill="x", padx=16)
+        # depth
+        row = tk.Frame(c, bg=bg)
+        row.pack(fill="x", padx=14, pady=(8, 2))
+        dv = int(F.get("depth", 1) or 1)
+
+        def setd(d):
+            F["depth"] = d
+            self.life_save()
+            self.garden_panel()
+        for i, (k, name, sub) in enumerate(FISH_DEPTHS):
+            self.tt_btn(row, "%s %s" % (k, name.split()[0] if i < 2 else "Falls"), lambda d=i + 1: setd(d),
+                        bg=ORANGE if dv == i + 1 else FIELD, fg=ON_ACC if dv == i + 1 else INK, size=9, padx=7,
+                        pady=1).pack(side="left", padx=(0, 4))
+        tk.Label(c, text="%s: %s" % (FISH_DEPTHS[dv - 1][1], FISH_DEPTHS[dv - 1][2]), bg=bg, fg=GREY, font=(FONT_UI, 8),
+                 anchor="w").pack(fill="x", padx=16)
+        # questions from
+        row2 = tk.Frame(c, bg=bg)
+        row2.pack(fill="x", padx=14, pady=(6, 0))
+        src = F.get("src", "mix")
+
+        def sets(v):
+            F["src"] = v
+            self.life_save()
+            self.garden_panel()
+        for k, lab in (("mix", "Mix"), ("cards", "My cards"), ("bank", "Questions")):
+            self.tt_btn(row2, lab, lambda k=k: sets(k), bg=ORANGE if src == k else FIELD, fg=ON_ACC if src == k else INK,
+                        size=9, padx=7, pady=1).pack(side="left", padx=(0, 4))
+        subj = F.get("subj", "any")
+
+        def pick_subj(e=None):
+            m = tk.Menu(self.root, tearoff=0, bg=T["card"], fg=INK, activebackground=ORANGE, activeforeground=ON_ACC)
+            for k, lab in FISH_Q_SUBJECTS:
+                m.add_command(label=("● " if k == subj else "   ") + lab, command=lambda k=k: (F.update(subj=k), self.life_save(),
+                                                                                         self.garden_panel()))
+            try:
+                m.tk_popup(self.root.winfo_pointerx(), self.root.winfo_pointery())
+            finally:
+                m.grab_release()
+        self.tt_btn(c, "Subject: %s ▾" % dict(FISH_Q_SUBJECTS).get(subj, "Any"), pick_subj, bg=FIELD, size=9, padx=8,
+                    pady=1).pack(anchor="w", padx=14, pady=(4, 0))
+        if int(F.get("gold", 0)) > 0:
+            gv = tk.BooleanVar(value=bool(self.cfg.get("fish_gold", False)))
+            tk.Checkbutton(c, text="Use golden bait (rare fish bite more)", variable=gv,
+                           command=lambda: self.cfg_set("fish_gold", bool(gv.get())), bg=bg, fg=INK, activebackground=bg,
+                           selectcolor=FIELD, highlightthickness=0, font=(FONT_UI, 9), anchor="w").pack(fill="x", padx=14)
+        now = self.fish_now()
+        bits = [("Night" if now["night"] else now["part"].capitalize()), now["season"].capitalize()]
+        if now["rain"]:
+            bits.append("rain")
+        if now["snow"]:
+            bits.append("snow")
+        special = [f[2] for f in FISH if f[3] >= 4 and self.fish_can(f, now, 3, rod, lan)]
+        tk.Label(c, text="Now: %s%s" % (" · ".join(bits), ("  ·  could bite: " + ", ".join(special[:3])) if special else ""),
+                 bg=bg, fg=GREY, font=(FONT_UI, 8), anchor="w", wraplength=wl, justify="left").pack(fill="x", padx=16, pady=(6, 0))
+        busy = bool(self._z22_fish)
+        btns = tk.Frame(c, bg=bg)
+        btns.pack(fill="x", padx=14, pady=(8, 0))
+        self.tt_btn(btns, "Waiting for a bite…" if busy else "🎣  Cast line", self.fish_cast, bg=ORANGE if not busy else FIELD,
+                    fg=ON_ACC if not busy else GREY, size=11, padx=14, pady=4, enabled=not busy).pack(side="left")
+        self.tt_btn(btns, "Koi book", self.koi_book, bg=FIELD, size=10, padx=10, pady=3).pack(side="left", padx=(6, 0))
+        n = sum(int(v.get("n", 0)) for v in F["book"].values())
+        tk.Label(c, text="%d caught  ·  %d of %d kinds found  ·  %d/%d right" % (n, len(F["book"]), len(FISH),
+                                                                                int(F.get("right", 0)), int(F.get("asked", 0))),
+                 bg=bg, fg=GREY, font=(FONT_UI, 8), anchor="w").pack(fill="x", padx=16, pady=(6, 12))
+        return c
+
+    # ---- the koi book --------------------------------------------------------------------------------------------
+    def koi_book(self):
+        w = self._z22_book
+        if w is not None:
+            try:
+                if w.winfo_exists():
+                    w.deiconify()
+                    w.lift()
+                    return
+            except tk.TclError:
+                pass
+        F = self.fishing()
+        bg, paper = T["card"], PAPER
+        w = tk.Toplevel(self.root)
+        self._z22_book = w
+        w.title("Koi book · 鯉図鑑")
+        w.configure(bg=paper)
+        sw, sh = w.winfo_screenwidth(), w.winfo_screenheight()
+        W_, H_ = min(980, sw - 80), min(680, sh - 100)
+        w.geometry("%dx%d+%d+%d" % (W_, H_, max(0, (sw - W_) // 2), max(0, (sh - H_) // 3)))
+        head = tk.Frame(w, bg=T["banner"])
+        head.pack(fill="x")
+        tk.Label(head, text="鯉図鑑  Koi book", bg=T["banner"], fg=GOLD, font=(FONT_TITLE or FONT_UI, 16, "bold")).pack(
+            side="left", padx=18, pady=10)
+        n = sum(int(v.get("n", 0)) for v in F["book"].values())
+        tk.Label(head, text="%d of %d kinds  ·  %d caught" % (len(F["book"]), len(FISH), n), bg=T["banner"], fg=INK,
+                 font=(FONT_UI, 10)).pack(side="left", padx=6)
+        body = tk.Frame(w, bg=paper)
+        body.pack(fill="both", expand=True, padx=14, pady=12)
+        left = tk.Frame(body, bg=paper)
+        left.pack(side="left", fill="both", expand=True)
+        right = tk.Frame(body, bg=bg, width=300, highlightthickness=1, highlightbackground=LINE)
+        right.pack(side="left", fill="y", padx=(12, 0))
+        right.pack_propagate(False)
+        cv = tk.Canvas(left, bg=paper, highlightthickness=0)
+        sb = tk.Scrollbar(left, orient="vertical", command=cv.yview)
+        sb.pack(side="right", fill="y")
+        cv.configure(yscrollcommand=sb.set)
+        cv.pack(side="left", fill="both", expand=True)
+        sel = {"fid": next(iter(F["book"]), None)}
+        jp = _mincho_font(self.root) or _jp_font(self.root) or FONT_UI
+        serif = _serif_font(self.root)
+
+        def detail():
+            for ch in right.winfo_children():
+                ch.destroy()
+            fid = sel["fid"]
+            if not fid:
+                tk.Label(right, text="Catch a fish in the Zen garden pond and it appears here~", bg=bg, fg=GREY,
+                         font=(serif, 11, "italic"), wraplength=260, justify="center").pack(pady=40, padx=16)
+                return
+            f_ = FISH_BY_ID[fid]
+            b = F["book"].get(fid)
+            if b:
+                img = self.fish_photo(fid, b.get("seed", 1), min(130, self.fish_book_L(fid)), 2 if self.fish_book_L(fid) <= 64 else 1)
+                lab = tk.Label(right, image=img, bg=_mixhex(bg, "#0e1a3a", 0.5), padx=10, pady=10)
+                lab.image = img
+                lab.pack(pady=(16, 8), padx=12, fill="x")
+            tk.Label(right, text=f_[1], bg=bg, fg=_mixhex(GOLD, INK, 0.25), font=(jp, 22)).pack()
+            tk.Label(right, text=f_[2] if b else "???", bg=bg, fg=INK, font=(serif, 13)).pack()
+            tk.Label(right, text=FISH_RARITY[f_[3]], bg=bg, fg=FISH_RCOL[f_[3]], font=(FONT_UI, 10, "bold")).pack(pady=(2, 6))
+            if b:
+                tk.Label(right, text="Caught %d×  ·  biggest %s cm\nfirst caught %s" % (
+                    b["n"], ("%.1f" % b["best"]).rstrip("0").rstrip("."), b.get("first", "")), bg=bg, fg=INK,
+                    font=(FONT_UI, 9), justify="center").pack()
+                tk.Label(right, text=f_[8], bg=bg, fg=GREY, font=(FONT_UI, 9), wraplength=260, justify="center").pack(
+                    pady=(8, 8), padx=12)
+                inpond = any(p[0] == fid for p in F.get("pond", []))
+
+                def toggle():
+                    pond = [p for p in F.get("pond", []) if p[0] != fid]
+                    if not inpond:
+                        pond = [[fid, b.get("seed", 1)]] + pond
+                    F["pond"] = pond[:6]
+                    self.life_save()
+                    ui = getattr(self, "garden_ui", None)
+                    if ui:
+                        ui["key"] = None
+                        self.garden_draw_later()
+                    detail()
+                self.tt_btn(right, "Take out of the pond" if inpond else "Show in my pond", toggle,
+                            bg=FIELD if inpond else ORANGE, fg=INK if inpond else ON_ACC, size=10, padx=12, pady=2).pack()
+                tk.Label(right, text="Up to 6 fish swim in the pond.", bg=bg, fg=GREY, font=(FONT_UI, 8)).pack(pady=(4, 0))
+            else:
+                c = f_[6]
+                hint = []
+                if c.get("night"):
+                    hint.append("at night")
+                if c.get("day"):
+                    hint.append("in daylight")
+                if c.get("rain"):
+                    hint.append("in the rain")
+                if c.get("snow_or_winter"):
+                    hint.append("in snow or winter")
+                if c.get("season"):
+                    hint.append("in %s" % c["season"])
+                if c.get("lantern"):
+                    hint.append("with a %s" % FISH_LANTERNS[c["lantern"]][1].lower())
+                if c.get("rod"):
+                    hint.append("with a %s" % FISH_RODS[c["rod"]][1].lower())
+                if c.get("depth", 1) >= 2:
+                    hint.append("in the %s" % FISH_DEPTHS[c["depth"] - 1][1])
+                if c.get("place"):
+                    hint.append("after you reach %s" % JOURNEY_BY_ID[c["place"]][2])
+                tk.Label(right, text=("Bites " + ", ".join(hint) + ".") if hint else "Keep casting~ it's out there.",
+                         bg=bg, fg=GREY, font=(serif, 10, "italic"), wraplength=250, justify="center").pack(pady=10, padx=12)
+
+        def grid(_e=None):
+            Wc = cv.winfo_width()
+            if Wc < 100:
+                return
+            cv.delete("all")
+            per = max(2, Wc // 150)
+            cw, ch = Wc / per, 112
+            keep = cv.__dict__.setdefault("imgs", [])
+            del keep[:]
+            for i, f_ in enumerate(FISH):
+                x, y = (i % per) * cw, (i // per) * ch
+                b = F["book"].get(f_[0])
+                on = sel["fid"] == f_[0]
+                rbox(cv, x + 4, y + 4, x + cw - 4, y + ch - 4, 12, fill=_mixhex(bg, ORANGE, 0.18) if on else bg,
+                     outline=FISH_RCOL[f_[3]] if b else LINE, width=2 if on else 1, tags=("t%d" % i,))
+                L = min(int(cw - 30), self.fish_book_L(f_[0]) if f_[4] != "oar" else int(cw - 24))
+                img = self.fish_photo(f_[0], b.get("seed", 1) if b else 1, max(24, L if f_[4] != "medaka" else L // 2))
+                if not b:
+                    sil = cv.__dict__.setdefault("sil", {})
+                    k = (f_[0], L)
+                    if k not in sil:
+                        px = fish_rgba(f_[0], 1, max(24, L if f_[4] != "medaka" else L // 2))
+                        dark = [[(30, 36, 60, p[3]) if p[3] else p for p in r] for r in px]
+                        sil[k] = tk.PhotoImage(data=base64.b64encode(_png(dark, 1)))
+                    img = sil[k]
+                keep.append(img)
+                cv.create_image(x + cw / 2, y + 44, image=img, tags=("t%d" % i,))
+                cv.create_text(x + cw / 2, y + 82, text=f_[2] if b else "???", fill=INK if b else GREY,
+                               font=(FONT_UI, 9, "bold"), tags=("t%d" % i,))
+                cv.create_text(x + cw / 2, y + 97, text=("×%d" % b["n"]) if b else FISH_RARITY[f_[3]],
+                               fill=FISH_RCOL[f_[3]] if b else GREY, font=(FONT_UI, 8), tags=("t%d" % i,))
+                cv.tag_bind("t%d" % i, "<Button-1>", lambda e, fid=f_[0]: (sel.update(fid=fid), grid(), detail()))
+            rows = (len(FISH) + per - 1) // per
+            cv.configure(scrollregion=(0, 0, Wc, rows * ch + 8))
+        cv.bind("<Configure>", grid)
+        cv.bind("<MouseWheel>", lambda e: cv.yview_scroll(int(-e.delta / 120), "units"))
+        cv.bind("<Button-4>", lambda e: cv.yview_scroll(-2, "units"))
+        cv.bind("<Button-5>", lambda e: cv.yview_scroll(2, "units"))
+        detail()
+        w.bind("<Escape>", lambda e: w.destroy())
+
+    # =================================================================================================================
+    #  the world map: journeys beyond Japan, story cards, quizzes, a passport and rewards
+    # =================================================================================================================
+    def journey_state(self):
+        hrs = self.journey_hours()
+        got = [p for p in JOURNEY_ALL if hrs >= p[6]]
+        nxt = next((p for p in JOURNEY_ALL if hrs < p[6]), None)
+        return hrs, got, nxt
+
+    def journey_check(self):
+        hrs, got, nxt = self.journey_state()
+        J = self.journey()
+        new = [p for p in got if p[0] not in J["seen"]]
+        if not new:
+            return
+        for p in new:
+            J["seen"].append(p[0])
+        self.life_save()
+        p = new[-1]
+        rew = [r for r in MAP_REWARDS if r[0] in [q[0] for q in new]]
+        self.z22_apply_rewards()
+        extra = ("\nIt unlocked: " + ", ".join(r[3] for r in rew) + "~") if rew else ""
+        self.root.after(4000, lambda: self.say("Kon! Our journey reached %s %s~ %s%s" % (p[1], p[2], p[9], extra), 12,
+                                               [("See the map", lambda: self.open_hub("map"))]))
+        self.map_refresh()
+        self.root.after(5000, self.z22_badge_check)
+
+    def z22_unlocked(self, kind):
+        hrs, got, nxt = self.journey_state()
+        ids = set(p[0] for p in got)
+        return [r[2] for r in MAP_REWARDS if r[1] == kind and r[0] in ids]
+
+    def z22_apply_rewards(self):
+        """Unlocked accent colours join the accent list (so Customize offers them)."""
+        have = set(self.z22_unlocked("accent"))
+        base = [a for a in ACCENTS if a[0] not in dict((k, 1) for k, _l, _v in Z22_ACCENTS)]
+        ACCENTS[:] = base + [a for a in Z22_ACCENTS if a[0] in have]
+
+    def z22_region_places(self, region):
+        return [p for p in JOURNEY_ALL if JOURNEY_REGION_OF.get(p[0]) == region]
+
+    def hub_build_map(self, pg):
+        self.hub_title(pg, "World map", "地図 · Zenko's journey: Japan, then Kyoto's seasons, Korea, China, the Silk Road "
+                                        "and the old legends. Focus hours carry her on; tap a place for its story.")
+        body = tk.Frame(pg, bg=PAPER)
+        body.pack(fill="both", expand=True, padx=20, pady=(10, 14))
+        body.grid_rowconfigure(1, weight=1)
+        body.grid_columnconfigure(0, weight=1)
+        bar = tk.Frame(body, bg=PAPER)
+        bar.grid(row=0, column=0, sticky="ew", pady=(0, 8))
+        frame = tk.Frame(body, bg=_mixhex(GOLD, "#000000", 0.45), padx=2, pady=2)
+        frame.grid(row=1, column=0, sticky="nsew")
+        cv = tk.Canvas(frame, bg="#0e1436", highlightthickness=0, width=420, height=300, cursor="arrow")
+        cv.pack(fill="both", expand=True)
+        side = tk.Frame(body, bg=PAPER, width=300)
+        side.grid(row=0, column=1, rowspan=2, sticky="ns", padx=(14, 0))
+        side.pack_propagate(False)
+        sc = self.hub_scroller(side)
+        hrs, got, nxt = self.journey_state()
+        sel = got[-1][0] if got else "inari"
+        self.map_ui = {"cv": cv, "side": side, "panel": sc, "key": None, "img": None, "sel": sel, "bar": bar,
+                       "region": JOURNEY_REGION_OF.get(sel, "japan"), "hover": None, "items": {}, "anim_on": False}
+        cv.bind("<Configure>", lambda e: self.map_draw_later())
+        cv.bind("<Motion>", self.map_motion)
+        cv.bind("<Leave>", lambda e: self.map_hover(None))
+        cv.bind("<Button-1>", self.map_click)
+        self.z22_region_bar()
+        self.map_panel()
+
+    def z22_region_bar(self):
+        ui = getattr(self, "map_ui", None)
+        if not ui:
+            return
+        bar = ui["bar"]
+        for ch in bar.winfo_children():
+            ch.destroy()
+        hrs, got, nxt = self.journey_state()
+        ids = set(p[0] for p in got)
+        btns = []
+        for key, kanji, name, sub in JOURNEY_REGIONS:
+            pl = self.z22_region_places(key)
+            n = sum(1 for p in pl if p[0] in ids)
+            open_ = n > 0 or (nxt and JOURNEY_REGION_OF.get(nxt[0]) == key)
+            on = ui["region"] == key
+            lab = "%s %s" % (kanji, name) + ("  %d/%d" % (n, len(pl)) if n else ("" if open_ else "  🔒 %dh" % pl[0][6]))
+            btns.append(self.tt_btn(bar, lab, lambda k=key: self.z22_region(k), bg=ORANGE if on else FIELD,
+                                    fg=ON_ACC if on else (INK if open_ else GREY), size=9, padx=9, pady=1))
+        self.z22_flow(bar, btns)
+
+    def z22_flow(self, bar, btns):
+        """Lay the region buttons out in as many rows as the width needs (a narrow window never hides a region)."""
+        bar.update_idletasks()
+        W = bar.winfo_width() if bar.winfo_width() > 60 else 520
+        x = y = rowh = 0
+        for b in btns:
+            bw, bh = b.winfo_reqwidth(), b.winfo_reqheight()
+            if x and x + bw > W:
+                x, y = 0, y + rowh + 5
+                rowh = 0
+            b.place(x=x, y=y)
+            x += bw + 5
+            rowh = max(rowh, bh)
+        bar.configure(height=y + rowh + 2)
+        if not getattr(bar, "_z22_flow", False):
+            bar._z22_flow = True
+            bar.bind("<Configure>", lambda e: (abs(e.width - getattr(bar, "_z22_w", 0)) > 4
+                                               and (setattr(bar, "_z22_w", e.width), self.z22_flow(bar, btns_of(bar)))))
+
+            def btns_of(b):
+                return [c for c in b.winfo_children()]
+
+    def z22_region(self, key):
+        ui = getattr(self, "map_ui", None)
+        if not ui or ui["region"] == key:
+            return
+        ui["region"] = key
+        ui["key"] = None
+        hrs, got, nxt = self.journey_state()
+        pl = self.z22_region_places(key)
+        here = [p for p in pl if hrs >= p[6]]
+        ui["sel"] = (here[-1] if here else pl[0])[0]
+        ui_sound("nav")
+        self.z22_region_bar()
+        self.map_draw_later()
+        self.map_panel()
+
+    def map_refresh(self):
+        ui = getattr(self, "map_ui", None)
+        if ui and ui["cv"].winfo_exists():
+            try:
+                self.z22_region_bar()
+            except Exception:
+                pass
+        return super().map_refresh()
+
+    def map_draw(self):
+        if getattr(self, "_z21_sliding", None):
+            return self.map_draw_later()
+        ui = getattr(self, "map_ui", None)
+        if not ui or not ui["cv"].winfo_exists():
+            return
+        ui["job"] = None
+        cv = ui["cv"]
+        W, H = cv.winfo_width(), cv.winfo_height()
+        if W < 120 or H < 120:
+            return
+        try:
+            sw = int(260 + 60 * max(0.0, min(1.0, (self.zk_f - 0.85) / 0.6)))
+            if abs(int(ui["side"].cget("width")) - sw) > 4:
+                ui["side"].configure(width=sw)
+                self.root.after(50, self.map_panel)
+        except (tk.TclError, AttributeError):
+            pass
+        z = max(2, int(round(max(W / 400.0, H / 330.0))))
+        rw, rh = int(math.ceil(W / float(z))), int(math.ceil(H / float(z)))
+        region = ui.get("region", "japan")
+        key = (rw, rh, z, region, z22_season_now() if region == "kyoto" else "")
+        if key != ui["key"]:
+            if region == "japan":
+                R, P = jmap_scene(rw, rh)
+            elif region == "kyoto":
+                R, P = kyoto_scene(rw, rh)
+            elif region == "myth":
+                R, P = myth_scene(rw, rh)
+            else:
+                R, P = asia_scene(rw, rh, region)
+            ui["img"] = R.photo(z)
+            ui["P"], ui["z"], ui["key"] = P, z, key
+        self.map_overlay()
+        if not ui["anim_on"]:
+            ui["anim_on"] = True
+            self.map_anim()
+
+    def map_overlay(self):
+        ui = self.map_ui
+        cv, P, z = ui["cv"], ui["P"], ui["z"]
+        region = ui.get("region", "japan")
+        W, H = cv.winfo_width(), cv.winfo_height()
+        cv.delete("all")
+        cv.create_image(0, 0, image=ui["img"], anchor="nw", tags="scene")
+        hrs, got, nxt = self.journey_state()
+        gotids = {p[0] for p in got}
+        places = self.z22_region_places(region)
+        here = [p for p in places if p[0] in gotids]
+        quiz = set(self.journey().get("quiz", []))
+        jp = _mincho_font(self.root) or _jp_font(self.root) or FONT_UI
+        serif = _serif_font(self.root)
+        reg = next(r for r in JOURNEY_REGIONS if r[0] == region)
+        tx, ty = 14, 12
+        t1 = cv.create_text(tx + 12, ty + 10, text="%s · %s" % (reg[1], reg[2]), fill=GOLD, anchor="nw",
+                            font=(jp, max(11, int(H / 40))))
+        bb = cv.bbox(t1)
+        t2 = cv.create_text(tx + 12, bb[3] + 2, text="%.1f focus hours · %d of %d places here" % (hrs, len(here), len(places)),
+                            fill=_mixhex(INK, "#000000", 0.1), anchor="nw", font=(serif, max(8, int(H / 64)), "italic"))
+        bb2 = cv.bbox(t2)
+        cv.create_rectangle(tx, ty, max(bb[2], bb2[2]) + 14, bb2[3] + 10, fill="#0b1030", outline=GOLD)
+        cv.create_rectangle(tx + 3, ty + 3, max(bb[2], bb2[2]) + 11, bb2[3] + 7, outline=_mixhex(GOLD, "#0b1030", 0.5))
+        cv.tag_raise(t1)
+        cv.tag_raise(t2)
+        if region == "japan":
+            x0, y0, x1, y1 = P.inset
+            cv.create_text((x0 + 4) * z, (y0 + 3) * z, text="沖縄 Okinawa", anchor="nw", fill=GOLD,
+                           font=(FONT_UI, max(7, int(H / 80))))
+        pts = [P.xy(p[4], p[5]) for p in here]
+        if len(pts) >= 2 and region not in ("kyoto", "myth"):      # Kyoto is a year of seasons, not a road
+            flat = [c * z for xy in pts for c in xy]
+            sm = region == "japan"                     # elsewhere the stops are close together and a spline loops
+            cv.create_line(*flat, fill=_mixhex(GOLD, "#000000", 0.55), width=max(3, z + 1), smooth=sm, capstyle="round",
+                           joinstyle="round")
+            cv.create_line(*flat, fill=GOLD, width=max(1, z - 1), dash=(6, 5), smooth=sm, capstyle="round")
+        if nxt and pts and JOURNEY_REGION_OF.get(nxt[0]) == region and not (region == "japan" and nxt[5] < 28):
+            a, b = pts[-1], P.xy(nxt[4], nxt[5])
+            cv.create_line(a[0] * z, a[1] * z, b[0] * z, b[1] * z, fill=_mixhex(GREY, "#000000", 0.2), width=max(1, z - 1),
+                           dash=(2, 6))
+        if ui.get("tz") != (z, region):
+            ui["tz"] = (z, region)
+            zz = max(2, z)
+            icon = JMAP_ICON_TORII if region in ("japan", "kyoto") else Z22_PIN
+            ui["torii_on"] = sprite_photo([icon], {"#": "#e0442e", "+": "#fff1d0"}, zz)
+            ui["torii_off"] = sprite_photo([icon], {"#": "#6d7290", "+": "#9aa0c0"}, zz)
+            ui["torii_next"] = sprite_photo([icon], {"#": "#e8c06a", "+": "#fff6dc"}, zz)
+            try:
+                ui["fox"] = self.mini_fox(max(1, z // 2))
+            except Exception:
+                ui["fox"] = None
+            ui["glow"] = aa_photo(44, 44, [("circle", 22, 22, 21, ("#ffcf7a", 0.10)), ("circle", 22, 22, 13, ("#ffcf7a", 0.18)),
+                                           ("circle", 22, 22, 6, ("#ffe7b0", 0.35))])
+        ui["items"] = {}
+        show_names = W >= (600 if region == "japan" else 420)
+        fs = max(8, int(H / 70))
+        for p in places:
+            x, y = P.xy(p[4], p[5])
+            x, y = x * z, y * z
+            on = p[0] in gotids
+            img = ui["torii_on"] if on else (ui["torii_next"] if nxt and p[0] == nxt[0] else ui["torii_off"])
+            if on:
+                cv.create_image(x, y, image=ui["glow"], tags=("fx",))
+            cv.create_image(x, y, image=img, anchor="s", tags=("place", "p_" + p[0]))
+            if p[0] in quiz:
+                cv.create_oval(x - 3 * z - 2, y - 9 * z - 4, x - 3 * z + 4, y - 9 * z + 2, fill=GOLD, outline="#3a2414",
+                               tags=("fx",))
+            ui["items"][p[0]] = (x, y)
+            if show_names and (on or (nxt and p[0] == nxt[0]) or region == "myth"):
+                name = p[2].split(" (")[0]
+                anc, lx, ly = JMAP_LABEL.get(p[0], ("w", 11, -6))
+                k = max(1.0, z / 2.0)
+                lx, ly = x + lx * k, y - 7 + ly * k
+                if region != "japan" and x > W * 0.78:
+                    anc, lx = "e", x - 11 * k
+                for dx, dy in ((1, 1), (-1, 1), (1, -1), (-1, -1)):
+                    cv.create_text(lx + dx, ly + dy, text=name, anchor=anc, fill="#05081c", font=(FONT_UI, fs, "bold"),
+                                   tags=("lab",))
+                cv.create_text(lx, ly, text=name, anchor=anc, fill=INK if on else GOLD, font=(FONT_UI, fs, "bold"),
+                               tags=("lab",))
+        ui["ring"] = cv.create_oval(0, 0, 0, 0, outline=GOLD, width=2, tags=("fx",))
+        ui["ring2"] = cv.create_oval(0, 0, 0, 0, outline=_mixhex(GOLD, "#ffffff", 0.4), width=1, tags=("fx",))
+        cur = got[-1] if got else JMAP_PLACES[0]
+        if JOURNEY_REGION_OF.get(cur[0]) != region:
+            cur = here[-1] if here else None
+        ui["zk_at"] = ui["items"].get(cur[0]) if cur else None
+        ui["zk"] = cv.create_image(-99, -99, image=ui["fox"], anchor="s", tags=("fx",)) if ui.get("fox") and cur else None
+        ui["tip"] = cv.create_text(0, 0, text="", anchor="sw", fill=INK, font=(FONT_UI, fs, "bold"), state="hidden")
+        ui["tipbg"] = cv.create_rectangle(0, 0, 0, 0, fill="#0b1030", outline=GOLD, state="hidden")
+        cv.tag_raise(ui["tip"])
+        if "cloud" not in ui:
+            ui["cloud"] = aa_photo(160, 50, [("circle", 40, 30, 20, ("#ffffff", 0.07)), ("circle", 70, 22, 24, ("#ffffff", 0.08)),
+                                             ("circle", 104, 28, 20, ("#ffffff", 0.07)), ("circle", 130, 32, 14, ("#ffffff", 0.06))])
+        rnd = random.Random(5)
+        ui["clouds"] = [[cv.create_image(rnd.uniform(0, W), rnd.uniform(0.1, 0.9) * H, image=ui["cloud"], tags=("fx",)),
+                         rnd.uniform(0.15, 0.4)] for _ in range(4)]
+        self.map_place_ring()
+
+    def map_hover(self, pid):
+        ui = getattr(self, "map_ui", None)
+        if not ui or "tip" not in ui:
+            return
+        cv = ui["cv"]
+        ui["hover"] = pid
+        cv.configure(cursor="hand2" if pid else "arrow")
+        if not pid or pid not in JOURNEY_BY_ID:
+            cv.itemconfigure(ui["tip"], state="hidden")
+            cv.itemconfigure(ui["tipbg"], state="hidden")
+            return
+        p = JOURNEY_BY_ID[pid]
+        hrs = self.journey_hours()
+        x, y = ui["items"][pid]
+        txt = "%s  %s" % (p[1], p[2]) + ("" if hrs >= p[6] else "  ·  %.1f h to go" % (p[6] - hrs))
+        cv.itemconfigure(ui["tip"], text=txt, state="normal")
+        W = cv.winfo_width()
+        cv.coords(ui["tip"], x + 12, y - 18 - ui["z"] * 4)
+        bb = cv.bbox(ui["tip"])
+        if bb and bb[2] > W - 6:
+            cv.move(ui["tip"], -(bb[2] - W + 10) - 24, 0)
+            bb = cv.bbox(ui["tip"])
+        if bb:
+            cv.coords(ui["tipbg"], bb[0] - 6, bb[1] - 3, bb[2] + 6, bb[3] + 3)
+            cv.itemconfigure(ui["tipbg"], state="normal")
+            cv.tag_raise(ui["tipbg"])
+            cv.tag_raise(ui["tip"])
+
+    def z22_stamp(self, parent, p, size, state, bg):
+        """A round red hanko stamp for the passport: dim when not reached, red when visited, gold-rimmed when its quiz
+        is passed."""
+        cv = tk.Canvas(parent, width=size, height=size, bg=bg, highlightthickness=0, cursor="hand2")
+        r = size / 2.0 - 3
+        cx = cy = size / 2.0
+        jp = _mincho_font(self.root) or _jp_font(self.root) or FONT_UI
+        if state == 0:
+            cv.create_oval(cx - r, cy - r, cx + r, cy + r, outline=LINE, dash=(2, 3))
+            cv.create_text(cx, cy, text=p[1][:1], fill=_mixhex(bg, GREY, 0.5), font=(jp, int(size * 0.36)))
+        else:
+            red = "#c8372d"
+            if state == 2:
+                cv.create_oval(cx - r - 2, cy - r - 2, cx + r + 2, cy + r + 2, outline=GOLD, width=2)
+            cv.create_oval(cx - r, cy - r, cx + r, cy + r, outline=red, width=2)
+            cv.create_oval(cx - r + 4, cy - r + 4, cx + r - 4, cy + r - 4, outline=_mixhex(red, bg, 0.4), width=1)
+            cv.create_text(cx, cy - 1, text=p[1][:2] if len(p[1]) <= 3 else p[1][:2], fill=red,
+                           font=(jp, int(size * (0.3 if len(p[1][:2]) > 1 else 0.38)), "bold"))
+        return cv
+
+    def map_panel(self):
+        ui = getattr(self, "map_ui", None)
+        if not ui:
+            return
+        p = ui["panel"]
+        if not p.winfo_exists():
+            return
+        for ch in p.winfo_children():
+            ch.destroy()
+        bg = T["card"]
+        serif = _serif_font(self.root)
+        jp = _mincho_font(self.root) or _jp_font(self.root) or FONT_UI
+        hrs, got, nxt = self.journey_state()
+        gotids = {q[0] for q in got}
+        J = self.journey()
+        quiz = J.setdefault("quiz", [])
+        pl = JOURNEY_BY_ID.get(ui["sel"]) or JMAP_PLACES[0]
+        on = hrs >= pl[6]
+        try:
+            wl = max(160, int(ui["side"].cget("width")) - 64)
+        except (tk.TclError, ValueError):
+            wl = 220
+        c = self.hub_card(p, None, shape="ema")
+        c.pack(fill="x")
+        tk.Label(c, text=pl[1], bg=bg, fg=_mixhex(GOLD, INK, 0.25), font=(jp, 24 if len(pl[1]) <= 4 else 18)).pack(pady=(16, 0))
+        tk.Label(c, text=pl[2], bg=bg, fg=INK, font=(serif, 12), wraplength=wl).pack()
+        tk.Label(c, text=pl[3], bg=bg, fg=GREY, font=(serif, 9, "italic")).pack(pady=(0, 6))
+        chip = ("Visited ✓  ·  gold seal ✓" if pl[0] in quiz else "Visited ✓") if on else \
+            "Zenko arrives after %.1f more focus hours" % (pl[6] - hrs)
+        tk.Label(c, text=chip, bg=bg, fg=GOLD if on else GREY, font=(FONT_UI, 9, "bold")).pack(pady=(0, 8))
+        tk.Label(c, text="物語  Story", bg=bg, fg=GOLD, font=(FONT_UI, 9, "bold"), anchor="w").pack(fill="x", padx=16)
+        tk.Label(c, text=pl[7], bg=bg, fg=INK, font=(FONT_UI, 10), justify="left", anchor="w", wraplength=wl).pack(
+            fill="x", padx=16, pady=(2, 10))
+        tk.Label(c, text="豆知識  Did you know?", bg=bg, fg=GOLD, font=(FONT_UI, 9, "bold"), anchor="w").pack(fill="x", padx=16)
+        tk.Label(c, text=pl[8] if on else "Reach it to read the rest of the story~", bg=bg, fg=INK if on else GREY,
+                 font=(FONT_UI, 9), justify="left", anchor="w", wraplength=wl).pack(fill="x", padx=16, pady=(2, 10))
+        tk.Label(c, text="“%s”" % (pl[9] if on else "I'll tell you all about it when we get there~"), bg=bg, fg=GREY,
+                 font=(serif, 10, "italic"), justify="left", anchor="w", wraplength=wl).pack(fill="x", padx=16, pady=(0, 10))
+        rew = [r for r in MAP_REWARDS if r[0] == pl[0]]
+        if rew:
+            tk.Label(c, text=("Unlocked: " if on else "Unlocks: ") + ", ".join(r[3] for r in rew), bg=bg,
+                     fg=GOLD if on else GREY, font=(FONT_UI, 9, "bold"), justify="left", anchor="w", wraplength=wl).pack(
+                fill="x", padx=16, pady=(0, 10))
+        qz = JOURNEY_QUIZ.get(pl[0])
+        if on and qz and pl[0] not in quiz:
+            qc = self.hub_card(p, "問 · Earn the gold seal")
+            qc.pack(fill="x", pady=(12, 0))
+            tk.Label(qc, text=qz[0], bg=bg, fg=INK, font=(FONT_UI, 10, "bold"), wraplength=wl, justify="left",
+                     anchor="w").pack(fill="x", padx=16, pady=(0, 6))
+            opts = [qz[1]] + list(qz[2])
+            random.Random(pl[0]).shuffle(opts)
+            res = tk.Label(qc, text="", bg=bg, fg=GREY, font=(FONT_UI, 9), wraplength=wl, justify="left", anchor="w")
+
+            def answer(o, pid=pl[0], qz=qz):
+                if o == qz[1]:
+                    if pid not in quiz:
+                        quiz.append(pid)
+                        self.life_save()
+                    beep("gift")
+                    self.say("Sugoi~! Gold seal for %s in your passport!" % JOURNEY_BY_ID[pid][2], 6)
+                    self.map_panel()
+                    self.map_draw_later()
+                    self.root.after(800, self.z22_badge_check)
+                else:
+                    res.configure(text="Not quite~ Read the story again and try once more.", fg=GOLD)
+            for o in opts:
+                self.tt_btn(qc, o, lambda o=o: answer(o), bg=FIELD, size=9, padx=10, pady=2).pack(fill="x", padx=14, pady=2)
+            res.pack(fill="x", padx=16, pady=(4, 12))
+        # passport for this region
+        region = ui.get("region", "japan")
+        reg = next(r for r in JOURNEY_REGIONS if r[0] == region)
+        c3 = self.hub_card(p, "印 · Passport: %s" % reg[2])
+        c3.pack(fill="x", pady=(12, 0))
+        grid = tk.Frame(c3, bg=bg)
+        grid.pack(fill="x", padx=12, pady=(0, 4))
+        places = self.z22_region_places(region)
+        per = max(3, int(wl // 52))
+        for i, q in enumerate(places):
+            st = 0 if q[0] not in gotids else (2 if q[0] in quiz else 1)
+            s = self.z22_stamp(grid, q, 46, st, bg)
+            s.grid(row=i // per, column=i % per, padx=2, pady=2)
+            s.bind("<Button-1>", lambda e, pid=q[0]: self.map_select(pid))
+        nq = sum(1 for q in places if q[0] in quiz)
+        tk.Label(c3, text="%d stamps · %d gold seals (pass a place's quiz for its seal)" % (
+            sum(1 for q in places if q[0] in gotids), nq), bg=bg, fg=GREY, font=(FONT_UI, 8), anchor="w",
+            wraplength=wl, justify="left").pack(fill="x", padx=16, pady=(0, 12))
+        c2 = self.hub_card(p, "旅 · Journey")
+        c2.pack(fill="x", pady=(12, 0))
+        r = tk.Frame(c2, bg=bg)
+        r.pack(fill="x", padx=16)
+        if nxt:
+            prev = got[-1][6] if got else 0
+            frac = (hrs - prev) / max(0.01, nxt[6] - prev)
+            tk.Label(r, text="Next: %s %s in %.1f h" % (nxt[1], nxt[2].split(" (")[0], nxt[6] - hrs), bg=bg, fg=INK,
+                     font=(FONT_UI, 9), anchor="w", justify="left", wraplength=wl).pack(fill="x")
+            bar = tk.Canvas(r, height=12, bg=bg, highlightthickness=0, width=200)
+            bar.pack(fill="x", pady=(3, 4))
+            bar.bind("<Configure>", lambda e, b=bar, f=frac: (b.delete("all"), self.glow_bar(b, 1, 1, e.width - 2, 10, f)))
+        else:
+            tk.Label(r, text="Every place visited, even the legends. You walked the whole world with me!", bg=bg, fg=GOLD,
+                     font=(FONT_UI, 9, "bold"), anchor="w", justify="left", wraplength=wl).pack(fill="x")
+        tk.Label(r, text="Focus sessions and lock-ins both count.", bg=bg, fg=GREY, font=(FONT_UI, 8), anchor="w").pack(
+            fill="x", pady=(0, 6))
+        lst = tk.Frame(c2, bg=bg)
+        lst.pack(fill="x", padx=12, pady=(0, 12))
+        for q in places:
+            done = hrs >= q[6]
+            row = tk.Frame(lst, bg=_mixhex(ORANGE, bg, 0.82) if q[0] == pl[0] else bg, cursor="hand2")
+            row.pack(fill="x", pady=0)
+            a = tk.Label(row, text="⛩" if done and region in ("japan", "kyoto") else ("●" if done else "·"), bg=row["bg"],
+                         fg="#e0442e" if done else GREY, font=(FONT_UI, 9), width=2)
+            a.pack(side="left")
+            b = tk.Label(row, text="%s  %s" % (q[1], q[2].split(" (")[0]), bg=row["bg"], fg=INK if done else GREY,
+                         font=(FONT_UI, 9), anchor="w")
+            b.pack(side="left", fill="x", expand=True)
+            cc = tk.Label(row, text=("★" if q[0] in quiz else "") if done else "%dh" % q[6], bg=row["bg"], fg=GOLD if done else GREY,
+                          font=(FONT_UI, 8))
+            cc.pack(side="right", padx=4)
+            for wd in (row, a, b, cc):
+                wd.bind("<Button-1>", lambda e, pid=q[0]: self.map_select(pid))
+
+    # =================================================================================================================
+    #  rewards in Customize: travel outfits, bubble styles, garden decor, sidebar scene
+    # =================================================================================================================
+    def z19_robe(self):
+        mode = self.cfg.get("robe", "auto")
+        if mode in ROBES and ROBES[mode].get("travel"):
+            if mode not in self.z22_unlocked("outfit"):
+                return None
+            try:
+                if self.gym_look_on():
+                    return None
+            except Exception:
+                pass
+            return mode
+        return super().z19_robe()
+
+    def hub_build_customize(self, pg):
+        super().hub_build_customize(pg)
+        try:
+            self.z22_customize_extra(pg)
+        except Exception as ex:
+            zk_log_error("z22 customize: %r" % (ex,))
+
+    def z22_customize_extra(self, pg):
+        inner = self.z20_inner_of(pg)
+        if inner is None:
+            return
+        bg = T["card"]
+        row = tk.Frame(inner, bg=PAPER)
+        row.pack(fill="x", padx=24, pady=(0, 18))
+        left = tk.Frame(row, bg=PAPER)
+        left.pack(side="left", fill="both", expand=True, padx=(0, 8), anchor="n")
+        right = tk.Frame(row, bg=PAPER)
+        right.pack(side="left", fill="both", expand=True, padx=(8, 0), anchor="n")
+        kw = dict(bg=bg, fg=INK, activebackground=bg, activeforeground=GOLD, selectcolor=FIELD, highlightthickness=0,
+                  font=(FONT_UI, 10), anchor="w", disabledforeground=_mixhex(bg, GREY, 0.6))
+        hrs, got, nxt = self.journey_state()
+        ids = set(p[0] for p in got)
+        where = dict((r[2], r[0]) for r in MAP_REWARDS)
+
+        def need(key):
+            pid = where.get(key)
+            p = JOURNEY_BY_ID.get(pid)
+            return ("  (reach %s, %d h)" % (p[2], p[6])) if p else ""
+        # travel outfits
+        c = self.hub_card(left, "Travel outfits (from the world map)")
+        c.pack(fill="x")
+        rv = tk.StringVar(value=self.cfg.get("robe", "auto"))
+        have = set(self.z22_unlocked("outfit"))
+
+        def setv():
+            self.cfg["robe"] = rv.get()
+            save_config(self.cfg)
+            self._robe_cur = "?"
+            self.accessories()
+        for key in [r[2] for r in MAP_REWARDS if r[1] == "outfit"]:
+            ok = key in have
+            tk.Radiobutton(c, text=ROBES[key]["name"] + ("" if ok else need(key)), value=key, variable=rv, command=setv,
+                           state="normal" if ok else "disabled", **kw).pack(fill="x", padx=14)
+        tk.Radiobutton(c, text="Back to the seasonal wardrobe", value="auto", variable=rv, command=setv, **kw).pack(
+            fill="x", padx=14, pady=(4, 0))
+        tk.Frame(c, bg=bg, height=10).pack()
+        # bubble style
+        c2 = self.hub_card(left, "Speech bubble")
+        c2.pack(fill="x", pady=(12, 0))
+        bv = tk.StringVar(value=self.cfg.get("bubble_style", ""))
+        hb = set(self.z22_unlocked("bubble"))
+
+        def setb():
+            self.cfg["bubble_style"] = bv.get()
+            save_config(self.cfg)
+            self.say("Like this~? Kon!", 4)
+        for key, st in Z22_BUBBLES.items():
+            ok = key == "" or key in hb
+            tk.Radiobutton(c2, text=st[0] + ("" if ok else need(key)), value=key, variable=bv, command=setb,
+                           state="normal" if ok else "disabled", **kw).pack(fill="x", padx=14)
+        sv = tk.BooleanVar(value=bool(self.cfg.get("bubble_scale", True)))
+
+        def sets():
+            self.cfg["bubble_scale"] = bool(sv.get())
+            save_config(self.cfg)
+            self.say("My bubble is %s now~" % ("as big as me" if sv.get() else "always the same size"), 4)
+        tk.Checkbutton(c2, text="Bubble grows and shrinks with her size", variable=sv, command=sets, **kw).pack(
+            fill="x", padx=14, pady=(6, 10))
+        # garden decor
+        c3 = self.hub_card(right, "Garden decor")
+        c3.pack(fill="x")
+        hd = self.z22_unlocked("decor")
+        cur = self.cfg.get("garden_decor")
+        on = set(cur if cur is not None else hd)
+
+        def setd(key, var):
+            s = set(self.cfg.get("garden_decor") if self.cfg.get("garden_decor") is not None else hd)
+            (s.add if var.get() else s.discard)(key)
+            self.cfg["garden_decor"] = sorted(s)
+            save_config(self.cfg)
+            ui = getattr(self, "garden_ui", None)
+            if ui:
+                ui["key"] = None
+                self.garden_draw_later()
+        for key, name in Z22_DECOR.items():
+            ok = key in hd
+            v = tk.BooleanVar(value=ok and key in on)
+            tk.Checkbutton(c3, text=name + ("" if ok else need(key)), variable=v, state="normal" if ok else "disabled",
+                           command=lambda k=key, v=v: setd(k, v), **kw).pack(fill="x", padx=14)
+        tk.Frame(c3, bg=bg, height=10).pack()
+        # sidebar scene
+        c4 = self.hub_card(right, "Sidebar scene")
+        c4.pack(fill="x", pady=(12, 0))
+        scv = tk.StringVar(value=self.cfg.get("side_scene", ""))
+        hs = set(self.z22_unlocked("scene"))
+
+        def setsc():
+            self.cfg["side_scene"] = scv.get()
+            save_config(self.cfg)
+            try:
+                self.hub_side_draw()
+            except Exception:
+                pass
+        for key, name in Z22_SCENES.items():
+            ok = key == "" or key in hs
+            tk.Radiobutton(c4, text=name + ("" if ok else need(key)), value=key, variable=scv, command=setsc,
+                           state="normal" if ok else "disabled", **kw).pack(fill="x", padx=14)
+        ha = self.z22_unlocked("accent")
+        tk.Label(c4, text="Accent colours from the map (%s) appear under Look and feel." % (
+            ", ".join(n for k, n, _ in Z22_ACCENTS if k in ha) or "none yet"), bg=bg, fg=GREY, font=(FONT_UI, 9),
+            anchor="w", justify="left", wraplength=440).pack(fill="x", padx=16, pady=(6, 12))
+
+    # =================================================================================================================
+    #  sidebar: pinned ema, the Zenko Browser link light, and a scene from your travels
+    # =================================================================================================================
+    def hub_side_draw(self):
+        super().hub_side_draw()
+        h = getattr(self, "hub", None)
+        if not h:
+            return
+        try:
+            self.z22_side_extras()
+        except Exception as ex:
+            zk_log_error("z22 side: %r" % (ex,))
+
+    def z22_side_extras(self):
+        h = self.hub
+        cv = h["snow"]
+        W, Hh = cv.winfo_width(), cv.winfo_height()
+        if W < 50 or Hh < 200:
+            return
+        cv.delete("z22side")
+        scene = self.cfg.get("side_scene") or ""
+        if scene and scene in self.z22_unlocked("scene"):
+            self.z22_side_scene(cv, W, Hh, scene)
+        z, top_, title_y, nav_y, rowh = self.hub_side_layout()
+        end = nav_y + len(h.get("navkeys") or []) * rowh + 6
+        y = max(end, Hh - 150) + 30
+        pins = [b for b in self.life.get("badge_pins", []) if b in self.life.get("badges", {})][:3]
+        linked = self.zb_linked()
+        if y + 30 > Hh - 88:
+            return
+        x = 26
+        jp = _jp_font(self.root)
+        for bid in pins:
+            _b, kanji, name, how = BADGE_BY_ID[bid]
+            tier = self.badge_tier(bid) if bid in BADGE_TIER_BY_ID else 0
+            edge = BADGE_TIER_COL[tier] if tier else "#7a4a1c"
+            pts = [x + 12, y, x + 24, y + 6, x + 24, y + 26, x, y + 26, x, y + 6]
+            cv.create_polygon(pts, fill="#c98a35", outline=edge, width=2, tags=("z22side", "status"))
+            cv.create_text(x + 12, y + 16, text=kanji if jp else name[:1], fill="#3a2414",
+                           font=(jp or FONT_UI, 10, "bold"), tags=("z22side", "status"))
+            x += 30
+        if linked:
+            lx = max(x + 8, W - 92) if pins else 26
+            t = cv.create_text(lx + 14, y + 13, text="Browser", anchor="w", fill=_mixhex(GOLD, "#ffffff", 0.2),
+                               font=(FONT_UI, 9), tags=("z22side", "status"))
+            cv.create_oval(lx - 2, y + 7, lx + 10, y + 19, fill="", outline=_mixhex("#7fd8ff", T["night"], 0.5), width=2,
+                           tags=("z22side", "status"))
+            cv.create_oval(lx + 1, y + 10, lx + 7, y + 16, fill="#7fd8ff", outline="", tags=("z22side", "status"))
+            for it in (t,):
+                cv.tag_bind(it, "<Button-1>", lambda e: self.say(self.zb_status_text(), 8))
+        cv.tag_raise("z22side")
+
+    def z22_side_scene(self, cv, W, Hh, scene):
+        base = T["night2"]
+        far = _mixhex(base, "#000000", 0.25)
+        near = _mixhex(base, "#000000", 0.42)
+        gold = _mixhex(GOLD, base, 0.55)
+        y0 = Hh - 34
+        x0 = W * 0.52
+        tg = ("z22side", "bg")
+        if scene == "fuji":
+            cv.create_polygon(x0 - 40, y0, x0 + 30, y0 - 58, x0 + 46, y0 - 58, x0 + 120, y0, fill=far, outline="", tags=tg)
+            cv.create_polygon(x0 + 18, y0 - 44, x0 + 30, y0 - 58, x0 + 46, y0 - 58, x0 + 58, y0 - 44, x0 + 48, y0 - 48,
+                              x0 + 38, y0 - 42, x0 + 28, y0 - 48, fill=_mixhex("#e8eeff", base, 0.45), outline="", tags=tg)
+        elif scene == "kinkaku":
+            for (yy, w_, h_) in ((0, 64, 14), (14, 56, 12), (26, 44, 12)):
+                cv.create_rectangle(x0 + 30 - w_ / 2, y0 - yy - h_, x0 + 30 + w_ / 2, y0 - yy, fill=gold, outline="", tags=tg)
+                cv.create_polygon(x0 + 30 - w_ / 2 - 8, y0 - yy - h_, x0 + 30, y0 - yy - h_ - 7, x0 + 30 + w_ / 2 + 8,
+                                  y0 - yy - h_, fill=near, outline="", tags=tg)
+            cv.create_line(x0 + 30, y0 - 59, x0 + 30, y0 - 68, fill=gold, width=2, tags=tg)
+        elif scene == "pagoda":
+            for k in range(5):
+                w_ = 34 - k * 5
+                yy = y0 - k * 12
+                cv.create_rectangle(x0 + 30 - w_ / 2 + 4, yy - 10, x0 + 30 + w_ / 2 - 4, yy, fill=far, outline="", tags=tg)
+                cv.create_polygon(x0 + 30 - w_ / 2 - 4, yy - 9, x0 + 30, yy - 14, x0 + 30 + w_ / 2 + 4, yy - 9, fill=near,
+                                  outline="", tags=tg)
+            cv.create_line(x0 + 30, y0 - 62, x0 + 30, y0 - 76, fill=gold, width=2, tags=tg)
+        elif scene == "greatwall":
+            pts = []
+            for k in range(0, 15):
+                xx = x0 - 30 + k * 11
+                pts += [xx, y0 - 22 - 14 * math.sin(k * 0.55)]
+            cv.create_line(*pts, fill=far, width=7, smooth=True, tags=tg)
+            for k in range(0, 15, 2):
+                xx = x0 - 30 + k * 11
+                yy = y0 - 22 - 14 * math.sin(k * 0.55)
+                cv.create_rectangle(xx - 2, yy - 8, xx + 2, yy - 3, fill=far, outline="", tags=tg)
+            for k in (3, 10):
+                xx = x0 - 30 + k * 11
+                yy = y0 - 22 - 14 * math.sin(k * 0.55)
+                cv.create_rectangle(xx - 7, yy - 18, xx + 7, yy, fill=near, outline="", tags=tg)
+        elif scene == "dunes":
+            cv.create_polygon(x0 - 40, y0, x0 + 10, y0 - 26, x0 + 70, y0 - 8, x0 + 130, y0 - 30, x0 + 160, y0,
+                              fill=_mixhex("#c8a060", base, 0.6), outline="", tags=tg, smooth=True)
+            for k, xx in enumerate((x0 + 20, x0 + 42)):
+                yy = y0 - 20 - k * 3
+                cv.create_polygon(xx, yy, xx + 4, yy - 7, xx + 7, yy - 4, xx + 10, yy - 7, xx + 14, yy, xx + 16, yy - 9,
+                                  xx + 18, yy - 9, xx + 16, yy, xx + 14, yy + 6, xx + 12, yy, xx + 4, yy, xx + 2, yy + 6,
+                                  fill=near, outline="", tags=tg)
+        elif scene == "moon":
+            cv.create_oval(x0 + 4, y0 - 92, x0 + 56, y0 - 40, fill=_mixhex("#f4ecce", base, 0.35), outline="", tags=tg)
+            for (yy, w_, h_) in ((0, 70, 10), (10, 50, 10), (20, 30, 10)):
+                cv.create_rectangle(x0 + 30 - w_ / 2, y0 - yy - h_, x0 + 30 + w_ / 2, y0 - yy, fill=near, outline="", tags=tg)
+                cv.create_polygon(x0 + 30 - w_ / 2 - 6, y0 - yy - h_, x0 + 30, y0 - yy - h_ - 6, x0 + 30 + w_ / 2 + 6,
+                                  y0 - yy - h_, fill=far, outline="", tags=tg)
+        for it in cv.find_withtag("z22side"):
+            cv.tag_lower(it, "nav") if cv.find_withtag("nav") else None
+
+    # =================================================================================================================
+    #  Zenko Browser link (zenko22): both apps leave a small "I'm here" file every few seconds, so each can show a
+    #  "Linked" light. Zenko also shares your upcoming deadlines, today's plan and ema reminders so the browser's
+    #  new tab can show Zenko's calendar. Nothing leaves your computer.
+    # =================================================================================================================
+    def zb_now(self):
+        try:
+            with open(os.path.join(DATA_DIR, "browser_now.json"), encoding="utf-8") as f:
+                d = json.load(f)
+            return d if isinstance(d, dict) else {}
+        except Exception:
+            return {}
+
+    def zb_linked(self):
+        if not self.cfg.get("zb_link_on", True):
+            return False
+        d = self.zb_now()
+        try:
+            return bool(d) and time.time() - float(d.get("time") or 0) < 75
+        except (TypeError, ValueError):
+            return False
+
+    def zb_status_text(self):
+        if not self.cfg.get("zb_link_on", True):
+            return "The Zenko Browser link is switched off in Settings."
+        d = self.zb_now()
+        if not d:
+            return "I can't see Zenko Browser yet. Open it and we link up by ourselves~"
+        if not self.zb_linked():
+            return "Zenko Browser isn't open right now. When it is, this light glows."
+        t = clip(d.get("title") or d.get("host") or "a new tab", 60)
+        return "Linked with Zenko Browser %s~ You're on “%s”. Right-click any page there to summarise it, quiz yourself or add dates to me." % (
+            d.get("version") or "", t)
+
+    def z22_link_payload(self):
+        today = datetime.date.today()
+        end = (today + datetime.timedelta(days=21)).isoformat()
+        dl = []
+        for d in load_deadlines():
+            ds = d.get("date") or ""
+            if today.isoformat() <= ds <= end and not d.get("done"):
+                dl.append({"title": clip(d.get("title") or "", 80), "date": ds, "time": d.get("time") or "",
+                           "kind": d.get("kind") or ""})
+        plan = []
+        try:
+            for it in tt_today(self.tt):
+                plan.append({"start": it.get("start"), "mins": it.get("mins"), "task": clip(it.get("task") or "", 60),
+                             "done": tt_done(it)})
+        except Exception:
+            pass
+        ema = []
+        try:
+            for e in self.ema_active()[:12]:
+                ema.append({"text": clip(e.get("text") or "", 80), "at": e.get("at")})
+        except Exception:
+            pass
+        return {"app": "zenko", "version": APP_VERSION, "time": time.time(), "pid": os.getpid(),
+                "name": self.fox_name() if hasattr(self, "fox_name") else APP_NAME,
+                "deadlines": dl[:30], "today": plan[:20], "ema": ema}
+
+    def z22_link_tick(self):
+        try:
+            if self.cfg.get("zb_link_on", True):
+                os.makedirs(DATA_DIR, exist_ok=True)
+                path = os.path.join(DATA_DIR, "zenko_link.json")
+                with open(path + ".tmp", "w", encoding="utf-8") as f:
+                    json.dump(self.z22_link_payload(), f)
+                os.replace(path + ".tmp", path)
+                self.z22_reading_note()
+            was = getattr(self, "_zb_was_linked", None)
+            now = self.zb_linked()
+            if was is not None and now != was:
+                try:
+                    self.hub_side_draw()
+                except Exception:
+                    pass
+            self._zb_was_linked = now
+        except Exception as ex:
+            zk_log_error("zb link: %r" % (ex,))
+        try:
+            self.root.after(15000, self.z22_link_tick)
+        except Exception:
+            pass
+
+    Z22_SITES = {"youtube.com": "YouTube", "wikipedia.org": "Wikipedia", "khanacademy.org": "Khan Academy",
+                 "savemyexams.com": "Save My Exams", "revisionvillage.com": "Revision Village", "quizlet.com": "Quizlet",
+                 "ibo.org": "the IB site", "managebac.com": "ManageBac", "docs.google.com": "Google Docs",
+                 "classroom.google.com": "Google Classroom", "chemguide.co.uk": "Chemguide", "desmos.com": "Desmos",
+                 "wordreference.com": "WordReference", "bbc.co.uk": "BBC", "reddit.com": "Reddit"}
+
+    def z22_reading_note(self):
+        """When you settle on one page in Zenko Browser for a while, she notices what you're reading (gently, at most
+        every ten minutes, never during a focus session)."""
+        if not self.cfg.get("zb_reading_note", True) or not self.zb_linked():
+            return
+        d = self.zb_now()
+        title = (d.get("title") or "").strip()
+        S = self._zb_seen
+        if not title or title == "New tab" or (d.get("host") or "") in ("", "newtab"):
+            S["title"] = None
+            return
+        if title != S["title"]:
+            S["title"], S["t"] = title, time.time()
+            return
+        if time.time() - S["t"] < 100 or time.time() - S["noted"] < 600:
+            return
+        if self.session or self.lockin or getattr(self, "_z22_fish", None):
+            return
+        try:
+            if idle_seconds() > 240:
+                return
+        except Exception:
+            pass
+        S["noted"] = time.time()
+        host = (d.get("host") or "").lower()
+        site = next((v for k, v in self.Z22_SITES.items() if host == k or host.endswith("." + k)), host.replace("www.", ""))
+        sid = None
+        try:
+            sid = classify_subject(title + " " + host, (self.life.get("subj_learned") or None))[0]
+        except Exception:
+            sid = None
+        t = clip(title, 50)
+        if sid:
+            line = random.choice(["Ooh, %s on %s? “%s” looks useful~" % (self.sname(sid), site, t),
+                                  "Studying %s~ I'm counting it. (“%s”)" % (self.sname(sid), t),
+                                  "Kon~ reading “%s”? Right-click the page if you want me to quiz you." % t])
+        else:
+            line = random.choice(["What'cha reading? “%s” on %s~" % (t, site),
+                                  "Mm, “%s”... right-click it in the browser and I'll summarise it." % t])
+        self.say(line, 7)
+
+    # ---- things the browser sends ----------------------------------------------------------------------------------
+    def zb_inbox_item(self, it):
+        kind = it.get("kind") or "note"
+        try:
+            if kind == "deadline":
+                return self.z22_in_deadline(it)
+            if kind == "summary":
+                return self.z22_in_summary(it)
+            if kind == "card":
+                return self.z22_in_card(it)
+            if kind == "quiz":
+                return self.z22_in_quiz(it)
+        except Exception as ex:
+            zk_log_error("browser inbox %s: %r" % (kind, ex))
+            return None
+        return super().zb_inbox_item(it)
+
+    def z22_in_deadline(self, it):
+        title = re.sub(r"\s+", " ", it.get("text") or it.get("title") or "").strip()[:120]
+        date_iso = (it.get("date") or "").strip()
+        tm = (it.get("time") or "").strip()
+        if not title:
+            return None
+        if not re.match(r"^\d{4}-\d{2}-\d{2}$", date_iso):
+            when = float(it.get("when") or 0)
+            if not when:
+                return "I couldn't find a date in that. Try selecting the date too~"
+            dt = datetime.datetime.fromtimestamp(when)
+            date_iso = dt.date().isoformat()
+            tm = tm or (dt.strftime("%H:%M") if (dt.hour, dt.minute) != (9, 0) else "")
+        self.add_deadline(title, date_iso, tm, None, "browser")
+        try:
+            self.hub_refresh_page("deadlines")
+        except Exception:
+            pass
+        d = datetime.date.fromisoformat(date_iso)
+        return "Added to Upcoming: “%s” on %s~" % (clip(title, 50), d.strftime("%a %d %b").replace(" 0", " "))
+
+    def z22_in_summary(self, it):
+        title = clip((it.get("title") or "this page").strip(), 80)
+        body = (it.get("text") or "").strip()
+        url = it.get("url") or ""
+        if len(body) < 80:
+            return "There wasn't enough text there for me to summarise~"
+        self.say("Reading “%s”... give me a moment~" % clip(title, 50), 6)
+
+        def work():
+            if online_ready():
+                try:
+                    msg = [{"role": "system", "content": "You summarise web pages for an IB Diploma student. Give 5-7 short "
+                            "bullet points with the key ideas, then one line starting 'In short:'. Use correct IB terms. "
+                            "Plain text, '• ' bullets."},
+                           {"role": "user", "content": "Title: %s\n\n%s" % (title, body[:14000])}]
+                    out = (online_chat(msg, max_tokens=700) or "").strip()
+                    if out:
+                        return "Kon! The key points of “%s”:\n%s" % (title, out)
+                except Exception as ex:
+                    zk_log_error("browser summary online: %r" % (ex,))
+            return self.summarise_offline(title, body)
+
+        def done(res, err):
+            if err or not res:
+                self.say("Hmm, I couldn't summarise that one~", 6)
+                return
+            self.chat_line("Fox", res + ("\n(from %s)" % url if url else ""))
+            first = next((x[2:] for x in res.split("\n") if x.startswith("• ")), "")
+            self.say("Done~ " + clip(first, 110) + " (the rest is in Chat)", 22,
+                     [("Save to notes", lambda: super(Zenko22, self).zb_inbox_item(
+                         {"kind": "note", "title": "Summary: " + title, "text": res, "url": url})),
+                      ("Open chat", lambda: self.open_hub("chat"))])
+        self.bg(work, done)
+        return None
+
+    def z22_split_card(self, text):
+        t = re.sub(r"\s+", " ", text or "").strip(" .")
+        for sep in (" = ", " - ", " – ", " — ", ": "):
+            if sep in t:
+                q, a = t.split(sep, 1)
+                if q.strip() and a.strip():
+                    return q.strip(), a.strip()
+        m = re.match(r"^(.{3,80}?)\s+(?:is|are|was|were|means|refers to)\s+(.{3,})$", t, re.I)
+        if m:
+            return "What is %s?" % m.group(1).strip(), m.group(2).strip()
+        return None
+
+    def z22_in_card(self, it):
+        q, a = (it.get("q") or "").strip(), (it.get("a") or "").strip()
+        if not (q and a):
+            qa = self.z22_split_card(it.get("text") or "")
+            if not qa:
+                return "Select something like “osmosis - water moving across a membrane” and I'll make it a card~"
+            q, a = qa
+        return self.card_add(q, a)
+
+    Z22_STOP = set("about above after again against because before being below between could doesn during further "
+                   "having other their there these those through under until which while would should where whose "
+                   "every another however therefore although".split())
+
+    def z22_cloze(self, body, n=6):
+        sents = [s.strip() for s in _sentences(re.sub(r"\s+", " ", body[:20000]))]
+        out, seen = [], set()
+        for s in sents:
+            if not (50 <= len(s) <= 200) or s.count(" ") < 7:
+                continue
+            words = [w for w in re.findall(r"[A-Za-z][A-Za-z\-]{5,}", s) if w.lower() not in self.Z22_STOP]
+            if not words:
+                continue
+            caps = [w for w in words if w[0].isupper() and not s.startswith(w)]
+            key = max(caps or words, key=len)
+            if key.lower() in seen:
+                continue
+            seen.add(key.lower())
+            q = re.sub(r"\b%s\b" % re.escape(key), "_____", s, count=1)
+            out.append((q, key))
+            if len(out) >= n:
+                break
+        return out
+
+    def z22_in_quiz(self, it):
+        title = clip((it.get("title") or "this page").strip(), 60)
+        cards = self.z22_cloze(it.get("text") or "")
+        if not cards:
+            return "I couldn't make questions from that page. Try one with more sentences~"
+        for q, a in cards:
+            self.life["cards"].append({"id": "%x" % random.getrandbits(36), "q": q[:200], "a": a[:200], "box": 0,
+                                       "wrong": 0, "right": 0, "added": datetime.date.today().isoformat(),
+                                       "due": datetime.date.today().isoformat(), "from": "browser"})
+        self.life_save()
+        try:
+            self.daily_refresh()
+        except Exception:
+            pass
+        self.say("I made %d fill-in-the-blank cards from “%s”~ Ready?" % (len(cards), title), 25,
+                 [("Quiz me", lambda: self.hub_ask("review flashcards")), ("Later", lambda: None)])
+        return None
+
+    # =================================================================================================================
+    #  the Town square: one shared chat room for everyone using Zenko (online only)
+    # =================================================================================================================
+    def square_uid(self):
+        uid = self.cfg.get("square_uid")
+        if not uid:
+            uid = "%016x" % random.getrandbits(64)
+            self.cfg_set("square_uid", uid)
+        return uid
+
+    def square_connect(self):
+        if not self.cfg.get("square_on"):
+            return
+        srv = (self.cfg.get("square_server") or SQUARE_SERVER).strip()
+        if self._sq and self._sq.server == srv.rstrip("/"):
+            self._sq.start()
+            return
+        if self._sq:
+            self._sq.stop()
+        self._sq = SquareLink(srv, SQUARE_TOPIC)
+        self._sq.start()
+
+    def square_disconnect(self):
+        if self._sq:
+            self._sq.stop()
+
+    def square_visible(self):
+        sq = self._sq
+        if not sq:
+            return []
+        block = set(self.cfg.get("square_block") or [])
+        with sq.lock:
+            msgs = list(sq.msgs)
+            hidden = {k for k, v in sq.reports.items() if len(v) >= SQUARE_HIDE_AT}
+        return [m for m in msgs if m["uid"] not in block and m["id"] not in hidden]
+
+    def hub_build_square(self, pg):
+        self.hub_title(pg, "Town square", "One friendly chat room for everyone using %s. Online only, nicknames only" % APP_NAME)
+        bg = T["card"]
+        wrap = tk.Frame(pg, bg=PAPER)
+        wrap.pack(fill="both", expand=True, padx=24, pady=(4, 16))
+        top = tk.Frame(wrap, bg=PAPER)
+        top.pack(fill="x")
+        c = self.hub_card(top, None)
+        c.pack(fill="x")
+        row = tk.Frame(c, bg=bg)
+        row.pack(fill="x", padx=14, pady=10)
+        dot = tk.Canvas(row, width=14, height=14, bg=bg, highlightthickness=0)
+        dot.pack(side="left")
+        st = tk.Label(row, text="", bg=bg, fg=INK, font=(FONT_UI, 10, "bold"))
+        st.pack(side="left", padx=(6, 14))
+        tk.Label(row, text="Your name", bg=bg, fg=GREY, font=(FONT_UI, 9)).pack(side="left")
+        nv = tk.StringVar(value=self.cfg.get("square_name") or "")
+        ne = tk.Entry(row, textvariable=nv, width=16, bg=FIELD, fg=INK, insertbackground=INK, relief="flat",
+                      font=(FONT_UI, 10), highlightthickness=1, highlightbackground=LINE, highlightcolor=GOLD)
+        ne.pack(side="left", padx=(6, 4), ipady=3)
+        tag = tk.Label(row, text="#" + square_tag(self.square_uid()), bg=bg, fg=GREY, font=(FONT_UI, 9))
+        tag.pack(side="left")
+        go = self.tt_btn(row, "Go online", lambda: toggle(), bg=ORANGE)
+        go.pack(side="right")
+
+        board = self.hub_card(wrap, None)
+        board.pack(fill="both", expand=True, pady=(10, 0))
+        txt = tk.Text(board, bg=bg, fg=INK, relief="flat", wrap="word", font=(FONT_UI, 10), padx=14, pady=10,
+                      highlightthickness=0, cursor="arrow", height=14, spacing1=3, spacing3=3)
+        sb = tk.Scrollbar(board, command=txt.yview)
+        txt.configure(yscrollcommand=sb.set)
+        sb.pack(side="right", fill="y", pady=6)
+        txt.pack(side="left", fill="both", expand=True)
+        txt.tag_configure("name", foreground=GOLD, font=(FONT_UI, 10, "bold"))
+        txt.tag_configure("me", foreground=ORANGE, font=(FONT_UI, 10, "bold"))
+        txt.tag_configure("tag", foreground=GREY, font=(FONT_UI, 8))
+        txt.tag_configure("note", foreground=GREY, font=(FONT_UI, 9, "italic"), justify="center")
+        txt.configure(state="disabled")
+
+        bottom = tk.Frame(wrap, bg=PAPER)
+        bottom.pack(fill="x", pady=(10, 0))
+        mv = tk.StringVar()
+        me = tk.Entry(bottom, textvariable=mv, bg=FIELD, fg=INK, insertbackground=INK, relief="flat", font=(FONT_UI, 11),
+                      highlightthickness=1, highlightbackground=LINE, highlightcolor=GOLD)
+        me.pack(side="left", fill="x", expand=True, ipady=6)
+        cnt = tk.Label(bottom, text="", bg=PAPER, fg=GREY, font=(FONT_UI, 9), width=9)
+        cnt.pack(side="left", padx=6)
+        send = self.tt_btn(bottom, "Send", lambda: do_send(), bg=ORANGE)
+        send.pack(side="left")
+        tk.Label(wrap, text="Be kind. Links, phone numbers, emails and social handles are removed. Never share where you "
+                 "live or go to school. Right-click a message to report or block. Three reports hide it for everyone.",
+                 bg=PAPER, fg=GREY, font=(FONT_UI, 8), anchor="w", justify="left").pack(fill="x", pady=(6, 0))
+
+        ui = {"txt": txt, "st": st, "dot": dot, "go": go, "cnt": cnt, "me": me, "shown": -1, "lines": {}, "last": 0.0}
+        self._sq_ui = ui
+
+        def save_name(*_):
+            n = square_name_ok(nv.get())
+            if n:
+                self.cfg_set("square_name", n)
+            return n
+        ne.bind("<FocusOut>", save_name)
+        ne.bind("<Return>", lambda e: (save_name(), me.focus_set()))
+
+        def toggle():
+            if self.cfg.get("square_on"):
+                self.cfg_set("square_on", False)
+                self.square_disconnect()
+            else:
+                if not self.cfg.get("square_rules_ok"):
+                    return rules()
+                self.cfg_set("square_on", True)
+                self.square_connect()
+            ui["shown"] = -1
+            paint()
+
+        def rules():
+            self.say("The Town square is public: anyone using %s can read it. Use a nickname, be kind, and never share "
+                     "your real name, school or where you live." % APP_NAME, 40,
+                     [("I understand", lambda: (self.cfg_set("square_rules_ok", True), toggle())), ("Not now", lambda: None)])
+
+        def do_send():
+            if not self.cfg.get("square_on") or not self._sq:
+                return rules() if not self.cfg.get("square_rules_ok") else toggle()
+            name = save_name()
+            if not name:
+                self.say("Pick a nickname first (3 to 18 letters or numbers, nothing rude)~", 8)
+                ne.focus_set()
+                return
+            left = SQUARE_SLOW - (time.time() - ui["last"])
+            if left > 0:
+                return
+            t = square_clean(mv.get())
+            if not t:
+                return
+            ui["last"] = time.time()
+            mv.set("")
+            uid, sq = self.square_uid(), self._sq
+
+            def done(res, err):
+                if err:
+                    ui["last"] = 0.0
+                    mv.set(t)
+                    self.say("That didn't send. Are you online? (%s)" % clip(str(err), 60), 8)
+                else:
+                    ui_sound("send")
+            self.bg(lambda: sq.post(uid, name, t), done)
+        me.bind("<Return>", lambda e: do_send())
+
+        def menu_at(e):
+            idx = txt.index("@%d,%d" % (e.x, e.y)).split(".")[0]
+            m = ui["lines"].get(int(idx))
+            if not m or m["uid"] == self.square_uid():
+                return
+            pm = tk.Menu(txt, tearoff=0, bg=bg, fg=INK, activebackground=GOLD, activeforeground=ON_ACC,
+                         font=(FONT_UI, 10), relief="flat", bd=1)
+            pm.add_command(label="Report this message", command=lambda: report(m))
+            pm.add_command(label="Block %s#%s" % (m["name"], square_tag(m["uid"])), command=lambda: block(m))
+            pm.add_command(label="Copy text", command=lambda: (self.root.clipboard_clear(), self.root.clipboard_append(m["text"])))
+            try:
+                pm.tk_popup(e.x_root, e.y_root)
+            finally:
+                pm.grab_release()
+        txt.bind("<Button-3>", menu_at)
+
+        def report(m):
+            uid, sq = self.square_uid(), self._sq
+            if sq:
+                self.bg(lambda: sq.post(uid, "", "", rep=m["id"]), lambda r, e: None)
+            self.say("Thank you for reporting. It's hidden for you now~", 6)
+            hid = set(self.cfg.get("square_hidden") or [])
+            hid.add(m["id"])
+            self.cfg_set("square_hidden", sorted(hid)[-300:])
+            ui["shown"] = -1
+            paint()
+
+        def block(m):
+            b = list(self.cfg.get("square_block") or [])
+            if m["uid"] not in b:
+                b.append(m["uid"])
+            self.cfg_set("square_block", b[-200:])
+            ui["shown"] = -1
+            paint()
+
+        def paint():
+            on = bool(self.cfg.get("square_on"))
+            sq = self._sq
+            state = sq.state if (sq and on) else "off"
+            col = {"live": "#5fd38a", "connecting": GOLD, "error": "#e06a5a"}.get(state, GREY)
+            dot.delete("all")
+            dot.create_oval(2, 2, 12, 12, fill=col, outline="")
+            st.configure(text={"live": "Online", "connecting": "Connecting...", "error": "Can't reach the square",
+                               "off": "Offline"}[state])
+            go.configure(text="Leave" if on else "Go online")
+            left = max(0, SQUARE_SLOW - (time.time() - ui["last"]))
+            cnt.configure(text=("wait %ds" % left) if left > 0 else "%d/%d" % (len(mv.get()), SQUARE_MAX))
+            ver = (sq.changed if sq else 0) * 2 + (1 if on else 0)
+            if ver == ui["shown"]:
+                return
+            ui["shown"] = ver
+            hid = set(self.cfg.get("square_hidden") or [])
+            msgs = [m for m in self.square_visible() if m["id"] not in hid] if on else []
+            mine = self.square_uid()
+            at_end = txt.yview()[1] > 0.98
+            txt.configure(state="normal")
+            txt.delete("1.0", "end")
+            ui["lines"] = {}
+            if not on:
+                txt.insert("end", "\nYou're offline. Press Go online to join the Town square.\n", "note")
+            elif not msgs:
+                txt.insert("end", "\nIt's quiet here... say hello~\n", "note")
+            line = 1
+            day = None
+            for m in msgs[-200:]:
+                dt = datetime.datetime.fromtimestamp(m["ts"])
+                if dt.date() != day:
+                    day = dt.date()
+                    txt.insert("end", ("Today" if day == datetime.date.today() else day.strftime("%a %d %b")) + "\n", "note")
+                    line += 1
+                txt.insert("end", m["name"], "me" if m["uid"] == mine else "name")
+                txt.insert("end", " #%s  %s\n" % (square_tag(m["uid"]), dt.strftime("%H:%M")), "tag")
+                ui["lines"][line] = m
+                txt.insert("end", m["text"] + "\n")
+                ui["lines"][line + 1] = m
+                line += 2
+            txt.configure(state="disabled")
+            if at_end or ui["shown"] <= 1:
+                txt.see("end")
+
+        def tick():
+            if self._sq_ui is not ui or not txt.winfo_exists():
+                return
+            try:
+                paint()
+            except tk.TclError:
+                return
+            pg.after(800, tick)
+        paint()
+        tick()
+
+    # =================================================================================================================
+    #  Settings: browser link and Town square
+    # =================================================================================================================
+    def hub_settings_extras(self, left, right, check, radios, label, cfg_set):
+        super().hub_settings_extras(left, right, check, radios, label, cfg_set)
+        try:
+            self.z22_settings(right)
+        except Exception as ex:
+            zk_log_error("z22 settings: %r" % (ex,))
+
+    def z22_settings(self, parent):
+        bg = T["card"]
+        kw = dict(bg=bg, fg=INK, activebackground=bg, activeforeground=GOLD, selectcolor=FIELD, highlightthickness=0,
+                  font=(FONT_UI, 10), anchor="w")
+        c = self.hub_card(parent, "Linked apps: Zenko Browser")
+        c.pack(fill="x", pady=(12, 0))
+        stl = tk.Label(c, text="", bg=bg, fg=GREY, font=(FONT_UI, 9), anchor="w", justify="left", wraplength=320)
+        stl.pack(fill="x", padx=14, pady=(2, 4))
+
+        def upd():
+            stl.configure(text=("● Linked right now" if self.zb_linked() else "○ Not linked (open Zenko Browser)"),
+                          fg="#5fd38a" if self.zb_linked() else GREY)
+        upd()
+        for key, text, dflt in (("zb_link_on", "Link with Zenko Browser (share my calendar with its new tab)", True),
+                                ("zb_reading_note", "Let her notice what I'm reading there", True)):
+            v = tk.BooleanVar(value=bool(self.cfg.get(key, dflt)))
+            tk.Checkbutton(c, text=text, variable=v, command=lambda k=key, v=v: (self.cfg_set(k, v.get()), upd()),
+                           **kw).pack(fill="x", padx=14)
+        tk.Label(c, text="Both apps only read each other's small files in %APPDATA%\\FoxBuddy. Nothing goes online.",
+                 bg=bg, fg=GREY, font=(FONT_UI, 8), anchor="w", justify="left", wraplength=320).pack(fill="x", padx=14, pady=(2, 10))
+
+        c2 = self.hub_card(parent, "Town square")
+        c2.pack(fill="x", pady=(12, 0))
+        v = tk.BooleanVar(value=bool(self.cfg.get("square_on")))
+
+        def tog():
+            if v.get() and not self.cfg.get("square_rules_ok"):
+                self.cfg_set("square_rules_ok", True)
+            self.cfg_set("square_on", v.get())
+            (self.square_connect if v.get() else self.square_disconnect)()
+        tk.Checkbutton(c2, text="Join the Town square when I'm online", variable=v, command=tog, **kw).pack(fill="x", padx=14)
+        tk.Label(c2, text="Message server (ntfy). Leave as it is unless you run your own:", bg=bg, fg=GREY,
+                 font=(FONT_UI, 9), anchor="w").pack(fill="x", padx=14, pady=(6, 0))
+        sv = tk.StringVar(value=self.cfg.get("square_server") or SQUARE_SERVER)
+        e = tk.Entry(c2, textvariable=sv, bg=FIELD, fg=INK, insertbackground=INK, relief="flat", font=(FONT_UI, 10),
+                     highlightthickness=1, highlightbackground=LINE, highlightcolor=GOLD)
+        e.pack(fill="x", padx=14, pady=(2, 4), ipady=3)
+
+        def setsrv(*_):
+            s = sv.get().strip().rstrip("/")
+            if not re.match(r"^https?://[\w.-]+(:\d+)?(/.*)?$", s):
+                s = SQUARE_SERVER
+                sv.set(s)
+            self.cfg_set("square_server", s)
+            if self.cfg.get("square_on"):
+                self.square_connect()
+        e.bind("<FocusOut>", setsrv)
+        e.bind("<Return>", setsrv)
+        nb = len(self.cfg.get("square_block") or [])
+        r = tk.Frame(c2, bg=bg)
+        r.pack(fill="x", padx=14, pady=(2, 10))
+        bl = tk.Label(r, text="%d blocked" % nb, bg=bg, fg=GREY, font=(FONT_UI, 9))
+        bl.pack(side="left")
+        self.tt_btn(r, "Unblock everyone", lambda: (self.cfg_set("square_block", []), bl.configure(text="0 blocked")),
+                    bg=FIELD).pack(side="right")
+
+    # =================================================================================================================
+    #  chat commands
+    # =================================================================================================================
+    def gym_route(self, text):
+        lw = re.sub(r"^(?:hey |hi |ok |okay )?(?:zenko[, ]+)?(?:please |pls |can you |could you |let'?s )?", "",
+                    (text or "").lower().strip(" .!?~"))
+        try:
+            if re.match(r"^(?:go )?fish(?:ing)?$|^cast(?: a| the)? line$|^catch (?:a )?(?:fish|koi)$", lw):
+                self.open_hub("garden")
+                self.root.after(600, self.fish_cast)
+                return "To the pond~ Answer right and something bites!"
+            if re.match(r"^(?:my |open )?(?:koi|fish) ?(?:book|collection|dex)$", lw):
+                self.koi_book()
+                F = self.fishing()
+                return "Here's your koi book: %d of %d kinds caught~" % (len(F["book"]), len(FISH))
+            if re.match(r"^(?:my |open )?(?:passport|stamps|journey|world map)$", lw):
+                self.open_hub("map")
+                return "Your passport~ %d places stamped so far." % len(self.journey_state()[1])
+            if re.match(r"^(?:my |open )?(?:badges|ema badges|achievements)$", lw):
+                self.open_hub("daily")
+                return "Here are your ema badges~ %d earned." % len(self.life.get("badges") or {})
+            if re.match(r"^(?:open )?(?:town square|global chat|square)$", lw):
+                self.open_hub("square")
+                return "The Town square~ Be kind out there!"
+            if re.match(r"^(?:browser|zenko browser|are you linked|browser link)\??$", lw):
+                return self.zb_status_text()
+        except Exception as ex:
+            zk_log_error("z22 route: %r" % (ex,))
+        return super().gym_route(text)
+
+    def z20_nav_all(self):
+        allk = list(super().z20_nav_all())
+        if not any(k == "square" for k, _ in allk):
+            i = next((n + 1 for n, (k, _) in enumerate(allk) if k == "chat"), len(allk))
+            allk.insert(i, ("square", "Town square"))
+        return allk
+
+
+# ---- zenko22: the speech bubble grows and shrinks with her (Tiny ... Large), and can wear a style from the map -----
+def _z22_bub_u(self):
+    U = self.U
+    if not self.cfg.get("bubble_scale", True):
+        return U
+    try:
+        k = ((float(self.cfg.get("size", 4)) - 2) / 2.0) ** 0.6
+    except (TypeError, ValueError):
+        k = 1.0
+    return U * max(0.8, min(1.9, k))
+
+
+def _z22_bub_style(self):
+    st = Z22_BUBBLES.get(self.cfg.get("bubble_style") or "")
+    if not st or not st[1]:
+        return T["bub"], T["bubink"], GOLD, None
+    return st[1], st[2], st[3], st[4]
+
+
+def _z22_say(self, text, secs=9, choices=None):
+    """Show a speech bubble. choices = [(label, function)] adds one-tap buttons under the text. (zenko22: sized by
+    her size, in the chosen bubble style.)"""
+    U = self.z22_bu()
+    fill, ink, rim, _inner = self.z22_bub_style()
+    try:
+        win, cv = self.bubble_window()
+    except Exception:
+        return
+    if self.bubble_job:
+        try:
+            self.root.after_cancel(self.bubble_job)
+        except Exception:
+            pass
+    cv.delete("all")
+    text = clip(text, 160 if choices else 240)
+    k = U / max(0.5, self.U)
+    pad = int(13 * U)
+    maxw = int(206 * U)
+    tail = int(15 * U)
+    m = tail + int(4 * U)
+    fam = self.bubble_family()
+    fs, cs = max(8, int(round(10 * k))), max(7, int(round(9 * k)))
+    t = cv.create_text(0, 0, text=text, font=(fam, fs, "bold"), fill=ink, width=maxw, anchor="nw", tags="txt")
+    x1, y1, x2, y2 = cv.bbox(t)
+    tw, th = x2 - x1, y2 - y1
+    chips, cx, cy, ch = [], 0, 0, int(22 * U)
+    for (label, fn) in (choices or []):
+        it = cv.create_text(0, 0, text=label, font=(fam, cs, "bold"), anchor="nw")
+        a, b_, c_, d = cv.bbox(it)
+        cv.delete(it)
+        w = (c_ - a) + int(18 * U)
+        if cx and cx + w > maxw:
+            cx, cy = 0, cy + ch + int(6 * U)
+        chips.append((cx, cy, w, label, fn))
+        cx += w + int(6 * U)
+    chips_h = (cy + ch + int(8 * U)) if chips else 0
+    chips_w = max([c[0] + c[2] for c in chips] or [0])
+    bw, bh = max(tw, chips_w) + 2 * pad, th + 2 * pad + chips_h
+    cv.coords(t, m + pad, m + pad)
+    self._bub = {"bw": bw, "bh": bh, "m": m, "tail": tail, "side": None, "pos": None, "chips": [], "U": U}
+    for (ox, oy, w, label, fn) in chips:
+        X1, Y1 = m + pad + ox, m + pad + th + int(8 * U) + oy
+        rbox(cv, X1, Y1, X1 + w, Y1 + ch, 99, fill=ORANGE, outline=rim, width=1, tags="chip", shape="pill", step=max(2, int(U)))
+        cv.create_text(X1 + w // 2, Y1 + ch // 2, text=label, font=(fam, cs, "bold"), fill=ON_ACC, tags="chip")
+        self._bub["chips"].append((X1, Y1, X1 + w, Y1 + ch, fn))
+    cv.config(width=bw + 2 * m, height=bh + 2 * m)
+    self.bubble_place(force=True)
+    try:
+        win.deiconify()
+        win.lift()
+    except tk.TclError:
+        pass
+    self.bubble_job = self.root.after(int(secs * 1000), self.bubble_hide)
+
+
+def _z22_bubble_spot(self):
+    b, Z = self._bub, self.Z
+    U = b.get("U") or self.U
+    rx, ry = self.root.winfo_x(), self.root.winfo_y()
+    fx, fy = rx + self.COLW, ry + self.fox_y
+    head_x = fx + int(36 * Z)
+    l, t, r, bt = monitor_area(head_x, fy + int(40 * Z), self.root)
+    bw, bh, m, gap = b["bw"], b["bh"], b["m"], int(4 * U)
+    cy2 = ry + self.H - self.PH - int(16 * self.U)
+    cands = []
+    x2 = fx - int(14 * U)
+    y2 = min(bt - gap, max(t + gap + bh, cy2))
+    cands.append(("left", x2 - bw, y2 - bh, x2 - bw >= l + gap))
+    x1 = fx + int(68 * Z) + int(10 * U)
+    y2r = min(bt - gap, max(t + gap + bh, fy + int(34 * Z)))
+    cands.append(("right", x1, y2r - bh, x1 + bw <= r - gap))
+    ax1 = max(l + gap, min(r - gap - bw, head_x - bw // 2))
+    cands.append(("above", ax1, fy + int(2 * Z) - int(14 * U) - bh, fy + int(2 * Z) - int(14 * U) - bh >= t + gap))
+    cands.append(("below", ax1, fy + self.FH + int(14 * U), fy + self.FH + int(14 * U) + bh <= bt - gap))
+    side, bx, by = next(((sd, x, y) for sd, x, y, ok in cands if ok), cands[0][:3])
+    bx = max(l + gap, min(r - gap - bw, bx))
+    by = max(t + gap, min(bt - gap - bh, by))
+    return side, bx - m, by - m, head_x, fy + int(26 * Z)
+
+
+def _z22_bubble_place(self, force=False):
+    b = self._bub
+    if not b:
+        return
+    try:
+        side, wx, wy, hx, hy = self.bubble_spot()
+    except Exception:
+        return
+    if not force and b["pos"] == (wx, wy) and b["side"] == side and b.get("aim") == (hx, hy):
+        return
+    cv, m, tail = self.bubcv, b["m"], b["tail"]
+    U = b.get("U") or self.U
+    bw, bh = b["bw"], b["bh"]
+    fill, ink, rim, inner = self.z22_bub_style()
+    if force or b["side"] != side or b.get("aim") != (hx, hy):
+        cv.delete("frame")
+        X1, Y1, X2, Y2 = m, m, m + bw, m + bh
+        r = int(16 * U)
+        st = max(2, int(2 * U))
+        w = max(2, int(2 * U))
+        rbox(cv, X1, Y1, X2, Y2, r, fill=fill, outline=rim, width=w, tags="frame", step=st)
+        i = int(5 * U)
+        rbox(cv, X1 + i, Y1 + i, X2 - i, Y2 - i, max(2, r - i), fill="", outline=inner or _mixhex(fill, rim, 0.35), width=1,
+             tags="frame", step=st)
+        j = max(2, int(2 * U))
+        mxx = (X1 + X2) // 2
+        for (cx, k) in ((mxx - 3 * j, 1), (mxx + 3 * j, 1), (mxx, 2)):
+            cv.create_oval(cx - k * j, Y1 - k * j + 1, cx + k * j, Y1 + k * j + 1, fill=rim if k == 2 else _mixhex(rim, fill, 0.3),
+                           outline="", tags="frame")
+        ax, ay = hx - wx, hy - wy
+        if side in ("left", "right"):
+            py = max(Y1 + int(16 * U), min(Y2 - int(16 * U), ay if side == "right" else Y2 - int(18 * U)))
+            ex = X2 if side == "left" else X1
+            tip = ex + (tail - 2 if side == "left" else -(tail - 2))
+            cv.create_polygon(ex, py - int(8 * U), tip, py + int(4 * U), ex, py + int(9 * U),
+                              fill=fill, outline=rim, width=w, joinstyle="miter", tags="frame")
+            cv.create_line(ex, py - int(8 * U) + w, ex, py + int(9 * U) - w, fill=fill, width=w + 1, tags="frame")
+        else:
+            px = max(X1 + int(18 * U), min(X2 - int(18 * U), ax))
+            ey = Y2 if side == "above" else Y1
+            tip = ey + (tail - 2 if side == "above" else -(tail - 2))
+            cv.create_polygon(px - int(8 * U), ey, px + int(3 * U), tip, px + int(9 * U), ey,
+                              fill=fill, outline=rim, width=w, joinstyle="miter", tags="frame")
+            cv.create_line(px - int(8 * U) + w, ey, px + int(9 * U) - w, ey, fill=fill, width=w + 1, tags="frame")
+        cv.tag_lower("frame")
+        b["side"], b["aim"] = side, (hx, hy)
+    if b["pos"] != (wx, wy):
+        try:
+            self.bubwin.geometry("%dx%d+%d+%d" % (bw + 2 * m, bh + 2 * m, wx, wy))
+        except tk.TclError:
+            pass
+        b["pos"] = (wx, wy)
+
+
+FoxBuddy.z22_bu = _z22_bub_u
+FoxBuddy.z22_bub_style = _z22_bub_style
+FoxBuddy.say = _z22_say
+FoxBuddy.bubble_spot = _z22_bubble_spot
+FoxBuddy.bubble_place = _z22_bubble_place
+
+# ---- the Town square in the sidebar and quick search --------------------------------------------------------------
+Z19_ICONS["square"] = ["...........", ".#####.....", "#wwwww#....", "#w+w+w#####", "#wwwww#www#", ".##w##ww+w#",
+                       "..#w#wwwww#", "..##.##w##.", "......#w#..", "......##...", "..........."]
+PAGE_WORDS["square"] = "town square global chat online friends message everyone community talk"
+
+
+
 def main():
     if "--make-icon" in sys.argv:
         out = sys.argv[sys.argv.index("--make-icon") + 1] if len(sys.argv) > sys.argv.index("--make-icon") + 1 \
@@ -41708,7 +45784,7 @@ def main():
         return
     started = {"ok": False}
     try:
-        app = Zenko21()
+        app = Zenko22()
 
         def mark_ok():
             started["ok"] = True

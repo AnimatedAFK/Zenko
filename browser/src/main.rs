@@ -1035,6 +1035,42 @@ impl App {
         std::fs::write(&tmp, Value::Array(list).to_string()).is_ok() && std::fs::rename(&tmp, &f).is_ok()
     }
 
+    fn zk_toast(&self, ok: bool, msg: &str) {
+        let m = if !ok {
+            "Zenko isn't set up on this PC yet"
+        } else if bridge::zenko_live() {
+            msg
+        } else {
+            "Saved for Zenko. She'll pick it up next time she's open~"
+        };
+        self.ui(&format!("zb.toast({})", json!(m)));
+    }
+
+    /// Summarise text: Zenko does it when she's open (her online brain or her offline summariser, and it lands
+    /// in her chat); otherwise the browser makes a quick summary itself.
+    fn zk_summary(&mut self, id: u32, text: &str, title: &str) {
+        let text: String = text.chars().take(20000).collect();
+        if text.split_whitespace().count() < 25 {
+            self.ui("zb.toast(\"There isn't enough text there to summarise\")");
+            return;
+        }
+        let (_, url, subject) = self.page_info(id);
+        if bridge::zenko_live() && self.to_zenko(json!({"kind": "summary", "text": text, "title": title, "url": url, "subject": subject})) {
+            self.ui("zb.toast(\"Zenko is reading it... her summary pops up in a moment~\")");
+        } else {
+            self.ui(&format!("zb.summary({})", json!({"title": title, "url": url, "text": text})));
+        }
+    }
+
+    /// The Zenko link light and Zenko's calendar for the toolbar.
+    fn link_tick(&self) {
+        let installed = bridge::foxbuddy_dir().is_some();
+        let (v, live) = bridge::zenko_link().unwrap_or((Value::Null, false));
+        let d = json!({"installed": installed, "linked": live, "version": v["version"], "name": v["name"],
+                       "deadlines": v["deadlines"], "today": v["today"]});
+        self.ui(&format!("zb.link({})", d));
+    }
+
     fn page_info(&self, id: u32) -> (String, String, String) {
         self.index(id)
             .map(|i| {
@@ -1097,6 +1133,48 @@ impl App {
             }
             "cite" => self.page_js(id, "window.__zb&&__zb.cite()"),
             "clip" => self.ui("zb.clip()"),
+            // ---- Zenko link (0.3): summaries, flashcards, quizzes and dates go to Zenko
+            "sumSel" => {
+                let (title, _, _) = self.page_info(id);
+                self.zk_summary(id, data, &format!("Selection from {}", title));
+            }
+            "sumPage" => {
+                let (title, _, _) = self.page_info(id);
+                let text = self.index(id).map(|i| self.tabs[i].text.clone()).unwrap_or_default();
+                self.zk_summary(id, &text, &title);
+            }
+            "quizPage" => {
+                let (title, url, subject) = self.page_info(id);
+                let text = self.index(id).map(|i| self.tabs[i].text.clone()).unwrap_or_default();
+                if text.split_whitespace().count() < 60 {
+                    self.ui("zb.toast(\"There isn't enough text on this page for a quiz\")");
+                } else {
+                    let ok = self.to_zenko(json!({"kind": "quiz", "text": text, "title": title, "url": url, "subject": subject}));
+                    self.zk_toast(ok, "Zenko is making fill-in-the-blank cards from this page~");
+                }
+            }
+            "card" => {
+                let (title, url, subject) = self.page_info(id);
+                let ok = self.to_zenko(json!({"kind": "card", "text": data, "title": title, "url": url, "subject": subject}));
+                self.zk_toast(ok, "Zenko made it into a flashcard~");
+            }
+            "addZenko" => self.ui(&format!("zb.addTo({})", json!(data))),
+            "pageNote" | "linkNote" => {
+                let (title, url, subject) = self.page_info(id);
+                let text = if cmd == "linkNote" { data.to_string() } else { format!("{}\n{}", title, url) };
+                let ok = self.to_zenko(json!({"kind": "note", "text": text, "title": title, "url": url, "subject": subject}));
+                self.zk_toast(ok, "Sent to Zenko's notes");
+            }
+            "webSearch" => self.ui(&format!("zb.search({})", json!(data))),
+            "copyText" => self.ui(&format!("zb.copy({},\"Copied as plain text\")", json!(data))),
+            "copyLink" => self.ui(&format!("zb.copy({},\"Link copied\")", json!(data))),
+            "words" => self.ui(&format!("zb.words({})", json!(data))),
+            "imgTab" => {
+                if data.starts_with("http") {
+                    let pr = self.index(id).map(|i| self.tabs[i].profile.clone()).unwrap_or_default();
+                    self.new_tab_in(data, true, &pr, id);
+                }
+            }
             "savePage" => {
                 #[cfg(windows)]
                 if let Some(i) = self.index(id) {
@@ -1159,6 +1237,7 @@ impl App {
                 self.ui(&format!("zb.saved({})", self.saved_list()));
                 self.ui(&format!("zb.archivedList({})", json!(self.archived)));
                 self.ui(&format!("zb.downloads({})", Value::Array(self.downloads.clone())));
+                self.link_tick();
             }
             "space" => {
                 let name = s("name");
@@ -1315,8 +1394,10 @@ impl App {
             }
             "ntData" => {
                 let from = n("_from");
+                let (zl, live) = bridge::zenko_link().unwrap_or((Value::Null, false));
                 let d = json!({"recap": self.recap(), "downloads": self.downloads.iter().rev().take(4).cloned().collect::<Vec<_>>(),
-                               "saved": self.saved_list(), "zenko": bridge::foxbuddy_dir().is_some()});
+                               "saved": self.saved_list(), "zenko": bridge::foxbuddy_dir().is_some(),
+                               "zcal": zl, "linked": live});
                 self.page_js(from, &format!("window.zbNT&&zbNT({})", d));
             }
             "recap" => {
@@ -1327,6 +1408,13 @@ impl App {
                 let d = s("d");
                 self.new_day(&d);
             }
+            "tabCmd" => {
+                let id = n("id");
+                let url = self.index(id).map(|i| self.tabs[i].url.clone()).unwrap_or_default();
+                let cmd = s("a");
+                self.menu(id, &cmd, &url);
+            }
+            "linkNow" => self.link_tick(),
             "page" => {
                 let a = self.active;
                 let url = self.active_tab().map(|t| t.url.clone()).unwrap_or_default();
@@ -1987,6 +2075,13 @@ fn main() {
                 app.changed();
             }
             app.time_tick();
+            if ticks.is_multiple_of(20) {
+                app.last_title.clear(); // heartbeat: Zenko sees the browser is still open
+                app.tell_zenko();
+            }
+            if ticks % 5 == 2 {
+                app.link_tick();
+            }
             // links handed over by a second start
             if let Ok(d) = std::fs::read_dir(app.data_file("open")) {
                 for e in d.flatten() {

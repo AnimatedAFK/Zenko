@@ -46,6 +46,27 @@ pub fn write_now(title: &str, url: &str, host: &str, in_claude_panel: bool) {
     }
 }
 
+/// What Zenko shares with the browser (zenko_link.json: upcoming deadlines, today's plan, ema reminders).
+/// Returns the data (if it is under three days old) and whether Zenko is running right now.
+pub fn zenko_link() -> Option<(serde_json::Value, bool)> {
+    let t = std::fs::read_to_string(zenko_dir().join("zenko_link.json")).ok()?;
+    let v: serde_json::Value = serde_json::from_str(&t).ok()?;
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs_f64())
+        .unwrap_or(0.0);
+    let age = now - v["time"].as_f64().unwrap_or(0.0);
+    if !(-120.0..259_200.0).contains(&age) {
+        return None;
+    }
+    Some((v, age < 50.0))
+}
+
+/// Is Zenko open right now (she rewrites zenko_link.json every 15 seconds)?
+pub fn zenko_live() -> bool {
+    zenko_link().map(|x| x.1).unwrap_or(false)
+}
+
 #[cfg(test)]
 mod t {
     #[test]

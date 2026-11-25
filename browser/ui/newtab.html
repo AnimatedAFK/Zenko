@@ -61,6 +61,24 @@
   .w a:hover { color: var(--gold); }
   .w .bar { height: 5px; background: var(--line); margin: .15rem 0 .3rem; clip-path: var(--clips); }
   .w .bar i { display: block; height: 100%; background: var(--gold); }
+  /* Zenko's calendar (shared by Zenko when she's installed) */
+  .w.cal { grid-column: 1 / -1; display: none; min-height: 0; }
+  .w.cal.on { display: block; }
+  .w h3 .dot { width: 7px; height: 7px; display: inline-block; background: var(--grey); margin-right: .35rem; vertical-align: middle; }
+  .w h3 .dot.live { background: #5fd38a; box-shadow: 0 0 6px #5fd38a; }
+  .strip { display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: .3rem; margin: .2rem 0 .7rem; }
+  .strip .d { text-align: center; padding: .35rem 0 .3rem; background: color-mix(in srgb, var(--field) 70%, transparent); clip-path: var(--clips); font-size: .78rem; color: var(--grey); min-width: 0; }
+  .strip .d b { display: block; font-size: 1.05rem; color: var(--ink); font-weight: 500; }
+  .strip .d.today { background: var(--accbg); box-shadow: inset 0 -2px 0 var(--gold); }
+  .strip .d.we b { color: color-mix(in srgb, var(--ink) 70%, var(--grey)); }
+  .strip .d .pips { height: 7px; display: flex; justify-content: center; gap: 2px; margin-top: .2rem; }
+  .strip .d .pips i { width: 5px; height: 5px; background: var(--gold); }
+  .strip .d .pips i.exam { background: #e0533a; }
+  .strip .d.has { cursor: default; }
+  .up { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: .1rem 1.2rem; }
+  .up li .when { color: var(--gold); font-size: .85rem; flex: none; }
+  .up li .k { width: 6px; height: 6px; background: var(--gold); flex: none; }
+  .up li .k.exam { background: #e0533a; }
   .gear { position: fixed; right: 1rem; top: 1rem; z-index: 2; clip-path: var(--clips); }
 </style>
 </head>
@@ -76,6 +94,7 @@
   </form>
   <div class="sites" id="sites"></div>
   <div class="widgets">
+    <div class="w pxb cal" id="cal"><h3>Zenko's calendar <i id="calst"></i></h3><div class="strip" id="strip"></div><ul class="up" id="up"></ul></div>
     <div class="w pxb"><h3>Today <i id="wday"></i></h3><ul id="sched"></ul></div>
     <div class="w pxb"><h3>Tasks</h3><ul id="tasks"></ul><input class="add" id="taskIn" placeholder="+ Add a task, then Enter"></div>
     <div class="w pxb"><h3>Weather <i id="wcity"></i></h3><div id="weather" class="muted">...</div></div>
@@ -186,8 +205,35 @@
   let notes = {}; try { notes = JSON.parse(localStorage.getItem("zb.notes") || "{}"); } catch (e) {}
   const nl = Object.values(notes).sort((a, b) => b.at - a.at).slice(0, 3);
   $("#notes").innerHTML = nl.length ? nl.map((n) => `<li><span><a href="${esc(n.u)}">${esc(n.t || n.u)}</a></span></li>`).join("") : `<li class="muted"><span>Notes you write beside pages show here.</span></li>`;
+  // Zenko's calendar: deadlines she shares (nothing is read from school accounts; you add dates with right-click > Zenko)
+  function drawCal(d) {
+    const z = d.zcal || {}, dl = Array.isArray(z.deadlines) ? z.deadlines : [];
+    if (!d.zenko) return;
+    $("#cal").classList.add("on");
+    const ago = z.time ? Math.round((Date.now() / 1000 - z.time) / 60) : null;
+    $("#calst").innerHTML = d.linked ? '<span class="dot live"></span>linked' : (ago != null ? '<span class="dot"></span>from Zenko, ' + (ago < 60 ? ago + " min" : Math.round(ago / 60) + " h") + " ago" : '<span class="dot"></span>open Zenko to share it');
+    const day0 = new Date(new Date().toDateString()), iso = (x) => x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0");
+    const exam = (x) => /exam|test|paper|quiz|mock/i.test((x.kind || "") + " " + (x.title || ""));
+    let h = "";
+    for (let k = 0; k < 14; k++) {
+      const x = new Date(day0); x.setDate(x.getDate() + k);
+      const on = dl.filter((e) => e.date === iso(x));
+      h += `<div class="d${k === 0 ? " today" : ""}${x.getDay() % 6 === 0 ? " we" : ""}${on.length ? " has" : ""}" title="${esc(on.map((e) => e.title).join("\n"))}">${x.toLocaleDateString("en-GB", { weekday: "short" }).slice(0, 2)}<b>${x.getDate()}</b><div class="pips">${on.slice(0, 3).map((e) => `<i class="${exam(e) ? "exam" : ""}"></i>`).join("")}</div></div>`;
+    }
+    $("#strip").innerHTML = h;
+    const rel = (s) => { const n = Math.round((new Date(s + "T00:00") - day0) / 864e5); return n === 0 ? "Today" : n === 1 ? "Tomorrow" : n < 7 ? new Date(s + "T00:00").toLocaleDateString("en-GB", { weekday: "long" }) : "in " + n + " days"; };
+    $("#up").innerHTML = dl.length ? dl.slice(0, 8).map((e) => `<li><span class="k${exam(e) ? " exam" : ""}"></span><span>${esc(e.title)}</span><span class="when">${rel(e.date)}${e.time ? " " + esc(e.time) : ""}</span></li>`).join("")
+      : `<li class="muted"><span style="white-space:normal">Nothing due in the next three weeks. Right-click a date on any page and choose Zenko › Add to Zenko.</span></li>`;
+    // Zenko's plan for today replaces the typed schedule
+    const plan = Array.isArray(z.today) ? z.today : [];
+    if (plan.length) {
+      $("#sched").innerHTML = plan.slice(0, 7).map((x) => `<li class="${x.done ? "done" : ""}"><span>${esc(x.start || "")} · ${esc(x.task || "")}</span></li>`).join("");
+      $("#wday").textContent = "from Zenko";
+    }
+  }
   // time online today (from the browser)
   window.zbNT = function (d) {
+    try { drawCal(d || {}); } catch (e) {}
     const r = (d.recap || []).slice(0, 4);
     if (!r.length) { $("#recap").textContent = "Nothing yet today."; return; }
     const top = r[0].s, fm = (s) => { const m = Math.round(s / 60); return m < 60 ? m + "m" : Math.floor(m / 60) + "h " + (m % 60) + "m"; };

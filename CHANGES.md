@@ -1,5 +1,23 @@
 # Zenko changes
 
+## v2026.11.25-zenko22
+
+Zenko 22 adds koi fishing, a much longer journey, lots more badges, the Town square and a real link with Zenko Browser. Your saved data and settings carry over.
+
+- **Koi fishing in the Zen garden.** Cast a line in the pond (the 釣り · Koi fishing card, or say "go fishing"). When something bites, answer a question to reel it in: one of your due flashcards, or a question from a bank of about 110 (your six IB subjects, general knowledge and Japan). Harder questions and deeper water bring rarer fish.
+  - 32 kinds of fish, from medaka and goldfish to ogon, kujaku, tanchō and the legendary Ryū and Kitsunebi. Each fish you catch has its own pattern and size. They're drawn as proper pixel art with scales, fins and sheen.
+  - Some only bite at night, in rain or snow, in a season, or under a full moon.
+  - A koi book with silhouettes of what you haven't caught yet, and up to 6 favourites swimming in your pond.
+  - 3 free casts a day; focus time earns bait (one per 10 minutes) and 25-minute lock-ins earn golden bait. Study hours unlock better rods (Lacquer, Silver, Dragon) and lanterns that help at night.
+- **The journey goes on after Japan.** When Zenko has visited all 18 Japanese places she carries on: Kyoto through the four seasons, Korea, China, the Silk Road, then the old legends (Penglai, Kunlun, the Dragon Palace, the Moon Palace and more). 31 new places up to 450 focus hours, each with its own drawn map, a story, a "did you know" and Zenko's line.
+  - Every place has a small quiz: answer it for a gold seal in your **passport**, a stamp page for each region.
+  - Places unlock rewards: travel outfits (snow coat, bingata, furisode, hanbok, hanfu, traveller's cloak, hagoromo), speech-bubble styles, garden decorations (deer, sea torii, maple, Korean lantern, pine, camel, moon rabbit, stone kitsune), sidebar scenes and new accent colours. Pick them in Customize.
+- **Many more ema badges.** 61 now: 15 come in bronze, silver and gold tiers (hours, sessions, flashcards, fish, places and more), 16 new ones, and 12 secret ones that show as "?" until you find them. Click an earned plaque to pin up to 3 to the sidebar. Filters for All, Earned, Tiers and Secret.
+- **Her speech bubble grows with her.** At Large and Huge sizes the bubble, its text and buttons scale up too (Customize > Speech bubble can turn this off).
+- **Town square (new page).** One shared chat room for everyone using Zenko, online only. Pick a nickname (it shows with a short tag like #7fe7). Links, phone numbers, emails and social handles are removed, rude words are hidden, there's a 15-second slow mode, and you can right-click a message to report or block. Three reports hide a message for everyone. It uses the free ntfy.sh relay, so there's nothing to set up (Settings > Town square can point it at another ntfy server). It's off until you press Go online.
+- **Zenko Browser link.** Zenko and the browser now see each other: a light in her sidebar (and a fox button in the browser) glows when both are open. She shares your upcoming deadlines, today's plan and ema reminders with the browser's new tab. Things you send from the browser's right-click Zenko menu arrive here: summaries (in her bubble and Chat, with "Save to notes"), flashcards, "quiz me on this page" cards, and dates as Upcoming deadlines or ema reminders. When you settle on a page in the browser she may notice what you're reading (at most every 10 minutes, never during a focus session; Settings can turn this off).
+- New chat commands: "go fishing", "koi book", "passport", "badges", "town square", "browser".
+
 ## v2026.11.24-zenko21.3
 
 - **Zenko Browser can hand things to Zenko.** Text you send from the browser (right-click > "Send to Zenko notes", the notes side panel, the InThinking "Send key terms to Zenko" button, or a page clip) lands in your Notes scratchpad and files itself into the right subject notebook. Dates you select in the browser (right-click > "Add to Zenko reminders", e.g. "Due Fri 28 Nov") hang on the ema rack. Zenko checks every few seconds and tells you when something arrives.

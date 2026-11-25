@@ -1,6 +1,6 @@
 [package]
 name = "zenko-browser"
-version = "0.2.1"
+version = "0.3.0"
 edition = "2021"
 description = "Zenko Browser - a fast night-shrine browser that talks to Zenko"
 build = "build.rs"

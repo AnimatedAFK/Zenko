@@ -7,7 +7,18 @@ A fast everyday browser in Zenko's night-shrine style that talks to Zenko.
   Chromium's GPU compositor, so animations run at your screen's full refresh rate.
 - **Built by GitHub Actions** (`.github/workflows/browser.yml`): nothing to install on your PC.
 
-## 0.2.0 (this version)
+## 0.3.0 (this version)
+A real link with Zenko. A fox button in the toolbar glows when Zenko is open (both apps leave each other a small "I'm here"
+file in `%APPDATA%\FoxBuddy`, nothing goes online) and shows what's coming up. Right-click now has a **Zenko** submenu:
+summarize the selection or the whole page (Zenko's summary pops up in her bubble and chat; without Zenko a quick summary is
+made on your PC), make a flashcard, quiz me on this page (fill-in-the-blank cards), add a selected date to Zenko as an
+Upcoming deadline or an ema reminder, send text, links or the page to her notes. More right-click items: search the web for
+the selection, copy as plain text, count words, copy page link, open image in a new tab. The tab right-click menu keeps
+everything it had and adds Copy link, Copy clean link and the Zenko submenu. The new tab shows **Zenko's calendar**: the
+next 14 days with dots for deadlines, the upcoming list and her plan for today. No school calendar is read: only what you
+add to Zenko yourself.
+
+## 0.2.0
 Everything from stage 1, plus: Edge import (sign-ins, passwords, bookmarks, history), address-bar autofill, ad/tracker blocker
 with a per-site shield, cookie pop-up rejecting, link cleaning, YouTube ad + sponsor skipping, focus mode (block list, strict
 allow-list, 5-minute pass), spaces, subject tab groups, tab tree, split view, peek, profiles (two accounts side by side),
