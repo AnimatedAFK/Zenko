@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New tab</title>
+<link rel="stylesheet" href="theme.css">
+<script src="prefs.js"></script>
+<style>
+  body { overflow-x: hidden; overflow-y: auto; min-height: 100vh; background: var(--night); }
+  #sky { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+  main { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 7vh 1rem 3rem; }
+  .clock { font-size: 6.4rem; font-weight: 200; line-height: 1; letter-spacing: .01em; color: var(--ink);
+    text-shadow: 0 0 40px color-mix(in srgb, var(--glow) 35%, transparent), 0 2px 0 rgba(0,0,0,.25); }
+  [data-pixel="strong"] .clock { font-family: "DotGothic16", var(--font); font-weight: 400; }
+  .clock .colon { animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+  .clock small { font-size: 1.7rem; color: var(--gold); margin-left: .5rem; font-weight: 400; }
+  .jp { color: var(--gold); letter-spacing: .18em; margin-top: .7rem; font-size: 1.05rem; }
+  .hello { margin-top: .35rem; color: var(--grey); font-size: 1.1rem; }
+  form { margin-top: 2.2rem; width: min(42rem, 100%); }
+  .search { display: flex; align-items: center; gap: .8rem; height: 3.5rem; padding: 0 1.2rem; color: var(--gold);
+    --b: color-mix(in srgb, var(--line) 50%, var(--gold) 50%); --c: color-mix(in srgb, var(--panel) 94%, transparent); }
+  .search:focus-within { --b: var(--gold); }
+  .search::after { content: ""; position: absolute; inset: 2px; pointer-events: none; background: linear-gradient(100deg, transparent 40%, color-mix(in srgb, var(--gold) 12%, transparent) 50%, transparent 60%);
+    background-size: 250% 100%; animation: sweep 6s cubic-bezier(.2,.8,.2,1) infinite; }
+  @keyframes sweep { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+  .search input { flex: 1; height: 100%; background: none; border: 0; outline: 0; font-size: 1.2rem; min-width: 0; caret-color: var(--gold); }
+  .search input::placeholder { color: var(--grey); }
+  .calc { height: 1.7rem; margin-top: .5rem; text-align: center; color: var(--gold); font-size: 1.2rem; font-weight: 600; }
+  .sites { display: flex; flex-wrap: wrap; justify-content: center; gap: .7rem; margin-top: 1.3rem; max-width: 48rem; }
+  .site { width: 6.8rem; display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: .95rem .4rem .75rem; color: var(--ink); text-decoration: none;
+    --b: color-mix(in srgb, var(--line) 80%, var(--gold) 20%); --c: color-mix(in srgb, var(--panel) 85%, transparent); transition: transform .2s cubic-bezier(.2,.8,.2,1); }
+  .site:hover { transform: translateY(-4px); --b: var(--gold); }
+  .site:hover i { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--glow) 70%, transparent)); }
+  .site i { width: 2.6rem; height: 2.6rem; display: grid; place-items: center; font-style: normal; font-weight: 700; font-size: 1.2rem; background: var(--accbg); color: var(--acc); overflow: hidden; clip-path: var(--clips); }
+  .site i img { width: 22px; height: 22px; }
+  .site span { font-size: .95rem; color: var(--grey); }
+  .site:hover span { color: var(--ink); }
+  .quote { margin: 2.2rem 0 0; max-width: 36rem; text-align: center; color: var(--grey); line-height: 1.5; padding: .7rem 1.2rem; --b: color-mix(in srgb, var(--line) 60%, transparent); --c: color-mix(in srgb, var(--night) 55%, transparent); }
+  .quote::before { content: "✦ "; color: var(--gold); }
+  .fox { position: fixed; right: max(4vw, 1rem); bottom: 4vh; width: 116px; z-index: 1; image-rendering: pixelated; filter: drop-shadow(0 0 16px color-mix(in srgb, var(--glow) 35%, transparent)); cursor: pointer; transition: transform .25s cubic-bezier(.2,.8,.2,1); }
+  .fox:hover { transform: translateY(-4px); }
+  .bubble { position: fixed; right: calc(max(4vw, 1rem) + 104px); bottom: calc(4vh + 84px); z-index: 2; max-width: 16rem; padding: .65rem .9rem; color: var(--ink); font-size: .98rem;
+    --b: var(--gold); --c: var(--panel); opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .2s cubic-bezier(.2,.8,.2,1); }
+  .bubble.on { opacity: 1; transform: none; }
+  .widgets { display: grid; grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr)); gap: .8rem; width: min(60rem, 100%); margin-top: 1.5rem; }
+  .w { padding: .8rem 1rem .9rem; min-height: 8.4rem; color: var(--ink); --b: color-mix(in srgb, var(--line) 75%, var(--gold) 25%); --c: color-mix(in srgb, var(--panel) 88%, transparent); }
+  .w h3 { margin: 0 0 .5rem; font-size: .8rem; letter-spacing: .09em; text-transform: uppercase; color: var(--gold); font-weight: 600; display: flex; align-items: center; gap: .45rem; }
+  .w h3 i { font-style: normal; color: var(--grey); text-transform: none; letter-spacing: 0; margin-left: auto; font-weight: 400; }
+  .w ul { list-style: none; margin: 0; padding: 0; }
+  .w li { display: flex; align-items: center; gap: .5rem; padding: .18rem 0; font-size: .95rem; min-width: 0; }
+  .w li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .w li.done span { text-decoration: line-through; color: var(--grey); }
+  .w li input[type=checkbox] { accent-color: var(--acc); }
+  .w li button { color: var(--grey); opacity: 0; padding: 0 .2rem; }
+  .w li:hover button { opacity: 1; }
+  .w .add { width: 100%; height: 1.9rem; margin-top: .35rem; background: var(--field); border: 0; outline: 0; padding: 0 .55rem; clip-path: var(--clips); font-size: .92rem; }
+  .w .muted { color: var(--grey); font-size: .9rem; line-height: 1.45; }
+  .w .big { font-size: 2.1rem; font-weight: 300; line-height: 1.1; }
+  .w a { color: var(--ink); text-decoration: none; }
+  .w a:hover { color: var(--gold); }
+  .w .bar { height: 5px; background: var(--line); margin: .15rem 0 .3rem; clip-path: var(--clips); }
+  .w .bar i { display: block; height: 100%; background: var(--gold); }
+  /* Zenko's calendar (shared by Zenko when she's installed) */
+  .w.cal { grid-column: 1 / -1; display: none; min-height: 0; }
+  .w.cal.on { display: block; }
+  .w h3 .dot { width: 7px; height: 7px; display: inline-block; background: var(--grey); margin-right: .35rem; vertical-align: middle; }
+  .w h3 .dot.live { background: #5fd38a; box-shadow: 0 0 6px #5fd38a; }
+  .strip { display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: .3rem; margin: .2rem 0 .7rem; }
+  .strip .d { text-align: center; padding: .35rem 0 .3rem; background: color-mix(in srgb, var(--field) 70%, transparent); clip-path: var(--clips); font-size: .78rem; color: var(--grey); min-width: 0; }
+  .strip .d b { display: block; font-size: 1.05rem; color: var(--ink); font-weight: 500; }
+  .strip .d.today { background: var(--accbg); box-shadow: inset 0 -2px 0 var(--gold); }
+  .strip .d.we b { color: color-mix(in srgb, var(--ink) 70%, var(--grey)); }
+  .strip .d .pips { height: 7px; display: flex; justify-content: center; gap: 2px; margin-top: .2rem; }
+  .strip .d .pips i { width: 5px; height: 5px; background: var(--gold); }
+  .strip .d .pips i.exam { background: #e0533a; }
+  .strip .d.has { cursor: default; }
+  .up { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: .1rem 1.2rem; }
+  .up li .when { color: var(--gold); font-size: .85rem; flex: none; }
+  .up li .k { width: 6px; height: 6px; background: var(--gold); flex: none; }
+  .up li .k.exam { background: #e0533a; }
+  .gear { position: fixed; right: 1rem; top: 1rem; z-index: 2; clip-path: var(--clips); }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<main>
+  <div class="clock" id="clock">--:--</div>
+  <div class="jp" id="jp"></div>
+  <div class="hello" id="hello"></div>
+  <form id="f" autocomplete="off">
+    <label class="search pxb"><span id="si"></span><input id="q" autofocus placeholder="Search the web or type an address" spellcheck="false"></label>
+    <div class="calc" id="calc"></div>
+  </form>
+  <div class="sites" id="sites"></div>
+  <div class="widgets">
+    <div class="w pxb cal" id="cal"><h3>Zenko's calendar <i id="calst"></i></h3><div class="strip" id="strip"></div><ul class="up" id="up"></ul></div>
+    <div class="w pxb"><h3>Today <i id="wday"></i></h3><ul id="sched"></ul></div>
+    <div class="w pxb"><h3>Tasks</h3><ul id="tasks"></ul><input class="add" id="taskIn" placeholder="+ Add a task, then Enter"></div>
+    <div class="w pxb"><h3>Weather <i id="wcity"></i></h3><div id="weather" class="muted">...</div></div>
+    <div class="w pxb"><h3>Time online today</h3><div id="recap" class="muted">...</div><h3 style="margin-top:.6rem">Recent notes</h3><ul id="notes"></ul></div>
+  </div>
+  <p class="quote pxb" id="quote"></p>
+</main>
+<img class="fox" id="fox" src="zenko.png" alt="Zenko">
+<div class="bubble pxb" id="bub"></div>
+<a class="btn gear" href="settings.html" title="Settings and look" id="gear"></a>
+<script>
+(function () {
+  const $ = (s) => document.querySelector(s);
+  const p = ZB.load();
+  ZB.apply(p);
+  ZB.sky($("#sky"), { moon: [0.82, 0.14, 12], ridge: 0.3, torii: 0.2, wisps: 9 });
+  $("#si").innerHTML = ZB.icon("search", 2.6);
+  $("#gear").innerHTML = ZB.icon("gear", 2);
+
+  const JP_H = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
+  function tick() {
+    const d = new Date();
+    const h = d.getHours(), m = d.getMinutes(), h12 = h % 12 || 12;
+    $("#clock").innerHTML = `${h12}<span class="colon">:</span>${String(m).padStart(2, "0")}<small>${h < 12 ? "AM" : "PM"}</small>`;
+    $("#jp").textContent = (h < 12 ? "午前 " : "午後 ") + JP_H[h12] + "時 · " + d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+    $("#hello").textContent = h < 5 ? "Still up? Kon... rest soon" : h < 12 ? "Ohayou! Good morning" : h < 17 ? "Konnichiwa! Good afternoon" : h < 22 ? "Konbanwa! Good evening" : "Late night? Sleep saves what you studied";
+  }
+  tick(); setInterval(tick, 1000 * 10);
+
+  const sites = $("#sites");
+  ZB.sites(p).forEach(([name, url, l]) => {
+    const a = document.createElement("a");
+    a.className = "site pxb"; a.href = url;
+    a.innerHTML = `<i>${l}</i><span></span>`;
+    a.querySelector("span").textContent = name;
+    const img = new Image();
+    img.onload = () => { const i = a.querySelector("i"); i.textContent = ""; i.appendChild(img); };
+    img.src = "https://" + new URL(url).hostname + "/favicon.ico";
+    sites.appendChild(a);
+  });
+
+  const Q = ["Small steps every day add up to big results.", "Rest is part of the work. Your brain files what you learned while you sleep.",
+    "You don't have to be perfect, just a little better than yesterday.", "First do it, then do it right, then do it better.",
+    "Focus on the next 25 minutes. That's all.", "The expert in anything was once a beginner.", "Done is better than perfect.",
+    "Kon kon~ Inari believes in your harvest. Plant some study today!"];
+  $("#quote").textContent = Q[new Date().getDate() % Q.length];
+
+  const q = $("#q");
+  q.addEventListener("input", () => { const v = ZB.calc(q.value); $("#calc").textContent = v === null ? "" : "= " + v.toLocaleString("en", { maximumFractionDigits: 10 }); });
+  $("#f").addEventListener("submit", (e) => { e.preventDefault(); const u = ZB.toUrl(q.value, p); if (u) location.href = u; });
+  setTimeout(() => q.focus(), 50);
+
+  const LINES = ["Kon kon! What are we studying today?", "Ne~ one tab at a time, okay?", "I'll log your study time for you!", "Stuck? Ctrl+J opens Claude~", "Ctrl+K finds anything: tabs, sites, commands!"];
+  let n = 0;
+  $("#fox").addEventListener("click", () => {
+    const b = $("#bub"); b.textContent = LINES[n++ % LINES.length]; b.classList.add("on");
+    clearTimeout(b._t); b._t = setTimeout(() => b.classList.remove("on"), 3500);
+  });
+  window.addEventListener("storage", (e) => { if (e.key === "zb.prefs") location.reload(); });
+
+  // ---- widgets
+  const send = (o) => window.ipc && window.ipc.postMessage(JSON.stringify(o));
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  // schedule: Settings > New tab, lines like "Mon: Biology 8:00, Maths 9:30"
+  const WD = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"], now = new Date();
+  $("#wday").textContent = now.toLocaleDateString("en-GB", { weekday: "long" });
+  const lines = String(p.schedule || "").split("\n").map((l) => l.trim()).filter(Boolean);
+  const mine = lines.filter((l) => l.toLowerCase().startsWith(WD[now.getDay()])).map((l) => l.replace(/^[a-z]+\s*:\s*/i, ""));
+  const sched = mine.join(",").split(",").map((x) => x.trim()).filter(Boolean);
+  $("#sched").innerHTML = sched.length ? sched.map((x) => `<li><span>${esc(x)}</span></li>`).join("") : `<li class="muted"><span style="white-space:normal">${lines.length ? "Nothing planned today. Rest is part of the work~" : "Add your timetable in Settings > New tab page."}</span></li>`;
+  // tasks
+  const T = () => { try { return JSON.parse(localStorage.getItem("zb.tasks") || "[]"); } catch (e) { return []; } };
+  const saveT = (l) => { try { localStorage.setItem("zb.tasks", JSON.stringify(l)); } catch (e) {} drawT(); };
+  function drawT() {
+    const l = T();
+    $("#tasks").innerHTML = l.length ? "" : `<li class="muted"><span>No tasks. Nice~</span></li>`;
+    l.slice(0, 7).forEach((t, i) => {
+      const li = document.createElement("li"); if (t.d) li.className = "done";
+      li.innerHTML = `<input type="checkbox" ${t.d ? "checked" : ""}><span></span><button title="Remove">✕</button>`;
+      li.querySelector("span").textContent = t.t;
+      li.querySelector("input").onchange = () => { const x = T(); x[i].d = !x[i].d; saveT(x); };
+      li.querySelector("button").onclick = () => { const x = T(); x.splice(i, 1); saveT(x); };
+      $("#tasks").appendChild(li);
+    });
+  }
+  drawT();
+  $("#taskIn").addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.value.trim()) { const x = T(); x.push({ t: e.target.value.trim(), d: false }); e.target.value = ""; saveT(x); } });
+  // weather (free Open-Meteo, no account)
+  const CODES = [[0, "☀", "Clear"], [3, "⛅", "Partly cloudy"], [48, "🌫", "Fog"], [57, "🌦", "Drizzle"], [67, "🌧", "Rain"], [77, "❄", "Snow"], [82, "🌧", "Showers"], [86, "❄", "Snow showers"], [99, "⛈", "Thunder"]];
+  const wdesc = (c) => CODES.find((x) => c <= x[0]) || CODES[CODES.length - 1];
+  function showW(w) {
+    const [, ic, txt] = wdesc(w.code);
+    $("#weather").innerHTML = `<div class="big">${ic} ${Math.round(w.t)}°</div><div>${txt}</div><div class="muted">High ${Math.round(w.hi)}° · Low ${Math.round(w.lo)}°</div>`;
+  }
+  if (p.weatherLat == null) { $("#weather").textContent = "Set your town in Settings > New tab page to see the weather."; }
+  else {
+    $("#wcity").textContent = p.weatherCity || "";
+    let c = null; try { c = JSON.parse(localStorage.getItem("zb.weather") || "null"); } catch (e) {}
+    if (c && c.at > Date.now() - 30 * 60000 && c.lat === p.weatherLat) showW(c);
+    else fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.weatherLat}&longitude=${p.weatherLon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1`)
+      .then((r) => r.json()).then((j) => {
+        const w = { t: j.current.temperature_2m, code: j.current.weather_code, hi: j.daily.temperature_2m_max[0], lo: j.daily.temperature_2m_min[0], at: Date.now(), lat: p.weatherLat };
+        try { localStorage.setItem("zb.weather", JSON.stringify(w)); } catch (e) {}
+        showW(w);
+      }).catch(() => { $("#weather").textContent = c ? "" : "Weather is offline right now."; if (c) showW(c); });
+  }
+  // notes written in the side panel
+  let notes = {}; try { notes = JSON.parse(localStorage.getItem("zb.notes") || "{}"); } catch (e) {}
+  const nl = Object.values(notes).sort((a, b) => b.at - a.at).slice(0, 3);
+  $("#notes").innerHTML = nl.length ? nl.map((n) => `<li><span><a href="${esc(n.u)}">${esc(n.t || n.u)}</a></span></li>`).join("") : `<li class="muted"><span>Notes you write beside pages show here.</span></li>`;
+  // Zenko's calendar: deadlines she shares (nothing is read from school accounts; you add dates with right-click > Zenko)
+  function drawCal(d) {
+    const z = d.zcal || {}, dl = Array.isArray(z.deadlines) ? z.deadlines : [];
+    if (!d.zenko) return;
+    $("#cal").classList.add("on");
+    const ago = z.time ? Math.round((Date.now() / 1000 - z.time) / 60) : null;
+    $("#calst").innerHTML = d.linked ? '<span class="dot live"></span>linked' : (ago != null ? '<span class="dot"></span>from Zenko, ' + (ago < 60 ? ago + " min" : Math.round(ago / 60) + " h") + " ago" : '<span class="dot"></span>open Zenko to share it');
+    const day0 = new Date(new Date().toDateString()), iso = (x) => x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0");
+    const exam = (x) => /exam|test|paper|quiz|mock/i.test((x.kind || "") + " " + (x.title || ""));
+    let h = "";
+    for (let k = 0; k < 14; k++) {
+      const x = new Date(day0); x.setDate(x.getDate() + k);
+      const on = dl.filter((e) => e.date === iso(x));
+      h += `<div class="d${k === 0 ? " today" : ""}${x.getDay() % 6 === 0 ? " we" : ""}${on.length ? " has" : ""}" title="${esc(on.map((e) => e.title).join("\n"))}">${x.toLocaleDateString("en-GB", { weekday: "short" }).slice(0, 2)}<b>${x.getDate()}</b><div class="pips">${on.slice(0, 3).map((e) => `<i class="${exam(e) ? "exam" : ""}"></i>`).join("")}</div></div>`;
+    }
+    $("#strip").innerHTML = h;
+    const rel = (s) => { const n = Math.round((new Date(s + "T00:00") - day0) / 864e5); return n === 0 ? "Today" : n === 1 ? "Tomorrow" : n < 7 ? new Date(s + "T00:00").toLocaleDateString("en-GB", { weekday: "long" }) : "in " + n + " days"; };
+    $("#up").innerHTML = dl.length ? dl.slice(0, 8).map((e) => `<li><span class="k${exam(e) ? " exam" : ""}"></span><span>${esc(e.title)}</span><span class="when">${rel(e.date)}${e.time ? " " + esc(e.time) : ""}</span></li>`).join("")
+      : `<li class="muted"><span style="white-space:normal">Nothing due in the next three weeks. Right-click a date on any page and choose Zenko › Add to Zenko.</span></li>`;
+    // Zenko's plan for today replaces the typed schedule
+    const plan = Array.isArray(z.today) ? z.today : [];
+    if (plan.length) {
+      $("#sched").innerHTML = plan.slice(0, 7).map((x) => `<li class="${x.done ? "done" : ""}"><span>${esc(x.start || "")} · ${esc(x.task || "")}</span></li>`).join("");
+      $("#wday").textContent = "from Zenko";
+    }
+  }
+  // time online today (from the browser)
+  window.zbNT = function (d) {
+    try { drawCal(d || {}); } catch (e) {}
+    const r = (d.recap || []).slice(0, 4);
+    if (!r.length) { $("#recap").textContent = "Nothing yet today."; return; }
+    const top = r[0].s, fm = (s) => { const m = Math.round(s / 60); return m < 60 ? m + "m" : Math.floor(m / 60) + "h " + (m % 60) + "m"; };
+    $("#recap").innerHTML = r.map((x) => `<div style="display:flex;justify-content:space-between;color:var(--ink)"><span>${esc(x.h)}</span><span class="muted">${fm(x.s)}</span></div><div class="bar"><i style="width:${Math.max(4, x.s / top * 100)}%"></i></div>`).join("");
+  };
+  send({ c: "ntData" });
+  if (!window.ipc) $("#recap").textContent = "Nothing yet today.";
+})();
+</script>
+</body>
+</html>
