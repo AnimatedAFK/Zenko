@@ -2385,7 +2385,7 @@ dependencies = [
 
 [[package]]
 name = "web_atoms"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7572660c8890448ba236b7376f27e389c6a7e1c70195622faced601f855c0ada"
 dependencies = [
@@ -2821,7 +2821,7 @@ dependencies = [
 
 [[package]]
 name = "zenko-browser"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "base64 0.22.1",
  "native-tls",

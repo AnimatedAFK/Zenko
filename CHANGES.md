@@ -1,5 +1,21 @@
 # Zenko changes
 
+## v2026.11.25-zenko23
+
+Zenko 23 lets your ema reminders plan their own study time, turns the Town square into a festival street, and links study sessions with Zenko Browser's focus mode. Your saved data and settings carry over.
+
+- **Emas that plan themselves.** Hang a homework-like ema ("finish bio IA draft by friday", "revise chem organic", "maths past paper 1 on saturday") and Zenko finds study time for it in your free half hours (the Upcoming clock) before it's due, around your exam plan. She tells you when she planned it, and the sessions show on your timetable and in the Upcoming plan as "Ema: ...".
+  - She guesses how long a task takes (an IA or essay 2 h, a past paper 1.5 h, homework 45 min, revision 1 h, reading 30 min) or uses what you write ("revise bio for 2 hours"). Say "bio IA takes 3 hours" to change it.
+  - An ema with no date gets planned within three days. An ema at a set time ("study french at 5pm", "call mum at 6pm") keeps that time free instead.
+  - When you tick off the last session she asks if she can take the ema down. Daily emas (like "drink water every day") are never planned.
+  - Say "plan my emas" to see it all, or "don't plan call mum". Settings > Emas that plan themselves turns it off.
+- **The Town square is a festival street now.** A little country town on festival night above the chat: machiya houses with lit lattices, strings of chochin lanterns that flicker, yatai stalls (takoyaki, goldfish scooping, candy apples, shaved ice, masks...), a yagura with a taiko drum, a crowd walking by in yukata, and fireworks. The sky follows the time of day.
+  - **Everyone in the chat walks in the crowd** with their name above them, and new messages pop up as speech bubbles over their heads. You're there too, as a fox in a yukata. Right-click the street to pick your yukata colour or wear a fox mask; others see your look.
+  - **Click the stalls:** feed Zenko takoyaki, scoop a goldfish (+1 koi bait), draw an omikuji fortune once a day, try the shooting gallery, buy a charm.
+  - **Real festival dates.** The street dresses up for New Year, Setsubun, Valentine's Day, Hina-matsuri, Holi, hanami, Children's Day, Tanabata, summer matsuri, Obon (bon-odori dancers), Tsukimi, Halloween (pumpkins, witches, little ghosts, bats), Diwali (diyas, rangoli), Christmas (snow, a big tree, Santa hats) and New Year's Eve, with the seasons in between (autumn leaves right now). The banner says which festival is next. Right-click > Preview a festival to see any of them.
+- **Study sessions turn on Zenko Browser's focus mode.** Start a focus session or lock-in and the browser's focus mode switches on at once; it switches off when the session ends. Distracting sites rest behind a shoji screen that slides shut, with your session and minutes left on a hanging ema.
+- New chat commands: "plan my emas", "X takes 2 hours", "don't plan X", "festival".
+
 ## v2026.11.25-zenko22
 
 Zenko 22 adds koi fishing, a much longer journey, lots more badges, the Town square and a real link with Zenko Browser. Your saved data and settings carry over.
