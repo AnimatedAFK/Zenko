@@ -1,0 +1,852 @@
+//! The desktop fox (zenko.py FoxBuddy: compute_dims, accessories, tail_count, current_mood, animate,
+//! idle_moves, look_vec, draw_belly, belly_text, draw_foxfire, get_image, get_tails, get_orb).
+//! Platform independent: `Companion::frame` returns the finished RGBA picture of the whole window.
+
+use serde_json::Value;
+use std::collections::HashMap;
+use std::path::PathBuf;
+use zenko_art::core::{BELLY_X, BELLY_Y, H as H_, TAIL_BASE, W as W_};
+use zenko_art::palette::{LookCfg, Palette, ROBES, is_robe, make_pal, mixhex};
+use zenko_art::raster::{Image, sprite_photo};
+use zenko_art::{Grid, Look, core, curl, rig, sit};
+
+pub const FONT35: &[(char, [&str; 5])] = &[
+    ('0', ["###", "#.#", "#.#", "#.#", "###"]),
+    ('1', [".#.", "##.", ".#.", ".#.", "###"]),
+    ('2', ["###", "..#", "###", "#..", "###"]),
+    ('3', ["###", "..#", "###", "..#", "###"]),
+    ('4', ["#.#", "#.#", "###", "..#", "..#"]),
+    ('5', ["###", "#..", "###", "..#", "###"]),
+    ('6', ["###", "#..", "###", "#.#", "###"]),
+    ('7', ["###", "..#", "..#", "..#", "..#"]),
+    ('8', ["###", "#.#", "###", "#.#", "###"]),
+    ('9', ["###", "#.#", "###", "..#", "###"]),
+    (':', [".", "#", ".", "#", "."]),
+    ('A', [".#.", "#.#", "###", "#.#", "#.#"]),
+    ('B', ["##.", "#.#", "##.", "#.#", "##."]),
+    ('C', [".##", "#..", "#..", "#..", ".##"]),
+    ('D', ["##.", "#.#", "#.#", "#.#", "##."]),
+    ('E', ["###", "#..", "##.", "#..", "###"]),
+    ('F', ["###", "#..", "##.", "#..", "#.."]),
+    ('G', [".##", "#..", "#.#", "#.#", ".##"]),
+    ('H', ["#.#", "#.#", "###", "#.#", "#.#"]),
+    ('I', ["###", ".#.", ".#.", ".#.", "###"]),
+    ('J', ["..#", "..#", "..#", "#.#", ".#."]),
+    ('K', ["#.#", "#.#", "##.", "#.#", "#.#"]),
+    ('L', ["#..", "#..", "#..", "#..", "###"]),
+    ('M', ["#.#", "###", "###", "#.#", "#.#"]),
+    ('N', ["##.", "#.#", "#.#", "#.#", "#.#"]),
+    ('O', [".#.", "#.#", "#.#", "#.#", ".#."]),
+    ('P', ["##.", "#.#", "##.", "#..", "#.."]),
+    ('Q', [".#.", "#.#", "#.#", "##.", ".##"]),
+    ('R', ["##.", "#.#", "##.", "#.#", "#.#"]),
+    ('S', [".##", "#..", ".#.", "..#", "##."]),
+    ('T', ["###", ".#.", ".#.", ".#.", ".#."]),
+    ('U', ["#.#", "#.#", "#.#", "#.#", "###"]),
+    ('V', ["#.#", "#.#", "#.#", "#.#", ".#."]),
+    ('W', ["#.#", "#.#", "###", "###", "#.#"]),
+    ('X', ["#.#", "#.#", ".#.", "#.#", "#.#"]),
+    ('Y', ["#.#", "#.#", ".#.", ".#.", ".#."]),
+    ('Z', ["###", "..#", ".#.", "#..", "###"]),
+    (' ', ["..", "..", "..", "..", ".."]),
+    ('-', ["...", "...", "###", "...", "..."]),
+    ('.', [".", ".", ".", ".", "#"]),
+    (',', ["..", "..", "..", ".#", "#."]),
+    ('\'', ["#", "#", ".", ".", "."]),
+    ('!', ["#", "#", "#", ".", "#"]),
+    ('?', ["##.", "..#", ".#.", "...", ".#."]),
+    ('&', [".#.", "#.#", ".#.", "#.#", ".##"]),
+    ('(', [".#", "#.", "#.", "#.", ".#"]),
+    (')', ["#.", ".#", ".#", ".#", "#."]),
+    ('/', ["..#", "..#", ".#.", "#..", "#.."]),
+    ('~', ["..#.", ".#.#", ".#..", "##..", "##.."]),
+];
+
+// ---- where Zenko keeps her things (%APPDATA%\FoxBuddy, same as zenko.py) -------------------------------
+pub fn data_dir() -> PathBuf {
+    let base = std::env::var_os("APPDATA")
+        .or_else(|| std::env::var_os("HOME"))
+        .unwrap_or_default();
+    PathBuf::from(base).join("FoxBuddy")
+}
+fn read_json(name: &str) -> Value {
+    std::fs::read_to_string(data_dir().join(name))
+        .ok()
+        .and_then(|s| serde_json::from_str(&s).ok())
+        .unwrap_or(Value::Null)
+}
+
+/// The settings the desktop fox reads (zenko.py DEFAULTS for anything missing).
+#[derive(Clone, Debug)]
+pub struct Cfg {
+    pub raw: Value,
+}
+impl Cfg {
+    pub fn load() -> Cfg {
+        Cfg {
+            raw: read_json("config.json"),
+        }
+    }
+    pub fn from(v: Value) -> Cfg {
+        Cfg { raw: v }
+    }
+    pub fn s(&self, k: &str, d: &str) -> String {
+        self.raw
+            .get(k)
+            .and_then(|v| v.as_str())
+            .unwrap_or(d)
+            .to_string()
+    }
+    pub fn b(&self, k: &str, d: bool) -> bool {
+        match self.raw.get(k) {
+            Some(Value::Bool(b)) => *b,
+            Some(Value::Number(n)) => n.as_f64().unwrap_or(0.0) != 0.0,
+            Some(Value::Null) | None => d,
+            Some(Value::String(s)) => !s.is_empty(),
+            Some(_) => d,
+        }
+    }
+    pub fn f(&self, k: &str, d: f64) -> f64 {
+        match self.raw.get(k) {
+            Some(Value::Number(n)) => n.as_f64().unwrap_or(d),
+            Some(Value::String(s)) => s.parse().unwrap_or(d),
+            _ => d,
+        }
+    }
+    pub fn list(&self, k: &str) -> Vec<String> {
+        self.raw
+            .get(k)
+            .and_then(|v| v.as_array())
+            .map(|a| {
+                a.iter()
+                    .filter_map(|x| x.as_str().map(String::from))
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+}
+
+pub fn today_iso() -> String {
+    // local date via the C runtime-free civil-from-days on local time offset (see platform `local_now`)
+    let (y, m, d, _, _, _) = local_now();
+    format!("{y:04}-{m:02}-{d:02}")
+}
+
+/// Local wall-clock time (year, month, day, hour, minute, second).
+pub fn local_now() -> (i32, u32, u32, u32, u32, u32) {
+    let secs = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs() as i64)
+        .unwrap_or(0)
+        + local_offset_secs();
+    let days = secs.div_euclid(86400);
+    let sod = secs.rem_euclid(86400) as u32;
+    let (y, m, d) = civil_from_days(days);
+    (y, m, d, sod / 3600, sod / 60 % 60, sod % 60)
+}
+fn civil_from_days(z: i64) -> (i32, u32, u32) {
+    let z = z + 719468;
+    let era = z.div_euclid(146097);
+    let doe = z.rem_euclid(146097);
+    let yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+    let y = yoe + era * 400;
+    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let mp = (5 * doy + 2) / 153;
+    let d = (doy - (153 * mp + 2) / 5 + 1) as u32;
+    let m = if mp < 10 { mp + 3 } else { mp - 9 } as u32;
+    ((if m <= 2 { y + 1 } else { y }) as i32, m, d)
+}
+#[cfg(windows)]
+fn local_offset_secs() -> i64 {
+    use windows_sys::Win32::System::Time::{GetTimeZoneInformation, TIME_ZONE_INFORMATION};
+    unsafe {
+        let mut tz: TIME_ZONE_INFORMATION = std::mem::zeroed();
+        let r = GetTimeZoneInformation(&mut tz);
+        let bias = tz.Bias
+            + if r == 2 {
+                tz.DaylightBias
+            } else if r == 1 {
+                tz.StandardBias
+            } else {
+                0
+            };
+        -(bias as i64) * 60
+    }
+}
+#[cfg(not(windows))]
+fn local_offset_secs() -> i64 {
+    std::env::var("ZK_TZ_OFFSET")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0)
+}
+
+pub fn stats() -> Value {
+    read_json("stats.json")
+}
+
+// ---- tiny RNG (Python's random.uniform; the exact sequence never mattered) -----------------------------
+pub struct Rng(u64);
+impl Rng {
+    pub fn new(seed: u64) -> Rng {
+        Rng(seed | 1)
+    }
+    pub fn next(&mut self) -> f64 {
+        self.0 ^= self.0 << 13;
+        self.0 ^= self.0 >> 7;
+        self.0 ^= self.0 << 17;
+        (self.0 >> 11) as f64 / (1u64 << 53) as f64
+    }
+    pub fn uniform(&mut self, a: f64, b: f64) -> f64 {
+        a + (b - a) * self.next()
+    }
+}
+
+pub struct Session {
+    pub planned: f64,
+    pub started: f64,
+}
+
+pub struct Mote {
+    pub x: i32,
+    pub y: i32,
+    pub col: [u8; 3],
+    pub born: f64,
+    pub life: f64,
+}
+
+/// The finished window picture (RGBA, straight alpha) plus where the fox sits in it.
+pub struct Frame {
+    pub w: usize,
+    pub h: usize,
+    pub px: Vec<[u8; 4]>,
+}
+
+pub struct Companion {
+    pub cfg: Cfg,
+    pub u: f64,
+    pub z: i32,
+    pub colw: i32,
+    pub w: i32,
+    pub h: i32,
+    pub fox_y: i32,
+    pub pal: Palette,
+    look: Look,
+    robe_cur: Option<String>,
+    images: HashMap<String, Image>,
+    rng: Rng,
+    pub session: Option<Session>,
+    pub sleeping: bool,
+    pub mood_override: Option<(String, f64)>,
+    next_blink: f64,
+    blink_until: f64,
+    next_ear: f64,
+    ear_until: f64,
+    next_lick: f64,
+    lick_until: f64,
+    motes: Vec<Mote>,
+    tails_n: (f64, i32),
+    hrs: (f64, f64),
+    pub hd: bool,
+    pub last_state: String,
+}
+
+impl Companion {
+    pub fn new(cfg: Cfg, u: f64, now: f64) -> Companion {
+        let mut c = Companion {
+            cfg,
+            u,
+            z: 1,
+            colw: 0,
+            w: 0,
+            h: 0,
+            fox_y: 0,
+            pal: Palette::empty(),
+            look: Look::default(),
+            robe_cur: None,
+            images: HashMap::new(),
+            rng: Rng::new(now.to_bits() ^ 0x9E3779B97F4A7C15),
+            session: None,
+            sleeping: false,
+            mood_override: None,
+            next_blink: now + 3.0,
+            blink_until: 0.0,
+            next_ear: now + 5.0,
+            ear_until: 0.0,
+            next_lick: now + 14.0,
+            lick_until: 0.0,
+            motes: vec![],
+            tails_n: (-1e9, 3),
+            hrs: (-1e9, 0.0),
+            hd: true,
+            last_state: String::new(),
+        };
+        c.compute_dims();
+        c.apply_look();
+        c
+    }
+
+    pub fn compute_dims(&mut self) {
+        let u = self.u;
+        self.z = 1.max(((self.cfg.f("size", 4.0) - 2.0) * u).round_ties_even() as i32);
+        let (fw, fh) = (W_ * self.z, H_ * self.z);
+        self.colw = (250.0 * u) as i32;
+        self.w = self.colw + fw;
+        self.h = (fh + (20.0 * u) as i32).max((230.0 * u) as i32);
+        self.fox_y = self.h - fh - (2.0 * u) as i32;
+    }
+
+    pub fn apply_look(&mut self) {
+        let c = &self.cfg;
+        self.look = Look {
+            ears: c.s("ear_style", "pointy"),
+            blush: c.s("blush_style", "soft"),
+        };
+        self.pal = make_pal(&LookCfg {
+            theme: c.s("theme", "snow"),
+            coat: c.s("coat", ""),
+            eye_color: c.s("eye_color", ""),
+            foxfire_color: c.s("foxfire_color", ""),
+            scarf: c.s("scarf", ""),
+            robe: self.robe_cur.clone().unwrap_or_default(),
+        });
+        self.hd = c.b("hd_art", true);
+        self.images.clear();
+        self.tails_n = (-1e9, 3);
+    }
+
+    fn today_focus_minutes(&self) -> i64 {
+        (stats()
+            .get(today_iso())
+            .and_then(|v| v.as_f64())
+            .unwrap_or(0.0)
+            / 60.0)
+            .floor() as i64
+    }
+
+    /// A zenko grows tails with wisdom: 3 to start, one more for every 20 focused minutes today (up to 9).
+    pub fn tail_count(&mut self, now: f64) -> i32 {
+        let (t, n) = self.tails_n;
+        if now - t < 20.0 {
+            return n;
+        }
+        let mode = self.cfg.s("tails", "grow");
+        let n = if !mode.is_empty() && mode.chars().all(|c| c.is_ascii_digit()) {
+            mode.parse::<i32>().unwrap_or(3).clamp(1, 9)
+        } else {
+            (3 + self.today_focus_minutes() / 20).clamp(3, 9) as i32
+        };
+        self.tails_n = (now, n);
+        n
+    }
+
+    fn total_hours(&mut self, now: f64) -> f64 {
+        if now - self.hrs.0 > 120.0 {
+            let v = stats()
+                .as_object()
+                .map(|o| o.values().filter_map(|v| v.as_f64()).sum::<f64>())
+                .unwrap_or(0.0)
+                / 3600.0;
+            self.hrs = (now, v);
+        }
+        self.hrs.1
+    }
+
+    fn season(m: u32) -> &'static str {
+        if [12, 1, 2].contains(&m) {
+            "winter"
+        } else if [3, 4, 5].contains(&m) {
+            "spring"
+        } else if [6, 7, 8].contains(&m) {
+            "summer"
+        } else {
+            "autumn"
+        }
+    }
+
+    /// zenko19 / zenko22 z19_robe: the robe she wears today.
+    fn robe(&mut self, now: f64) -> Option<String> {
+        let mode = self.cfg.s("robe", "auto");
+        if mode.is_empty() || mode == "none" {
+            return None;
+        }
+        if let Some(r) = ROBES.iter().find(|r| r.key == mode) {
+            if r.hours == 0 && !mode.starts_with("kimono") && mode != "yukata" && mode != "uniform"
+            {
+                return Some(mode); // travel outfit picked in Customize (only offered once unlocked)
+            }
+        }
+        let (_, m, d, _, _, _) = local_now();
+        let season_k = format!("kimono_{}", Self::season(m));
+        let want = if mode == "auto" {
+            // exam-season uniform needs the deadline list (not ported yet), so auto = yukata in summer festival season, else the seasonal kimono
+            if (m, d) >= (7, 15) && (m, d) <= (8, 31) {
+                "yukata".to_string()
+            } else {
+                season_k.clone()
+            }
+        } else if mode == "kimono" {
+            season_k.clone()
+        } else {
+            mode.clone()
+        };
+        let r = ROBES.iter().find(|r| r.key == want)?;
+        let hrs = self.total_hours(now);
+        if hrs < r.hours as f64 {
+            if mode == "auto" {
+                let k = ROBES.iter().find(|r| r.key == season_k)?;
+                return if hrs >= k.hours as f64 {
+                    Some(season_k)
+                } else {
+                    None
+                };
+            }
+            return None;
+        }
+        Some(want)
+    }
+
+    pub fn accessories(&mut self, now: f64) -> Vec<String> {
+        let mut acc: Vec<String> = vec![];
+        let out = self.cfg.list("outfit");
+        if (self.session.is_some() && self.cfg.b("glasses_in_session", true))
+            || out.iter().any(|o| o == "glasses_always")
+        {
+            acc.push("glasses".into());
+        }
+        for a in &out {
+            if ["flower", "bow", "crown", "headband", "mask"].contains(&a.as_str()) {
+                acc.push(a.clone());
+            }
+        }
+        if !self.cfg.s("scarf", "").is_empty() {
+            acc.push("scarf".into());
+        }
+        let rb = self.robe(now);
+        if rb != self.robe_cur {
+            self.robe_cur = rb.clone();
+            self.apply_look();
+        }
+        if let Some(r) = rb {
+            acc.push(r);
+        }
+        acc
+    }
+
+    pub fn current_mood(&self, now: f64) -> String {
+        if let Some((m, until)) = &self.mood_override {
+            if now < *until {
+                return m.clone();
+            }
+        }
+        if self.sleeping {
+            return "sleep".into();
+        }
+        if self.session.is_some() {
+            return "focus".into();
+        }
+        "idle".into()
+    }
+
+    fn idle_moves(&mut self, now: f64, mood: &str) -> (i32, i32) {
+        if !["idle", "focus", "sad"].contains(&mood) {
+            return (0, 0);
+        }
+        let live = match self.cfg.s("idle_lively", "normal").as_str() {
+            "calm" => 0.6,
+            "lively" => 1.6,
+            _ => 1.0,
+        };
+        let s = (now * if mood == "focus" { 0.55 } else { 0.8 } * live).sin();
+        let mut hx = if self.cfg.b("idle_sway", true) {
+            if s > 0.55 {
+                1
+            } else if s < -0.55 {
+                -1
+            } else {
+                0
+            }
+        } else {
+            0
+        };
+        if now >= self.next_ear {
+            self.ear_until = now
+                + if self.cfg.b("idle_ears", true) {
+                    0.32
+                } else {
+                    0.0
+                };
+            self.next_ear = now + self.rng.uniform(4.0, 10.0) / live;
+        }
+        let ear = if now < self.ear_until && (self.ear_until - now) > 0.12 {
+            1
+        } else {
+            0
+        };
+        if !self.cfg.b("idle_lick", true) {
+            self.lick_until = 0.0;
+            self.next_lick = now + 30.0;
+        }
+        if mood == "idle" && now >= self.next_lick && now >= self.lick_until {
+            self.lick_until = now + self.rng.uniform(1.8, 2.8);
+            self.next_lick = now + self.rng.uniform(16.0, 34.0);
+        }
+        if now < self.lick_until {
+            hx = 0;
+        }
+        (hx, ear)
+    }
+
+    /// (eye shift x, eye shift y, snout shift x, snout shift y) so the fox looks at your mouse.
+    pub fn look_vec(
+        &self,
+        mood: &str,
+        pointer: (i32, i32),
+        win: (i32, i32),
+    ) -> (i32, i32, i32, i32) {
+        if !self.cfg.b("look_at_mouse", true) || mood == "sleep" {
+            return (0, 0, 0, 0);
+        }
+        let cx = win.0 + self.colw + 36 * self.z;
+        let cy = win.1 + self.fox_y + 30 * self.z;
+        let (dx, dy) = ((pointer.0 - cx) as f64, (pointer.1 - cy) as f64);
+        let t = 70.0 * self.u;
+        let lx = if dx > t {
+            1
+        } else if dx < -t {
+            -1
+        } else {
+            0
+        };
+        let ly = if dy > 1.6 * t {
+            1
+        } else if dy < -1.6 * t {
+            -1
+        } else {
+            0
+        };
+        let sx = lx * if dx.abs() > 5.0 * t { 2 } else { 1 };
+        let sy = if ly < 0 { -1 } else { 0 };
+        (lx, ly, sx, sy)
+    }
+
+    pub fn belly_text(&self, now: f64) -> String {
+        if let Some(s) = &self.session {
+            let left = (s.planned - (now - s.started)).max(0.0) as i64;
+            if left >= 3600 {
+                return format!("{}:{:02}", left / 3600, left % 3600 / 60);
+            }
+            return format!("{:02}:{:02}", left / 60, left % 60);
+        }
+        let (_, _, _, h, m, _) = local_now();
+        if self.cfg.b("clock_24h", true) {
+            format!("{h:02}:{m:02}")
+        } else {
+            format!("{}:{:02}", if h % 12 == 0 { 12 } else { h % 12 }, m)
+        }
+    }
+
+    fn img(
+        &mut self,
+        key: String,
+        make: impl FnOnce(&Look) -> Vec<Grid>,
+        pal: Option<Palette>,
+    ) -> &Image {
+        if !self.images.contains_key(&key) {
+            if self.images.len() > 360 {
+                self.images.clear();
+            }
+            let layers = make(&self.look);
+            let refs: Vec<&Grid> = layers.iter().collect();
+            let p = pal.unwrap_or_else(|| self.pal.clone());
+            let im = sprite_photo(&refs, &p, self.z as usize, self.hd);
+            self.images.insert(key.clone(), im);
+        }
+        &self.images[&key]
+    }
+
+    fn orb_pal(&self, style: &str) -> Palette {
+        let mut pal = self.pal.clone();
+        let hx = |k: u8| pal.hex(k).unwrap_or_else(|| "#000000".into());
+        if style == "angry" {
+            pal.set(b'A', "#fff3c4");
+            pal.set(b'I', "#ffb02e");
+            pal.set(b'U', "#ff3b1f");
+        } else if style == "sleep" {
+            let (i, u) = (hx(b'I'), hx(b'U'));
+            pal.set(b'A', &i);
+            pal.set(b'I', &u);
+            pal.set(b'U', &mixhex(&u, "#000000", 0.35));
+        }
+        pal
+    }
+
+    /// One animation step (zenko.py animate, every 60 ms): returns the whole window picture.
+    pub fn frame(&mut self, now: f64, pointer: (i32, i32), win: (i32, i32)) -> Frame {
+        let mood = self.current_mood(now);
+        let z = self.z;
+        let speed = if mood == "alert" {
+            0.07
+        } else if mood == "sleep" {
+            0.32
+        } else {
+            0.15
+        };
+        let tframe = ((now / speed) as i64 % 8) as i32;
+        let mut frame = ((now / 0.6) as i64 % 2) as i32;
+        let (mut dx, dy) = (0, 0);
+        let mut state = mood.clone();
+        let (mut hx, ear) = self.idle_moves(now, &mood);
+        if mood == "idle" || mood == "focus" {
+            if now >= self.next_blink {
+                self.blink_until = now
+                    + if self.cfg.b("idle_blink", true) {
+                        0.15
+                    } else {
+                        0.0
+                    };
+                self.next_blink = now + self.rng.uniform(2.5, 5.5);
+            }
+            if now < self.lick_until && mood == "idle" {
+                state = if (now / 0.22) as i64 % 2 != 0 {
+                    "lick".into()
+                } else {
+                    "lick2".into()
+                };
+            } else if now < self.blink_until {
+                state = "blink".into();
+            }
+        } else if mood == "alert" {
+            state = if (now / 0.3) as i64 % 2 == 0 {
+                "alert".into()
+            } else {
+                "alert2".into()
+            };
+            dx = if (now / 0.08) as i64 % 2 != 0 { z } else { -z };
+        } else if mood == "happy" {
+            hx = if (now / 0.16) as i64 % 2 != 0 { 1 } else { -1 };
+        }
+        let mut look = self.look_vec(&mood, pointer, win);
+        let mut acc = self.accessories(now);
+        let curled = mood == "sleep" && self.sleeping && self.cfg.b("curl_when_away", true);
+        if curled {
+            state = "curl".into();
+            look = (0, 0, 0, 0);
+            frame = ((now / 1.6) as i64 % 2) as i32;
+            acc.retain(|a| a == "headphones");
+        }
+        self.last_state = state.clone();
+        let n = self.tail_count(now);
+        let (fw, fh) = (self.w as usize, self.h as usize);
+        let mut out = Frame {
+            w: fw,
+            h: fh,
+            px: vec![[0, 0, 0, 0]; fw * fh],
+        };
+        let (fx0, fy0) = (self.colw + dx, self.fox_y + dy);
+        let accs: Vec<&str> = acc.iter().map(|s| s.as_str()).collect();
+        let acck = accs.join(",");
+        if !curled {
+            let im = self
+                .img(
+                    format!("tails|{n}|{tframe}"),
+                    |_| vec![core::build_tails(n, tframe, 8, true)],
+                    None,
+                )
+                .clone();
+            blit(&mut out, &im, fx0, fy0);
+        }
+        let key = if curled {
+            format!("curl|{frame}|{acck}|{n}")
+        } else {
+            format!("{state}|{frame}|{look:?}|{acck}|{hx}|{ear}")
+        };
+        let st2 = state.clone();
+        let accv = accs.iter().map(|s| s.to_string()).collect::<Vec<_>>();
+        let im = self
+            .img(
+                key,
+                move |lk| {
+                    let a: Vec<&str> = accv.iter().map(|s| s.as_str()).collect();
+                    if st2 == "curl" {
+                        vec![curl::build_curl(frame, &a, n)]
+                    } else if st2.starts_with("qwalk") || st2.starts_with("rig") {
+                        vec![rig::rig_rows(&st2, n, &a, lk)]
+                    } else {
+                        vec![sit::build_frame(&st2, frame, Some(look), &a, hx, ear, lk)]
+                    }
+                },
+                None,
+            )
+            .clone();
+        blit(&mut out, &im, fx0, fy0);
+        if !curled {
+            self.draw_belly(&mut out, now, dx, dy);
+        }
+        self.draw_foxfire(&mut out, now, &mood, curled);
+        out
+    }
+
+    fn draw_belly(&self, out: &mut Frame, now: f64, dx: i32, dy: i32) {
+        let text = self.belly_text(now);
+        let mut cols: Vec<[bool; 5]> = vec![];
+        for ch in text.chars() {
+            if let Some((_, g)) = FONT35.iter().find(|(c, _)| *c == ch) {
+                for cx in 0..g[0].len() {
+                    let mut col = [false; 5];
+                    for r in 0..5 {
+                        col[r] = g[r].as_bytes()[cx] == b'#';
+                    }
+                    cols.push(col);
+                }
+                cols.push([false; 5]);
+            }
+        }
+        cols.pop();
+        let w = 17usize;
+        let window: Vec<Option<[bool; 5]>> = if cols.len() <= w {
+            let mut v: Vec<Option<[bool; 5]>> = vec![None; (w - cols.len()) / 2];
+            v.extend(cols.iter().map(|c| Some(*c)));
+            v
+        } else {
+            let mut lp = cols.clone();
+            lp.extend(std::iter::repeat([false; 5]).take(8));
+            let off = (now / 0.11) as usize % lp.len();
+            (0..w).map(|i| Some(lp[(off + i) % lp.len()])).collect()
+        };
+        let ink = self
+            .pal
+            .get(b'b')
+            .or(self.pal.get(b'B'))
+            .unwrap_or([0, 0, 0]);
+        let z2 = self.z * 2;
+        for (i, col) in window.iter().take(w).enumerate() {
+            let Some(col) = col else { continue };
+            for r in 0..5 {
+                if col[r] {
+                    let px = self.colw + dx + BELLY_X * self.z + i as i32 * z2;
+                    let py = self.fox_y + dy + BELLY_Y * self.z + r as i32 * z2;
+                    fill(out, px, py, z2, z2, ink);
+                }
+            }
+        }
+    }
+
+    fn draw_foxfire(&mut self, out: &mut Frame, now: f64, mood: &str, curled: bool) {
+        if !self.cfg.b("foxfire", true) {
+            self.motes.clear();
+            return;
+        }
+        let z = self.z;
+        let style = if mood == "alert" {
+            "angry"
+        } else if mood == "sleep" {
+            "sleep"
+        } else {
+            "calm"
+        };
+        let spd = match style {
+            "angry" => 2.6,
+            "sleep" => 0.35,
+            _ => 1.0,
+        } * if mood == "happy" { 1.8 } else { 1.0 };
+        let anchors: &[(f64, f64, f64)] = if !curled {
+            &[(2.0, 16.0, 0.0), (66.0, 2.0, 2.1), (98.0, 22.0, 4.2)]
+        } else {
+            &[(88.0, 30.0, 0.0), (6.0, 34.0, 3.0)]
+        };
+        // motes first (they sit under the wisps)
+        self.motes.retain(|m| now - m.born <= m.life);
+        if self.motes.len() < if curled { 2 } else { 5 } && self.rng.next() < 0.25 {
+            let (x, y) = if curled {
+                (self.rng.uniform(40.0, 100.0), self.rng.uniform(42.0, 60.0))
+            } else {
+                let a = self.rng.uniform(5.0, 88.0).to_radians();
+                let r = self.rng.uniform(30.0, 52.0);
+                (TAIL_BASE.0 + r * a.cos(), TAIL_BASE.1 - r * a.sin())
+            };
+            let pick = (self.rng.next() * 3.0) as usize;
+            let col = [self.pal.get(b'I'), self.pal.get(b'A'), self.pal.get(b'x')][pick.min(2)]
+                .unwrap_or([255, 243, 184]);
+            let life = self.rng.uniform(0.3, 0.9);
+            self.motes.push(Mote {
+                x: self.colw + x as i32 * z,
+                y: self.fox_y + y as i32 * z,
+                col,
+                born: now,
+                life,
+            });
+        }
+        for m in &self.motes {
+            fill(out, m.x, m.y, z, z, m.col);
+        }
+        for i in 0..3usize {
+            if i >= anchors.len() || (style == "sleep" && i > 0 && !curled) {
+                continue;
+            }
+            let (ax, ay, ph) = anchors[i];
+            let t = now * spd + ph;
+            let fi = i as f64;
+            let x = ax
+                + 3.0 * (t * 0.9).sin()
+                + if style == "angry" {
+                    1.5 * (now * 23.0 + fi).sin()
+                } else {
+                    0.0
+                };
+            let y = ay + 2.5 * (t * 1.7 + fi).sin()
+                - if style == "sleep" {
+                    2.0 * (t * 0.5).sin()
+                } else {
+                    0.0
+                };
+            let fr =
+                ((now * if style == "angry" { 11.0 } else { 6.0 } + fi * 2.0) as i64 % 4) as i32;
+            let pal = self.orb_pal(style);
+            let im = self
+                .img(
+                    format!("orb|{style}|{fr}"),
+                    |_| vec![curl::foxfire_rows(fr)],
+                    Some(pal),
+                )
+                .clone();
+            blit(
+                out,
+                &im,
+                self.colw + x as i32 * z,
+                self.fox_y + y as i32 * z,
+            );
+        }
+    }
+}
+
+pub fn blit(out: &mut Frame, im: &Image, x0: i32, y0: i32) {
+    for y in 0..im.h as i32 {
+        let oy = y0 + y;
+        if oy < 0 || oy >= out.h as i32 {
+            continue;
+        }
+        for x in 0..im.w as i32 {
+            let ox = x0 + x;
+            if ox < 0 || ox >= out.w as i32 {
+                continue;
+            }
+            let p = im.px[(y as usize) * im.w + x as usize];
+            if p[3] != 0 {
+                out.px[oy as usize * out.w + ox as usize] = p;
+            }
+        }
+    }
+}
+
+pub fn fill(out: &mut Frame, x0: i32, y0: i32, w: i32, h: i32, c: [u8; 3]) {
+    for y in y0.max(0)..(y0 + h).min(out.h as i32) {
+        for x in x0.max(0)..(x0 + w).min(out.w as i32) {
+            out.px[y as usize * out.w + x as usize] = [c[0], c[1], c[2], 255];
+        }
+    }
+}
+
+pub fn is_robe_name(a: &str) -> bool {
+    is_robe(a)
+}
