@@ -12,6 +12,12 @@ fn main() {
 #[cfg(windows)]
 mod bubble;
 #[cfg(windows)]
+mod dialog;
+#[cfg(windows)]
+mod panel;
+#[cfg(windows)]
+mod tkw;
+#[cfg(windows)]
 mod gdi;
 #[cfg(windows)]
 mod menu;
@@ -71,6 +77,9 @@ mod win {
         family: String,
         last_tick: f64,
         next_tick: f64,
+        panel_fonts: Option<crate::panel::Fonts>,
+        panel_dib: Option<(HDC, HBITMAP, *mut u8, i32, i32)>,
+        fg: (String, String),
         next_top: f64,
         hwnd: HWND,
     }
@@ -147,6 +156,9 @@ mod win {
                 buf[i * 4 + 2] = (p[0] as u32 * a / 255) as u8;
                 buf[i * 4 + 3] = p[3];
             }
+            if app.fox.session.is_some() {
+                draw_panel(app, w, h, buf);
+            }
             let pt = POINT { x: app.x, y: app.y };
             let sz = SIZE { cx: w, cy: h };
             let src = POINT { x: 0, y: 0 };
@@ -158,6 +170,105 @@ mod win {
             };
             UpdateLayeredWindow(hwnd, screen, &pt, &sz, dc, &src, 0, &blend, ULW_ALPHA);
             ReleaseDC(std::ptr::null_mut(), screen);
+        }
+    }
+
+    /// draw_panel: the timer panel, drawn with GDI on a KEY-coloured bitmap and copied onto her frame (Tk draws it
+    /// on the same see-through canvas as her).
+    unsafe fn draw_panel(app: &mut App, w: i32, h: i32, buf: &mut [u8]) {
+        unsafe {
+            let screen = GetDC(std::ptr::null_mut());
+            if app.panel_dib.map(|d| (d.3, d.4)) != Some((w, h)) {
+                if let Some((dc, bmp, _, _, _)) = app.panel_dib.take() {
+                    DeleteObject(bmp as _);
+                    DeleteDC(dc);
+                }
+                let dc = CreateCompatibleDC(screen);
+                let mut bi: BITMAPINFO = std::mem::zeroed();
+                bi.bmiHeader.biSize = std::mem::size_of::<BITMAPINFOHEADER>() as u32;
+                bi.bmiHeader.biWidth = w;
+                bi.bmiHeader.biHeight = -h;
+                bi.bmiHeader.biPlanes = 1;
+                bi.bmiHeader.biBitCount = 32;
+                bi.bmiHeader.biCompression = BI_RGB;
+                let mut bits: *mut core::ffi::c_void = std::ptr::null_mut();
+                let bmp = CreateDIBSection(dc, &bi, DIB_RGB_COLORS, &mut bits, std::ptr::null_mut(), 0);
+                SelectObject(dc, bmp as _);
+                app.panel_dib = Some((dc, bmp, bits as *mut u8, w, h));
+            }
+            ReleaseDC(std::ptr::null_mut(), screen);
+            let (dc, _, bits, _, _) = app.panel_dib.unwrap();
+            let pw = app.fox.colw.min(w);
+            let br = CreateSolidBrush(crate::gdi::KEY);
+            let r = RECT { left: 0, top: 0, right: pw, bottom: h };
+            FillRect(dc, &r, br);
+            DeleteObject(br as _);
+            let th = theme(&app.fox.cfg);
+            let fam = app.family.clone();
+            let fonts = crate::panel::Fonts::get(&mut app.panel_fonts, &fam, app.dpi);
+            let ops = crate::panel::ops(&app.fox, &th, fonts);
+            crate::gdi::draw(dc, &ops);
+            GdiFlush();
+            let src = std::slice::from_raw_parts(bits, (w * h * 4) as usize);
+            for y in 0..h as usize {
+                for x in 0..pw as usize {
+                    let i = (y * w as usize + x) * 4;
+                    // KEY (#ff00ff) is see-through, like Tk's -transparentcolor
+                    if !(src[i] == 0xff && src[i + 1] == 0 && src[i + 2] == 0xff) {
+                        buf[i] = src[i];
+                        buf[i + 1] = src[i + 1];
+                        buf[i + 2] = src[i + 2];
+                        buf[i + 3] = 255;
+                    }
+                }
+            }
+        }
+    }
+
+    /// foreground_info(): (window title, exe name in lower case) of the window you are using.
+    fn foreground_info() -> (String, String) {
+        use windows_sys::Win32::System::Threading::*;
+        unsafe {
+            let hwnd = GetForegroundWindow();
+            if hwnd.is_null() {
+                return (String::new(), String::new());
+            }
+            let n = GetWindowTextLengthW(hwnd);
+            let mut buf = vec![0u16; n as usize + 1];
+            let got = GetWindowTextW(hwnd, buf.as_mut_ptr(), n + 1);
+            let title = String::from_utf16_lossy(&buf[..got.max(0) as usize]);
+            let mut pid = 0u32;
+            GetWindowThreadProcessId(hwnd, &mut pid);
+            let mut proc_ = String::new();
+            let h = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid);
+            if !h.is_null() {
+                let mut pb = vec![0u16; 520];
+                let mut size = 520u32;
+                if QueryFullProcessImageNameW(h, PROCESS_NAME_WIN32, pb.as_mut_ptr(), &mut size) != 0 {
+                    let full = String::from_utf16_lossy(&pb[..size as usize]);
+                    proc_ = full.rsplit(['\\', '/']).next().unwrap_or("").to_lowercase();
+                }
+                CloseHandle(h);
+            }
+            (title, proc_)
+        }
+    }
+
+    /// close_distraction(kind): Ctrl+W for a browser tab, a polite WM_CLOSE for an app.
+    fn close_distraction(kind: &str) -> bool {
+        unsafe {
+            let hwnd = GetForegroundWindow();
+            if hwnd.is_null() {
+                return false;
+            }
+            if kind == "tab" {
+                for (vk, flag) in [(0x11u8, 0u32), (0x57, 0), (0x57, KEYEVENTF_KEYUP), (0x11, KEYEVENTF_KEYUP)] {
+                    keybd_event(vk, 0, flag, 0);
+                }
+            } else {
+                PostMessageW(hwnd, WM_CLOSE, 0, 0);
+            }
+            true
         }
     }
 
@@ -220,7 +331,7 @@ mod win {
 
     unsafe fn tick(hwnd: HWND) {
         APP.with(|a| {
-            let mut g = a.borrow_mut();
+            let Ok(mut g) = a.try_borrow_mut() else { return };
             let Some(app) = g.as_mut() else { return };
             let t = now(app);
             if t >= app.next_tick {
@@ -228,7 +339,21 @@ mod win {
                 let dt = (t - app.last_tick).clamp(0.0, 5.0);
                 app.last_tick = t;
                 app.next_tick = t + 1.0;
-                app.fox.tick_1s(t, dt, idle_seconds());
+                app.fg = foreground_info();
+                let (title, proc_) = app.fg.clone();
+                app.fox.tick_1s(t, dt, idle_seconds(), &title, &proc_);
+            }
+            for o in crate::dialog::OUT.with(|q| std::mem::take(&mut *q.borrow_mut())) {
+                match o {
+                    crate::dialog::Out::Go(name, raw, minutes) => {
+                        update_config(&mut app.fox.cfg, |v| {
+                            v["last_task"] = raw.clone().into();
+                            v["last_minutes"] = minutes.into();
+                        });
+                        app.fox.start_session(t, &name, minutes as f64);
+                    }
+                    crate::dialog::Out::Sound(k) => app.fox.events.push(Ev::Ui(k.into())),
+                }
             }
             if t >= app.next_top {
                 app.next_top = t + 2.5; // keep_on_top
@@ -290,28 +415,49 @@ mod win {
         } else if let Some(k) = c.strip_prefix("toggle:") {
             let on = !fox.cfg.b(k, true);
             update_config(&mut fox.cfg, |v| v[k] = on.into());
+        } else if let Some(rest) = c.strip_prefix("close:") {
+            let (kind, site) = rest.split_once(':').unwrap_or((rest, ""));
+            let ok = close_distraction(kind);
+            fox.closed_distraction(t, site, ok);
+        } else if c == "break" {
+            fox.start_break(t, None);
+        } else if c == "endbreak" {
+            fox.end_break(t, false);
         } else if c == "quit" {
             unsafe { DestroyWindow(app.hwnd) };
         }
     }
 
-    /// open_dialog (zenko.py double-click): the session dialog itself is the next stage, so for now this starts a
-    /// session straight away with the task and minutes you used last time (the dialog's own defaults).
+    /// open_dialog (zenko.py double-click / "Start focus session..."): the new focus session window.
     fn open_dialog(app: &mut App, t: f64) {
+        if crate::dialog::is_open() {
+            crate::dialog::lift();
+            return;
+        }
         let fox = &mut app.fox;
         if fox.session.is_some() {
             fox.say("We're already in a session. Right-click me to pause or stop it.", 6.0);
             return;
         }
-        let task = fox.cfg.s("last_task", "");
-        let task = if task.trim().is_empty() { "Focus session".to_string() } else { task.trim().to_string() };
-        let m = fox.cfg.f("last_minutes", 25.0).clamp(1.0, 240.0).floor();
-        fox.start_session(t, &task, m);
+        fox.events.push(Ev::Ui("open".into()));
+        let im = fox.small_fox(t);
+        let c = &fox.cfg;
+        let setup = crate::dialog::Setup {
+            theme: theme(c),
+            font_ui: crate::gdi::ui_font(&c.s("app_font", "")),
+            dpi: app.dpi,
+            last_task: c.s("last_task", ""),
+            last_minutes: crate::dialog::py_str(c.raw.get("last_minutes")),
+            hint: if c.b("learn_habits", true) { zenko_desktop::watch::learned_hint() } else { String::new() },
+            fox: (im.w as i32, im.h as i32, im.px.clone()),
+            icon_px: zenko_desktop::icon::icon_pixels(&c.s("theme", "snow")),
+        };
+        crate::dialog::open(setup);
     }
 
     pub fn bubble_click(x: i32, y: i32) {
         APP.with(|a| {
-            let mut g = a.borrow_mut();
+            let Ok(mut g) = a.try_borrow_mut() else { return };
             let Some(app) = g.as_mut() else { return };
             let Some(b) = app.bubble.as_mut() else { return };
             let hit = b.chips.iter().find(|c| c.0 <= x && x <= c.2 && c.1 <= y && y <= c.3).map(|c| c.4.clone());
@@ -354,7 +500,11 @@ mod win {
         m.push(later("Breathe with me (Zen garden)"));
         m.push(later("Today's timetable..."));
         m.push(later("\u{6025} Something urgent (push my day back)"));
-        m.push(later(format!("Take a {}-min break", c.f("break_minutes", 5.0) as i64)));
+        if fox.brk.is_some() {
+            m.push(cmd("End break", "endbreak"));
+        } else {
+            m.push(cmd(format!("Take a {}-min break", c.f("break_minutes", 5.0) as i64), "break"));
+        }
         m.push(later("Export timetable as PDF (reMarkable)..."));
         m.push(Item::Sep);
         // menu_extras (ZenkoExtras)
@@ -437,7 +587,7 @@ mod win {
                     let mut p = POINT { x: 0, y: 0 };
                     GetCursorPos(&mut p);
                     APP.with(|a| {
-                        if let Some(app) = a.borrow_mut().as_mut() {
+                        if let Some(app) = a.try_borrow_mut().ok().as_mut().and_then(|g| g.as_mut()) {
                             app.drag = Some((p.x - app.x, p.y - app.y, p.x, p.y, false));
                         }
                     });
@@ -448,7 +598,7 @@ mod win {
                     let mut p = POINT { x: 0, y: 0 };
                     GetCursorPos(&mut p);
                     APP.with(|a| {
-                        if let Some(app) = a.borrow_mut().as_mut() {
+                        if let Some(app) = a.try_borrow_mut().ok().as_mut().and_then(|g| g.as_mut()) {
                             if let Some((dx, dy, sx, sy, moved)) = app.drag {
                                 if moved || (p.x - sx).abs() + (p.y - sy).abs() > 4 {
                                     app.x = p.x - dx;
@@ -466,7 +616,7 @@ mod win {
                     ReleaseCapture();
                     let (cx, cy) = ((lp & 0xffff) as i16 as i32, ((lp >> 16) & 0xffff) as i16 as i32);
                     APP.with(|a| {
-                        if let Some(app) = a.borrow_mut().as_mut() {
+                        if let Some(app) = a.try_borrow_mut().ok().as_mut().and_then(|g| g.as_mut()) {
                             let moved = app.drag.map(|d| d.4);
                             app.drag = None;
                             match moved {
@@ -490,7 +640,7 @@ mod win {
                 }
                 WM_LBUTTONDBLCLK => {
                     APP.with(|a| {
-                        if let Some(app) = a.borrow_mut().as_mut() {
+                        if let Some(app) = a.try_borrow_mut().ok().as_mut().and_then(|g| g.as_mut()) {
                             let t = now(app);
                             open_dialog(app, t);
                         }
@@ -498,12 +648,12 @@ mod win {
                     0
                 }
                 WM_RBUTTONUP => {
-                    let built = APP.with(|a| a.borrow().as_ref().map(|app| (build_menu(app), theme(&app.fox.cfg))));
+                    let built = APP.with(|a| a.try_borrow().ok().and_then(|g| g.as_ref().map(|app| (build_menu(app), theme(&app.fox.cfg)))));
                     if let Some((items, th)) = built {
                         let chosen = menu::popup(hwnd, &items, &th);
                         if !chosen.is_empty() {
                             APP.with(|a| {
-                                if let Some(app) = a.borrow_mut().as_mut() {
+                                if let Some(app) = a.try_borrow_mut().ok().as_mut().and_then(|g| g.as_mut()) {
                                     run_command(app, &chosen);
                                 }
                             });
@@ -592,6 +742,9 @@ mod win {
                     family,
                     last_tick: 1000.0,
                     next_tick: 1001.0,
+                    panel_fonts: None,
+                    panel_dib: None,
+                    fg: (String::new(), String::new()),
                     next_top: 1002.5,
                     hwnd,
                 })

@@ -33,7 +33,12 @@ fn stair(r: i32, step: i32, cut: bool) -> Vec<(f64, f64)> {
 
 /// round_pts with SHAPES[shape](r); no notch. Returns integer canvas points (Tk rounds coordinates the same way).
 pub fn round_pts(x1: i32, y1: i32, x2: i32, y2: i32, r: i32, step: i32, shape: &str) -> Vec<(i32, i32)> {
-    let half = ((x2 - x1).div_euclid(2)).min((y2 - y1).div_euclid(2));
+    round_pts_f(x1 as f64, y1 as f64, x2 as f64, y2 as f64, r, step, shape)
+}
+
+/// round_pts for float coordinates (e.g. the progress bar end): Python's int((x2 - x1) // 2) and float points.
+pub fn round_pts_f(x1f: f64, y1f: f64, x2f: f64, y2f: f64, r: i32, step: i32, shape: &str) -> Vec<(i32, i32)> {
+    let half = (((x2f - x1f) / 2.0).floor() as i32).min(((y2f - y1f) / 2.0).floor() as i32);
     // SHAPES[shape](r) is built from the r passed in; each corner is then clamped to the box
     let cs: [(bool, i32); 4] = match shape {
         "pill" => [(false, 999); 4],
@@ -42,7 +47,6 @@ pub fn round_pts(x1: i32, y1: i32, x2: i32, y2: i32, r: i32, step: i32, shape: &
         _ => [(false, r); 4],
     };
     let cs: Vec<(bool, i32)> = cs.iter().map(|&(k, rr)| (k, 0.max(rr.min(half)))).collect();
-    let (x1f, y1f, x2f, y2f) = (x1 as f64, y1 as f64, x2 as f64, y2 as f64);
     let mut out: Vec<(f64, f64)> = vec![];
     out.extend(stair(cs[0].1, step, cs[0].0).iter().map(|&(ox, oy)| (x1f + ox, y1f + oy)));
     out.extend(stair(cs[1].1, step, cs[1].0).iter().map(|&(ox, oy)| (x2f - oy, y1f + ox)));
@@ -52,7 +56,7 @@ pub fn round_pts(x1: i32, y1: i32, x2: i32, y2: i32, r: i32, step: i32, shape: &
 }
 
 /// Tk canvas coordinate to device pixel (TkCanvTranslatePath rounds half away from zero).
-fn tk_coord(v: f64) -> i32 {
+pub fn tk_coord(v: f64) -> i32 {
     if v > 0.0 { (v + 0.5) as i32 } else { (v - 0.5) as i32 }
 }
 

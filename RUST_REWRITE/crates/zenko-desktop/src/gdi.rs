@@ -66,6 +66,10 @@ pub fn ui_font(wanted: &str) -> String {
 
 /// Tk's font size in points -> pixels (TkFontGetPixels: points * dpi / 72, rounded).
 pub fn tk_font(family: &str, points: i32, bold: bool, dpi: f64) -> HFONT {
+    tk_font_s(family, points, bold, false, dpi)
+}
+
+pub fn tk_font_s(family: &str, points: i32, bold: bool, italic: bool, dpi: f64) -> HFONT {
     let px = (points as f64 * dpi / 72.0 + 0.5) as i32;
     let name = wide(family);
     unsafe {
@@ -75,7 +79,7 @@ pub fn tk_font(family: &str, points: i32, bold: bool, dpi: f64) -> HFONT {
             0,
             0,
             if bold { FW_BOLD as i32 } else { FW_NORMAL as i32 },
-            0,
+            italic as u32,
             0,
             0,
             DEFAULT_CHARSET as u32,
@@ -95,7 +99,7 @@ pub struct TextLayout {
     pub line_h: i32,
 }
 
-fn extent(dc: HDC, s: &[u16]) -> i32 {
+pub fn extent(dc: HDC, s: &[u16]) -> i32 {
     let mut sz = SIZE { cx: 0, cy: 0 };
     unsafe { GetTextExtentPoint32W(dc, s.as_ptr(), s.len() as i32, &mut sz) };
     sz.cx
@@ -182,6 +186,12 @@ pub enum Op {
     Line { pts: Vec<(i32, i32)>, color: u32, width: i32 },
     /// create_text (already laid out); x, y = top left; justify: 0 left, 1 right
     Text { x: i32, y: i32, lay: TextLayout, font: HFONT, color: u32, right: bool },
+    /// a filled rectangle (Tk's XFillRectangle / Tk_Fill3DRectangle with a flat relief)
+    Rect { x: i32, y: i32, w: i32, h: i32, color: u32 },
+    /// a picture with see-through pixels (an image label); RGBA rows
+    Img { x: i32, y: i32, w: i32, h: i32, px: std::rc::Rc<Vec<[u8; 4]>> },
+    /// clip the following ops to this rectangle (None = no clip)
+    Clip(Option<(i32, i32, i32, i32)>),
 }
 
 pub fn pen(color: u32, width: i32) -> HPEN {
@@ -239,6 +249,49 @@ pub unsafe fn draw(dc: HDC, ops: &[Op]) {
                     SelectObject(dc, opn);
                     DeleteObject(pn as _);
                 }
+                Op::Rect { x, y, w, h, color } => {
+                    let br = CreateSolidBrush(*color);
+                    let r = RECT { left: *x, top: *y, right: x + w, bottom: y + h };
+                    FillRect(dc, &r, br);
+                    DeleteObject(br as _);
+                }
+                Op::Img { x, y, w, h, px } => {
+                    let mut bi: BITMAPINFO = std::mem::zeroed();
+                    bi.bmiHeader.biSize = std::mem::size_of::<BITMAPINFOHEADER>() as u32;
+                    bi.bmiHeader.biWidth = *w;
+                    bi.bmiHeader.biHeight = -*h;
+                    bi.bmiHeader.biPlanes = 1;
+                    bi.bmiHeader.biBitCount = 32;
+                    bi.bmiHeader.biCompression = BI_RGB;
+                    let mut bits: *mut core::ffi::c_void = std::ptr::null_mut();
+                    let mdc = CreateCompatibleDC(dc);
+                    let bmp = CreateDIBSection(mdc, &bi, DIB_RGB_COLORS, &mut bits, std::ptr::null_mut(), 0);
+                    let ob = SelectObject(mdc, bmp as _);
+                    let buf = std::slice::from_raw_parts_mut(bits as *mut u8, (w * h * 4) as usize);
+                    for (i, p) in px.iter().enumerate() {
+                        let a = p[3] as u32;
+                        buf[i * 4] = (p[2] as u32 * a / 255) as u8;
+                        buf[i * 4 + 1] = (p[1] as u32 * a / 255) as u8;
+                        buf[i * 4 + 2] = (p[0] as u32 * a / 255) as u8;
+                        buf[i * 4 + 3] = p[3];
+                    }
+                    let bf = BLENDFUNCTION { BlendOp: AC_SRC_OVER as u8, BlendFlags: 0, SourceConstantAlpha: 255,
+                                             AlphaFormat: AC_SRC_ALPHA as u8 };
+                    GdiAlphaBlend(dc, *x, *y, *w, *h, mdc, 0, 0, *w, *h, bf);
+                    SelectObject(mdc, ob);
+                    DeleteObject(bmp as _);
+                    DeleteDC(mdc);
+                }
+                Op::Clip(r) => match r {
+                    Some((x, y, w, h)) => {
+                        let rg = CreateRectRgn(*x, *y, x + w, y + h);
+                        SelectClipRgn(dc, rg);
+                        DeleteObject(rg as _);
+                    }
+                    None => {
+                        SelectClipRgn(dc, std::ptr::null_mut());
+                    }
+                },
                 Op::Text { x, y, lay, font, color, right } => {
                     let of = SelectObject(dc, *font as _);
                     SetTextColor(dc, *color);

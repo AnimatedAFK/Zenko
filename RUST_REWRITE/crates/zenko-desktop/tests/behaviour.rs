@@ -38,10 +38,45 @@ fn behaviour() {
     f.start_session(3000.0, "Biology notes", 1.0);
     assert_eq!(says(&mut f), vec!["Let's go! 1 min on \u{201c}Biology notes\u{201d}. I'm watching.".to_string()]);
     for i in 1..=61 {
-        f.tick_1s(3000.0 + i as f64, 1.0, 0.5);
+        f.tick_1s(3000.0 + i as f64, 1.0, 0.5, "Notes", "notepad.exe");
     }
     assert!(f.session.is_none());
     assert_eq!(says(&mut f), vec!["Done! 1 min on \u{201c}Biology notes\u{201d}. Off-task: 0 min. Spotless!".to_string()]);
     let st = zenko_desktop::stats();
     assert_eq!(st[zenko_desktop::today_iso()].as_i64(), Some(60));
+
+    // the session ends, and 7 seconds later a 5-minute break starts by itself (auto_break_after_session)
+    for i in 62..=69 {
+        f.tick_1s(3000.0 + i as f64, 1.0, 0.5, "Notes", "notepad.exe");
+    }
+    assert!(f.brk.is_some());
+    assert_eq!(f.current_mood(3070.0), "sleep");
+    assert_eq!(f.belly_text(3070.0), "04:57");
+    f.end_break(3071.0, false);
+    assert!(f.brk.is_none());
+
+    // Reddit during a session: a nag at the grace time, a warning, then the tab is closed; going back = praise
+    let mut f = fox();
+    f.start_session(5000.0, "Chem", 25.0);
+    says(&mut f);
+    let mut cmds = vec![];
+    let mut all = vec![];
+    for i in 1..=21 {
+        f.tick_1s(5000.0 + i as f64, 1.0, 0.5, "Reddit - Dive into anything - Google Chrome", "chrome.exe");
+        for e in f.events.drain(..) {
+            match e {
+                Ev::Command(c) => cmds.push(c),
+                Ev::Say { text, .. } => all.push(text),
+                _ => {}
+            }
+        }
+    }
+    assert!(f.watch.alerted);
+    assert_eq!(f.current_mood(5021.0), "alert");
+    assert!(all.iter().any(|s| s.starts_with("Closing Reddit in 10 seconds")), "{all:?}");
+    assert_eq!(cmds, vec!["close:tab:Reddit".to_string()]);
+    assert!((f.session.as_ref().unwrap().dist - 21.0).abs() < 1e-9);
+    f.tick_1s(5022.0, 1.0, 0.5, "Notes", "notepad.exe");
+    assert!(!f.watch.alerted);
+    assert_eq!(says(&mut f).len(), 1); // a PRAISE line
 }

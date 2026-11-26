@@ -16,6 +16,7 @@ pub struct Theme {
     pub glow: String,
     pub onacc: String,
     pub field: String,
+    pub line: String,
     pub bub: String,
     pub bubink: String,
 }
@@ -35,6 +36,7 @@ fn realm(night: &str, paper: &str, card: &str, ink: &str, grey: &str, acc: &str,
         glow: glow.into(),
         onacc: onacc.into(),
         field: mixhex(card, ink, 0.07),
+        line: mixhex(card, ink, 0.16),
         bub: mixhex(night, card, 0.35),
         bubink: ink.into(),
     }
@@ -60,6 +62,12 @@ const ACCENTS: [(&str, [&str; 4]); 7] = [
     ("wisteria", ["#a28cff", "#c9bcff", "#e3b04b", "#b9a6ff"]),
     ("moon", ["#8fb0e8", "#bfd2f6", "#d8c08a", "#a8c4ff"]),
 ];
+
+/// THEMES.get(name) or THEMES["snow"] (no accent).
+pub fn theme_named(name: &str) -> Theme {
+    let t = THEMES.iter().find(|(k, _)| *k == name).unwrap_or(&THEMES[0]).1;
+    realm(t[0], t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8], t[9])
+}
 
 /// apply_theme(cfg["theme"]) with the accent from cfg["accent"] on top.
 pub fn theme(cfg: &Cfg) -> Theme {

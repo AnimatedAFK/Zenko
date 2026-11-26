@@ -70,6 +70,10 @@ impl Companion {
         let Some(s) = self.session.take() else { return };
         let focused = (s.elapsed - s.dist - s.away).max(0.0);
         add_stats(focused);
+        if self.cfg.b("learn_habits", true) && s.elapsed >= 120.0 {
+            crate::watch::learn_session(s.planned / 60.0, focused / 60.0, completed, s.dist / 60.0);
+        }
+        self.watch.alerted = false;
         self.tails_n = (-1e9, 3);
         self.mood_override = None;
         if completed {
@@ -85,48 +89,15 @@ impl Companion {
             let line = format!("Done! {} min on \u{201c}{}\u{201d}. Off-task: {} min. {}", mins(s.planned),
                                clip(&s.task, 30), (s.dist / 60.0).floor() as i64, verdict);
             self.say(&line, 14.0);
+            if self.cfg.b("auto_break_after_session", true) && self.brk.is_none() {
+                let bm = self.cfg.f("break_minutes", 5.0) as i64 * if s.planned >= 3000.0 { 2 } else { 1 };
+                self.watch.auto_break = Some((now + 7.0, bm));
+            }
         } else {
             self.set_mood(now, "sad", 4.0);
             self.events.push(Ev::Beep { kind: "sad".into(), variety: false });
             let line = format!("Stopped. You focused for {} min. Come back soon.", (focused / 60.0).floor() as i64);
             self.say(&line, 8.0);
-        }
-    }
-
-    /// The once-a-second watcher (sleep when away, wake, session timer). `idle` = seconds since the last input.
-    pub fn tick_1s(&mut self, now: f64, dt: f64, idle: f64) {
-        let away = idle >= self.cfg.f("idle_minutes", 4.0) * 60.0;
-        let has = self.session.is_some();
-        if self.sleeping && !away && idle < 3.0 {
-            self.sleeping = false;
-            self.say(if has { "Welcome back! Let's keep going." } else { "Hi again!" }, 5.0);
-        }
-        if away && !self.sleeping {
-            self.sleeping = true;
-            if self.session.as_ref().is_some_and(|s| !s.paused) {
-                self.say("Still there? I'll keep the timer running.", 8.0);
-            }
-        }
-        let idle_pause = self.cfg.b("idle_pause", true);
-        let Some(s) = &mut self.session else { return };
-        if s.paused {
-            return;
-        }
-        if away && idle_pause {
-            s.idle_paused = true;
-            return;
-        }
-        if s.idle_paused {
-            s.idle_paused = false;
-            self.say("Okaeri~ I paused your timer while you were away. Carrying on!", 5.0);
-        }
-        let Some(s) = &mut self.session else { return };
-        s.elapsed += dt;
-        if away {
-            s.away += dt;
-        }
-        if s.elapsed >= s.planned {
-            self.end_session(now, true);
         }
     }
 }

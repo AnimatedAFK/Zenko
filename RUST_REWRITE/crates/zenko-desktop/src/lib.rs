@@ -13,6 +13,9 @@ use zenko_art::{Grid, Look, core, curl, rig, sit};
 pub mod play;
 pub mod session;
 pub mod shapes;
+pub mod watch;
+pub mod tkgrid;
+pub mod icon;
 pub mod sound;
 pub mod theme;
 pub use play::{Play, Pose, Prop};
@@ -47,8 +50,12 @@ pub fn py_json(v: &Value) -> String {
 
 /// Python's json.dump(cfg, f, indent=2) (ensure_ascii on: non-ASCII written as \uXXXX), used for config.json.
 pub fn py_json_ascii(v: &Value) -> String {
+    py_json_ascii_indent(v, b"  ")
+}
+
+pub fn py_json_ascii_indent(v: &Value, indent: &[u8]) -> String {
     let mut out = Vec::new();
-    let fmt = serde_json::ser::PrettyFormatter::with_indent(b"  ");
+    let fmt = serde_json::ser::PrettyFormatter::with_indent(indent);
     let mut ser = serde_json::Serializer::with_formatter(&mut out, fmt);
     serde::Serialize::serialize(v, &mut ser).ok();
     let s = String::from_utf8(out).unwrap_or_default();
@@ -230,6 +237,16 @@ pub fn local_now() -> (i32, u32, u32, u32, u32, u32) {
     let (y, m, d) = civil_from_days(days);
     (y, m, d, sod / 3600, sod / 60 % 60, sod % 60)
 }
+/// datetime.now().weekday(): Monday = 0
+pub fn local_weekday() -> u32 {
+    let secs = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs() as i64)
+        .unwrap_or(0)
+        + local_offset_secs();
+    (secs.div_euclid(86400) + 3).rem_euclid(7) as u32
+}
+
 fn civil_from_days(z: i64) -> (i32, u32, u32) {
     let z = z + 719468;
     let era = z.div_euclid(146097);
@@ -296,12 +313,16 @@ pub struct Session {
     pub away: f64,
     pub paused: bool,
     pub idle_paused: bool,
+    pub last_motiv: f64,
+    pub half: bool,
+    pub final_: bool,
+    pub closed: i64,
 }
 
 impl Session {
     pub fn new(task: &str, minutes: f64) -> Session {
         Session { task: task.into(), planned: minutes * 60.0, elapsed: 0.0, dist: 0.0, away: 0.0, paused: false,
-                  idle_paused: false }
+                  idle_paused: false, last_motiv: 0.0, half: false, final_: false, closed: 0 }
     }
 }
 
@@ -353,6 +374,8 @@ pub struct Companion {
     pub events: Vec<Ev>,
     pub delayed: Vec<(f64, Ev)>,
     pub pose: Option<Pose>,
+    pub watch: watch::Watch,
+    pub brk: Option<watch::Brk>,
 }
 
 impl Companion {
@@ -390,6 +413,8 @@ impl Companion {
             events: vec![],
             delayed: vec![],
             pose: None,
+            watch: Default::default(),
+            brk: None,
         };
         c.compute_dims();
         c.apply_look();
@@ -437,6 +462,14 @@ impl Companion {
             .unwrap_or(0.0)
             / 60.0)
             .floor() as i64
+    }
+
+    /// small_fox(1): the fox with her tails as a little picture for headers and dialogs (see-through background).
+    pub fn small_fox(&mut self, now: f64) -> Image {
+        let n = self.tail_count(now);
+        let tails = core::build_tails(n, 0, 8, false);
+        let body = sit::build_frame("happy", 0, None, &[], 0, 0, &self.look);
+        sprite_photo(&[&tails, &body], &self.pal, 1, false)
     }
 
     /// A zenko grows tails with wisdom: 3 to start, one more for every 20 focused minutes today (up to 9).
@@ -554,7 +587,7 @@ impl Companion {
                 return m.clone();
             }
         }
-        if self.sleeping {
+        if self.sleeping || self.brk.is_some() {
             return "sleep".into();
         }
         if let Some(s) = &self.session {
@@ -646,7 +679,14 @@ impl Companion {
     }
 
     pub fn belly_text(&self, now: f64) -> String {
+        if let Some(b) = &self.brk {
+            let left = (b.planned - b.elapsed).max(0.0) as i64;
+            return format!("{:02}:{:02}", left / 60, left % 60);
+        }
         if let Some(s) = &self.session {
+            if s.paused && (unix_now() as i64) % 2 != 0 {
+                return String::new();
+            }
             let _ = now;
             let left = (s.planned - s.elapsed).max(0.0) as i64;
             if left >= 3600 {
@@ -744,7 +784,8 @@ impl Companion {
         }
         let mut look = self.look_vec(&mood, pointer, win);
         let mut acc = self.accessories(now);
-        let mut curled = mood == "sleep" && self.sleeping && self.cfg.b("curl_when_away", true);
+        let mo = self.mood_override.as_ref().is_some_and(|(_, u)| now < *u);
+        let mut curled = mood == "sleep" && self.sleeping && self.brk.is_none() && !mo && self.cfg.b("curl_when_away", true);
         if curled {
             state = "curl".into();
             look = (0, 0, 0, 0);
@@ -754,7 +795,7 @@ impl Companion {
         let n = self.tail_count(now);
         let mut st = Pose { state, hx, ear, look, frame, acc, curled, tframe, n, dxf: 0, dyf: 0, hide_fire: false };
         let mut prop = None;
-        if self.play.is_some() || self.sulk_until > 0.0 {
+        if (self.play.is_some() || self.sulk_until > 0.0) && self.brk.is_none() {
             if curled && self.play.is_some() {
                 curled = false;
                 st.curled = false;

@@ -1,0 +1,2814 @@
+{
+"NAGS": {
+"gentle": [
+[
+"Hey, a little nudge: “{task}” is waiting for you.",
+"That {site} tab can wait. “{task}” can't.",
+"Psst. Back to “{task}”? You just drifted a little."
+],
+[
+"Still on {site}. {left} min left on “{task}”. Shall we go back?",
+"No judgement, but “{task}” misses you.",
+"Let's close this and finish one small piece of “{task}”."
+],
+[
+"That's {dist} min away from “{task}” now. One tiny step back?",
+"Gently insisting: close {site} and return to “{task}”."
+]
+],
+"savage": [
+[
+"Hey. Stop procrastinating.",
+"{site}? Really? You're supposed to be on “{task}”.",
+"I can see that tab. Close it."
+],
+[
+"You promised {planned} min of “{task}”. It has been {elapsed}.",
+"Every minute on {site} is a minute not spent on “{task}”. Maths is hard, I know.",
+"Still here? So am I. Watching."
+],
+[
+"{dist} min wasted so far. Impressive commitment to the wrong thing.",
+"I'm not mad. I'm disappointed. Also a bit mad. Close {site}.",
+"Go. Work. Now."
+]
+]
+},
+"PRAISE": [
+"Nice. Back to it!",
+"That's the spirit.",
+"There you go. I'm proud of you.",
+"Good. Keep that streak going."
+],
+"SUGGEST": [
+"You've been on {site} for a while. Double-click me to start a focus session.",
+"{site} again? How about 25 focused minutes? Double-click me."
+],
+"MOTIV": [
+"Kon kon~ you're doing great. Keep going on “{task}”!",
+"Small steps add up~ One more paragraph, ne?",
+"Sit up, breathe, keep going~kon!",
+"Ehehe~ future you will thank you for this.",
+"Focus is a muscle. You're training it! Sugoi~",
+"Still with you! {left} min to go~kon!",
+"Progress beats perfect, ne~?",
+"Sip of water? Then back to it! Kon!",
+"Not on YouTube. Ehehe~ I'm proud of you!",
+"Just keep going. I believe in you~kon!",
+"Done is better than perfect! Yatta~"
+],
+"HALFWAY": [
+"Yatta! Halfway there! The hard part is behind you~kon!",
+"Kon kon~ 50% done. Keep the momentum!"
+],
+"FINAL": [
+"Final minute! Finish strong~kon!",
+"Uwaa~ almost there: {left} min. Don't stop now!"
+],
+"PRETTY": {
+"youtube": "YouTube",
+"tiktok": "TikTok",
+"/ x": "X (Twitter)",
+"9gag": "9GAG",
+"prime video": "Prime Video",
+"hotstar": "Hotstar",
+"disney+": "Disney+"
+},
+"BROWSERS": [
+"chrome.exe",
+"msedge.exe",
+"firefox.exe",
+"brave.exe",
+"opera.exe",
+"vivaldi.exe",
+"arc.exe",
+"zenkobrowser.exe"
+],
+"LOCK_LINES": [
+"Nom nom! That window looked delicious. Back to work~kon!",
+"CHOMP! Gone. Now, where were we? Ah yes, your work!",
+"Ehehe~ I ate it before you could even look. Focus time!",
+"Gulp! Distractions are my favourite snack. Back to it, ne~",
+"Mou~! Not today! *munch munch* Back to work!",
+"Kon! Eaten! Your future self says arigatou.",
+"Hamu hamu... tastes like procrastination. Back to work~kon!",
+"Pounce! Got it! No distractions in lock-in, ne~"
+],
+"BREAK_NUDGE": "You've been at it for %d min. Time for a %d-min break! Stretch, drink some water, look at something far away. Right-click me > Take a break.",
+"DEFAULTS": {
+"distractions": [
+"youtube",
+"instagram",
+"facebook",
+"reddit",
+"tiktok",
+"netflix",
+"twitch",
+"twitter",
+"/ x",
+"9gag",
+"prime video",
+"hotstar",
+"disney+",
+"pinterest",
+"snapchat",
+"tumblr",
+"buzzfeed",
+"imgur",
+"steam",
+"epic games"
+],
+"distraction_apps": [
+"steam.exe",
+"epicgameslauncher.exe",
+"riotclientservices.exe",
+"leagueclient.exe",
+"valorant.exe",
+"minecraft.exe"
+],
+"allow": [
+"lecture",
+"tutorial",
+"course",
+"lesson"
+],
+"idle_minutes": 4,
+"grace_seconds": 10,
+"nag_every_seconds": 45,
+"passive_minutes": 3,
+"watch_without_session": true
+},
+"RULE_ALIASES": {
+"youtube": [
+"youtube"
+],
+"reddit": [
+"reddit"
+],
+"instagram": [
+"instagram"
+],
+"tiktok": [
+"tiktok"
+],
+"x / twitter": [
+"twitter",
+" / x",
+"x.com"
+],
+"netflix": [
+"netflix"
+],
+"discord": [
+"discord"
+],
+"twitch": [
+"twitch"
+],
+"facebook": [
+"facebook"
+],
+"spotify": [
+"spotify"
+],
+"pinterest": [
+"pinterest"
+],
+"steam": [
+"steam"
+],
+"roblox": [
+"roblox"
+],
+"whatsapp": [
+"whatsapp"
+],
+"chatgpt": [
+"chatgpt"
+],
+"any site or app": [
+"*"
+]
+},
+"SUBJECTS": [
+[
+"bio",
+"Biology HL",
+"Bio",
+[
+"bio",
+"biology",
+"biol",
+"ib bio",
+"bio hl"
+],
+[
+"cell",
+"cells",
+"mitosis",
+"meiosis",
+"dna",
+"rna",
+"enzyme",
+"enzymes",
+"photosynthesis",
+"respiration",
+"ecology",
+"evolution",
+"natural selection",
+"genetics",
+"gene",
+"genes",
+"allele",
+"chromosome",
+"protein synthesis",
+"membrane",
+"osmosis",
+"diffusion",
+"hormone",
+"neuron",
+"synapse",
+"immune",
+"antibody",
+"antibodies",
+"homeostasis",
+"kidney",
+"nephron",
+"transpiration",
+"xylem",
+"phloem",
+"ecosystem",
+"biodiversity",
+"classification",
+"cladogram",
+"mutation",
+"transcription",
+"translation",
+"atp",
+"glycolysis",
+"krebs",
+"chloroplast",
+"mitochondria",
+"organelle",
+"pathogen",
+"vaccine",
+"inheritance",
+"punnett",
+"hardy-weinberg",
+"carbon cycle",
+"water potential",
+"lipids",
+"carbohydrates",
+"heart",
+"blood",
+"digestion",
+"ventilation",
+"gas exchange",
+"speciation",
+"epigenetics",
+"stem cell",
+"prokaryote",
+"eukaryote",
+"virus",
+"viruses",
+"plant",
+"animal physiology"
+],
+[
+"bioninja",
+"bio ninja",
+"biologycorner",
+"biology online",
+"savemyexams biology",
+"kognity biology"
+]
+],
+[
+"chem",
+"Chemistry HL",
+"Chem",
+[
+"chem",
+"chemistry",
+"chm",
+"ib chem",
+"chem hl"
+],
+[
+"mole",
+"moles",
+"stoichiometry",
+"enthalpy",
+"entropy",
+"gibbs",
+"equilibrium",
+"le chatelier",
+"acid",
+"acids",
+"base",
+"bases",
+"ph",
+"buffer",
+"redox",
+"oxidation",
+"reduction",
+"electrochemical",
+"electrolysis",
+"organic",
+"alkane",
+"alkene",
+"alcohol",
+"ester",
+"isomer",
+"isomers",
+"bonding",
+"covalent",
+"ionic",
+"metallic bonding",
+"intermolecular",
+"vsepr",
+"hybridization",
+"hybridisation",
+"periodic table",
+"periodicity",
+"electron configuration",
+"ionisation energy",
+"ionization energy",
+"kinetics",
+"rate of reaction",
+"activation energy",
+"titration",
+"molarity",
+"concentration",
+"ideal gas",
+"spectroscopy",
+"nmr",
+"mass spectrum",
+"infrared",
+"lewis structure",
+"hess",
+"born-haber",
+"transition metal",
+"ligand",
+"polymer",
+"nucleophilic",
+"electrophilic",
+"data booklet",
+"functional group",
+"half equation"
+],
+[
+"chemguide",
+"msjchem",
+"chemistry libretexts",
+"savemyexams chemistry",
+"kognity chemistry",
+"chemrevise"
+]
+],
+[
+"math",
+"Math AA SL",
+"Maths",
+[
+"math",
+"maths",
+"mathematics",
+"math aa",
+"maths aa",
+"aa sl",
+"analysis and approaches"
+],
+[
+"derivative",
+"derivatives",
+"differentiation",
+"integral",
+"integrals",
+"integration",
+"calculus",
+"trigonometry",
+"trig",
+"sine",
+"cosine",
+"tangent",
+"radians",
+"logarithm",
+"logarithms",
+"exponential",
+"function",
+"functions",
+"quadratic",
+"polynomial",
+"sequence",
+"sequences",
+"series",
+"arithmetic",
+"geometric",
+"binomial",
+"probability",
+"statistics",
+"standard deviation",
+"normal distribution",
+"regression",
+"correlation",
+"vectors",
+"kinematics",
+"optimisation",
+"optimization",
+"chain rule",
+"product rule",
+"quotient rule",
+"tangent line",
+"area under",
+"proof",
+"induction",
+"venn",
+"tree diagram",
+"composite",
+"inverse function",
+"transformations",
+"equation",
+"algebra"
+],
+[
+"desmos",
+"geogebra",
+"revision village",
+"revisionvillage",
+"wolfram",
+"symbolab",
+"mathway",
+"savemyexams maths",
+"kognity math"
+]
+],
+[
+"french",
+"French ab initio SL",
+"French",
+[
+"french",
+"français",
+"francais",
+"ab initio",
+"ab-initio",
+"fr ab"
+],
+[
+"vocabulaire",
+"vocab",
+"conjugaison",
+"conjugation",
+"verbe",
+"verbes",
+"passé composé",
+"passe compose",
+"imparfait",
+"futur",
+"subjonctif",
+"grammaire",
+"grammar",
+"bonjour",
+"je suis",
+"j'ai",
+"être",
+"avoir",
+"dictée",
+"compréhension",
+"expression écrite",
+"oral",
+"lecture",
+"écoute",
+"paper 1 french"
+],
+[
+"wordreference",
+"lawless french",
+"lawlessfrench",
+"conjugation-fr",
+"le conjugueur",
+"conjugueur",
+"languagesonline",
+"tv5monde",
+"1jour1actu",
+"bescherelle",
+"reverso"
+]
+],
+[
+"psych",
+"Psychology SL",
+"Psych",
+[
+"psych",
+"psychology",
+"psyc",
+"ib psych",
+"psych sl"
+],
+[
+"biological approach",
+"cognitive approach",
+"sociocultural approach",
+"memory",
+"schema",
+"schemas",
+"conformity",
+"obedience",
+"bias",
+"heuristic",
+"cognitive dissonance",
+"localization",
+"localisation",
+"neuroplasticity",
+"neurotransmitter",
+"hormones and behaviour",
+"pheromone",
+"genetics and behaviour",
+"twin study",
+"research method",
+"research methods",
+"experiment",
+"ethics",
+"milgram",
+"asch",
+"loftus",
+"bartlett",
+"glanzer",
+"maguire",
+"social identity",
+"stereotype",
+"enculturation",
+"acculturation",
+"globalization",
+"abnormal psychology",
+"health psychology",
+"human relationships",
+"developmental psychology",
+"depression",
+"stress",
+"attachment",
+"internal assessment",
+"sam ",
+"erq",
+"saq"
+],
+[
+"simplypsychology",
+"simply psychology",
+"themantic education",
+"themantic-education",
+"ib psychology",
+"thinkib psychology",
+"psychlopedia",
+"verywellmind"
+]
+],
+[
+"english",
+"English Lang & Lit HL",
+"English",
+[
+"english",
+"lang lit",
+"langlit",
+"lang & lit",
+"lang and lit",
+"language and literature",
+"eng lit",
+"english hl"
+],
+[
+"paper 1",
+"paper 2",
+"individual oral",
+"higher level essay",
+"hl essay",
+"learner portfolio",
+"global issue",
+"poem",
+"poetry",
+"novel",
+"prose",
+"drama",
+"play",
+"literary",
+"rhetoric",
+"rhetorical",
+"persuasive",
+"text type",
+"non-literary",
+"literary techniques",
+"imagery",
+"metaphor",
+"symbolism",
+"tone",
+"narrator",
+"characterisation",
+"characterization",
+"theme",
+"themes",
+"comparative essay",
+"advertisement",
+"speech",
+"commentary",
+"analysis"
+],
+[
+"litcharts",
+"sparknotes",
+"gradesaver",
+"ib english guide",
+"thinkib english",
+"poetry foundation",
+"ibenglishguide"
+]
+]
+],
+"SV_TERMS": {
+"bio": [
+[
+"action potential",
+true
+],
+[
+"active transport",
+true
+],
+[
+"allele",
+true
+],
+[
+"amino acid",
+true
+],
+[
+"amoeba sisters",
+true
+],
+[
+"anatomy",
+false
+],
+[
+"animal physiology",
+true
+],
+[
+"antibodies",
+true
+],
+[
+"antibody",
+true
+],
+[
+"antigen",
+true
+],
+[
+"atp",
+true
+],
+[
+"bacteria",
+false
+],
+[
+"bio",
+false
+],
+[
+"bio hl",
+true
+],
+[
+"biodiversity",
+true
+],
+[
+"biol",
+false
+],
+[
+"biological",
+true
+],
+[
+"biologist",
+true
+],
+[
+"biology",
+true
+],
+[
+"bioninja",
+true
+],
+[
+"biotechnology",
+true
+],
+[
+"blood",
+false
+],
+[
+"blood vessel",
+true
+],
+[
+"calvin cycle",
+true
+],
+[
+"carbohydrate",
+true
+],
+[
+"carbohydrates",
+true
+],
+[
+"carbon cycle",
+true
+],
+[
+"cell",
+false
+],
+[
+"cell cycle",
+true
+],
+[
+"cell division",
+true
+],
+[
+"cell membrane",
+true
+],
+[
+"cells",
+false
+],
+[
+"cellular",
+true
+],
+[
+"cellular respiration",
+true
+],
+[
+"chloroplast",
+true
+],
+[
+"chromosome",
+true
+],
+[
+"circulatory system",
+true
+],
+[
+"cladistics",
+true
+],
+[
+"cladogram",
+true
+],
+[
+"classification",
+false
+],
+[
+"cloning",
+false
+],
+[
+"crispr",
+true
+],
+[
+"darwin",
+false
+],
+[
+"diffusion",
+true
+],
+[
+"digestion",
+false
+],
+[
+"digestive system",
+true
+],
+[
+"dna",
+true
+],
+[
+"dna replication",
+true
+],
+[
+"ecology",
+false
+],
+[
+"ecosystem",
+true
+],
+[
+"electron transport chain",
+true
+],
+[
+"embryo",
+false
+],
+[
+"endocrine system",
+true
+],
+[
+"endocytosis",
+true
+],
+[
+"enzyme",
+true
+],
+[
+"enzymes",
+true
+],
+[
+"epigenetics",
+true
+],
+[
+"eukaryote",
+true
+],
+[
+"eukaryotic",
+true
+],
+[
+"evolution",
+false
+],
+[
+"exocytosis",
+true
+],
+[
+"fertilisation",
+true
+],
+[
+"fertilization",
+true
+],
+[
+"food web",
+true
+],
+[
+"fungi",
+false
+],
+[
+"gas exchange",
+true
+],
+[
+"gel electrophoresis",
+true
+],
+[
+"gene",
+false
+],
+[
+"genes",
+false
+],
+[
+"genetic",
+true
+],
+[
+"genetics",
+true
+],
+[
+"genome",
+true
+],
+[
+"glycolysis",
+true
+],
+[
+"golgi",
+false
+],
+[
+"hardy-weinberg",
+true
+],
+[
+"heart",
+false
+],
+[
+"homeostasis",
+true
+],
+[
+"hormone",
+false
+],
+[
+"ib bio",
+true
+],
+[
+"immune",
+false
+],
+[
+"immune system",
+true
+],
+[
+"immunity",
+true
+],
+[
+"inheritance",
+false
+],
+[
+"insulin",
+true
+],
+[
+"kidney",
+false
+],
+[
+"krebs",
+false
+],
+[
+"krebs cycle",
+true
+],
+[
+"lipid",
+false
+],
+[
+"lipids",
+true
+],
+[
+"lungs",
+false
+],
+[
+"meiosis",
+true
+],
+[
+"membrane",
+false
+],
+[
+"menstrual cycle",
+true
+],
+[
+"microbiology",
+true
+],
+[
+"mitochondria",
+true
+],
+[
+"mitochondrion",
+true
+],
+[
+"mitosis",
+true
+],
+[
+"muscle contraction",
+true
+],
+[
+"mutation",
+false
+],
+[
+"natural selection",
+true
+],
+[
+"nephron",
+true
+],
+[
+"nervous system",
+true
+],
+[
+"neuron",
+true
+],
+[
+"neurotransmitter",
+true
+],
+[
+"nitrogen cycle",
+true
+],
+[
+"nucleotide",
+true
+],
+[
+"nucleus",
+false
+],
+[
+"organelle",
+true
+],
+[
+"osmoregulation",
+true
+],
+[
+"osmosis",
+true
+],
+[
+"pathogen",
+true
+],
+[
+"pcr",
+true
+],
+[
+"phloem",
+true
+],
+[
+"photosynthesis",
+true
+],
+[
+"physiology",
+true
+],
+[
+"plant",
+false
+],
+[
+"plant biology",
+true
+],
+[
+"prokaryote",
+true
+],
+[
+"prokaryotic",
+true
+],
+[
+"protein synthesis",
+true
+],
+[
+"punnett",
+true
+],
+[
+"reproduction",
+false
+],
+[
+"respiration",
+true
+],
+[
+"ribosome",
+true
+],
+[
+"rna",
+true
+],
+[
+"sarcomere",
+true
+],
+[
+"speciation",
+true
+],
+[
+"stem cell",
+true
+],
+[
+"stomata",
+true
+],
+[
+"synapse",
+true
+],
+[
+"taxonomy",
+true
+],
+[
+"thermoregulation",
+true
+],
+[
+"transcription",
+true
+],
+[
+"translation",
+false
+],
+[
+"transpiration",
+true
+],
+[
+"vaccination",
+true
+],
+[
+"vaccine",
+true
+],
+[
+"ventilation",
+false
+],
+[
+"virus",
+false
+],
+[
+"viruses",
+false
+],
+[
+"water potential",
+true
+],
+[
+"xylem",
+false
+]
+],
+"chem": [
+[
+"acid",
+false
+],
+[
+"acids",
+false
+],
+[
+"acids and bases",
+true
+],
+[
+"activation energy",
+true
+],
+[
+"alcohol",
+false
+],
+[
+"aldehyde",
+true
+],
+[
+"alkane",
+true
+],
+[
+"alkene",
+true
+],
+[
+"alkyne",
+true
+],
+[
+"amide",
+false
+],
+[
+"amine",
+false
+],
+[
+"aromatic",
+true
+],
+[
+"arrhenius",
+true
+],
+[
+"atom",
+false
+],
+[
+"atomic structure",
+true
+],
+[
+"base",
+false
+],
+[
+"bases",
+false
+],
+[
+"benzene",
+true
+],
+[
+"bonding",
+false
+],
+[
+"born-haber",
+true
+],
+[
+"buffer",
+false
+],
+[
+"buffer solution",
+true
+],
+[
+"carboxylic acid",
+true
+],
+[
+"chem",
+false
+],
+[
+"chem hl",
+true
+],
+[
+"chemical",
+false
+],
+[
+"chemist",
+false
+],
+[
+"chemistry",
+true
+],
+[
+"chm",
+false
+],
+[
+"chromatography",
+true
+],
+[
+"complex ion",
+true
+],
+[
+"concentration",
+false
+],
+[
+"covalent",
+true
+],
+[
+"covalent bonding",
+true
+],
+[
+"data booklet",
+true
+],
+[
+"electrochemical",
+true
+],
+[
+"electrochemistry",
+true
+],
+[
+"electrolysis",
+true
+],
+[
+"electron configuration",
+true
+],
+[
+"electrophilic",
+true
+],
+[
+"electrophilic addition",
+true
+],
+[
+"energetics",
+true
+],
+[
+"enthalpy",
+true
+],
+[
+"entropy",
+true
+],
+[
+"equilibria",
+true
+],
+[
+"equilibrium",
+true
+],
+[
+"ester",
+false
+],
+[
+"functional group",
+true
+],
+[
+"galvanic cell",
+true
+],
+[
+"gibbs",
+false
+],
+[
+"gibbs free energy",
+true
+],
+[
+"half equation",
+true
+],
+[
+"hess",
+false
+],
+[
+"hess's law",
+true
+],
+[
+"hybridisation",
+true
+],
+[
+"hybridization",
+true
+],
+[
+"hydrogen bonding",
+true
+],
+[
+"ib chem",
+true
+],
+[
+"ideal gas",
+true
+],
+[
+"infrared",
+true
+],
+[
+"intermolecular",
+true
+],
+[
+"intermolecular forces",
+true
+],
+[
+"ionic",
+false
+],
+[
+"ionic bonding",
+true
+],
+[
+"ionisation energy",
+true
+],
+[
+"ionization energy",
+true
+],
+[
+"ir spectroscopy",
+true
+],
+[
+"isomer",
+true
+],
+[
+"isomerism",
+true
+],
+[
+"isomers",
+true
+],
+[
+"ketone",
+true
+],
+[
+"kinetics",
+true
+],
+[
+"lattice enthalpy",
+true
+],
+[
+"le chatelier",
+true
+],
+[
+"lewis structure",
+true
+],
+[
+"ligand",
+true
+],
+[
+"mass spectrometry",
+true
+],
+[
+"mass spectrum",
+true
+],
+[
+"metallic bonding",
+true
+],
+[
+"molarity",
+true
+],
+[
+"mole",
+false
+],
+[
+"mole concept",
+true
+],
+[
+"moles",
+false
+],
+[
+"neutralisation",
+true
+],
+[
+"neutralization",
+true
+],
+[
+"nmr",
+true
+],
+[
+"nucleophilic",
+true
+],
+[
+"nucleophilic substitution",
+true
+],
+[
+"orbital",
+true
+],
+[
+"organic",
+false
+],
+[
+"organic chemistry",
+true
+],
+[
+"oxidation",
+true
+],
+[
+"oxidation state",
+true
+],
+[
+"periodic table",
+true
+],
+[
+"periodicity",
+true
+],
+[
+"ph scale",
+true
+],
+[
+"polarity",
+true
+],
+[
+"polymer",
+false
+],
+[
+"rate of reaction",
+true
+],
+[
+"redox",
+false
+],
+[
+"reduction",
+false
+],
+[
+"sn1",
+true
+],
+[
+"sn2",
+true
+],
+[
+"spectroscopy",
+true
+],
+[
+"stereoisomer",
+true
+],
+[
+"stoichiometry",
+true
+],
+[
+"thermochemistry",
+true
+],
+[
+"titration",
+true
+],
+[
+"transition metal",
+true
+],
+[
+"van der waals",
+true
+],
+[
+"voltaic cell",
+true
+],
+[
+"vsepr",
+true
+]
+],
+"math": [
+[
+"aa sl",
+false
+],
+[
+"algebra",
+true
+],
+[
+"analysis and approaches",
+true
+],
+[
+"antiderivative",
+true
+],
+[
+"area under",
+true
+],
+[
+"area under a curve",
+true
+],
+[
+"arithmetic",
+false
+],
+[
+"arithmetic sequence",
+true
+],
+[
+"arithmetic series",
+true
+],
+[
+"binomial",
+true
+],
+[
+"binomial distribution",
+true
+],
+[
+"binomial expansion",
+true
+],
+[
+"binomial theorem",
+true
+],
+[
+"calculus",
+true
+],
+[
+"chain rule",
+true
+],
+[
+"complex numbers",
+true
+],
+[
+"composite",
+false
+],
+[
+"composite function",
+true
+],
+[
+"conditional probability",
+true
+],
+[
+"correlation",
+true
+],
+[
+"cosine",
+true
+],
+[
+"derivative",
+true
+],
+[
+"derivatives",
+true
+],
+[
+"differentiation",
+true
+],
+[
+"equation",
+false
+],
+[
+"exponential",
+true
+],
+[
+"function",
+false
+],
+[
+"functions",
+false
+],
+[
+"geometric",
+false
+],
+[
+"geometric sequence",
+true
+],
+[
+"geometric series",
+true
+],
+[
+"hypothesis test",
+true
+],
+[
+"implicit differentiation",
+true
+],
+[
+"induction",
+false
+],
+[
+"integral",
+true
+],
+[
+"integrals",
+true
+],
+[
+"integration",
+false
+],
+[
+"integration by parts",
+true
+],
+[
+"integration by substitution",
+true
+],
+[
+"inverse function",
+true
+],
+[
+"kinematics",
+true
+],
+[
+"limits",
+false
+],
+[
+"logarithm",
+true
+],
+[
+"logarithms",
+true
+],
+[
+"math",
+false
+],
+[
+"math aa",
+true
+],
+[
+"mathematical induction",
+true
+],
+[
+"mathematics",
+true
+],
+[
+"maths",
+false
+],
+[
+"maths aa",
+true
+],
+[
+"normal distribution",
+true
+],
+[
+"optimisation",
+true
+],
+[
+"optimization",
+true
+],
+[
+"polynomial",
+true
+],
+[
+"pre-calculus",
+true
+],
+[
+"precalculus",
+true
+],
+[
+"probability",
+true
+],
+[
+"product rule",
+true
+],
+[
+"proof",
+false
+],
+[
+"proof by induction",
+true
+],
+[
+"quadratic",
+true
+],
+[
+"quotient rule",
+true
+],
+[
+"radians",
+true
+],
+[
+"regression",
+false
+],
+[
+"related rates",
+true
+],
+[
+"sequence",
+false
+],
+[
+"sequences",
+false
+],
+[
+"series",
+false
+],
+[
+"sigma notation",
+true
+],
+[
+"simultaneous equations",
+true
+],
+[
+"sine",
+false
+],
+[
+"standard deviation",
+true
+],
+[
+"statistics",
+false
+],
+[
+"tangent",
+false
+],
+[
+"tangent line",
+true
+],
+[
+"transformations",
+false
+],
+[
+"transformations of graphs",
+true
+],
+[
+"tree diagram",
+true
+],
+[
+"trig",
+false
+],
+[
+"trig identities",
+true
+],
+[
+"trigonometric",
+true
+],
+[
+"trigonometry",
+true
+],
+[
+"u-substitution",
+true
+],
+[
+"unit circle",
+true
+],
+[
+"vectors",
+false
+],
+[
+"venn",
+false
+],
+[
+"venn diagram",
+true
+],
+[
+"volume of revolution",
+true
+]
+],
+"french": [
+[
+"ab initio",
+true
+],
+[
+"ab-initio",
+true
+],
+[
+"avoir",
+false
+],
+[
+"bonjour",
+false
+],
+[
+"compréhension",
+true
+],
+[
+"conditionnel",
+true
+],
+[
+"conjugaison",
+true
+],
+[
+"conjugation",
+true
+],
+[
+"delf",
+false
+],
+[
+"dictée",
+true
+],
+[
+"direct object pronouns",
+true
+],
+[
+"expression écrite",
+true
+],
+[
+"fr ab",
+false
+],
+[
+"francais",
+true
+],
+[
+"français",
+true
+],
+[
+"french",
+false
+],
+[
+"french conversation",
+true
+],
+[
+"french for beginners",
+true
+],
+[
+"french grammar",
+true
+],
+[
+"french lesson",
+true
+],
+[
+"french listening",
+true
+],
+[
+"french pronunciation",
+true
+],
+[
+"french vocabulary",
+true
+],
+[
+"futur",
+false
+],
+[
+"futur proche",
+true
+],
+[
+"futur simple",
+true
+],
+[
+"grammaire",
+true
+],
+[
+"grammar",
+true
+],
+[
+"imparfait",
+true
+],
+[
+"j'ai",
+false
+],
+[
+"je suis",
+true
+],
+[
+"learn french",
+true
+],
+[
+"lecture",
+false
+],
+[
+"oral",
+false
+],
+[
+"paper 1 french",
+true
+],
+[
+"passe compose",
+true
+],
+[
+"passé composé",
+true
+],
+[
+"prononciation",
+true
+],
+[
+"reflexive verbs",
+true
+],
+[
+"subjonctif",
+true
+],
+[
+"subjunctive",
+true
+],
+[
+"verbe",
+false
+],
+[
+"verbes",
+true
+],
+[
+"vocab",
+false
+],
+[
+"vocabulaire",
+true
+],
+[
+"écoute",
+true
+],
+[
+"être",
+false
+]
+],
+"psych": [
+[
+"abnormal psychology",
+true
+],
+[
+"acculturation",
+true
+],
+[
+"anxiety disorder",
+true
+],
+[
+"asch",
+false
+],
+[
+"attachment",
+false
+],
+[
+"attachment theory",
+true
+],
+[
+"bandura",
+true
+],
+[
+"bartlett",
+true
+],
+[
+"behaviorism",
+true
+],
+[
+"behaviourism",
+true
+],
+[
+"bias",
+false
+],
+[
+"biological approach",
+true
+],
+[
+"cognition",
+true
+],
+[
+"cognitive approach",
+true
+],
+[
+"cognitive bias",
+true
+],
+[
+"cognitive dissonance",
+true
+],
+[
+"cognitive psychology",
+true
+],
+[
+"conformity",
+false
+],
+[
+"cultural dimensions",
+true
+],
+[
+"decision making",
+true
+],
+[
+"depression",
+false
+],
+[
+"developmental psychology",
+true
+],
+[
+"dual process model",
+true
+],
+[
+"enculturation",
+true
+],
+[
+"erq",
+false
+],
+[
+"ethics",
+false
+],
+[
+"experiment",
+false
+],
+[
+"eyewitness testimony",
+true
+],
+[
+"flashbulb memory",
+true
+],
+[
+"genetics and behaviour",
+true
+],
+[
+"glanzer",
+true
+],
+[
+"globalization",
+false
+],
+[
+"health psychology",
+true
+],
+[
+"heuristic",
+true
+],
+[
+"hormones and behaviour",
+true
+],
+[
+"human relationships",
+true
+],
+[
+"ib psych",
+true
+],
+[
+"internal assessment",
+true
+],
+[
+"localisation",
+true
+],
+[
+"localisation of function",
+true
+],
+[
+"localization",
+true
+],
+[
+"localization of function",
+true
+],
+[
+"loftus",
+true
+],
+[
+"maguire",
+true
+],
+[
+"memory",
+false
+],
+[
+"milgram",
+true
+],
+[
+"multi-store model",
+true
+],
+[
+"neuroplasticity",
+true
+],
+[
+"neurotransmitter",
+true
+],
+[
+"obedience",
+false
+],
+[
+"pheromone",
+true
+],
+[
+"pheromones",
+true
+],
+[
+"piaget",
+true
+],
+[
+"psyc",
+false
+],
+[
+"psych",
+false
+],
+[
+"psych sl",
+true
+],
+[
+"psychological",
+true
+],
+[
+"psychologist",
+true
+],
+[
+"psychology",
+true
+],
+[
+"ptsd",
+true
+],
+[
+"reconstructive memory",
+true
+],
+[
+"research method",
+true
+],
+[
+"research methods",
+true
+],
+[
+"sam",
+false
+],
+[
+"saq",
+false
+],
+[
+"schema",
+true
+],
+[
+"schema theory",
+true
+],
+[
+"schemas",
+true
+],
+[
+"social cognitive theory",
+true
+],
+[
+"social identity",
+true
+],
+[
+"social identity theory",
+true
+],
+[
+"social learning theory",
+true
+],
+[
+"sociocultural approach",
+true
+],
+[
+"stanford prison experiment",
+true
+],
+[
+"stereotype",
+false
+],
+[
+"stereotype threat",
+true
+],
+[
+"stress",
+false
+],
+[
+"twin studies",
+true
+],
+[
+"twin study",
+true
+],
+[
+"working memory model",
+true
+],
+[
+"zimbardo",
+true
+]
+],
+"english": [
+[
+"advertisement",
+false
+],
+[
+"advertisement analysis",
+true
+],
+[
+"analysis",
+false
+],
+[
+"animal farm",
+true
+],
+[
+"characterisation",
+true
+],
+[
+"characterization",
+true
+],
+[
+"close reading",
+true
+],
+[
+"commentary",
+false
+],
+[
+"comparative essay",
+true
+],
+[
+"drama",
+false
+],
+[
+"eng lit",
+true
+],
+[
+"english",
+false
+],
+[
+"english hl",
+true
+],
+[
+"english lit",
+true
+],
+[
+"english literature",
+true
+],
+[
+"ethos",
+false
+],
+[
+"frankenstein",
+true
+],
+[
+"global issue",
+true
+],
+[
+"great gatsby",
+true
+],
+[
+"hamlet",
+true
+],
+[
+"higher level essay",
+true
+],
+[
+"hl essay",
+true
+],
+[
+"imagery",
+false
+],
+[
+"individual oral",
+true
+],
+[
+"jane eyre",
+true
+],
+[
+"king lear",
+true
+],
+[
+"lang & lit",
+true
+],
+[
+"lang and lit",
+true
+],
+[
+"lang lit",
+true
+],
+[
+"langlit",
+true
+],
+[
+"language and literature",
+true
+],
+[
+"learner portfolio",
+true
+],
+[
+"literary",
+true
+],
+[
+"literary devices",
+true
+],
+[
+"literary techniques",
+true
+],
+[
+"logos",
+false
+],
+[
+"macbeth",
+true
+],
+[
+"metaphor",
+false
+],
+[
+"narrative voice",
+true
+],
+[
+"narrator",
+false
+],
+[
+"non-literary",
+true
+],
+[
+"non-literary texts",
+true
+],
+[
+"novel",
+false
+],
+[
+"orwell",
+true
+],
+[
+"othello",
+true
+],
+[
+"paper 1",
+true
+],
+[
+"paper 2",
+true
+],
+[
+"pathos",
+true
+],
+[
+"persuasive",
+true
+],
+[
+"persuasive techniques",
+true
+],
+[
+"play",
+false
+],
+[
+"poem",
+false
+],
+[
+"poem analysis",
+true
+],
+[
+"poetic devices",
+true
+],
+[
+"poetry",
+false
+],
+[
+"point of view",
+true
+],
+[
+"prose",
+false
+],
+[
+"rhetoric",
+true
+],
+[
+"rhetorical",
+true
+],
+[
+"rhetorical devices",
+true
+],
+[
+"romeo and juliet",
+true
+],
+[
+"shakespeare",
+true
+],
+[
+"speech",
+false
+],
+[
+"speech analysis",
+true
+],
+[
+"stylistic devices",
+true
+],
+[
+"symbolism",
+false
+],
+[
+"text type",
+true
+],
+[
+"textual analysis",
+true
+],
+[
+"theme",
+false
+],
+[
+"themes",
+false
+],
+[
+"tone",
+false
+]
+]
+},
+"RE": {
+"cues": "\\b(explained|explanation|lecture|lesson|tutorial|revision|revise|review|recap of (?:topic|unit)|ib|ibdp|sl|hl|crash ?course|how to|practice|past paper|notes|chapter|unit|topic|summary|exam|paper [123]|intro(?:duction)? to|basics|in \\d+ minutes|khan academy|amoeba sisters|bozeman|organic chemistry tutor|ted-ed|worked example|grammar|vocab(?:ulary)?|conjugation|learn french|french lesson|analysis|essay|study with me|ap |a-level|gcse)\\b",
+"nope": "(#shorts|\\breaction (?:video|compilation|to\\b)|\\breacting to\\b|\\breacts?\\b|\\bfunny\\b|\\bmemes?\\b|\\bprank|\\bvlog|\\btrailer\\b|official (?:music )?video|\\blyrics?\\b|\\bgameplay\\b|\\blet'?s play\\b|\\basmr\\b|\\bmukbang\\b|\\bfortnite\\b|\\bminecraft\\b|\\banime\\b|\\bamv\\b|\\bepisode \\d+|\\bmovie\\b|\\bfull album\\b)",
+"browser_tail": "\\s+[-\\u2013\\u2014]\\s+(google chrome|chromium|microsoft\\u200b?\\s?edge|mozilla firefox|firefox|brave|opera(\\s+gx)?|vivaldi|arc|zenko browser)\\b.*$",
+"phrase_junk": "^(and|of|the|to|in|for|a)\\b|\\b(and|of|the|to|in|for|a)$",
+"title_tails": "\\s+[-–—|]\\s+(google chrome|microsoft edge|mozilla firefox|firefox|brave|opera|vivaldi|arc|word|microsoft word|powerpoint|excel|onenote|adobe acrobat.*|acrobat reader.*|sumatrapdf|notion|obsidian.*|personal|work|profile \\d+)\\s*$"
+}
+}
