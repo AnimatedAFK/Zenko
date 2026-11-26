@@ -1,0 +1,1337 @@
+{
+"BADGES": [
+[
+"first",
+"初",
+"First Step",
+"Finish your first focus session"
+],
+[
+"streak3",
+"炎",
+"Three-day Flame",
+"Focus 3 days in a row"
+],
+[
+"streak7",
+"灯",
+"Week of Foxfire",
+"Focus 7 days in a row"
+],
+[
+"streak30",
+"月",
+"Moon Cycle",
+"Focus 30 days in a row"
+],
+[
+"hours10",
+"十",
+"Ten Hours",
+"10 hours of focus in total"
+],
+[
+"hours50",
+"山",
+"Mountain Path",
+"50 hours of focus in total"
+],
+[
+"hours100",
+"百",
+"Hundred Hours",
+"100 hours of focus in total"
+],
+[
+"marathon",
+"長",
+"Long Walk",
+"One focus session of 90 minutes or more"
+],
+[
+"spotless",
+"清",
+"Spotless",
+"A 25+ minute session with no off-task time"
+],
+[
+"early",
+"朝",
+"Early Bird",
+"Start a focus session before 8 am"
+],
+[
+"planner",
+"暦",
+"Planner Fox",
+"Let me plan your study for an exam"
+],
+[
+"prepared",
+"鳥",
+"Ready to Fly",
+"Finish every planned session before an exam"
+],
+[
+"lockin",
+"鍵",
+"Locked In",
+"Finish a lock-in"
+],
+[
+"cards50",
+"札",
+"Card Sharp",
+"Review 50 flashcards"
+],
+[
+"journal7",
+"心",
+"Open Heart",
+"Do 7 daily check-ins"
+],
+[
+"breathe",
+"息",
+"Calm Breath",
+"Finish a breathing exercise"
+],
+[
+"homework",
+"学",
+"Curious Mind",
+"Ask me 5 homework questions"
+],
+[
+"friend",
+"友",
+"Fox Friends",
+"Meet a visiting fox spirit"
+],
+[
+"t_angler",
+"釣",
+"Angler",
+"Catch 10 / 50 / 150 fish in the Zen garden pond"
+],
+[
+"t_collector",
+"鑑",
+"Koi Collector",
+"Find 8 / 18 / 32 kinds of fish"
+],
+[
+"t_wanderer",
+"旅",
+"Wanderer",
+"Reach 6 / 24 / 48 places on the world map"
+],
+[
+"t_story",
+"話",
+"Storyteller",
+"Pass 5 / 20 / 48 place quizzes on the world map"
+],
+[
+"t_cards",
+"札",
+"Card Master",
+"Review 100 / 500 / 2000 flashcards"
+],
+[
+"t_lantern",
+"燈",
+"Lantern Keeper",
+"Finish 25 / 100 / 300 focus sessions"
+],
+[
+"t_lock",
+"錠",
+"Iron Focus",
+"Finish 5 / 25 / 100 lock-ins"
+],
+[
+"t_streak",
+"暦",
+"Steady Fox",
+"A 14 / 60 / 150-day focus streak"
+],
+[
+"t_hours",
+"時",
+"Long Road",
+"200 / 500 / 1000 hours of focus in total"
+],
+[
+"t_grove",
+"樹",
+"Gardener",
+"Grow 1 / 3 / 7 sacred trees in the garden"
+],
+[
+"t_calm",
+"静",
+"Still Water",
+"Finish 5 / 25 / 75 breathing exercises"
+],
+[
+"t_diary",
+"日",
+"Diary Fox",
+"Do 30 / 100 / 300 daily check-ins"
+],
+[
+"t_notes",
+"筆",
+"Brush and Ink",
+"Keep 10 / 50 / 150 pages in your notebooks"
+],
+[
+"t_paths",
+"六",
+"Six Paths",
+"5 / 20 / 50 hours in every one of your six subjects"
+],
+[
+"t_quiz",
+"問",
+"Sharp Mind",
+"Answer 25 / 100 / 400 fishing questions right"
+],
+[
+"koi1",
+"鯉",
+"First Catch",
+"Catch your first fish"
+],
+[
+"golden",
+"金",
+"Golden Scales",
+"Catch an Ogon koi"
+],
+[
+"bigfish",
+"大",
+"The Big One",
+"Catch a fish over 80 cm"
+],
+[
+"rainfish",
+"雨",
+"Rain Angler",
+"Catch a fish while it's raining"
+],
+[
+"snowfish",
+"雪",
+"Snow Angler",
+"Catch a fish while it's snowing"
+],
+[
+"hotq",
+"連",
+"Hot Streak",
+"Answer 10 fishing questions right in a row"
+],
+[
+"dragon",
+"龍",
+"Dragon Gate",
+"Catch the Dragon Gate koi"
+],
+[
+"japan",
+"和",
+"All of Japan",
+"Reach every place in Japan"
+],
+[
+"kyoto4",
+"京",
+"Four Seasons",
+"Reach all of Kyoto's seasons"
+],
+[
+"korea",
+"韓",
+"Across the Sea",
+"Reach Korea"
+],
+[
+"china",
+"華",
+"Middle Kingdom",
+"Reach China"
+],
+[
+"silk",
+"絹",
+"Silk Road",
+"Reach Bukhara, the end of the Silk Road"
+],
+[
+"moon",
+"嫦",
+"To the Moon",
+"Reach the Moon Palace"
+],
+[
+"passport",
+"券",
+"Full Passport",
+"Pass the quiz of every place in one region"
+],
+[
+"weekend",
+"週",
+"Weekend Warrior",
+"Focus on both days of one weekend"
+],
+[
+"allsix",
+"彩",
+"Well-Rounded",
+"Study all six subjects in one week"
+],
+[
+"s_3am",
+"丑",
+"Witching Hour",
+"Study at 3 am (then please go to sleep!)"
+],
+[
+"s_newyear",
+"元",
+"First Light",
+"Focus on New Year's Day"
+],
+[
+"s_fullmoon",
+"望",
+"Full Moon Scholar",
+"Focus on a full-moon night"
+],
+[
+"s_fri13",
+"吉",
+"Lucky Fox",
+"Focus on a Friday the 13th"
+],
+[
+"s_meow",
+"猫",
+"Wrong Animal",
+"Say 'meow' to a fox"
+],
+[
+"s_rainbow",
+"虹",
+"Rainbow Pond",
+"Catch fish of four different rarities in one day"
+],
+[
+"s_dawn",
+"暁",
+"Dawn Patrol",
+"Start five focus sessions before 7 am"
+],
+[
+"s_birthday",
+"祝",
+"Birthday Scholar",
+"Focus on your birthday"
+],
+[
+"s_iron",
+"鉄",
+"Iron Fox",
+"Focus for 6 hours in one day"
+],
+[
+"s_comeback",
+"帰",
+"Welcome Back",
+"Come back after a week away and focus again"
+],
+[
+"s_legend",
+"伝",
+"Living Legend",
+"Catch a legendary fish"
+],
+[
+"s_kyubi",
+"尾",
+"Nine Tails",
+"Reach the Village of Nine Tails"
+]
+],
+"BADGE_TIERED": [
+[
+"t_angler",
+"釣",
+"Angler",
+"fish",
+[
+10,
+50,
+150
+],
+"Catch {n} fish in the Zen garden pond"
+],
+[
+"t_collector",
+"鑑",
+"Koi Collector",
+"species",
+[
+8,
+18,
+32
+],
+"Find {n} kinds of fish"
+],
+[
+"t_wanderer",
+"旅",
+"Wanderer",
+"places",
+[
+6,
+24,
+48
+],
+"Reach {n} places on the world map"
+],
+[
+"t_story",
+"話",
+"Storyteller",
+"quizzes",
+[
+5,
+20,
+48
+],
+"Pass {n} place quizzes on the world map"
+],
+[
+"t_cards",
+"札",
+"Card Master",
+"reviews",
+[
+100,
+500,
+2000
+],
+"Review {n} flashcards"
+],
+[
+"t_lantern",
+"燈",
+"Lantern Keeper",
+"sessions",
+[
+25,
+100,
+300
+],
+"Finish {n} focus sessions"
+],
+[
+"t_lock",
+"錠",
+"Iron Focus",
+"lockins",
+[
+5,
+25,
+100
+],
+"Finish {n} lock-ins"
+],
+[
+"t_streak",
+"暦",
+"Steady Fox",
+"beststreak",
+[
+14,
+60,
+150
+],
+"A {n}-day focus streak"
+],
+[
+"t_hours",
+"時",
+"Long Road",
+"hours",
+[
+200,
+500,
+1000
+],
+"{n} hours of focus in total"
+],
+[
+"t_grove",
+"樹",
+"Gardener",
+"trees",
+[
+1,
+3,
+7
+],
+"Grow {n} sacred trees in the garden"
+],
+[
+"t_calm",
+"静",
+"Still Water",
+"breaths",
+[
+5,
+25,
+75
+],
+"Finish {n} breathing exercises"
+],
+[
+"t_diary",
+"日",
+"Diary Fox",
+"checkins",
+[
+30,
+100,
+300
+],
+"Do {n} daily check-ins"
+],
+[
+"t_notes",
+"筆",
+"Brush and Ink",
+"notes",
+[
+10,
+50,
+150
+],
+"Keep {n} pages in your notebooks"
+],
+[
+"t_paths",
+"六",
+"Six Paths",
+"subjects",
+[
+5,
+20,
+50
+],
+"{n} hours in every one of your six subjects"
+],
+[
+"t_quiz",
+"問",
+"Sharp Mind",
+"fishq",
+[
+25,
+100,
+400
+],
+"Answer {n} fishing questions right"
+]
+],
+"BADGE_TIER_NAME": [
+"",
+"Bronze",
+"Silver",
+"Gold"
+],
+"GARDEN_STAGES": [
+[
+0,
+"種",
+"tane",
+"Seed"
+],
+[
+25,
+"芽",
+"me",
+"Sprout"
+],
+[
+75,
+"苗",
+"nae",
+"Seedling"
+],
+[
+180,
+"若木",
+"wakagi",
+"Sapling"
+],
+[
+360,
+"盆栽",
+"bonsai",
+"Bonsai"
+],
+[
+600,
+"蕾",
+"tsubomi",
+"Budding"
+],
+[
+900,
+"花",
+"hana",
+"First blossoms"
+],
+[
+1300,
+"満開",
+"mankai",
+"Full bloom"
+],
+[
+1800,
+"神木",
+"shinboku",
+"Sacred tree"
+]
+],
+"JOURNEY_ALL": [
+[
+"inari",
+"伏見稲荷大社",
+"Fushimi Inari Taisha",
+0,
+"Home! Every journey of mine starts here~"
+],
+[
+"nara",
+"奈良",
+"Nara",
+2,
+"They bow if you bow! Very polite... until you have crackers."
+],
+[
+"ise",
+"伊勢神宮",
+"Ise Jingū",
+4,
+"Rebuilt every 20 years... like my revision notes."
+],
+[
+"tokyo",
+"東京",
+"Tokyo",
+6,
+"So many lights! I'm keeping my tails close."
+],
+[
+"fuji",
+"富士山",
+"Mount Fuji",
+8,
+"Worth the early alarm. Probably."
+],
+[
+"kumano",
+"熊野古道",
+"Kumano Kodō",
+10,
+"The three-legged crow Yatagarasu shows the way. I just follow the crow."
+],
+[
+"kusatsu",
+"草津温泉",
+"Kusatsu Onsen",
+13,
+"Onsen after a long study day... this is the dream."
+],
+[
+"nikko",
+"日光",
+"Nikkō",
+16,
+"See no distractions, hear no distractions~"
+],
+[
+"kanazawa",
+"金沢",
+"Kanazawa",
+20,
+"They put gold leaf on ice cream here. For science, we must try it."
+],
+[
+"izumo",
+"出雲大社",
+"Izumo Taisha",
+25,
+"Every kami in Japan meets up here once a year. Imagine the group chat."
+],
+[
+"miyajima",
+"厳島",
+"Itsukushima (Miyajima)",
+30,
+"A torii in the sea! My paws will get wet and I don't care."
+],
+[
+"konpira",
+"金刀比羅宮",
+"Konpira-san",
+36,
+"1,368 steps. That counts as leg day, right?"
+],
+[
+"aso",
+"阿蘇山",
+"Mount Aso",
+42,
+"A whole town inside a volcano. Brave people."
+],
+[
+"yakushima",
+"屋久島",
+"Yakushima",
+50,
+"Older than every textbook put together. Very calm trees."
+],
+[
+"osorezan",
+"恐山",
+"Osorezan",
+58,
+"Spooky but beautiful. Hold my tail, okay?"
+],
+[
+"sapporo",
+"札幌",
+"Sapporo",
+66,
+"Snow! I'm very fluffy for exactly this reason."
+],
+[
+"shiretoko",
+"知床",
+"Shiretoko",
+76,
+"The end of the earth... and I walked here with you."
+],
+[
+"shuri",
+"首里城",
+"Shuri Castle",
+88,
+"Warm sea, red roofs, shīsā lion-dogs on every gate. We made it!"
+],
+[
+"kiyomizu",
+"清水寺",
+"Kiyomizu-dera",
+94,
+"Sakura everywhere! Let's take the plunge into Chapter 5~"
+],
+[
+"arashiyama",
+"嵐山",
+"Arashiyama",
+100,
+"The bamboo whispers. I think it's saying 'study, study'~"
+],
+[
+"tofukuji",
+"東福寺",
+"Tōfuku-ji",
+106,
+"Momiji season! My fur matches the leaves, ehehe~"
+],
+[
+"kinkakuji",
+"金閣寺",
+"Kinkaku-ji",
+112,
+"Gold and snow... it's like a winter dream~"
+],
+[
+"gion",
+"祇園",
+"Gion",
+118,
+"Lanterns, wooden lanes, the sound of geta... so pretty at dusk."
+],
+[
+"gyeongbok",
+"景福宮",
+"Gyeongbokgung",
+126,
+"Royal guards in red and blue! I'm standing very straight now."
+],
+[
+"bulguksa",
+"佛國寺",
+"Bulguksa",
+134,
+"Stone pagodas older than a thousand years. Very patient stones~"
+],
+[
+"haeinsa",
+"海印寺",
+"Haeinsa",
+142,
+"81,000 blocks with no mistakes... the best revision notes ever."
+],
+[
+"jeju",
+"漢拏山",
+"Hallasan, Jeju",
+150,
+"A whole island made by one volcano. The sea breeze is so nice!"
+],
+[
+"yonggung",
+"龍宮寺",
+"Haedong Yonggungsa",
+158,
+"A temple on the waves. I hope the Dragon King says hello~"
+],
+[
+"forbidden",
+"紫禁城",
+"The Forbidden City",
+168,
+"So many golden roofs! I'll need a map just for the palace."
+],
+[
+"greatwall",
+"長城",
+"The Great Wall",
+178,
+"My paws are tired... but the view from the watchtower is worth it."
+],
+[
+"taishan",
+"泰山",
+"Mount Tai",
+188,
+"6,000 steps. Leg day again. Exercise tab, are you watching?"
+],
+[
+"westlake",
+"西湖",
+"West Lake",
+198,
+"A poet built a whole causeway. I just want to write one good essay~"
+],
+[
+"shaolin",
+"少林寺",
+"Shaolin Temple",
+208,
+"Zen started here? Then our focus sessions are a little bit Shaolin~"
+],
+[
+"huangshan",
+"黄山",
+"Huangshan",
+218,
+"Mountains floating in clouds, like a painting come alive."
+],
+[
+"leshan",
+"樂山大佛",
+"Leshan Giant Buddha",
+228,
+"His toenail is bigger than me. I checked."
+],
+[
+"guilin",
+"桂林",
+"Guilin and the Li River",
+238,
+"Mountains like sleeping dragons. Shh, don't wake them~"
+],
+[
+"xian",
+"西安",
+"Xi'an",
+250,
+"Thousands of clay soldiers... and not one of them is studying. Hmph."
+],
+[
+"jiayuguan",
+"嘉峪關",
+"Jiayu Pass",
+262,
+"One spare brick. Now that's planning! Like your study planner~"
+],
+[
+"dunhuang",
+"敦煌",
+"Dunhuang",
+274,
+"The sand dunes sing when the wind blows. Really!"
+],
+[
+"turpan",
+"吐魯番",
+"Turpan",
+286,
+"So hot! My tails are fanning me as fast as they can."
+],
+[
+"kashgar",
+"喀什",
+"Kashgar",
+298,
+"A market full of spices and melons. I smell everything at once!"
+],
+[
+"samarkand",
+"撒馬爾罕",
+"Samarkand",
+310,
+"Turquoise domes under the desert sky... and an astronomer who studied the stars!"
+],
+[
+"bukhara",
+"布哈拉",
+"Bukhara",
+322,
+"The end of the road... for now. We walked all the way from Kyoto!"
+],
+[
+"penglai",
+"蓬萊",
+"Mount Penglai",
+340,
+"If I find the elixir, I'll share it with you. Promise."
+],
+[
+"kunlun",
+"崑崙",
+"Kunlun",
+360,
+"3,000 years for one peach? I'd rather have inari sushi now~"
+],
+[
+"ryugu",
+"竜宮城",
+"Ryūgū-jō",
+380,
+"We can visit, but let's not stay too long. Your exams are this year, not in 300 years!"
+],
+[
+"takamagahara",
+"高天原",
+"Takamagahara",
+400,
+"When you feel dark, I'll dance for you too. Kon kon~"
+],
+[
+"guanghan",
+"廣寒宮",
+"The Moon Palace",
+425,
+"We made it to the Moon! The Jade Rabbit says hello~"
+],
+[
+"kyubi",
+"九尾の里",
+"Village of Nine Tails",
+450,
+"Here is where every fox dreams of going. And I came here... with you. Arigatou."
+]
+],
+"JMAP_PLACES": [
+"inari",
+"nara",
+"ise",
+"tokyo",
+"fuji",
+"kumano",
+"kusatsu",
+"nikko",
+"kanazawa",
+"izumo",
+"miyajima",
+"konpira",
+"aso",
+"yakushima",
+"osorezan",
+"sapporo",
+"shiretoko",
+"shuri"
+],
+"JOURNEY_REGIONS": [
+"japan",
+"kyoto",
+"korea",
+"china",
+"silk",
+"myth"
+],
+"JOURNEY_REGION_OF": {
+"inari": "japan",
+"nara": "japan",
+"ise": "japan",
+"tokyo": "japan",
+"fuji": "japan",
+"kumano": "japan",
+"kusatsu": "japan",
+"nikko": "japan",
+"kanazawa": "japan",
+"izumo": "japan",
+"miyajima": "japan",
+"konpira": "japan",
+"aso": "japan",
+"yakushima": "japan",
+"osorezan": "japan",
+"sapporo": "japan",
+"shiretoko": "japan",
+"shuri": "japan",
+"kiyomizu": "kyoto",
+"arashiyama": "kyoto",
+"tofukuji": "kyoto",
+"kinkakuji": "kyoto",
+"gion": "kyoto",
+"gyeongbok": "korea",
+"bulguksa": "korea",
+"haeinsa": "korea",
+"jeju": "korea",
+"yonggung": "korea",
+"forbidden": "china",
+"greatwall": "china",
+"taishan": "china",
+"westlake": "china",
+"shaolin": "china",
+"huangshan": "china",
+"leshan": "china",
+"guilin": "china",
+"xian": "silk",
+"jiayuguan": "silk",
+"dunhuang": "silk",
+"turpan": "silk",
+"kashgar": "silk",
+"samarkand": "silk",
+"bukhara": "silk",
+"penglai": "myth",
+"kunlun": "myth",
+"ryugu": "myth",
+"takamagahara": "myth",
+"guanghan": "myth",
+"kyubi": "myth"
+},
+"MAP_REWARDS": [
+[
+"nara",
+"decor",
+"deer",
+"A sika deer for your garden"
+],
+[
+"ise",
+"bubble",
+"shinto",
+"Shrine-white speech bubble"
+],
+[
+"fuji",
+"scene",
+"fuji",
+"Mount Fuji in your sidebar"
+],
+[
+"kanazawa",
+"accent",
+"kinpaku",
+"Gold-leaf accent colour"
+],
+[
+"miyajima",
+"decor",
+"seatorii",
+"A floating torii in the pond"
+],
+[
+"sapporo",
+"outfit",
+"snowcoat",
+"Snow festival coat"
+],
+[
+"shuri",
+"outfit",
+"bingata",
+"Ryūkyū bingata robe"
+],
+[
+"tofukuji",
+"decor",
+"momiji",
+"A little maple tree"
+],
+[
+"kinkakuji",
+"scene",
+"kinkaku",
+"The Golden Pavilion in your sidebar"
+],
+[
+"gion",
+"outfit",
+"furisode",
+"Gion furisode"
+],
+[
+"gyeongbok",
+"outfit",
+"hanbok",
+"Hanbok"
+],
+[
+"bulguksa",
+"scene",
+"pagoda",
+"A stone pagoda in your sidebar"
+],
+[
+"haeinsa",
+"bubble",
+"hanji",
+"Hanji paper speech bubble"
+],
+[
+"jeju",
+"accent",
+"dancheong",
+"Dancheong accent colour"
+],
+[
+"yonggung",
+"decor",
+"cheong",
+"A blue and red Korean lantern"
+],
+[
+"forbidden",
+"accent",
+"imperial",
+"Imperial yellow accent colour"
+],
+[
+"greatwall",
+"scene",
+"greatwall",
+"The Great Wall in your sidebar"
+],
+[
+"westlake",
+"bubble",
+"lacquer",
+"Red lacquer speech bubble"
+],
+[
+"shaolin",
+"outfit",
+"hanfu",
+"Hanfu"
+],
+[
+"huangshan",
+"decor",
+"pine",
+"A Huangshan pine"
+],
+[
+"jiayuguan",
+"bubble",
+"silk",
+"Indigo silk speech bubble"
+],
+[
+"dunhuang",
+"scene",
+"dunes",
+"Desert dunes and camels in your sidebar"
+],
+[
+"kashgar",
+"decor",
+"camel",
+"A Bactrian camel"
+],
+[
+"samarkand",
+"accent",
+"lapis",
+"Samarkand turquoise accent colour"
+],
+[
+"bukhara",
+"outfit",
+"traveller",
+"Silk Road traveller's coat"
+],
+[
+"penglai",
+"bubble",
+"cloud",
+"Cloud speech bubble"
+],
+[
+"takamagahara",
+"outfit",
+"hagoromo",
+"Hagoromo, the celestial robe"
+],
+[
+"guanghan",
+"scene",
+"moon",
+"The Moon Palace in your sidebar"
+],
+[
+"guanghan",
+"decor",
+"rabbit",
+"The Jade Rabbit"
+],
+[
+"guanghan",
+"accent",
+"moonsilver",
+"Moon silver accent colour"
+],
+[
+"kyubi",
+"bubble",
+"foxfire",
+"Foxfire speech bubble"
+],
+[
+"kyubi",
+"decor",
+"kitsune",
+"A nine-tailed fox statue"
+]
+],
+"Z22_ACCENTS": [
+[
+"kinpaku",
+"Gold leaf",
+[
+"#e8b830",
+"#f8dc7c",
+"#f2c94c",
+"#ffe08a"
+]
+],
+[
+"dancheong",
+"Dancheong",
+[
+"#2fa37a",
+"#7fd3b0",
+"#e0573e",
+"#5fe0b0"
+]
+],
+[
+"imperial",
+"Imperial",
+[
+"#f0b72f",
+"#ffd36b",
+"#d9482c",
+"#ffcc4d"
+]
+],
+[
+"lapis",
+"Turquoise",
+[
+"#2fb7c9",
+"#86e0ea",
+"#e3b04b",
+"#5fe3f0"
+]
+],
+[
+"moonsilver",
+"Moon silver",
+[
+"#b8c4dc",
+"#e2e8f4",
+"#d8c08a",
+"#d0dcf8"
+]
+]
+],
+"SUBJECT_IDS": [
+"bio",
+"chem",
+"math",
+"french",
+"psych",
+"english"
+],
+"DEFAULT_FREE": {
+"0": [
+16,
+17,
+18,
+19
+],
+"1": [
+16,
+17,
+18,
+19
+],
+"2": [
+16,
+17,
+18,
+19
+],
+"3": [
+16,
+17,
+18,
+19
+],
+"4": [
+16,
+17,
+18
+],
+"5": [
+10,
+11,
+14,
+15,
+16
+],
+"6": [
+10,
+11,
+14,
+15,
+16
+]
+}
+}

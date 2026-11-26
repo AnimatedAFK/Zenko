@@ -453,6 +453,7 @@ mod win {
                 app.fox.lock_eating = false;
                 app.eating = None;
             }
+            app.fox.pump(t);
             app.fox.win_move = None;
             let f = app.fox.frame(t, (p.x, p.y), (app.x, app.y));
             if let Some((nx, ny)) = app.fox.win_move.take() {
@@ -805,7 +806,8 @@ mod win {
             } else {
                 "Consolas".to_string()
             };
-            let fox = Companion::new(cfg, u, 1000.0);
+            let mut fox = Companion::new(cfg, u, 1000.0);
+            fox.life_startup();
             let (x, y) = start_pos(&fox);
             let (w, h) = (fox.w, fox.h);
             let hinst = GetModuleHandleW(std::ptr::null());

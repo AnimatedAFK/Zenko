@@ -1,0 +1,972 @@
+[
+ {
+  "name": "fresh_session_done",
+  "now": 1764151200.25,
+  "files": {},
+  "cfg": {},
+  "act": {
+   "do": "session",
+   "task": "Biology notes",
+   "planned": 1500,
+   "elapsed": 1500,
+   "dist": 2,
+   "away": 0,
+   "completed": true
+  },
+  "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {\n  \"first\": \"2025-11-26\",\n  \"spotless\": \"2025-11-26\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 0.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 15.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 15,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 6.497999999999999,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": "{\"2025-11-26\": 1498}",
+  "out": [
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ]
+  ],
+  "later": [
+   [
+    2.5,
+    "say",
+    "New ema badge! 【初】 First Step - Finish your first focus session. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【清】 Spotless - A 25+ minute session with no off-task time. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ]
+  ]
+ },
+ {
+  "name": "fresh_session_stopped_short",
+  "now": 1764151200.25,
+  "files": {},
+  "cfg": {},
+  "act": {
+   "do": "session",
+   "task": "Maths",
+   "planned": 3000,
+   "elapsed": 420,
+   "dist": 30,
+   "away": 0,
+   "completed": false
+  },
+  "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 26.75,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": "{\"2025-11-26\": 390}",
+  "out": [],
+  "later": []
+ },
+ {
+  "name": "stopped_long_grows_garden",
+  "now": 1764151200.25,
+  "files": {
+   "zenko_life.json": "{\"garden\": {\"xp\": 240.0, \"health\": 0.8, \"active\": [\"2025-11-20\"], \"log\": [{\"d\": \"2025-11-20\", \"m\": 50, \"k\": \"lockin\"}, {\"d\": \"2025-11-21\", \"m\": 30.0, \"k\": \"focus\"}], \"grove\": [], \"seed\": 77, \"planted\": \"2025-10-01\"}, \"hunger\": 70.0, \"hunger_t\": 1764144000.25}"
+  },
+  "cfg": {},
+  "act": {
+   "do": "session",
+   "task": "Chem",
+   "planned": 3000,
+   "elapsed": 1900,
+   "dist": 100,
+   "away": 60,
+   "completed": false
+  },
+  "startup": "{\n \"garden\": {\n  \"xp\": 240.0,\n  \"health\": 0.8,\n  \"active\": [\n   \"2025-11-20\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-20\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   },\n   {\n    \"d\": \"2025-11-21\",\n    \"m\": 30.0,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 77,\n  \"planted\": \"2025-10-01\"\n },\n \"hunger\": 70.0,\n \"hunger_t\": 1764144000.25,\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 50,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"garden\": {\n  \"xp\": 257.4,\n  \"health\": 0.35,\n  \"active\": [\n   \"2025-11-20\",\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-20\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   },\n   {\n    \"d\": \"2025-11-21\",\n    \"m\": 30.0,\n    \"k\": \"focus\"\n   },\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 17,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 77,\n  \"planted\": \"2025-10-01\"\n },\n \"hunger\": 61.5,\n \"hunger_t\": 1764151200.25,\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 50,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 6.74,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": "{\"2025-11-26\": 1740}",
+  "out": [],
+  "later": []
+ },
+ {
+  "name": "early_marathon_streak",
+  "now": 1764136800.0,
+  "files": {
+   "stats.json": "{\"2025-11-25\": 1500, \"2025-11-24\": 1500, \"2025-11-23\": 1500, \"2025-11-22\": 1500, \"2025-11-21\": 1500, \"2025-11-20\": 1500, \"2025-11-19\": 1500}"
+  },
+  "cfg": {},
+  "act": {
+   "do": "session",
+   "task": "Long",
+   "planned": 5400,
+   "elapsed": 5400,
+   "dist": 0,
+   "away": 0,
+   "completed": true
+  },
+  "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764136800.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {\n  \"first\": \"2025-11-26\",\n  \"marathon\": \"2025-11-26\",\n  \"spotless\": \"2025-11-26\",\n  \"early\": \"2025-11-26\",\n  \"streak3\": \"2025-11-26\",\n  \"streak7\": \"2025-11-26\",\n  \"weekend\": \"2025-11-26\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 0,\n  \"dawn\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 0.0,\n \"hunger_t\": 1764136800.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 54.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"06:00\",\n    \"m\": 54,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\",\n   \"nara\",\n   \"ise\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 10.4,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": "{\"2025-11-25\": 1500, \"2025-11-24\": 1500, \"2025-11-23\": 1500, \"2025-11-22\": 1500, \"2025-11-21\": 1500, \"2025-11-20\": 1500, \"2025-11-19\": 1500, \"2025-11-26\": 5400}",
+  "out": [
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ]
+  ],
+  "later": [
+   [
+    2.5,
+    "say",
+    "New ema badge! 【初】 First Step - Finish your first focus session. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【長】 Long Walk - One focus session of 90 minutes or more. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【清】 Spotless - A 25+ minute session with no off-task time. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【朝】 Early Bird - Start a focus session before 8 am. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【炎】 Three-day Flame - Focus 3 days in a row. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【灯】 Week of Foxfire - Focus 7 days in a row. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【週】 Weekend Warrior - Focus on both days of one weekend. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    4.0,
+    "say",
+    "Kon! Our journey reached 伊勢神宮 Ise Jingū~ Rebuilt every 20 years... like my revision notes.\nIt unlocked: A sika deer for your garden, Shrine-white speech bubble~",
+    12,
+    [
+     "See the map"
+    ]
+   ],
+   [
+    9.0,
+    "say",
+    "Kon! Your garden tree grew: 芽 (Sprout) *sparkle*~ Come see it in the Garden tab!",
+    10,
+    [
+     "Show me"
+    ]
+   ]
+  ]
+ },
+ {
+  "name": "garden_stage_up_and_journey",
+  "now": 1764151200.25,
+  "files": {
+   "stats.json": "{\"2025-11-25\": 36000, \"2025-11-24\": 36000, \"2025-11-23\": 36000, \"2025-11-22\": 36000, \"2025-11-21\": 36000, \"2025-11-20\": 36000, \"2025-11-19\": 36000, \"2025-11-18\": 36000, \"2025-11-17\": 36000, \"2025-11-16\": 36000, \"2025-11-15\": 36000}",
+   "zenko_life.json": "{\"garden\": {\"xp\": 590.0, \"health\": 0.8, \"active\": [\"2025-11-20\"], \"log\": [{\"d\": \"2025-11-20\", \"m\": 50, \"k\": \"lockin\"}, {\"d\": \"2025-11-21\", \"m\": 30.0, \"k\": \"focus\"}], \"grove\": [], \"seed\": 77, \"planted\": \"2025-10-01\"}, \"badges\": {\"first\": \"x\"}}"
+  },
+  "cfg": {},
+  "act": {
+   "do": "session",
+   "task": "Psych",
+   "planned": 3000,
+   "elapsed": 3000,
+   "dist": 0,
+   "away": 0,
+   "completed": true
+  },
+  "startup": "{\n \"garden\": {\n  \"xp\": 590.0,\n  \"health\": 0.8,\n  \"active\": [\n   \"2025-11-20\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-20\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   },\n   {\n    \"d\": \"2025-11-21\",\n    \"m\": 30.0,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 77,\n  \"planted\": \"2025-10-01\"\n },\n \"badges\": {\n  \"first\": \"x\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 50,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"garden\": {\n  \"xp\": 620.0,\n  \"health\": 0.35,\n  \"active\": [\n   \"2025-11-20\",\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-20\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   },\n   {\n    \"d\": \"2025-11-21\",\n    \"m\": 30.0,\n    \"k\": \"focus\"\n   },\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 30,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 77,\n  \"planted\": \"2025-10-01\"\n },\n \"badges\": {\n  \"first\": \"x\",\n  \"spotless\": \"2025-11-26\",\n  \"streak3\": \"2025-11-26\",\n  \"streak7\": \"2025-11-26\",\n  \"hours10\": \"2025-11-26\",\n  \"hours50\": \"2025-11-26\",\n  \"hours100\": \"2025-11-26\",\n  \"t_wanderer\": \"2025-11-26\",\n  \"japan\": \"2025-11-26\",\n  \"weekend\": \"2025-11-26\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 2,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 0.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\",\n   \"nara\",\n   \"ise\",\n   \"tokyo\",\n   \"fuji\",\n   \"kumano\",\n   \"kusatsu\",\n   \"nikko\",\n   \"kanazawa\",\n   \"izumo\",\n   \"miyajima\",\n   \"konpira\",\n   \"aso\",\n   \"yakushima\",\n   \"osorezan\",\n   \"sapporo\",\n   \"shiretoko\",\n   \"shuri\",\n   \"kiyomizu\",\n   \"arashiyama\",\n   \"tofukuji\"\n  ],\n  \"lock_min\": 50,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {\n  \"t_wanderer\": 1\n },\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 8.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": "{\"2025-11-25\": 36000, \"2025-11-24\": 36000, \"2025-11-23\": 36000, \"2025-11-22\": 36000, \"2025-11-21\": 36000, \"2025-11-20\": 36000, \"2025-11-19\": 36000, \"2025-11-18\": 36000, \"2025-11-17\": 36000, \"2025-11-16\": 36000, \"2025-11-15\": 36000, \"2025-11-26\": 3000}",
+  "out": [
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ]
+  ],
+  "later": [
+   [
+    2.5,
+    "say",
+    "New ema badge! 【清】 Spotless - A 25+ minute session with no off-task time. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【炎】 Three-day Flame - Focus 3 days in a row. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【灯】 Week of Foxfire - Focus 7 days in a row. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【十】 Ten Hours - 10 hours of focus in total. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【山】 Mountain Path - 50 hours of focus in total. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【百】 Hundred Hours - 100 hours of focus in total. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【旅】 Wanderer - Reach 6 / 24 / 48 places on the world map. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【和】 All of Japan - Reach every place in Japan. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【週】 Weekend Warrior - Focus on both days of one weekend. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    4.0,
+    "say",
+    "Kon! Our journey reached 東福寺 Tōfuku-ji~ Momiji season! My fur matches the leaves, ehehe~\nIt unlocked: A sika deer for your garden, Shrine-white speech bubble, Mount Fuji in your sidebar, Gold-leaf accent colour, A floating torii in the pond, Snow festival coat, Ryūkyū bingata robe, A little maple tree~",
+    12,
+    [
+     "See the map"
+    ]
+   ],
+   [
+    9.0,
+    "say",
+    "Kon! Your garden tree grew: 蕾 (Budding) *sparkle*~ Come see it in the Garden tab!",
+    10,
+    [
+     "Show me"
+    ]
+   ]
+  ]
+ },
+ {
+  "name": "lockin_done",
+  "now": 1764151200.25,
+  "files": {},
+  "cfg": {},
+  "act": {
+   "do": "lockin",
+   "eaten": 3,
+   "mins": 50.0,
+   "done": true
+  },
+  "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {\n  \"lockin\": \"2025-11-26\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 50.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 50.0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 10.0,\n  \"gold\": 1,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": null,
+  "out": [
+   [
+    0.0,
+    "mood",
+    "happy",
+    6
+   ],
+   [
+    0.0,
+    "beep",
+    "done"
+   ],
+   [
+    0.0,
+    "say",
+    "Lock-in complete! Yatta~! I ate 3 distractions for you. Otsukaresama~kon!",
+    10
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ]
+  ],
+  "later": [
+   [
+    2.5,
+    "say",
+    "New ema badge! 【鍵】 Locked In - Finish a lock-in. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    9.0,
+    "say",
+    "Kon! Your garden tree grew: 芽 (Sprout) *sparkle*~ Come see it in the Garden tab!",
+    10,
+    [
+     "Show me"
+    ]
+   ]
+  ]
+ },
+ {
+  "name": "lockin_off_early",
+  "now": 1764151200.25,
+  "files": {
+   "zenko_life.json": "{\"garden\": {\"xp\": 240.0, \"health\": 0.8, \"active\": [\"2025-11-20\"], \"log\": [{\"d\": \"2025-11-20\", \"m\": 50, \"k\": \"lockin\"}, {\"d\": \"2025-11-21\", \"m\": 30.0, \"k\": \"focus\"}], \"grove\": [], \"seed\": 77, \"planted\": \"2025-10-01\"}}"
+  },
+  "cfg": {},
+  "act": {
+   "do": "lockin",
+   "eaten": 1,
+   "mins": 12.5,
+   "done": false
+  },
+  "startup": "{\n \"garden\": {\n  \"xp\": 240.0,\n  \"health\": 0.8,\n  \"active\": [\n   \"2025-11-20\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-20\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   },\n   {\n    \"d\": \"2025-11-21\",\n    \"m\": 30.0,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 77,\n  \"planted\": \"2025-10-01\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 50,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"garden\": {\n  \"xp\": 250.0,\n  \"health\": 0.5,\n  \"active\": [\n   \"2025-11-20\",\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-20\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   },\n   {\n    \"d\": \"2025-11-21\",\n    \"m\": 30.0,\n    \"k\": \"focus\"\n   },\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 10,\n    \"k\": \"lockin\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 77,\n  \"planted\": \"2025-10-01\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 60.0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 6.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": null,
+  "out": [
+   [
+    0.0,
+    "beep",
+    "happy"
+   ],
+   [
+    0.0,
+    "say",
+    "Lock-in off. I ate 1 distraction while it was on. Rest well, ne~",
+    10
+   ]
+  ],
+  "later": []
+ },
+ {
+  "name": "lockin_off_too_short",
+  "now": 1764151200.25,
+  "files": {},
+  "cfg": {},
+  "act": {
+   "do": "lockin",
+   "eaten": 0,
+   "mins": 2.0,
+   "done": false
+  },
+  "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": null,
+  "out": [
+   [
+    0.0,
+    "beep",
+    "happy"
+   ],
+   [
+    0.0,
+    "say",
+    "Lock-in off. I ate 0 distractions while it was on. Rest well, ne~",
+    10
+   ]
+  ],
+  "later": []
+ },
+ {
+  "name": "fri13_lockin",
+  "now": 1771012800.0,
+  "files": {},
+  "cfg": {},
+  "act": {
+   "do": "lockin",
+   "eaten": 2,
+   "mins": 25.0,
+   "done": true
+  },
+  "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1771012800.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2026-02-13\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {\n  \"lockin\": \"2026-02-13\",\n  \"s_fri13\": \"2026-02-13\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1771012800.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 25.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2026-02-13\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2026-02-13\",\n    \"t\": \"20:00\",\n    \"m\": 25,\n    \"k\": \"lockin\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2026-02-13\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 25.0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 7.5,\n  \"gold\": 1,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": null,
+  "out": [
+   [
+    0.0,
+    "mood",
+    "happy",
+    6
+   ],
+   [
+    0.0,
+    "beep",
+    "done"
+   ],
+   [
+    0.0,
+    "say",
+    "Lock-in complete! Yatta~! I ate 2 distractions for you. Otsukaresama~kon!",
+    10
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ]
+  ],
+  "later": [
+   [
+    2.5,
+    "say",
+    "New ema badge! 【鍵】 Locked In - Finish a lock-in. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【吉】 Lucky Fox - Focus on a Friday the 13th. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    9.0,
+    "say",
+    "Kon! Your garden tree grew: 芽 (Sprout) *sparkle*~ Come see it in the Garden tab!",
+    10,
+    [
+     "Show me"
+    ]
+   ]
+  ]
+ },
+ {
+  "name": "fullmoon_lockin",
+  "now": 1767470400.0,
+  "files": {},
+  "cfg": {},
+  "act": {
+   "do": "lockin",
+   "eaten": 1,
+   "mins": 60.0,
+   "done": true
+  },
+  "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1767470400.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2026-01-03\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {\n  \"lockin\": \"2026-01-03\",\n  \"s_fullmoon\": \"2026-01-03\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1767470400.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 60.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2026-01-03\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2026-01-03\",\n    \"t\": \"20:00\",\n    \"m\": 60,\n    \"k\": \"lockin\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2026-01-03\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 60.0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 11.0,\n  \"gold\": 1,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": null,
+  "out": [
+   [
+    0.0,
+    "mood",
+    "happy",
+    6
+   ],
+   [
+    0.0,
+    "beep",
+    "done"
+   ],
+   [
+    0.0,
+    "say",
+    "Lock-in complete! Yatta~! I ate 1 distraction for you. Otsukaresama~kon!",
+    10
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ]
+  ],
+  "later": [
+   [
+    2.5,
+    "say",
+    "New ema badge! 【鍵】 Locked In - Finish a lock-in. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【望】 Full Moon Scholar - Focus on a full-moon night. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    9.0,
+    "say",
+    "Kon! Your garden tree grew: 芽 (Sprout) *sparkle*~ Come see it in the Garden tab!",
+    10,
+    [
+     "Show me"
+    ]
+   ]
+  ]
+ },
+ {
+  "name": "newyear_3am_session",
+  "now": 1767236400.0,
+  "files": {},
+  "cfg": {},
+  "act": {
+   "do": "session",
+   "task": "Night",
+   "planned": 1500,
+   "elapsed": 1500,
+   "dist": 0,
+   "away": 0,
+   "completed": true
+  },
+  "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1767236400.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2026-01-01\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {\n  \"first\": \"2026-01-01\",\n  \"spotless\": \"2026-01-01\",\n  \"s_newyear\": \"2026-01-01\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 0.0,\n \"hunger_t\": 1767236400.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 15.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2026-01-01\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2026-01-01\",\n    \"t\": \"03:00\",\n    \"m\": 15,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2026-01-01\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 6.5,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": "{\"2026-01-01\": 1500}",
+  "out": [
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ]
+  ],
+  "later": [
+   [
+    2.5,
+    "say",
+    "New ema badge! 【初】 First Step - Finish your first focus session. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【清】 Spotless - A 25+ minute session with no off-task time. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【元】 First Light - Focus on New Year's Day. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ]
+  ]
+ },
+ {
+  "name": "birthday_session",
+  "now": 1764151200.25,
+  "files": {
+   "zenko_life.json": "{\"facts\": {\"birthday\": \"11-26\"}}"
+  },
+  "cfg": {},
+  "act": {
+   "do": "session",
+   "task": "Bday",
+   "planned": 1500,
+   "elapsed": 1600,
+   "dist": 10,
+   "away": 5,
+   "completed": true
+  },
+  "startup": "{\n \"facts\": {\n  \"birthday\": \"11-26\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"facts\": {\n  \"birthday\": \"11-26\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"badges\": {\n  \"first\": \"2025-11-26\",\n  \"s_birthday\": \"2025-11-26\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 0.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 15.8,\n  \"health\": 1.0,\n  \"active\": [\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 16,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 6.585,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": "{\"2025-11-26\": 1585}",
+  "out": [
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ]
+  ],
+  "later": [
+   [
+    2.5,
+    "say",
+    "New ema badge! 【初】 First Step - Finish your first focus session. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【祝】 Birthday Scholar - Focus on your birthday. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ]
+  ]
+ },
+ {
+  "name": "badge_tick_tiers",
+  "now": 1764151200.25,
+  "files": {
+   "stats.json": "{\"2025-11-25\": 36000, \"2025-11-24\": 36000, \"2025-11-23\": 36000, \"2025-11-22\": 36000, \"2025-11-21\": 36000, \"2025-11-20\": 36000, \"2025-11-19\": 36000, \"2025-11-18\": 36000, \"2025-11-17\": 36000, \"2025-11-16\": 36000, \"2025-11-15\": 36000}",
+   "zenko_life.json": "{\"stats\": {\"sessions\": 26, \"lockins\": 11}, \"badges\": {}}"
+  },
+  "cfg": {},
+  "act": {
+   "do": "tick"
+  },
+  "startup": "{\n \"stats\": {\n  \"sessions\": 26,\n  \"lockins\": 11\n },\n \"badges\": {},\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"said\": {},\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"stats\": {\n  \"sessions\": 26,\n  \"lockins\": 11\n },\n \"badges\": {\n  \"t_wanderer\": \"2025-11-26\",\n  \"t_lantern\": \"2025-11-26\",\n  \"t_lock\": \"2025-11-26\",\n  \"japan\": \"2025-11-26\",\n  \"weekend\": \"2025-11-26\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"said\": {},\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {\n  \"t_wanderer\": 1,\n  \"t_lantern\": 1,\n  \"t_lock\": 1\n },\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": "{\"2025-11-25\": 36000, \"2025-11-24\": 36000, \"2025-11-23\": 36000, \"2025-11-22\": 36000, \"2025-11-21\": 36000, \"2025-11-20\": 36000, \"2025-11-19\": 36000, \"2025-11-18\": 36000, \"2025-11-17\": 36000, \"2025-11-16\": 36000, \"2025-11-15\": 36000}",
+  "out": [
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ]
+  ],
+  "later": [
+   [
+    2.5,
+    "say",
+    "New ema badge! 【旅】 Wanderer - Reach 6 / 24 / 48 places on the world map. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【燈】 Lantern Keeper - Finish 25 / 100 / 300 focus sessions. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【錠】 Iron Focus - Finish 5 / 25 / 100 lock-ins. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【和】 All of Japan - Reach every place in Japan. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【週】 Weekend Warrior - Focus on both days of one weekend. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ]
+  ]
+ }
+]

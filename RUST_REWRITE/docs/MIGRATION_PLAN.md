@@ -75,9 +75,9 @@ order is kept where it changes the result (tail outlines, eye cells).
 | Right-click menu | every item of on_menu + both menu_extras, same order and words, theme colours; size, colours, mood, sound and other toggles write config.json | **partial** (items whose feature isn't ported yet are greyed out) |
 | Focus sessions | start, pause/resume, stop, countdown on the ema, idle pause, end lines, stats.json, the new-session dialog, timer panel, distraction detection (foreground window, browser titles, site rules, study videos), nags, praise, pep talks, auto-close, breaks, learned habits | **done, not yet seen on Windows** (distraction decisions match Python on 25 titles; dialog layout matches real Tk) |
 | Roaming and poses | walks along the taskbar, chases the mouse, hops home, zenko19 four-legged walk, stretch / play bow / pounce / rest / sniff routines | **done, not yet seen on Windows** |
-| Lock-in | timer, hachimaki, Esc-hold exit, pounce-and-eat of distractions (tab close / minimise / close), the zenko21 overlay animation, eaten counts, resume after restart | **done, not yet seen on Windows** (garden, journey and badge rewards come with the daily-life stage) |
+| Lock-in | timer, hachimaki, Esc-hold exit, pounce-and-eat of distractions (tab close / minimise / close), the zenko21 overlay animation, eaten counts, resume after restart | **done, not yet seen on Windows** |
 | Desktop fox, rest | music tablet, battery, weather particles, the visiting fox, slide, focus glow, exam countdown on the ema | |
-| Session rewards | garden growth, journey minutes, badges, hunger after a session or lock-in, timetable marking, pomodoro, music hooks | |
+| Session rewards | garden growth, journey minutes, badges, hunger after a session or lock-in, timetable marking, pomodoro, music hooks | **garden, journey, badges, hunger, counters done** (byte-for-byte vs zenko.py); timetable, pomodoro, music to do |
 | Hub shell | sidebar with pixel icons, rearrange, accents, text scaling, themed scrollbars, Ctrl+K search, page transitions, living sidebar fox | |
 | Home, Daily, You | streak, mood/hunger, 61 badges, check-ins, journal | |
 | Timetable, Upcoming, Japanese clock, planner, reminders rack | free hours, half-hour slots, plan/replan, countdowns, emas that auto-plan, PDF export | |
@@ -109,7 +109,8 @@ order is kept where it changes the result (tail outlines, eye cells).
 1. **Done:** sprite engine, palettes, HD raster, golden tests.
 2. **In progress:** desktop fox window. Done: sounds, play reactions, speech bubble, right-click menu, sessions with the
    dialog and timer panel, distraction checks, nags, pep talks, breaks, roaming and poses, lock-in with the pounce.
-   Next: the daily-life rewards (garden, journey, badges, hunger), music tablet, weather, visiting fox.
+   Stage 2c done: session and lock-in rewards (rewards.rs).
+   Next: pomodoro and timetable marking, music tablet, weather, visiting fox.
 3. A Tk-compatible drawing layer and the fonts, checked by screenshot comparison with Tk.
 4. Hub pages one at a time (Home, Timetable/Upcoming, Chat, Settings/Customize first, then the rest), each compared with Python.
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.

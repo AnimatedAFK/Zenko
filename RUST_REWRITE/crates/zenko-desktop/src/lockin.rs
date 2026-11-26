@@ -119,16 +119,7 @@ impl Companion {
         if !quiet {
             self.say(&line, 10.0);
         }
-        if done {
-            // zenko22 stat_add("lockins")
-            update_json("zenko_life.json", |v| {
-                if !v["stats"].is_object() {
-                    v["stats"] = json!({});
-                }
-                let k = v["stats"]["lockins"].as_i64().unwrap_or(0);
-                v["stats"]["lockins"] = json!(k + 1);
-            });
-        }
+        self.lockin_rewards(now, l.t0, done);
         line
     }
 

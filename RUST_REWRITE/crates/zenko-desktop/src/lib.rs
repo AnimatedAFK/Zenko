@@ -17,6 +17,7 @@ pub mod watch;
 pub mod tkgrid;
 pub mod life;
 pub mod lockin;
+pub mod rewards;
 pub mod icon;
 pub mod sound;
 pub mod theme;
@@ -34,7 +35,18 @@ pub enum Ev {
     Command(String),
 }
 
+static FAKE_NOW: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+
+/// Tests only: pin the wall clock (unix seconds) so results can be compared with zenko.py run at the same time.
+pub fn set_fake_now(t: Option<f64>) {
+    FAKE_NOW.store(t.map(f64::to_bits).unwrap_or(0), std::sync::atomic::Ordering::Relaxed);
+}
+
 pub fn unix_now() -> f64 {
+    let f = FAKE_NOW.load(std::sync::atomic::Ordering::Relaxed);
+    if f != 0 {
+        return f64::from_bits(f);
+    }
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .map(|d| d.as_secs_f64())
@@ -229,11 +241,7 @@ pub fn today_iso() -> String {
 
 /// Local wall-clock time (year, month, day, hour, minute, second).
 pub fn local_now() -> (i32, u32, u32, u32, u32, u32) {
-    let secs = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_secs() as i64)
-        .unwrap_or(0)
-        + local_offset_secs();
+    let secs = unix_now().floor() as i64 + local_offset_secs();
     let days = secs.div_euclid(86400);
     let sod = secs.rem_euclid(86400) as u32;
     let (y, m, d) = civil_from_days(days);
@@ -241,12 +249,16 @@ pub fn local_now() -> (i32, u32, u32, u32, u32, u32) {
 }
 /// datetime.now().weekday(): Monday = 0
 pub fn local_weekday() -> u32 {
-    let secs = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_secs() as i64)
-        .unwrap_or(0)
-        + local_offset_secs();
+    let secs = unix_now().floor() as i64 + local_offset_secs();
     (secs.div_euclid(86400) + 3).rem_euclid(7) as u32
+}
+
+pub fn civil_from_days_pub(d: i64) -> (i32, u32, u32) {
+    civil_from_days(d)
+}
+
+pub fn local_offset_pub() -> i64 {
+    local_offset_secs()
 }
 
 fn civil_from_days(z: i64) -> (i32, u32, u32) {
@@ -385,6 +397,7 @@ pub struct Companion {
     pub lockin: Option<lockin::Lockin>,
     pub lock_eating: bool,
     pub esc_t: f64,
+    pub rewards: rewards::Rewards,
 }
 
 impl Companion {
@@ -430,6 +443,7 @@ impl Companion {
             lockin: None,
             lock_eating: false,
             esc_t: 0.0,
+            rewards: Default::default(),
         };
         c.compute_dims();
         c.apply_look();

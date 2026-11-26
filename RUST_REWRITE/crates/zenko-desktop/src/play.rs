@@ -144,14 +144,7 @@ impl Companion {
     }
 
     fn feed(&mut self, n: f64) {
-        update_json("zenko_life.json", |l| {
-            let now = crate::unix_now();
-            let h0 = l.get("hunger").and_then(|v| v.as_f64()).unwrap_or(30.0);
-            let t = l.get("hunger_t").and_then(|v| v.as_f64()).unwrap_or(now);
-            let h = (h0 + (now - t) / 3600.0 * 3.0).clamp(0.0, 100.0);
-            l["hunger"] = json!((h - n).max(0.0));
-            l["hunger_t"] = json!(now);
-        });
+        self.feed_tummy(n);
     }
 
     /// Play with her: pet, belly, boop, tickle, tail, treat, yarn, hide, highfive, gift, dance, brush, sing, yawn.

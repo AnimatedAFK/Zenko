@@ -77,6 +77,13 @@ pub fn theme(cfg: &Cfg) -> Theme {
     if let Some((_, a)) = ACCENTS.iter().find(|(k, _)| *k == acc) {
         return realm(t[0], t[1], t[2], t[3], t[4], a[0], a[1], a[2], a[3], t[9]);
     }
+    // zenko22: the accent colours unlocked on the journey join ACCENTS
+    if let Some(row) = crate::rewards::rdata()["Z22_ACCENTS"].as_array().and_then(|v| v.iter().find(|r| r[0] == acc.as_str())) {
+        if crate::rewards::unlocked_accents().contains(&acc) {
+            let c: Vec<&str> = (0..4).map(|i| row[2][i].as_str().unwrap_or("#000000")).collect();
+            return realm(t[0], t[1], t[2], t[3], t[4], c[0], c[1], c[2], c[3], t[9]);
+        }
+    }
     realm(t[0], t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8], t[9])
 }
 

@@ -70,6 +70,7 @@ impl Companion {
         let Some(s) = self.session.take() else { return };
         let focused = (s.elapsed - s.dist - s.away).max(0.0);
         add_stats(focused);
+        self.session_rewards(now, &s, completed, focused);
         if self.cfg.b("learn_habits", true) && s.elapsed >= 120.0 {
             crate::watch::learn_session(s.planned / 60.0, focused / 60.0, completed, s.dist / 60.0);
         }

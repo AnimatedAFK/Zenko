@@ -47,7 +47,8 @@ ZenkoExtras.lockin_poll ZenkoExtras._lockin_check ZenkoExtras.lockin_eat ZenkoEx
 ZenkoLife.roam_home ZenkoLife.roam_go_home ZenkoLife.roam_ok ZenkoLife.roam_go ZenkoLife.roam_decide ZenkoLife.roam_step
 ZenkoLife.walk_pose ZenkoLife.life_pose Zenko19.z19_pose_start Zenko19.z19_pose_stop Zenko19.z19_can_pose Zenko19.z19_pose
 Zenko19.life_pose Zenko19.walk_pose Zenko21._eat_states Zenko21._eat_acc Zenko21.lockin_start Zenko21.eat_overlay
-Zenko21.z21_eat_overlay""".split())
+Zenko21.z21_eat_overlay
+load_life save_life ZenkoLife.life_save ZenkoLife.stat_add ZenkoLife.streak ZenkoLife.total_hours ZenkoLife.feed ZenkoLife.award ZenkoLife.check_badges ZenkoLife.life_session_done ZenkoLife.lockin_stop FoxBuddy.end_session Zenko.garden Zenko.garden_stage Zenko.garden_health Zenko._garden_add_core Zenko.lockin_stop Zenko.end_session Zenko.journey Zenko.garden_add Zenko.journey_state Zenko.journey_check z22_moon_age Zenko22.fishing Zenko22.garden_add Zenko22.life_session_done Zenko22.lockin_stop Zenko22.z22_metrics Zenko22.z22_badge_tick Zenko22.z22_badge_check Zenko22.award Zenko22.journey_state Zenko22.journey_check Zenko22.z22_unlocked Zenko22.z22_apply_rewards Zenko22.z22_migrate Zenko22.z22_day_secrets""".split())
 n_items = n_ported = 0
 out.append("## Module-level functions and data")
 out.append("")
