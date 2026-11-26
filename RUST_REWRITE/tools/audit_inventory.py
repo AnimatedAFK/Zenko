@@ -35,7 +35,19 @@ FoxBuddy.toggle_pause FoxBuddy.on_menu FoxBuddy.build_menu FoxBuddy.style_menus 
 FoxBuddy.bind_events FoxBuddy.keep_on_top ZenkoExtras.play_pose ZenkoExtras.show_prop ZenkoExtras.hide_prop
 ZenkoExtras.interact ZenkoExtras.give_gift ZenkoExtras.start_sulk ZenkoExtras.forgive ZenkoExtras.fox_clicked
 ZenkoExtras.bond_add ZenkoExtras.save_extra ZenkoExtras.menu_extras ZenkoExtras.fox_name ZenkoLife.interact ZenkoLife.feed
-ZenkoLife.hunger ZenkoLife.menu_extras Zenko.interact Zenko.fox_clicked Zenko.forgive""".split())
+ZenkoLife.hunger ZenkoLife.menu_extras Zenko.interact Zenko.fox_clicked Zenko.forgive
+FoxBuddy.draw_panel FoxBuddy.open_dialog FoxBuddy.small_fox FoxBuddy.tt_btn FoxBuddy.tt_entry FoxBuddy.style_titlebar
+FoxBuddy.is_distracting FoxBuddy.study_video FoxBuddy.nag FoxBuddy.pick_nag FoxBuddy.maybe_motivate FoxBuddy.maybe_close
+FoxBuddy.break_tick FoxBuddy.start_break FoxBuddy.end_break FoxBuddy.tick FoxBuddy._tick FoxBuddy.is_curled
+foreground_info close_distraction fg_window window_rect window_action window_focus key_down work_area icon_pixels icon_png
+study_video_subject classify_subject rule_verdict window_key learn_distraction learn_session learned_hint load_learned
+save_learned _sv_terms PixelButton._draw PixelButton.__init__ PixelButton._set PixelButton._release
+ZenkoExtras.lock_extra_acc ZenkoExtras.lockin_start ZenkoExtras.lockin_stop ZenkoExtras.lockin_distracting
+ZenkoExtras.lockin_poll ZenkoExtras._lockin_check ZenkoExtras.lockin_eat ZenkoExtras.eat_overlay
+ZenkoLife.roam_home ZenkoLife.roam_go_home ZenkoLife.roam_ok ZenkoLife.roam_go ZenkoLife.roam_decide ZenkoLife.roam_step
+ZenkoLife.walk_pose ZenkoLife.life_pose Zenko19.z19_pose_start Zenko19.z19_pose_stop Zenko19.z19_can_pose Zenko19.z19_pose
+Zenko19.life_pose Zenko19.walk_pose Zenko21._eat_states Zenko21._eat_acc Zenko21.lockin_start Zenko21.eat_overlay
+Zenko21.z21_eat_overlay""".split())
 n_items = n_ported = 0
 out.append("## Module-level functions and data")
 out.append("")

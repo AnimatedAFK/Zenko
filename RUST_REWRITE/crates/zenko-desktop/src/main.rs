@@ -14,6 +14,8 @@ mod bubble;
 #[cfg(windows)]
 mod dialog;
 #[cfg(windows)]
+mod eat;
+#[cfg(windows)]
 mod panel;
 #[cfg(windows)]
 mod tkw;
@@ -80,6 +82,8 @@ mod win {
         panel_fonts: Option<crate::panel::Fonts>,
         panel_dib: Option<(HDC, HBITMAP, *mut u8, i32, i32)>,
         fg: (String, String),
+        next_lock: f64,
+        eating: Option<zenko_desktop::lockin::Eat>,
         next_top: f64,
         hwnd: HWND,
     }
@@ -225,6 +229,73 @@ mod win {
         }
     }
 
+    fn work_area() -> (i32, i32, i32, i32) {
+        unsafe {
+            let mut r = RECT { left: 0, top: 0, right: GetSystemMetrics(SM_CXSCREEN), bottom: GetSystemMetrics(SM_CYSCREEN) };
+            SystemParametersInfoW(SPI_GETWORKAREA, 0, &mut r as *mut RECT as *mut _, 0);
+            (r.left, r.top, r.right, r.bottom)
+        }
+    }
+
+    /// _lockin_check with what's on screen; a pounce closes the tab now and runs the overlay.
+    fn lock_poll(app: &mut App, t: f64) {
+        use windows_sys::Win32::System::Threading::GetCurrentProcessId;
+        let (hwnd, pid) = unsafe {
+            let h = GetForegroundWindow();
+            let mut pid = 0u32;
+            if !h.is_null() {
+                GetWindowThreadProcessId(h, &mut pid);
+            }
+            (h as isize, pid)
+        };
+        let (title, proc_) = foreground_info();
+        let esc = unsafe { GetAsyncKeyState(VK_ESCAPE as i32) as u16 & 0x8000 != 0 };
+        let me = unsafe { GetCurrentProcessId() };
+        let Some(e) = app.fox.lockin_check(t, (hwnd, &title, &proc_, pid), esc, me) else { return };
+        if e.tab {
+            close_distraction("tab"); // the browser is still in front: close just that tab now
+        }
+        let rect = unsafe {
+            let mut r = RECT { left: 0, top: 0, right: 0, bottom: 0 };
+            if GetWindowRect(e.hwnd as HWND, &mut r) != 0 { (r.left, r.top, r.right, r.bottom) } else { (100, 100, 900, 600) }
+        };
+        if e.animate && !crate::eat::is_running() {
+            let th = theme(&app.fox.cfg);
+            let fam = crate::gdi::ui_font(&app.fox.cfg.s("app_font", ""));
+            let fox = &mut app.fox;
+            crate::eat::start(rect, &e.site, &th, &fam, app.dpi, |s, p, f, z| fox.eat_image(t, s, p, f, z));
+            app.eating = Some(e);
+        } else {
+            eat_finish(&e);
+            app.fox.lock_eating = false;
+        }
+    }
+
+    /// finish(): minimise or close the window if it wasn't a tab, then bring back the window you were working in.
+    fn eat_finish(e: &zenko_desktop::lockin::Eat) {
+        unsafe {
+            let h = e.hwnd as HWND;
+            if !e.tab {
+                if e.action == "close" {
+                    PostMessageW(h, WM_CLOSE, 0, 0);
+                } else {
+                    ShowWindow(h, SW_MINIMIZE);
+                }
+            }
+            if let Some(g) = e.good {
+                if g != e.hwnd {
+                    let g = g as HWND;
+                    if IsWindow(g) != 0 {
+                        if IsIconic(g) != 0 {
+                            ShowWindow(g, SW_RESTORE);
+                        }
+                        SetForegroundWindow(g);
+                    }
+                }
+            }
+        }
+    }
+
     /// foreground_info(): (window title, exe name in lower case) of the window you are using.
     fn foreground_info() -> (String, String) {
         use windows_sys::Win32::System::Threading::*;
@@ -363,7 +434,33 @@ mod win {
             }
             let mut p = POINT { x: 0, y: 0 };
             unsafe { GetCursorPos(&mut p) };
+            app.fox.env = zenko_desktop::life::Env {
+                work: work_area(),
+                screen_w: unsafe { GetSystemMetrics(SM_CXSCREEN) },
+                idle: idle_seconds(),
+                dragging: app.drag.is_some(),
+            };
+            if t >= app.next_lock && app.fox.lockin.is_some() {
+                app.next_lock = t + 0.2; // lockin_poll
+                lock_poll(app, t);
+            }
+            if crate::eat::take_finished() {
+                if let Some(e) = app.eating.take() {
+                    eat_finish(&e);
+                }
+            }
+            if crate::eat::take_closed() {
+                app.fox.lock_eating = false;
+                app.eating = None;
+            }
+            app.fox.win_move = None;
             let f = app.fox.frame(t, (p.x, p.y), (app.x, app.y));
+            if let Some((nx, ny)) = app.fox.win_move.take() {
+                if !app.drag.is_some() {
+                    app.x = nx;
+                    app.y = ny;
+                }
+            }
             unsafe { present(hwnd, app, &f) };
             handle_events(app, t);
             let root = (app.x, app.y);
@@ -419,6 +516,14 @@ mod win {
             let (kind, site) = rest.split_once(':').unwrap_or((rest, ""));
             let ok = close_distraction(kind);
             fox.closed_distraction(t, site, ok);
+        } else if c == "lockin" {
+            fox.lockin_start(t, None, false);
+        } else if c == "lockin_resume" {
+            if fox.lockin.is_none() {
+                fox.lockin_start(t, None, true);
+            }
+        } else if c == "lockout" {
+            fox.lockin_stop(t, false, false);
         } else if c == "break" {
             fox.start_break(t, None);
         } else if c == "endbreak" {
@@ -534,7 +639,12 @@ mod win {
         pm.push(later("Draw an omikuji fortune"));
         pm.push(later("Japanese word of the day"));
         m.push(sub(format!("Play with {name}"), pm));
-        m.push(later(format!("Lock-in mode ({} min)", c.f("lockin_minutes", 50.0) as i64)));
+        if fox.lockin.is_some() {
+            m.push(cmd(format!("Exit lock-in ({} min left)", fox.lockin_left_min()), "lockout"));
+        } else {
+            let lm = c.f("lockin_minutes", 50.0) as i64;
+            m.push(cmd(format!("Lock-in mode ({} min)", if lm == 0 { 50 } else { lm }), "lockin"));
+        }
         m.push(later(format!("Customize {name}...")));
         // menu_extras (ZenkoLife)
         let mut lm = vec![
@@ -622,6 +732,8 @@ mod win {
                             match moved {
                                 Some(true) => {
                                     let (x, y) = (app.x, app.y);
+                                    let t = now(app);
+                                    app.fox.dragged(t);
                                     update_config(&mut app.fox.cfg, |v| {
                                         v["x"] = x.into();
                                         v["y"] = y.into();
@@ -745,10 +857,19 @@ mod win {
                     panel_fonts: None,
                     panel_dib: None,
                     fg: (String::new(), String::new()),
+                    next_lock: 0.0,
+                    eating: None,
                     next_top: 1002.5,
                     hwnd,
                 })
             });
+            if Companion::lockin_pending() {
+                APP.with(|a| {
+                    if let Some(app) = a.borrow_mut().as_mut() {
+                        app.fox.delayed.push((1002.5, Ev::Command("lockin_resume".into())));
+                    }
+                });
+            }
             tick(hwnd);
             ShowWindow(hwnd, SW_SHOWNOACTIVATE);
             SetTimer(hwnd, 1, 60, None);

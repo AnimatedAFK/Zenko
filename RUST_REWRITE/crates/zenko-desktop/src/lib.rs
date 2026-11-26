@@ -15,6 +15,8 @@ pub mod session;
 pub mod shapes;
 pub mod watch;
 pub mod tkgrid;
+pub mod life;
+pub mod lockin;
 pub mod icon;
 pub mod sound;
 pub mod theme;
@@ -376,6 +378,13 @@ pub struct Companion {
     pub pose: Option<Pose>,
     pub watch: watch::Watch,
     pub brk: Option<watch::Brk>,
+    pub life: life::Life,
+    pub env: life::Env,
+    /// where roaming wants the window this frame (the window side moves it)
+    pub win_move: Option<(i32, i32)>,
+    pub lockin: Option<lockin::Lockin>,
+    pub lock_eating: bool,
+    pub esc_t: f64,
 }
 
 impl Companion {
@@ -415,9 +424,16 @@ impl Companion {
             pose: None,
             watch: Default::default(),
             brk: None,
+            life: life::Life::default(),
+            env: life::Env::default(),
+            win_move: None,
+            lockin: None,
+            lock_eating: false,
+            esc_t: 0.0,
         };
         c.compute_dims();
         c.apply_look();
+        c.life.roam_next = now + 45.0 + 45.0 * c.rand();
         c
     }
 
@@ -462,6 +478,15 @@ impl Companion {
             .unwrap_or(0.0)
             / 60.0)
             .floor() as i64
+    }
+
+    pub fn look_ref(&self) -> &Look {
+        &self.look
+    }
+
+    /// self.images = {}: the pictures are drawn again (her look changed)
+    pub fn clear_images(&mut self) {
+        self.images.clear();
     }
 
     /// small_fox(1): the fox with her tails as a little picture for headers and dialogs (see-through background).
@@ -565,6 +590,11 @@ impl Companion {
         for a in &out {
             if ["flower", "bow", "crown", "headband", "mask"].contains(&a.as_str()) {
                 acc.push(a.clone());
+            }
+        }
+        if let Some(a) = self.lock_extra_acc() {
+            if !acc.iter().any(|x| x == a) {
+                acc.push(a.into());
             }
         }
         if !self.cfg.s("scarf", "").is_empty() {
@@ -803,6 +833,7 @@ impl Companion {
             }
             prop = self.play_pose(now, &mut st);
         }
+        self.life_pose(now, &mut st, win, pointer);
         self.pose = Some(st.clone());
         let Pose { state, hx, ear, look, frame, acc, tframe, .. } = st.clone();
         let (dx, dy) = (dx + st.dxf * z, dy + st.dyf * z);

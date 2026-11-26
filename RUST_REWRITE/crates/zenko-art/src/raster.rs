@@ -141,7 +141,7 @@ fn s3x(src: &Image) -> Image {
     }
 }
 
-fn nearest(src: &Image, k: usize) -> Image {
+pub fn nearest(src: &Image, k: usize) -> Image {
     let (ow, oh) = (src.w * k, src.h * k);
     let mut px = Vec::with_capacity(ow * oh);
     for y in 0..oh {

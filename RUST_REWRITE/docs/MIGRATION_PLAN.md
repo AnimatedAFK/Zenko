@@ -73,9 +73,11 @@ order is kept where it changes the result (tail outlines, eye cells).
 | Play reactions | click regions (nose, head, belly, tails), pet/belly/boop/tickle/tail/treat/yarn/hide-and-seek/high five/gift/dance/brush/sing, props, sulking after 8 pokes, forgiving, bond, treats, treasures, hunger | **done** (logic tested; poses use the checked sprite engine) |
 | Speech bubble | zenko22 say/spot/place: size scaling, bubble styles, Zen Maru Gothic text (same fonts built in), wrap, chips, frame, knot, tail, left/right/above/below placement, follows her, tap to dismiss | **done, not yet seen on Windows** (outline shapes match Python on 420 cases; drawn with the same GDI calls Tk uses) |
 | Right-click menu | every item of on_menu + both menu_extras, same order and words, theme colours; size, colours, mood, sound and other toggles write config.json | **partial** (items whose feature isn't ported yet are greyed out) |
-| Focus sessions | start, pause/resume, stop, countdown on the ema, idle pause, end lines, stats.json | **partial** (dialog, timer panel, distraction checks, nags, pep talks, breaks: next) |
-| Desktop fox, rest | timer panel, music tablet, battery, life poses (roam, walk across the screen, slide), lock-in pounce, focus glow, exam countdown on the ema | |
-| Focus sessions, rest | focus dialog, breaks, distraction detection (foreground window and browser titles), nags, praise, pep talks, auto-close, lock-in | |
+| Focus sessions | start, pause/resume, stop, countdown on the ema, idle pause, end lines, stats.json, the new-session dialog, timer panel, distraction detection (foreground window, browser titles, site rules, study videos), nags, praise, pep talks, auto-close, breaks, learned habits | **done, not yet seen on Windows** (distraction decisions match Python on 25 titles; dialog layout matches real Tk) |
+| Roaming and poses | walks along the taskbar, chases the mouse, hops home, zenko19 four-legged walk, stretch / play bow / pounce / rest / sniff routines | **done, not yet seen on Windows** |
+| Lock-in | timer, hachimaki, Esc-hold exit, pounce-and-eat of distractions (tab close / minimise / close), the zenko21 overlay animation, eaten counts, resume after restart | **done, not yet seen on Windows** (garden, journey and badge rewards come with the daily-life stage) |
+| Desktop fox, rest | music tablet, battery, weather particles, the visiting fox, slide, focus glow, exam countdown on the ema | |
+| Session rewards | garden growth, journey minutes, badges, hunger after a session or lock-in, timetable marking, pomodoro, music hooks | |
 | Hub shell | sidebar with pixel icons, rearrange, accents, text scaling, themed scrollbars, Ctrl+K search, page transitions, living sidebar fox | |
 | Home, Daily, You | streak, mood/hunger, 61 badges, check-ins, journal | |
 | Timetable, Upcoming, Japanese clock, planner, reminders rack | free hours, half-hour slots, plan/replan, countdowns, emas that auto-plan, PDF export | |
@@ -105,9 +107,9 @@ order is kept where it changes the result (tail outlines, eye cells).
 ## 5. Order of work (small, testable stages)
 
 1. **Done:** sprite engine, palettes, HD raster, golden tests.
-2. **In progress:** desktop fox window. Done: sounds, play reactions, speech bubble, right-click menu, basic sessions.
-   Next: session dialog + timer panel, distraction checks and nags, breaks, roaming/walking, lock-in. At the end of this
-   stage ZenkoRust.exe can replace Zenko on the desktop.
+2. **In progress:** desktop fox window. Done: sounds, play reactions, speech bubble, right-click menu, sessions with the
+   dialog and timer panel, distraction checks, nags, pep talks, breaks, roaming and poses, lock-in with the pounce.
+   Next: the daily-life rewards (garden, journey, badges, hunger), music tablet, weather, visiting fox.
 3. A Tk-compatible drawing layer and the fonts, checked by screenshot comparison with Tk.
 4. Hub pages one at a time (Home, Timetable/Upcoming, Chat, Settings/Customize first, then the rest), each compared with Python.
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.

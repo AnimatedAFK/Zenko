@@ -410,7 +410,7 @@ pub struct Brk {
 }
 
 impl Companion {
-    fn cfg_list(&self, k: &str) -> Vec<String> {
+    pub fn cfg_list(&self, k: &str) -> Vec<String> {
         match self.cfg.raw.get(k) {
             Some(v) if v.is_array() => strs(v),
             _ => strs(&data().raw["DEFAULTS"][k]),
