@@ -752,6 +752,7 @@ impl Companion {
         let l = format!("{}{}", if done { "Break over! Ready to go?" } else { "Break ended. Back to it!" },
                         if resumed { " Your session is running again." } else { "" });
         self.say(&l, 8.0);
+        self.pomo_break_done(now);
     }
 
     /// zenko.py tick() -> _tick(), once a second. `title`/`proc` = the window you're using.
@@ -766,6 +767,7 @@ impl Companion {
         }
         let site = self.is_distracting(now, title, proc);
         let away = idle >= self.cfg_num("idle_minutes") * 60.0;
+        self.check_timetable(now);
         self.break_tick(now, dt, idle);
         if self.brk.is_some() {
             return;

@@ -48,7 +48,14 @@ impl Companion {
     }
 
     pub fn start_session(&mut self, now: f64, task: &str, minutes: f64) {
-        self.session = Some(Session::new(task, minutes));
+        self.start_session_item(now, task, minutes, None);
+    }
+
+    /// start_session(task, minutes, item): `item` = the timetable item it came from
+    pub fn start_session_item(&mut self, now: f64, task: &str, minutes: f64, item: Option<usize>) {
+        let mut ns = Session::new(task, minutes);
+        ns.item = item;
+        self.session = Some(ns);
         self.sleeping = false;
         self.mood_override = None;
         self.set_mood(now, "happy", 2.0);
@@ -74,6 +81,11 @@ impl Companion {
         if self.cfg.b("learn_habits", true) && s.elapsed >= 120.0 {
             crate::watch::learn_session(s.planned / 60.0, focused / 60.0, completed, s.dist / 60.0);
         }
+        if completed {
+            if let Some(i) = s.item {
+                self.tt_mark(now, i, true);
+            }
+        }
         self.watch.alerted = false;
         self.tails_n = (-1e9, 3);
         self.mood_override = None;
@@ -90,11 +102,13 @@ impl Companion {
             let line = format!("Done! {} min on \u{201c}{}\u{201d}. Off-task: {} min. {}", mins(s.planned),
                                clip(&s.task, 30), (s.dist / 60.0).floor() as i64, verdict);
             self.say(&line, 14.0);
-            if self.cfg.b("auto_break_after_session", true) && self.brk.is_none() {
+            if self.pomo_session_done(now, true) {
+            } else if self.cfg.b("auto_break_after_session", true) && self.brk.is_none() {
                 let bm = self.cfg.f("break_minutes", 5.0) as i64 * if s.planned >= 3000.0 { 2 } else { 1 };
                 self.watch.auto_break = Some((now + 7.0, bm));
             }
         } else {
+            self.pomo_session_done(now, false);
             self.set_mood(now, "sad", 4.0);
             self.events.push(Ev::Beep { kind: "sad".into(), variety: false });
             let line = format!("Stopped. You focused for {} min. Come back soon.", (focused / 60.0).floor() as i64);

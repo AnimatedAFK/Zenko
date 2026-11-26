@@ -18,6 +18,7 @@ pub mod tkgrid;
 pub mod life;
 pub mod lockin;
 pub mod rewards;
+pub mod tt;
 pub mod icon;
 pub mod sound;
 pub mod theme;
@@ -28,6 +29,8 @@ pub use play::{Play, Pose, Prop};
 pub enum Ev {
     /// say(text, secs, choices): a speech bubble; choices = (label, command)
     Say { text: String, secs: f64, choices: Vec<(String, String)> },
+    /// remind_aloud: read this out with the Windows voice
+    Speak(String),
     /// beep(kind): one of her voice clips (variety = the play-interaction pool)
     Beep { kind: String, variety: bool },
     /// ui_sound(kind)
@@ -331,12 +334,14 @@ pub struct Session {
     pub half: bool,
     pub final_: bool,
     pub closed: i64,
+    /// the timetable item this session came from (index into Companion::tt)
+    pub item: Option<usize>,
 }
 
 impl Session {
     pub fn new(task: &str, minutes: f64) -> Session {
         Session { task: task.into(), planned: minutes * 60.0, elapsed: 0.0, dist: 0.0, away: 0.0, paused: false,
-                  idle_paused: false, last_motiv: 0.0, half: false, final_: false, closed: 0 }
+                  idle_paused: false, last_motiv: 0.0, half: false, final_: false, closed: 0, item: None }
     }
 }
 
@@ -398,6 +403,12 @@ pub struct Companion {
     pub lock_eating: bool,
     pub esc_t: f64,
     pub rewards: rewards::Rewards,
+    /// the timetable (load_tt at start-up), check_timetable's throttle and what it already announced
+    pub tt: Vec<serde_json::Value>,
+    pub tt_last: f64,
+    pub announced: std::collections::HashSet<String>,
+    pub pomo: Option<tt::Pomo>,
+    pub pomo_id: u64,
 }
 
 impl Companion {
@@ -444,6 +455,11 @@ impl Companion {
             lock_eating: false,
             esc_t: 0.0,
             rewards: Default::default(),
+            tt: tt::load_tt(),
+            tt_last: 0.0,
+            announced: Default::default(),
+            pomo: None,
+            pomo_id: 0,
         };
         c.compute_dims();
         c.apply_look();

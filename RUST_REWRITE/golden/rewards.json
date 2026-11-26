@@ -16,6 +16,7 @@
   "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {\n  \"first\": \"2025-11-26\",\n  \"spotless\": \"2025-11-26\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 0.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 15.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 15,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 6.497999999999999,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "stats": "{\"2025-11-26\": 1498}",
+  "timetable": null,
   "out": [
    [
     0.0,
@@ -72,6 +73,7 @@
   "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 26.75,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "stats": "{\"2025-11-26\": 390}",
+  "timetable": null,
   "out": [],
   "later": []
  },
@@ -94,6 +96,7 @@
   "startup": "{\n \"garden\": {\n  \"xp\": 240.0,\n  \"health\": 0.8,\n  \"active\": [\n   \"2025-11-20\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-20\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   },\n   {\n    \"d\": \"2025-11-21\",\n    \"m\": 30.0,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 77,\n  \"planted\": \"2025-10-01\"\n },\n \"hunger\": 70.0,\n \"hunger_t\": 1764144000.25,\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 50,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "life": "{\n \"garden\": {\n  \"xp\": 257.4,\n  \"health\": 0.35,\n  \"active\": [\n   \"2025-11-20\",\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-20\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   },\n   {\n    \"d\": \"2025-11-21\",\n    \"m\": 30.0,\n    \"k\": \"focus\"\n   },\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 17,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 77,\n  \"planted\": \"2025-10-01\"\n },\n \"hunger\": 61.5,\n \"hunger_t\": 1764151200.25,\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 50,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 6.74,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "stats": "{\"2025-11-26\": 1740}",
+  "timetable": null,
   "out": [],
   "later": []
  },
@@ -116,6 +119,7 @@
   "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764136800.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {\n  \"first\": \"2025-11-26\",\n  \"marathon\": \"2025-11-26\",\n  \"spotless\": \"2025-11-26\",\n  \"early\": \"2025-11-26\",\n  \"streak3\": \"2025-11-26\",\n  \"streak7\": \"2025-11-26\",\n  \"weekend\": \"2025-11-26\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 0,\n  \"dawn\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 0.0,\n \"hunger_t\": 1764136800.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 54.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"06:00\",\n    \"m\": 54,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\",\n   \"nara\",\n   \"ise\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 10.4,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "stats": "{\"2025-11-25\": 1500, \"2025-11-24\": 1500, \"2025-11-23\": 1500, \"2025-11-22\": 1500, \"2025-11-21\": 1500, \"2025-11-20\": 1500, \"2025-11-19\": 1500, \"2025-11-26\": 5400}",
+  "timetable": null,
   "out": [
    [
     0.0,
@@ -278,6 +282,7 @@
   "startup": "{\n \"garden\": {\n  \"xp\": 590.0,\n  \"health\": 0.8,\n  \"active\": [\n   \"2025-11-20\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-20\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   },\n   {\n    \"d\": \"2025-11-21\",\n    \"m\": 30.0,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 77,\n  \"planted\": \"2025-10-01\"\n },\n \"badges\": {\n  \"first\": \"x\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 50,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "life": "{\n \"garden\": {\n  \"xp\": 620.0,\n  \"health\": 0.35,\n  \"active\": [\n   \"2025-11-20\",\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-20\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   },\n   {\n    \"d\": \"2025-11-21\",\n    \"m\": 30.0,\n    \"k\": \"focus\"\n   },\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 30,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 77,\n  \"planted\": \"2025-10-01\"\n },\n \"badges\": {\n  \"first\": \"x\",\n  \"spotless\": \"2025-11-26\",\n  \"streak3\": \"2025-11-26\",\n  \"streak7\": \"2025-11-26\",\n  \"hours10\": \"2025-11-26\",\n  \"hours50\": \"2025-11-26\",\n  \"hours100\": \"2025-11-26\",\n  \"t_wanderer\": \"2025-11-26\",\n  \"japan\": \"2025-11-26\",\n  \"weekend\": \"2025-11-26\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 2,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 0.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\",\n   \"nara\",\n   \"ise\",\n   \"tokyo\",\n   \"fuji\",\n   \"kumano\",\n   \"kusatsu\",\n   \"nikko\",\n   \"kanazawa\",\n   \"izumo\",\n   \"miyajima\",\n   \"konpira\",\n   \"aso\",\n   \"yakushima\",\n   \"osorezan\",\n   \"sapporo\",\n   \"shiretoko\",\n   \"shuri\",\n   \"kiyomizu\",\n   \"arashiyama\",\n   \"tofukuji\"\n  ],\n  \"lock_min\": 50,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {\n  \"t_wanderer\": 1\n },\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 8.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "stats": "{\"2025-11-25\": 36000, \"2025-11-24\": 36000, \"2025-11-23\": 36000, \"2025-11-22\": 36000, \"2025-11-21\": 36000, \"2025-11-20\": 36000, \"2025-11-19\": 36000, \"2025-11-18\": 36000, \"2025-11-17\": 36000, \"2025-11-16\": 36000, \"2025-11-15\": 36000, \"2025-11-26\": 3000}",
+  "timetable": null,
   "out": [
    [
     0.0,
@@ -468,6 +473,7 @@
   "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {\n  \"lockin\": \"2025-11-26\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 50.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 50.0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 10.0,\n  \"gold\": 1,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "stats": null,
+  "timetable": null,
   "out": [
    [
     0.0,
@@ -532,6 +538,7 @@
   "startup": "{\n \"garden\": {\n  \"xp\": 240.0,\n  \"health\": 0.8,\n  \"active\": [\n   \"2025-11-20\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-20\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   },\n   {\n    \"d\": \"2025-11-21\",\n    \"m\": 30.0,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 77,\n  \"planted\": \"2025-10-01\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 50,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "life": "{\n \"garden\": {\n  \"xp\": 250.0,\n  \"health\": 0.5,\n  \"active\": [\n   \"2025-11-20\",\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-20\",\n    \"m\": 50,\n    \"k\": \"lockin\"\n   },\n   {\n    \"d\": \"2025-11-21\",\n    \"m\": 30.0,\n    \"k\": \"focus\"\n   },\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 10,\n    \"k\": \"lockin\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 77,\n  \"planted\": \"2025-10-01\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 60.0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 6.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "stats": null,
+  "timetable": null,
   "out": [
    [
     0.0,
@@ -561,6 +568,7 @@
   "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "stats": null,
+  "timetable": null,
   "out": [
    [
     0.0,
@@ -590,6 +598,7 @@
   "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1771012800.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2026-02-13\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {\n  \"lockin\": \"2026-02-13\",\n  \"s_fri13\": \"2026-02-13\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1771012800.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 25.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2026-02-13\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2026-02-13\",\n    \"t\": \"20:00\",\n    \"m\": 25,\n    \"k\": \"lockin\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2026-02-13\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 25.0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 7.5,\n  \"gold\": 1,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "stats": null,
+  "timetable": null,
   "out": [
    [
     0.0,
@@ -669,6 +678,7 @@
   "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1767470400.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2026-01-03\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {\n  \"lockin\": \"2026-01-03\",\n  \"s_fullmoon\": \"2026-01-03\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 1\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1767470400.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 60.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2026-01-03\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2026-01-03\",\n    \"t\": \"20:00\",\n    \"m\": 60,\n    \"k\": \"lockin\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2026-01-03\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 60.0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 11.0,\n  \"gold\": 1,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "stats": null,
+  "timetable": null,
   "out": [
    [
     0.0,
@@ -751,6 +761,7 @@
   "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1767236400.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2026-01-01\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {\n  \"first\": \"2026-01-01\",\n  \"spotless\": \"2026-01-01\",\n  \"s_newyear\": \"2026-01-01\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 0.0,\n \"hunger_t\": 1767236400.0,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 15.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2026-01-01\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2026-01-01\",\n    \"t\": \"03:00\",\n    \"m\": 15,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2026-01-01\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 6.5,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "stats": "{\"2026-01-01\": 1500}",
+  "timetable": null,
   "out": [
    [
     0.0,
@@ -826,6 +837,7 @@
   "startup": "{\n \"facts\": {\n  \"birthday\": \"11-26\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "life": "{\n \"facts\": {\n  \"birthday\": \"11-26\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"badges\": {\n  \"first\": \"2025-11-26\",\n  \"s_birthday\": \"2025-11-26\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 0.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 15.8,\n  \"health\": 1.0,\n  \"active\": [\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 16,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 6.585,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "stats": "{\"2025-11-26\": 1585}",
+  "timetable": null,
   "out": [
    [
     0.0,
@@ -866,6 +878,458 @@
   ]
  },
  {
+  "name": "timetable_alerts",
+  "now": 1764151200.25,
+  "files": {
+   "timetable.json": "[{\"start\": \"10:04\", \"task\": \"Bio *flashcards* ~ \\\"cells\\\"\", \"mins\": 45, \"daily\": true}, {\"start\": \"9:55\", \"task\": \"French\", \"mins\": \"20\", \"date\": \"2025-11-26\"}, {\"start\": \"10:20\", \"task\": \"Done already\", \"mins\": 30, \"daily\": true, \"done\": [\"2025-11-26\"]}, {\"start\": \"25:00\", \"task\": \"bad\"}, {\"start\": \"11am\", \"task\": \"\"}, {\"start\": \"11am\", \"task\": \"A really long timetable task name that gets clipped\", \"mins\": 10, \"date\": \"2025-11-26\"}]"
+  },
+  "cfg": {
+   "tts_voice": "win:Zira",
+   "tts_speed": 1
+  },
+  "act": {
+   "do": "tt",
+   "steps": [
+    0,
+    5,
+    12,
+    25,
+    40,
+    3300,
+    3310,
+    3320,
+    3605
+   ]
+  },
+  "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": null,
+  "timetable": "[{\"start\": \"10:04\", \"task\": \"Bio *flashcards* ~ \\\"cells\\\"\", \"mins\": 45, \"daily\": true}, {\"start\": \"9:55\", \"task\": \"French\", \"mins\": \"20\", \"date\": \"2025-11-26\"}, {\"start\": \"10:20\", \"task\": \"Done already\", \"mins\": 30, \"daily\": true, \"done\": [\"2025-11-26\"]}, {\"start\": \"25:00\", \"task\": \"bad\"}, {\"start\": \"11am\", \"task\": \"\"}, {\"start\": \"11am\", \"task\": \"A really long timetable task name that gets clipped\", \"mins\": 10, \"date\": \"2025-11-26\"}]",
+  "out": [
+   [
+    0.0,
+    "mood",
+    "happy",
+    3
+   ],
+   [
+    0.0,
+    "beep",
+    "happy"
+   ],
+   [
+    0.0,
+    "say",
+    "Timetable: time for “French” (20 min). Right-click me > Start timetable item!",
+    12
+   ],
+   [
+    0.0,
+    "beep",
+    "hello"
+   ],
+   [
+    0.0,
+    "step",
+    0
+   ],
+   [
+    0.0,
+    "step",
+    5
+   ],
+   [
+    0.0,
+    "say",
+    "Heads up: “Bio *flashcards* ~ \"cells\"” at 10:04 (in 4 min).",
+    9
+   ],
+   [
+    0.0,
+    "beep",
+    "ding"
+   ],
+   [
+    0.0,
+    "beep",
+    "hello"
+   ],
+   [
+    0.0,
+    "step",
+    12
+   ],
+   [
+    0.0,
+    "step",
+    25
+   ],
+   [
+    0.0,
+    "step",
+    40
+   ],
+   [
+    0.0,
+    "say",
+    "Heads up: “A really long timetable task …” at 11:00 (in 5 min).",
+    9
+   ],
+   [
+    0.0,
+    "beep",
+    "ding"
+   ],
+   [
+    0.0,
+    "beep",
+    "hello"
+   ],
+   [
+    0.0,
+    "step",
+    3300
+   ],
+   [
+    0.0,
+    "step",
+    3310
+   ],
+   [
+    0.0,
+    "step",
+    3320
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    3
+   ],
+   [
+    0.0,
+    "beep",
+    "happy"
+   ],
+   [
+    0.0,
+    "say",
+    "Timetable: time for “A really long timetable task …” (10 min). Right-click me > Start timetable item!",
+    12
+   ],
+   [
+    0.0,
+    "beep",
+    "hello"
+   ],
+   [
+    0.0,
+    "step",
+    3605
+   ]
+  ],
+  "later": []
+ },
+ {
+  "name": "timetable_english_voice",
+  "now": 1764151200.25,
+  "files": {
+   "timetable.json": "[{\"start\": \"10:03\", \"task\": \"**Maths** ~ \\\"vectors\\\"\", \"mins\": 25, \"daily\": true}]"
+  },
+  "cfg": {
+   "remind_voice": "english",
+   "tts_voice": "win:Zira",
+   "tts_speed": 1
+  },
+  "act": {
+   "do": "tt",
+   "steps": [
+    0,
+    200
+   ]
+  },
+  "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": null,
+  "timetable": "[{\"start\": \"10:03\", \"task\": \"**Maths** ~ \\\"vectors\\\"\", \"mins\": 25, \"daily\": true}]",
+  "out": [
+   [
+    0.0,
+    "say",
+    "Heads up: “**Maths** ~ \"vectors\"” at 10:03 (in 3 min).",
+    9
+   ],
+   [
+    0.0,
+    "beep",
+    "ding"
+   ],
+   [
+    0.0,
+    "speak",
+    "Heads up: Maths  vectors at 10:03 (in 3 min).",
+    "win:Zira",
+    1,
+    0
+   ],
+   [
+    0.0,
+    "step",
+    0
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    3
+   ],
+   [
+    0.0,
+    "beep",
+    "happy"
+   ],
+   [
+    0.0,
+    "say",
+    "Timetable: time for “**Maths** ~ \"vectors\"” (25 min). Right-click me > Start timetable item!",
+    12
+   ],
+   [
+    0.0,
+    "speak",
+    "Timetable: time for Maths  vectors (25 min).",
+    "win:Zira",
+    1,
+    0
+   ],
+   [
+    0.0,
+    "step",
+    200
+   ]
+  ],
+  "later": []
+ },
+ {
+  "name": "timetable_quiet",
+  "now": 1764151200.25,
+  "files": {
+   "timetable.json": "[{\"start\": \"10:03\", \"task\": \"Chem\", \"mins\": 25, \"daily\": true}]"
+  },
+  "cfg": {
+   "remind_aloud": false
+  },
+  "act": {
+   "do": "tt",
+   "steps": [
+    0,
+    200
+   ]
+  },
+  "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": null,
+  "timetable": "[{\"start\": \"10:03\", \"task\": \"Chem\", \"mins\": 25, \"daily\": true}]",
+  "out": [
+   [
+    0.0,
+    "say",
+    "Heads up: “Chem” at 10:03 (in 3 min).",
+    9
+   ],
+   [
+    0.0,
+    "beep",
+    "ding"
+   ],
+   [
+    0.0,
+    "step",
+    0
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    3
+   ],
+   [
+    0.0,
+    "beep",
+    "happy"
+   ],
+   [
+    0.0,
+    "say",
+    "Timetable: time for “Chem” (25 min). Right-click me > Start timetable item!",
+    12
+   ],
+   [
+    0.0,
+    "step",
+    200
+   ]
+  ],
+  "later": []
+ },
+ {
+  "name": "timetable_item_done_prepared",
+  "now": 1764151200.25,
+  "files": {
+   "timetable.json": "[{\"start\": \"09:30\", \"task\": \"Psych revision\", \"mins\": 30, \"daily\": false, \"date\": \"2025-11-26\", \"plan\": \"p1\", \"done\": []}, {\"start\": \"08:00\", \"task\": \"Psych 2\", \"mins\": 20, \"plan\": \"p1\", \"date\": \"2025-11-25\", \"done\": [\"2025-11-25\"]}]"
+  },
+  "cfg": {},
+  "act": {
+   "do": "session",
+   "task": "Psych revision",
+   "planned": 1800,
+   "elapsed": 1800,
+   "dist": 0,
+   "away": 0,
+   "completed": true,
+   "item": 0
+  },
+  "startup": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {\n  \"p1\": 30\n },\n \"facts\": {},\n \"badges\": {\n  \"first\": \"2025-11-26\",\n  \"spotless\": \"2025-11-26\",\n  \"prepared\": \"2025-11-26\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 0\n },\n \"counted\": {\n  \"2025-11-26|09:30|p1\": 30\n },\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 0.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 18.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 18,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 6.8,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": "{\"2025-11-26\": 1800}",
+  "timetable": "[\n  {\n    \"start\": \"09:30\",\n    \"task\": \"Psych revision\",\n    \"mins\": 30,\n    \"daily\": false,\n    \"date\": \"2025-11-26\",\n    \"plan\": \"p1\",\n    \"done\": [\n      \"2025-11-26\"\n    ]\n  },\n  {\n    \"start\": \"08:00\",\n    \"task\": \"Psych 2\",\n    \"mins\": 20,\n    \"plan\": \"p1\",\n    \"date\": \"2025-11-25\",\n    \"done\": [\n      \"2025-11-25\"\n    ],\n    \"daily\": false\n  }\n]",
+  "out": [
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ]
+  ],
+  "later": [
+   [
+    2.5,
+    "say",
+    "New ema badge! 【初】 First Step - Finish your first focus session. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【清】 Spotless - A 25+ minute session with no off-task time. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【鳥】 Ready to Fly - Finish every planned session before an exam. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ]
+  ]
+ },
+ {
+  "name": "timetable_ema_last_bit",
+  "now": 1764151200.25,
+  "files": {
+   "timetable.json": "[{\"start\": \"09:00\", \"task\": \"IA draft\", \"mins\": 50, \"plan\": \"ema:e7\", \"date\": \"2025-11-26\"}, {\"start\": \"09:00\", \"task\": \"IA draft\", \"mins\": 50, \"plan\": \"ema:e7\", \"date\": \"2025-11-20\"}]",
+   "zenko_life.json": "{\"ema\": [{\"id\": \"e7\", \"text\": \"Finish the maths IA draft before Friday\", \"at\": null, \"made\": 1.0, \"done\": false}]}"
+  },
+  "cfg": {},
+  "act": {
+   "do": "session",
+   "task": "IA draft",
+   "planned": 3000,
+   "elapsed": 3000,
+   "dist": 0,
+   "away": 0,
+   "completed": true,
+   "item": 0
+  },
+  "startup": "{\n \"ema\": [\n  {\n   \"id\": \"e7\",\n   \"text\": \"Finish the maths IA draft before Friday\",\n   \"at\": null,\n   \"made\": 1.0,\n   \"done\": false\n  }\n ],\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"badges\": {},\n \"said\": {},\n \"stats\": {\n  \"sessions\": 0,\n  \"lockins\": 0\n },\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "life": "{\n \"ema\": [\n  {\n   \"id\": \"e7\",\n   \"text\": \"Finish the maths IA draft before Friday\",\n   \"at\": null,\n   \"made\": 1.0,\n   \"done\": false\n  }\n ],\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {\n  \"ema:e7\": 50\n },\n \"facts\": {},\n \"badges\": {\n  \"first\": \"2025-11-26\",\n  \"spotless\": \"2025-11-26\"\n },\n \"said\": {},\n \"stats\": {\n  \"sessions\": 1,\n  \"lockins\": 0\n },\n \"counted\": {\n  \"2025-11-26|09:00|ema:e7\": 50\n },\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 0.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 30.0,\n  \"health\": 1.0,\n  \"active\": [\n   \"2025-11-26\"\n  ],\n  \"log\": [\n   {\n    \"d\": \"2025-11-26\",\n    \"t\": \"10:00\",\n    \"m\": 30,\n    \"k\": \"focus\"\n   }\n  ],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 8.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
+  "stats": "{\"2025-11-26\": 3000}",
+  "timetable": "[\n  {\n    \"start\": \"09:00\",\n    \"task\": \"IA draft\",\n    \"mins\": 50,\n    \"plan\": \"ema:e7\",\n    \"date\": \"2025-11-26\",\n    \"daily\": false,\n    \"done\": [\n      \"2025-11-26\"\n    ]\n  },\n  {\n    \"start\": \"09:00\",\n    \"task\": \"IA draft\",\n    \"mins\": 50,\n    \"plan\": \"ema:e7\",\n    \"date\": \"2025-11-20\",\n    \"daily\": false,\n    \"done\": []\n  }\n]",
+  "out": [
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ],
+   [
+    0.0,
+    "mood",
+    "happy",
+    5
+   ]
+  ],
+  "later": [
+   [
+    0.5,
+    "say",
+    "That was the last planned bit of “Finish the maths IA draft bef…”. Take its ema down?",
+    15,
+    [
+     "Yes, done!",
+     "Not yet"
+    ]
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【初】 First Step - Finish your first focus session. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    2.5,
+    "say",
+    "New ema badge! 【清】 Spotless - A 25+ minute session with no off-task time. Sugoi~!",
+    10
+   ],
+   [
+    2.5,
+    "beep",
+    "gift"
+   ],
+   [
+    9.0,
+    "say",
+    "Kon! Your garden tree grew: 芽 (Sprout) *sparkle*~ Come see it in the Garden tab!",
+    10,
+    [
+     "Show me"
+    ]
+   ]
+  ]
+ },
+ {
   "name": "badge_tick_tiers",
   "now": 1764151200.25,
   "files": {
@@ -879,6 +1343,7 @@
   "startup": "{\n \"stats\": {\n  \"sessions\": 26,\n  \"lockins\": 11\n },\n \"badges\": {},\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"said\": {},\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {},\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "life": "{\n \"stats\": {\n  \"sessions\": 26,\n  \"lockins\": 11\n },\n \"badges\": {\n  \"t_wanderer\": \"2025-11-26\",\n  \"t_lantern\": \"2025-11-26\",\n  \"t_lock\": \"2025-11-26\",\n  \"japan\": \"2025-11-26\",\n  \"weekend\": \"2025-11-26\"\n },\n \"free\": {\n  \"0\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"1\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"2\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"3\": [\n   16,\n   17,\n   18,\n   19\n  ],\n  \"4\": [\n   16,\n   17,\n   18\n  ],\n  \"5\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ],\n  \"6\": [\n   10,\n   11,\n   14,\n   15,\n   16\n  ]\n },\n \"free_dates\": {},\n \"plan_hours\": {},\n \"studied\": {},\n \"facts\": {},\n \"said\": {},\n \"counted\": {},\n \"journal\": [],\n \"cards\": [],\n \"found\": [],\n \"notes\": [],\n \"hunger\": 30.0,\n \"hunger_t\": 1764151200.25,\n \"slog\": {},\n \"dlog\": {},\n \"hourlog\": {},\n \"win_subj\": {},\n \"subj_words\": {},\n \"goals\": {},\n \"unsorted\": {},\n \"nb_hist\": {},\n \"grades\": [],\n \"fr_vocab\": {},\n \"book_state\": {},\n \"ibtasks\": [],\n \"garden\": {\n  \"xp\": 0.0,\n  \"health\": 1.0,\n  \"active\": [],\n  \"log\": [],\n  \"grove\": [],\n  \"seed\": 4242,\n  \"planted\": \"2025-11-26\"\n },\n \"screen\": {\n  \"days\": {}\n },\n \"journey\": {\n  \"seen\": [\n   \"inari\"\n  ],\n  \"lock_min\": 0,\n  \"quiz\": []\n },\n \"ema\": [],\n \"btier\": {\n  \"t_wanderer\": 1,\n  \"t_lantern\": 1,\n  \"t_lock\": 1\n },\n \"badge_pins\": [],\n \"fishing\": {\n  \"bait\": 5.0,\n  \"gold\": 0,\n  \"book\": {},\n  \"log\": [],\n  \"pond\": [],\n  \"right\": 0,\n  \"asked\": 0,\n  \"row\": 0,\n  \"free_day\": \"\",\n  \"depth\": 1,\n  \"src\": \"mix\",\n  \"subj\": \"any\"\n }\n}",
   "stats": "{\"2025-11-25\": 36000, \"2025-11-24\": 36000, \"2025-11-23\": 36000, \"2025-11-22\": 36000, \"2025-11-21\": 36000, \"2025-11-20\": 36000, \"2025-11-19\": 36000, \"2025-11-18\": 36000, \"2025-11-17\": 36000, \"2025-11-16\": 36000, \"2025-11-15\": 36000}",
+  "timetable": null,
   "out": [
    [
     0.0,

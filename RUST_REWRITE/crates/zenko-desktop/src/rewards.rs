@@ -226,6 +226,10 @@ pub fn unlocked_accents() -> Vec<String> {
 pub enum Later {
     Say { text: String, secs: f64, choices: Vec<(String, String)>, only_idle: bool, beep: Option<String> },
     BadgeCheck,
+    /// pomodoro: start_break(m) unless a session or break is on
+    Break(i64),
+    /// pomodoro: the next round, if it's still the same pomodoro
+    PomoGo(u64),
 }
 
 #[derive(Clone, Debug, Default)]
@@ -337,7 +341,7 @@ impl Companion {
         self.rand()
     }
 
-    fn life_do<R>(&mut self, f: impl FnOnce(&mut Value) -> R) -> R {
+    pub(crate) fn life_do<R>(&mut self, f: impl FnOnce(&mut Value) -> R) -> R {
         let mut seq: Vec<f64> = (0..4).map(|_| self.rnd()).collect();
         let mut r = || seq.pop().unwrap_or(0.5);
         update_life(&mut r, f)
@@ -348,7 +352,7 @@ impl Companion {
         self.life_do(|_| ());
     }
 
-    fn later(&mut self, at: f64, job: Later) {
+    pub(crate) fn later(&mut self, at: f64, job: Later) {
         self.rewards.later.push((at, job));
     }
 
@@ -368,6 +372,12 @@ impl Companion {
                     }
                 }
                 Later::BadgeCheck => self.z22_badge_check(now),
+                Later::Break(m) => {
+                    if self.session.is_none() && self.brk.is_none() {
+                        self.start_break(now, Some(m));
+                    }
+                }
+                Later::PomoGo(id) => self.pomo_go(now, id),
             }
         }
         // z22_badge_tick: 30 s after start, then every 3 minutes

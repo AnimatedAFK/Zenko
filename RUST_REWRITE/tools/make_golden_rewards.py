@@ -56,7 +56,7 @@ class Root:
         return lambda *a, **kw: None
 
 
-NOOP = ("daily_refresh", "map_refresh", "up_refresh", "chat_line", "garden_refresh", "music_session_hook",
+NOOP = ("tt_refresh", "daily_refresh", "map_refresh", "up_refresh", "chat_line", "garden_refresh", "music_session_hook",
         "music_apply", "badges_refresh", "fish_refresh", "hub_refresh", "z22_badges_refresh", "zk_on_map")
 
 
@@ -71,8 +71,14 @@ def make(cfg, extra):
     o.images = {}
     o.FONT_CLASSES = ()
     o._z22_metrics_t = 0.0
-    o.say = lambda text, secs=6, chips=None, *a, **k: OUT.append(["say", text, secs] + ([[c[0] for c in chips]]
-                                                                                    if chips else []))
+    def say(text, secs=6, chips=None, *a, **k):
+        if isinstance(getattr(o, "_say_cap", None), list):
+            o._say_cap.append(text)
+        OUT.append(["say", text, secs] + ([[c[0] for c in chips]] if chips else []))
+    o.say = say
+    o.speaker = types.SimpleNamespace(say=lambda text, *a: OUT.append(["speak", text] + list(a)))
+    o.tt = Z.load_tt()
+    o.announced, o._tt_last = set(), 0.0
     o.set_mood = lambda m, secs=0, *a, **k: OUT.append(["mood", m, secs])
     o.save_extra = lambda: None
     o.life_init()
@@ -102,7 +108,7 @@ def read(name):
 
 
 def wipe():
-    for n in ("zenko_life.json", "stats.json", "zenko_extras.json"):
+    for n in ("zenko_life.json", "stats.json", "zenko_extras.json", "timetable.json"):
         p = os.path.join(Z.DATA_DIR, n)
         if os.path.exists(p):
             os.remove(p)
@@ -134,13 +140,22 @@ def run(case):
             focused = max(0.0, s["elapsed"] - s["dist"] - s["away"])
             Z.add_stats(focused)
             self.life_session_done(s, completed, focused)
+            if completed and s.get("item") is not None:
+                self.tt_mark(s["item"], True)
         Z.FoxBuddy.end_session = base_end
         o.session = {"task": act["task"], "planned": act["planned"], "elapsed": act["elapsed"], "dist": act["dist"],
-                     "away": act["away"], "item": None}
+                     "away": act["away"],
+                     "item": o.tt[act["item"]] if "item" in act else None}
         o.end_session(act["completed"])
     elif act["do"] == "lockin":
         o.lockin = {"until": NOW[0] + 600, "eaten": act["eaten"], "t0": NOW[0] - act["mins"] * 60.0}
         o.lockin_stop(act["done"], False)
+    elif act["do"] == "tt":
+        Z.IS_WIN = True
+        for off in act["steps"]:
+            NOW[0] = case["now"] + off
+            o.check_timetable(1000.0 + off)
+            OUT.append(["step", off])
     elif act["do"] == "tick":
         o.z22_badge_check()
     now_out = [[0.0] + e for e in OUT]
@@ -148,6 +163,7 @@ def run(case):
     later = drain(o)
     return {"name": case["name"], "now": case["now"], "files": files, "cfg": case.get("cfg", {}),
             "act": act, "startup": startup, "life": read("zenko_life.json"), "stats": read("stats.json"),
+            "timetable": read("timetable.json"),
             "out": now_out, "later": later}
 
 
@@ -187,6 +203,38 @@ CASES = [
     {"name": "birthday_session", "now": T, "files": {"zenko_life.json": {"facts": {"birthday": "11-26"}}},
      "act": {"do": "session", "task": "Bday", "planned": 1500, "elapsed": 1600, "dist": 10, "away": 5,
              "completed": True}},
+    {"name": "timetable_alerts", "now": T, "cfg": {"tts_voice": "win:Zira", "tts_speed": 1},
+     "files": {"timetable.json": json.dumps([
+         {"start": "10:04", "task": "Bio *flashcards* ~ \"cells\"", "mins": 45, "daily": True},
+         {"start": "9:55", "task": "French", "mins": "20", "date": "2025-11-26"},
+         {"start": "10:20", "task": "Done already", "mins": 30, "daily": True, "done": ["2025-11-26"]},
+         {"start": "25:00", "task": "bad"}, {"start": "11am", "task": ""},
+         {"start": "11am", "task": "A really long timetable task name that gets clipped", "mins": 10,
+          "date": "2025-11-26"}])},
+     "act": {"do": "tt", "steps": [0, 5, 12, 25, 40, 3600 - 300, 3600 - 290, 3600 - 280, 3605]}},
+    {"name": "timetable_english_voice", "now": T, "cfg": {"remind_voice": "english", "tts_voice": "win:Zira", "tts_speed": 1},
+     "files": {"timetable.json": json.dumps([{"start": "10:03", "task": "**Maths** ~ \"vectors\"", "mins": 25,
+                                              "daily": True}])},
+     "act": {"do": "tt", "steps": [0, 200]}},
+    {"name": "timetable_quiet", "now": T, "cfg": {"remind_aloud": False},
+     "files": {"timetable.json": json.dumps([{"start": "10:03", "task": "Chem", "mins": 25, "daily": True}])},
+     "act": {"do": "tt", "steps": [0, 200]}},
+    {"name": "timetable_item_done_prepared", "now": T,
+     "files": {"timetable.json": json.dumps([{"start": "09:30", "task": "Psych revision", "mins": 30, "daily": False,
+                                              "date": "2025-11-26", "plan": "p1", "done": []},
+                                             {"start": "08:00", "task": "Psych 2", "mins": 20, "plan": "p1",
+                                              "date": "2025-11-25", "done": ["2025-11-25"]}])},
+     "act": {"do": "session", "task": "Psych revision", "planned": 1800, "elapsed": 1800, "dist": 0, "away": 0,
+             "completed": True, "item": 0}},
+    {"name": "timetable_ema_last_bit", "now": T,
+     "files": {"timetable.json": json.dumps([{"start": "09:00", "task": "IA draft", "mins": 50, "plan": "ema:e7",
+                                              "date": "2025-11-26"},
+                                             {"start": "09:00", "task": "IA draft", "mins": 50, "plan": "ema:e7",
+                                              "date": "2025-11-20"}]),
+               "zenko_life.json": {"ema": [{"id": "e7", "text": "Finish the maths IA draft before Friday", "at": None,
+                                            "made": 1.0, "done": False}]}},
+     "act": {"do": "session", "task": "IA draft", "planned": 3000, "elapsed": 3000, "dist": 0, "away": 0,
+             "completed": True, "item": 0}},
     {"name": "badge_tick_tiers", "now": T,
      "files": {"stats.json": big_stats, "zenko_life.json": {"stats": {"sessions": 26, "lockins": 11}, "badges": {}}},
      "act": {"do": "tick"}},

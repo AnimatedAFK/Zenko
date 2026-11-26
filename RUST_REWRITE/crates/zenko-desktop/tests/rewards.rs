@@ -5,7 +5,7 @@
 use serde_json::{Value, json};
 use zenko_desktop::lockin::Lockin;
 use zenko_desktop::rewards::Later;
-use zenko_desktop::{Cfg, Companion, set_fake_now};
+use zenko_desktop::{Cfg, Companion, Ev, set_fake_now};
 
 fn read(dir: &std::path::Path, name: &str) -> Option<String> {
     std::fs::read_to_string(dir.join(name)).ok()
@@ -65,7 +65,8 @@ fn rewards_match_zenko_py() {
         set_fake_now(Some(now0 + act["later"].as_f64().unwrap_or(0.0)));
         match act["do"].as_str().unwrap() {
             "session" => {
-                f.start_session(t, act["task"].as_str().unwrap(), act["planned"].as_f64().unwrap() / 60.0);
+                let item = act.get("item").and_then(|v| v.as_u64()).map(|v| v as usize);
+                f.start_session_item(t, act["task"].as_str().unwrap(), act["planned"].as_f64().unwrap() / 60.0, item);
                 let s = f.session.as_mut().unwrap();
                 s.elapsed = act["elapsed"].as_f64().unwrap();
                 s.dist = act["dist"].as_f64().unwrap();
@@ -84,6 +85,43 @@ fn rewards_match_zenko_py() {
                     t0: wall - act["mins"].as_f64().unwrap() * 60.0,
                 });
                 f.lockin_stop(t, act["done"].as_bool().unwrap(), false);
+            }
+            "tt" => {
+                // check_timetable at each step; what she says, beeps and reads aloud must match
+                let mut got = vec![];
+                for off in act["steps"].as_array().unwrap() {
+                    let off = off.as_f64().unwrap();
+                    set_fake_now(Some(now0 + off));
+                    f.check_timetable(t + off);
+                    for e in f.events.drain(..) {
+                        match e {
+                            Ev::Say { text, secs, .. } => got.push(json!(["say", text, secs])),
+                            Ev::Beep { kind, .. } => got.push(json!(["beep", kind])),
+                            Ev::Speak(text) => got.push(json!(["speak", text])),
+                            _ => {}
+                        }
+                    }
+                    got.push(json!(["step", off]));
+                }
+                let want: Vec<Value> = case["out"].as_array().unwrap().iter()
+                    .filter(|e| e[1] != "mood")
+                    .map(|e| {
+                        let mut a = e.as_array().unwrap()[1..].to_vec();
+                        if a[0] == "say" {
+                            a[2] = json!(a[2].as_f64().unwrap());
+                        }
+                        if a[0] == "speak" {
+                            a.truncate(2);
+                        }
+                        if a[0] == "step" {
+                            a[1] = json!(a[1].as_f64().unwrap());
+                        }
+                        Value::Array(a)
+                    })
+                    .collect();
+                if got != want {
+                    bad.push(format!("{name}: timetable alerts\n got  {}\n want {}", json!(got), json!(want)));
+                }
             }
             _ => f.z22_badge_check(t),
         }
@@ -119,6 +157,10 @@ fn rewards_match_zenko_py() {
         let life = read(&data, "zenko_life.json");
         if fix(life.clone()) != fix(case["life"].as_str().map(String::from)) {
             bad.push(format!("{name}: zenko_life.json differs:\n{}", life.unwrap_or_default()));
+        }
+        let tt = read(&data, "timetable.json");
+        if tt.as_deref() != case["timetable"].as_str() {
+            bad.push(format!("{name}: timetable.json {:?}\n vs {:?}", tt, case["timetable"]));
         }
         let stats = read(&data, "stats.json");
         if stats.as_deref() != case["stats"].as_str() {

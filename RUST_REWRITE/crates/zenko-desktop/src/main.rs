@@ -23,6 +23,8 @@ mod tkw;
 mod gdi;
 #[cfg(windows)]
 mod menu;
+#[cfg(windows)]
+mod speak;
 
 #[cfg(windows)]
 fn main() {
@@ -396,6 +398,10 @@ mod win {
                     }
                 }
                 Ev::Command(c) => run_command(app, &c),
+                Ev::Speak(text) => {
+                    let c = &app.fox.cfg;
+                    crate::speak::say(&text, &c.s("tts_voice", ""), c.f("tts_speed", 0.0) as i64, c.f("tts_pitch", 0.0) as i64);
+                }
             }
         }
     }
@@ -517,6 +523,14 @@ mod win {
             let (kind, site) = rest.split_once(':').unwrap_or((rest, ""));
             let ok = close_distraction(kind);
             fox.closed_distraction(t, site, ok);
+        } else if let Some(i) = c.strip_prefix("tt_start:") {
+            if let Some(i) = i.parse::<usize>().ok().filter(|&i| i < fox.tt.len()) {
+                let it = fox.tt[i].clone();
+                let task = it["task"].as_str().map(String::from).unwrap_or_else(|| it["task"].to_string());
+                fox.start_session_item(t, &task, it["mins"].as_f64().unwrap_or(30.0), Some(i));
+            }
+        } else if let Some(id) = c.strip_prefix("ema_done:") {
+            fox.ema_set_done(id);
         } else if c == "lockin" {
             fox.lockin_start(t, None, false);
         } else if c == "lockin_resume" {
@@ -598,6 +612,12 @@ mod win {
             m.push(cmd("Stop session", "stop"));
         } else {
             m.push(cmd("Start focus session...", "focus"));
+        }
+        if let (Some(i), None) = (fox.focus_item(), &fox.session) {
+            let it = &fox.tt[i];
+            let task = it["task"].as_str().map(String::from).unwrap_or_else(|| it["task"].to_string());
+            m.push(cmd(&format!("Start timetable item: {} ({} min)", zenko_desktop::session::clip(&task, 22),
+                                it["mins"].as_i64().unwrap_or(30)), &format!("tt_start:{i}")));
         }
         m.push(Item::Sep);
         m.push(later("Open Zenko window"));
