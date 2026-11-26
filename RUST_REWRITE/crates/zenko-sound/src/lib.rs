@@ -4,6 +4,7 @@
 //! so the .wav bytes are the same as the ones zenko.py writes (checked by tests/sounds.rs).
 
 pub mod mt;
+pub mod music;
 use mt::PyRandom;
 use std::f64::consts::PI;
 

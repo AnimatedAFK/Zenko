@@ -48,7 +48,7 @@ order is kept where it changes the result (tail outlines, eye cells).
 | ctypes user32/kernel32/shcore | foreground window, idle time, DPI, hotkeys, media keys, battery | `windows-sys` |
 | winsound + MCI | sound effects, background music | `PlaySoundW` + `mciSendStringW` (the same Windows APIs) |
 | synthesised WAVs (`_koto`, `_bell`, ...) | all sounds and music | port the maths 1:1 and compare the bytes with Python |
-| urllib | weather, search, wiki, news, Gemini, ntfy Town square, updater | `ureq` with Windows' own TLS (schannel), so school proxies and certificates behave as they do now |
+| urllib | weather, search, wiki, news, Gemini, ntfy Town square, updater | Windows' own WinHTTP (net.rs), so school proxies and certificates behave as they do now |
 | json | every data file | `serde_json` (same files, same keys) |
 | threading + queue | brain, web, voice, prewarm | `std::thread` + channels |
 | re, difflib, unicodedata | chat routing, typo fixes | `regex`, `strsim`, `unicode-normalization` |
@@ -76,8 +76,8 @@ order is kept where it changes the result (tail outlines, eye cells).
 | Focus sessions | start, pause/resume, stop, countdown on the ema, idle pause, end lines, stats.json, the new-session dialog, timer panel, distraction detection (foreground window, browser titles, site rules, study videos), nags, praise, pep talks, auto-close, breaks, learned habits | **done, not yet seen on Windows** (distraction decisions match Python on 25 titles; dialog layout matches real Tk) |
 | Roaming and poses | walks along the taskbar, chases the mouse, hops home, zenko19 four-legged walk, stretch / play bow / pounce / rest / sniff routines | **done, not yet seen on Windows** |
 | Lock-in | timer, hachimaki, Esc-hold exit, pounce-and-eat of distractions (tab close / minimise / close), the zenko21 overlay animation, eaten counts, resume after restart | **done, not yet seen on Windows** |
-| Desktop fox, rest | music tablet, battery, weather particles, the visiting fox, slide, focus glow, exam countdown on the ema | |
-| Session rewards | garden growth, journey minutes, badges, hunger after a session or lock-in, timetable marking, pomodoro, music hooks | **garden, journey, badges, hunger, counters done** (byte-for-byte vs zenko.py); timetable, pomodoro, music to do |
+| Desktop fox, rest | music tablet, battery, weather particles, the visiting fox, slide, focus glow, exam countdown on the ema | **music tablet, weather particles + real weather, visiting fox, 30 s life tick done**; battery, slide, glow, ema countdown to do |
+| Session rewards | garden growth, journey minutes, badges, hunger after a session or lock-in, timetable marking, pomodoro, music hooks | **all done** (byte-for-byte vs zenko.py), except the Spotify-account music hooks |
 | Hub shell | sidebar with pixel icons, rearrange, accents, text scaling, themed scrollbars, Ctrl+K search, page transitions, living sidebar fox | |
 | Home, Daily, You | streak, mood/hunger, 61 badges, check-ins, journal | |
 | Timetable, Upcoming, Japanese clock, planner, reminders rack | free hours, half-hour slots, plan/replan, countdowns, emas that auto-plan, PDF export | |
@@ -89,7 +89,7 @@ order is kept where it changes the result (tail outlines, eye cells).
 | World map, journey, Town square | shrines to the Silk Road, quizzes, rewards, real-date festivals, ntfy chat street | |
 | Screen time | per-app/site time, private windows skipped | |
 | Voice | VOICEVOX auto-start + speech, chirps, offline voice chat, Piper, SAPI | |
-| Sounds and music | synthesised UI sounds, 3 background tracks | |
+| Sounds and music | synthesised UI sounds, 3 background tracks | **done**: 279 sounds and the 3 loops byte-identical |
 | Installer and updater | self-install, Releases updater, crash logs | |
 | Browser link | Linked light, browser_inbox.json, focus with Zenko | |
 
@@ -110,7 +110,8 @@ order is kept where it changes the result (tail outlines, eye cells).
 2. **In progress:** desktop fox window. Done: sounds, play reactions, speech bubble, right-click menu, sessions with the
    dialog and timer panel, distraction checks, nags, pep talks, breaks, roaming and poses, lock-in with the pounce.
    Stage 2c done: session and lock-in rewards (rewards.rs).
-   Next: pomodoro and timetable marking, music tablet, weather, visiting fox.
+   Stage 2d done: pomodoro, timetable alerts/marking, background music, music tablet, weather, visiting fox, life tick.
+   Next: battery on the tail, vertical slide, focus glow, ema countdown, daily check-in card, then the hub.
 3. A Tk-compatible drawing layer and the fonts, checked by screenshot comparison with Tk.
 4. Hub pages one at a time (Home, Timetable/Upcoming, Chat, Settings/Customize first, then the rest), each compared with Python.
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.

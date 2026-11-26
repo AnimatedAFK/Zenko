@@ -25,6 +25,10 @@ mod gdi;
 mod menu;
 #[cfg(windows)]
 mod speak;
+#[cfg(windows)]
+mod bgm;
+#[cfg(windows)]
+mod net;
 
 #[cfg(windows)]
 fn main() {
@@ -85,6 +89,11 @@ mod win {
         panel_dib: Option<(HDC, HBITMAP, *mut u8, i32, i32)>,
         fg: (String, String),
         next_lock: f64,
+        /// player_poll (1.5 s), music_watch (4 s), life_slow_tick (30 s)
+        next_player: f64,
+        next_watch: f64,
+        next_slow: f64,
+        next_wx: f64,
         eating: Option<zenko_desktop::lockin::Eat>,
         next_top: f64,
         hwnd: HWND,
@@ -398,6 +407,9 @@ mod win {
                     }
                 }
                 Ev::Command(c) => run_command(app, &c),
+                Ev::Bgm(Some((track, vol))) => crate::bgm::play(&track, vol),
+                Ev::Bgm(None) => crate::bgm::stop(),
+                Ev::Media(k) => crate::bgm::media_key(&k),
                 Ev::Speak(text) => {
                     let c = &app.fox.cfg;
                     crate::speak::say(&text, &c.s("tts_voice", ""), c.f("tts_speed", 0.0) as i64, c.f("tts_pitch", 0.0) as i64);
@@ -458,6 +470,32 @@ mod win {
             if crate::eat::take_closed() {
                 app.fox.lock_eating = false;
                 app.eating = None;
+            }
+            if t >= app.next_player {
+                app.next_player = t + 1.5;
+                app.fox.player_poll(crate::bgm::spotify_window());
+            }
+            if t >= app.next_watch {
+                app.next_watch = t + 4.0;
+                if app.fox.music.bgm_state.as_ref().is_some_and(|s| s.0) {
+                    crate::bgm::keep_going();
+                }
+            }
+            if crate::bgm::FAILED.swap(false, std::sync::atomic::Ordering::Relaxed) {
+                app.fox.say("Uu~ Windows wouldn't play the background music. (It still works for her other sounds.)", 8.0);
+            }
+            if t >= app.next_wx {
+                app.next_wx = t + 45.0 * 60.0; // weather_poll
+                if let Some(city) = app.fox.weather_wanted() {
+                    crate::net::weather_poll(city);
+                }
+            }
+            if let Some(code) = crate::net::CODE.lock().unwrap().take() {
+                app.fox.slow.wx.code = Some(code);
+            }
+            if t >= app.next_slow {
+                app.next_slow = t + 30.0;
+                app.fox.life_slow(t);
             }
             app.fox.pump(t);
             app.fox.win_move = None;
@@ -531,6 +569,8 @@ mod win {
             }
         } else if let Some(id) = c.strip_prefix("ema_done:") {
             fox.ema_set_done(id);
+        } else if c == "music_apply" {
+            fox.music_apply();
         } else if c == "lockin" {
             fox.lockin_start(t, None, false);
         } else if c == "lockin_resume" {
@@ -760,6 +800,11 @@ mod win {
                                         v["y"] = y.into();
                                     });
                                 }
+                                Some(false) if app.fox.tablet_hit(now(app), cx, cy).is_some() => {
+                                    let t = now(app);
+                                    let n = app.fox.tablet_hit(t, cx, cy).unwrap_or("screen");
+                                    app.fox.tablet_press(t, n);
+                                }
                                 Some(false) if cx >= app.fox.colw => {
                                     // a click on the fox itself (head, nose, belly, tails react differently)
                                     let t = now(app);
@@ -880,10 +925,19 @@ mod win {
                     panel_dib: None,
                     fg: (String::new(), String::new()),
                     next_lock: 0.0,
+                    next_player: 1001.2,
+                    next_watch: 1008.0,
+                    next_slow: 1006.0,
+                    next_wx: 1009.0,
                     eating: None,
                     next_top: 1002.5,
                     hwnd,
                 })
+            });
+            APP.with(|a| {
+                if let Some(app) = a.borrow_mut().as_mut() {
+                    app.fox.delayed.push((1003.5, Ev::Command("music_apply".into())));
+                }
             });
             if Companion::lockin_pending() {
                 APP.with(|a| {

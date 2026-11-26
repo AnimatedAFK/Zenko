@@ -230,6 +230,9 @@ pub enum Later {
     Break(i64),
     /// pomodoro: the next round, if it's still the same pomodoro
     PomoGo(u64),
+    MusicApply,
+    /// tablet_press next/previous: forget the last song so the new one is announced
+    ForgetSong,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -378,6 +381,8 @@ impl Companion {
                     }
                 }
                 Later::PomoGo(id) => self.pomo_go(now, id),
+                Later::MusicApply => self.music_apply(),
+                Later::ForgetSong => self.music.last_song = None,
             }
         }
         // z22_badge_tick: 30 s after start, then every 3 minutes

@@ -19,6 +19,8 @@ pub mod life;
 pub mod lockin;
 pub mod rewards;
 pub mod tt;
+pub mod music;
+pub mod slow;
 pub mod icon;
 pub mod sound;
 pub mod theme;
@@ -31,6 +33,10 @@ pub enum Ev {
     Say { text: String, secs: f64, choices: Vec<(String, String)> },
     /// remind_aloud: read this out with the Windows voice
     Speak(String),
+    /// the background loop: Some((track, volume)) to play it, None to stop
+    Bgm(Option<(String, i64)>),
+    /// press a media key ("playpause" / "next" / "previous")
+    Media(String),
     /// beep(kind): one of her voice clips (variety = the play-interaction pool)
     Beep { kind: String, variety: bool },
     /// ui_sound(kind)
@@ -409,6 +415,8 @@ pub struct Companion {
     pub announced: std::collections::HashSet<String>,
     pub pomo: Option<tt::Pomo>,
     pub pomo_id: u64,
+    pub music: music::Music,
+    pub slow: slow::Slow,
 }
 
 impl Companion {
@@ -460,10 +468,13 @@ impl Companion {
             announced: Default::default(),
             pomo: None,
             pomo_id: 0,
+            music: Default::default(),
+            slow: Default::default(),
         };
         c.compute_dims();
         c.apply_look();
         c.life.roam_next = now + 45.0 + 45.0 * c.rand();
+        c.slow_init(now);
         c
     }
 
@@ -864,6 +875,7 @@ impl Companion {
             prop = self.play_pose(now, &mut st);
         }
         self.life_pose(now, &mut st, win, pointer);
+        self.wx_step(now);
         self.pose = Some(st.clone());
         let Pose { state, hx, ear, look, frame, acc, tframe, .. } = st.clone();
         let (dx, dy) = (dx + st.dxf * z, dy + st.dyf * z);
@@ -874,6 +886,7 @@ impl Companion {
             h: fh,
             px: vec![[0, 0, 0, 0]; fw * fh],
         };
+        self.wx_draw(&mut out);
         let (fx0, fy0) = (self.colw + dx, self.fox_y + dy);
         let accs: Vec<&str> = acc.iter().map(|s| s.as_str()).collect();
         let acck = accs.join(",");
@@ -915,8 +928,20 @@ impl Companion {
             )
             .clone();
         blit(&mut out, &im, fx0, fy0);
-        if !curl_pic && !walking {
-            self.draw_belly(&mut out, now, dx, dy);
+        if !walking {
+            if self.tablet_shown(&state) {
+                // the music tablet in her paws (draw_tablet) instead of the ema timer
+                let rows = self.tablet_rows(now);
+                let mut pal = self.pal.clone();
+                for (k, v) in music::ldata()["TAB_PAL"].as_object().unwrap() {
+                    pal.set(k.as_bytes()[0], v.as_str().unwrap());
+                }
+                let key = format!("tablet|{}", rows.join("/"));
+                let im = self.img(key, |_| vec![Grid::from_rows(&rows)], Some(pal)).clone();
+                blit(&mut out, &im, self.colw + dx + music::TAB_X * self.z, self.fox_y + dy + (music::TAB_Y - 3) * self.z);
+            } else if !curl_pic {
+                self.draw_belly(&mut out, now, dx, dy);
+            }
         }
         if !st.hide_fire {
             self.draw_foxfire(&mut out, now, &mood, curled && !walking);
@@ -936,6 +961,7 @@ impl Companion {
                 blit(&mut out, &im, self.colw + (x + st.dxf) * self.z, self.fox_y + y * self.z);
             }
         }
+        self.visitor_draw(&mut out, now);
         out
     }
 

@@ -91,6 +91,31 @@ impl PyRandom {
         (a * 67108864.0 + b) * (1.0 / 9007199254740992.0)
     }
 
+    /// `random.getrandbits(k)` for k <= 32
+    pub fn getrandbits(&mut self, k: u32) -> u32 {
+        if k == 0 { 0 } else { self.genrand() >> (32 - k) }
+    }
+
+    /// `random._randbelow(n)`
+    pub fn randbelow(&mut self, n: u64) -> u64 {
+        let k = 64 - n.leading_zeros();
+        let mut r = self.getrandbits(k) as u64;
+        while r >= n {
+            r = self.getrandbits(k) as u64;
+        }
+        r
+    }
+
+    /// `random.randint(a, b)`
+    pub fn randint(&mut self, a: i64, b: i64) -> i64 {
+        a + self.randbelow((b - a + 1) as u64) as i64
+    }
+
+    /// `random.choice(seq)`
+    pub fn choice<'a, T>(&mut self, seq: &'a [T]) -> &'a T {
+        &seq[self.randbelow(seq.len() as u64) as usize]
+    }
+
     /// `random.uniform(a, b)`
     pub fn uniform(&mut self, a: f64, b: f64) -> f64 {
         a + (b - a) * self.random()

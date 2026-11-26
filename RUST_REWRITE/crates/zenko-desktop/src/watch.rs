@@ -548,7 +548,7 @@ impl Companion {
         None
     }
 
-    fn pick_s(&mut self, v: &[String]) -> String {
+    pub(crate) fn pick_s(&mut self, v: &[String]) -> String {
         let i = (self.rand() * v.len() as f64) as usize;
         v[i.min(v.len().saturating_sub(1))].clone()
     }
