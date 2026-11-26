@@ -69,8 +69,13 @@ order is kept where it changes the result (tail outlines, eye cells).
 |---|---|---|
 | Sprite engine (module, ~1,700 lines) | tails, sitting body + ema, head, 3 ear styles, 3 blush styles, eyes/mouth for all 26 states, effects, glasses, headphones, outfits (flower, bow, crown, headband, mask, towel, sweat), bib, all 13 robes and patterns, walk4, walk34, rig + 15 poses + walk, curl, foxfire, palettes (10 coats, 8 themes, eye/foxfire/bib colours), HD smoothing at every size | **done** (653 frames + 127 images identical) |
 | Desktop fox | window size and place, idle sway, ear flick, paw lick, blink, look at mouse, tails grow with focus minutes, seasonal robe, ema clock (24h/12h) and session countdown, foxfire wisps and motes, sleep/curl when away, drag | **partial** (ZenkoRust.exe preview) |
-| Desktop fox, rest | speech bubble window, timer panel, music tablet, battery, props, play reactions (pet, boop, belly, tails, sulk, treats), life poses (roam, walk across the screen, slide), lock-in pounce, focus glow, exam countdown on the ema, the full right-click menu, sounds | |
-| Focus sessions | focus dialog, sessions, breaks, distraction detection (foreground window and browser titles), nags, praise, pep talks, auto-close, lock-in, stats.json | |
+| Sounds | every synthesised sound and voice clip (koto, suzu, furin, taiko, her 20 voice lines, the zenko14 sound pool, "a+b" mixes), zenko17 voice-only beep, varied play sounds, VOICEVOX clip pick-up, ui sounds | **done** (279 .wav files byte-identical to Python's) |
+| Play reactions | click regions (nose, head, belly, tails), pet/belly/boop/tickle/tail/treat/yarn/hide-and-seek/high five/gift/dance/brush/sing, props, sulking after 8 pokes, forgiving, bond, treats, treasures, hunger | **done** (logic tested; poses use the checked sprite engine) |
+| Speech bubble | zenko22 say/spot/place: size scaling, bubble styles, Zen Maru Gothic text (same fonts built in), wrap, chips, frame, knot, tail, left/right/above/below placement, follows her, tap to dismiss | **done, not yet seen on Windows** (outline shapes match Python on 420 cases; drawn with the same GDI calls Tk uses) |
+| Right-click menu | every item of on_menu + both menu_extras, same order and words, theme colours; size, colours, mood, sound and other toggles write config.json | **partial** (items whose feature isn't ported yet are greyed out) |
+| Focus sessions | start, pause/resume, stop, countdown on the ema, idle pause, end lines, stats.json | **partial** (dialog, timer panel, distraction checks, nags, pep talks, breaks: next) |
+| Desktop fox, rest | timer panel, music tablet, battery, life poses (roam, walk across the screen, slide), lock-in pounce, focus glow, exam countdown on the ema | |
+| Focus sessions, rest | focus dialog, breaks, distraction detection (foreground window and browser titles), nags, praise, pep talks, auto-close, lock-in | |
 | Hub shell | sidebar with pixel icons, rearrange, accents, text scaling, themed scrollbars, Ctrl+K search, page transitions, living sidebar fox | |
 | Home, Daily, You | streak, mood/hunger, 61 badges, check-ins, journal | |
 | Timetable, Upcoming, Japanese clock, planner, reminders rack | free hours, half-hour slots, plan/replan, countdowns, emas that auto-plan, PDF export | |
@@ -88,6 +93,8 @@ order is kept where it changes the result (tail outlines, eye cells).
 
 ## 4. How the port is checked (Phase 6)
 
+- `tools/make_golden_sounds.py` records the sha256 of every .wav zenko.py synthesises (all kinds, volumes 1-3, two voice
+  pitches); `tools/make_golden_ui.py` records round_pts outlines. `cargo test` checks both.
 - `tools/make_golden.py` imports the untouched zenko.py and dumps what it draws (grids, palettes, final HD pixels) into
   `golden/`. `cargo test` redraws every case in Rust and fails on a single different cell or pixel.
 - Re-run `make_golden.py` whenever zenko.py changes; if its drawings changed, the Rust tests fail until the port catches up.
@@ -98,8 +105,9 @@ order is kept where it changes the result (tail outlines, eye cells).
 ## 5. Order of work (small, testable stages)
 
 1. **Done:** sprite engine, palettes, HD raster, golden tests.
-2. **Started:** desktop fox window. Next: speech bubble, full right-click menu, focus sessions and timer panel, play
-   reactions, roaming/walking, lock-in, sounds. At the end of this stage ZenkoRust.exe can replace Zenko on the desktop.
+2. **In progress:** desktop fox window. Done: sounds, play reactions, speech bubble, right-click menu, basic sessions.
+   Next: session dialog + timer panel, distraction checks and nags, breaks, roaming/walking, lock-in. At the end of this
+   stage ZenkoRust.exe can replace Zenko on the desktop.
 3. A Tk-compatible drawing layer and the fonts, checked by screenshot comparison with Tk.
 4. Hub pages one at a time (Home, Timetable/Upcoming, Chat, Settings/Customize first, then the rest), each compared with Python.
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.

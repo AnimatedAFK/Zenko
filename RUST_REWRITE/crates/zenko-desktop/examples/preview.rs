@@ -13,12 +13,13 @@ fn main() {
     );
     let mut fox = Companion::new(cfg, 1.0, 1000.0);
     if mood == "focus" {
-        fox.session = Some(Session {
-            planned: 1500.0,
-            started: 1000.0,
-        });
+        fox.session = Some(Session::new("Biology notes", 25.0));
     } else if mood == "sleep" {
         fox.sleeping = true;
+    } else if let Some(k) = mood.strip_prefix("play:") {
+        // a play interaction (writes bond/treats to %APPDATA%\FoxBuddy, so point APPDATA somewhere safe)
+        let line = fox.interact(1000.0, k, None);
+        println!("she says: {line}");
     } else if !mood.is_empty() {
         fox.mood_override = Some((mood.clone(), 1e9));
     }

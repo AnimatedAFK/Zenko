@@ -10,6 +10,92 @@ use zenko_art::palette::{LookCfg, Palette, ROBES, is_robe, make_pal, mixhex};
 use zenko_art::raster::{Image, sprite_photo};
 use zenko_art::{Grid, Look, core, curl, rig, sit};
 
+pub mod play;
+pub mod session;
+pub mod shapes;
+pub mod sound;
+pub mod theme;
+pub use play::{Play, Pose, Prop};
+
+/// Things the desktop fox asks the window side to do (the bubble, sounds, menu commands).
+#[derive(Clone, Debug)]
+pub enum Ev {
+    /// say(text, secs, choices): a speech bubble; choices = (label, command)
+    Say { text: String, secs: f64, choices: Vec<(String, String)> },
+    /// beep(kind): one of her voice clips (variety = the play-interaction pool)
+    Beep { kind: String, variety: bool },
+    /// ui_sound(kind)
+    Ui(String),
+    Command(String),
+}
+
+pub fn unix_now() -> f64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs_f64())
+        .unwrap_or(0.0)
+}
+
+/// Python's json.dump(d, f, indent=1, ensure_ascii=False).
+pub fn py_json(v: &Value) -> String {
+    let mut out = Vec::new();
+    let fmt = serde_json::ser::PrettyFormatter::with_indent(b" ");
+    let mut ser = serde_json::Serializer::with_formatter(&mut out, fmt);
+    serde::Serialize::serialize(v, &mut ser).ok();
+    String::from_utf8(out).unwrap_or_default()
+}
+
+/// Python's json.dump(cfg, f, indent=2) (ensure_ascii on: non-ASCII written as \uXXXX), used for config.json.
+pub fn py_json_ascii(v: &Value) -> String {
+    let mut out = Vec::new();
+    let fmt = serde_json::ser::PrettyFormatter::with_indent(b"  ");
+    let mut ser = serde_json::Serializer::with_formatter(&mut out, fmt);
+    serde::Serialize::serialize(v, &mut ser).ok();
+    let s = String::from_utf8(out).unwrap_or_default();
+    let mut o = String::with_capacity(s.len());
+    for ch in s.chars() {
+        if (ch as u32) < 128 {
+            o.push(ch);
+        } else {
+            let mut b = [0u16; 2];
+            for u in ch.encode_utf16(&mut b) {
+                o.push_str(&format!("\\u{:04x}", u));
+            }
+        }
+    }
+    o
+}
+
+/// save_config for the keys the desktop fox changes: config.json is read fresh, those keys set, and written back.
+pub fn update_config(cfg: &mut Cfg, f: impl Fn(&mut Value)) {
+    f(&mut cfg.raw);
+    let mut v = read_json("config.json");
+    if !v.is_object() {
+        v = Value::Object(Default::default());
+    }
+    f(&mut v);
+    let dir = data_dir();
+    let _ = std::fs::create_dir_all(&dir);
+    let _ = std::fs::write(dir.join("config.json"), py_json_ascii(&v));
+}
+
+/// Read one of Zenko's data files fresh, change it and write it back the way zenko.py does (a .part file, then
+/// replace), so only the keys we touch change, even if zenko.py also wrote it.
+pub fn update_json(name: &str, f: impl FnOnce(&mut Value)) {
+    let mut v = read_json(name);
+    if !v.is_object() {
+        v = Value::Object(Default::default());
+    }
+    f(&mut v);
+    let dir = data_dir();
+    let _ = std::fs::create_dir_all(&dir);
+    let p = dir.join(name);
+    let tmp = dir.join(format!("{name}.part"));
+    if std::fs::write(&tmp, py_json(&v)).is_ok() {
+        let _ = std::fs::rename(&tmp, &p);
+    }
+}
+
 pub const FONT35: &[(char, [&str; 5])] = &[
     ('0', ["###", "#.#", "#.#", "#.#", "###"]),
     ('1', [".#.", "##.", ".#.", ".#.", "###"]),
@@ -69,7 +155,7 @@ pub fn data_dir() -> PathBuf {
         .unwrap_or_default();
     PathBuf::from(base).join("FoxBuddy")
 }
-fn read_json(name: &str) -> Value {
+pub fn read_json(name: &str) -> Value {
     std::fs::read_to_string(data_dir().join(name))
         .ok()
         .and_then(|s| serde_json::from_str(&s).ok())
@@ -203,8 +289,20 @@ impl Rng {
 }
 
 pub struct Session {
+    pub task: String,
     pub planned: f64,
-    pub started: f64,
+    pub elapsed: f64,
+    pub dist: f64,
+    pub away: f64,
+    pub paused: bool,
+    pub idle_paused: bool,
+}
+
+impl Session {
+    pub fn new(task: &str, minutes: f64) -> Session {
+        Session { task: task.into(), planned: minutes * 60.0, elapsed: 0.0, dist: 0.0, away: 0.0, paused: false,
+                  idle_paused: false }
+    }
 }
 
 pub struct Mote {
@@ -249,6 +347,12 @@ pub struct Companion {
     hrs: (f64, f64),
     pub hd: bool,
     pub last_state: String,
+    pub play: Option<Play>,
+    pub sulk_until: f64,
+    pub pokes: Vec<f64>,
+    pub events: Vec<Ev>,
+    pub delayed: Vec<(f64, Ev)>,
+    pub pose: Option<Pose>,
 }
 
 impl Companion {
@@ -280,10 +384,21 @@ impl Companion {
             hrs: (-1e9, 0.0),
             hd: true,
             last_state: String::new(),
+            play: None,
+            sulk_until: 0.0,
+            pokes: vec![],
+            events: vec![],
+            delayed: vec![],
+            pose: None,
         };
         c.compute_dims();
         c.apply_look();
         c
+    }
+
+    /// random.random() for picks that never needed to match zenko.py's sequence
+    pub fn rand(&mut self) -> f64 {
+        self.rng.next()
     }
 
     pub fn compute_dims(&mut self) {
@@ -442,8 +557,8 @@ impl Companion {
         if self.sleeping {
             return "sleep".into();
         }
-        if self.session.is_some() {
-            return "focus".into();
+        if let Some(s) = &self.session {
+            return if s.paused { "sad".into() } else { "focus".into() };
         }
         "idle".into()
     }
@@ -532,7 +647,8 @@ impl Companion {
 
     pub fn belly_text(&self, now: f64) -> String {
         if let Some(s) = &self.session {
-            let left = (s.planned - (now - s.started)).max(0.0) as i64;
+            let _ = now;
+            let left = (s.planned - s.elapsed).max(0.0) as i64;
             if left >= 3600 {
                 return format!("{}:{:02}", left / 3600, left % 3600 / 60);
             }
@@ -628,15 +744,28 @@ impl Companion {
         }
         let mut look = self.look_vec(&mood, pointer, win);
         let mut acc = self.accessories(now);
-        let curled = mood == "sleep" && self.sleeping && self.cfg.b("curl_when_away", true);
+        let mut curled = mood == "sleep" && self.sleeping && self.cfg.b("curl_when_away", true);
         if curled {
             state = "curl".into();
             look = (0, 0, 0, 0);
             frame = ((now / 1.6) as i64 % 2) as i32;
             acc.retain(|a| a == "headphones");
         }
-        self.last_state = state.clone();
         let n = self.tail_count(now);
+        let mut st = Pose { state, hx, ear, look, frame, acc, curled, tframe, n, dxf: 0, dyf: 0, hide_fire: false };
+        let mut prop = None;
+        if self.play.is_some() || self.sulk_until > 0.0 {
+            if curled && self.play.is_some() {
+                curled = false;
+                st.curled = false;
+                st.acc = self.accessories(now);
+            }
+            prop = self.play_pose(now, &mut st);
+        }
+        self.pose = Some(st.clone());
+        let Pose { state, hx, ear, look, frame, acc, tframe, .. } = st.clone();
+        let (dx, dy) = (dx + st.dxf * z, dy + st.dyf * z);
+        self.last_state = state.clone();
         let (fw, fh) = (self.w as usize, self.h as usize);
         let mut out = Frame {
             w: fw,
@@ -646,7 +775,9 @@ impl Companion {
         let (fx0, fy0) = (self.colw + dx, self.fox_y + dy);
         let accs: Vec<&str> = acc.iter().map(|s| s.as_str()).collect();
         let acck = accs.join(",");
-        if !curled {
+        let walking = state.starts_with("qwalk") || state.starts_with("rig");
+        let curl_pic = state == "curl";
+        if !curl_pic && !walking {
             let im = self
                 .img(
                     format!("tails|{n}|{tframe}"),
@@ -656,8 +787,10 @@ impl Companion {
                 .clone();
             blit(&mut out, &im, fx0, fy0);
         }
-        let key = if curled {
+        let key = if curl_pic {
             format!("curl|{frame}|{acck}|{n}")
+        } else if walking {
+            format!("{state}|{acck}|{n}")
         } else {
             format!("{state}|{frame}|{look:?}|{acck}|{hx}|{ear}")
         };
@@ -680,10 +813,27 @@ impl Companion {
             )
             .clone();
         blit(&mut out, &im, fx0, fy0);
-        if !curled {
+        if !curl_pic && !walking {
             self.draw_belly(&mut out, now, dx, dy);
         }
-        self.draw_foxfire(&mut out, now, &mood, curled);
+        if !st.hide_fire {
+            self.draw_foxfire(&mut out, now, &mood, curled && !walking);
+        }
+        if let Some((name, x, y, eaten)) = prop {
+            if let Some(rows) = play::prop_rows(&name) {
+                let cut = if eaten > 0.0 { (rows[0].len() as f64 * eaten) as usize } else { 0 };
+                let z = self.z as usize;
+                let hd = self.hd;
+                let key = format!("prop|{name}|{cut}");
+                if !self.images.contains_key(&key) {
+                    let rr: Vec<String> = rows.iter().map(|r| ".".repeat(cut) + &r[cut.min(r.len())..]).collect();
+                    let g = Grid::from_rows(&rr);
+                    self.images.insert(key.clone(), sprite_photo(&[&g], &play::prop_pal(), z, hd));
+                }
+                let im = self.images[&key].clone();
+                blit(&mut out, &im, self.colw + (x + st.dxf) * self.z, self.fox_y + y * self.z);
+            }
+        }
         out
     }
 

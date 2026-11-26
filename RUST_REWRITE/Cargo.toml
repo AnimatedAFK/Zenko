@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/zenko-art", "crates/zenko-desktop"]
+members = ["crates/zenko-art", "crates/zenko-sound", "crates/zenko-desktop"]
 
 [profile.release]
 opt-level = 3

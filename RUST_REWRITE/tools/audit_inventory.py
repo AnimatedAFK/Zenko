@@ -25,7 +25,17 @@ _highfive_paw effects2 z19_sit_extra _zk_s2x _zk_s3x _zk_nearest zk_upscale spri
 FoxBuddy.compute_dims FoxBuddy.accessories FoxBuddy.tail_count FoxBuddy.current_mood FoxBuddy.animate FoxBuddy.idle_moves
 FoxBuddy.look_vec FoxBuddy.belly_text FoxBuddy.draw_belly FoxBuddy.draw_foxfire FoxBuddy.get_image FoxBuddy.get_tails
 FoxBuddy.get_orb FoxBuddy.place_window FoxBuddy.on_press FoxBuddy.on_motion FoxBuddy.on_release ZenkoExtras.make_pal
-Zenko19.make_pal Zenko19.accessories Zenko19.z19_robe Zenko19.z19_robe_auto Zenko19.z19_hours z19_season""".split())
+Zenko19.make_pal Zenko19.accessories Zenko19.z19_robe Zenko19.z19_robe_auto Zenko19.z19_hours z19_season
+_koto _bell _tap _drum _pop _suzu _furin _arp _sound_parts _wav_bytes sound_file play_sound ui_sound beep extra_sound_parts _vox
+_koto_song _note _pool_sound_file varied_sound voice_clip_file _stair round_pts rbox clip mins monitor_area add_stats _realm
+apply_theme set_ui_font zk_fonts_unpack _z22_bub_u _z22_bub_style _z22_say _z22_bubble_spot _z22_bubble_place
+FoxBuddy.bubble_window FoxBuddy.bubble_click FoxBuddy.bubble_hide FoxBuddy.say FoxBuddy.bubble_spot FoxBuddy.bubble_place
+FoxBuddy.bubble_family FoxBuddy.pixel_box FoxBuddy.set_mood FoxBuddy.clear_mood FoxBuddy.start_session FoxBuddy.end_session
+FoxBuddy.toggle_pause FoxBuddy.on_menu FoxBuddy.build_menu FoxBuddy.style_menus FoxBuddy.set_size FoxBuddy.save_prefs
+FoxBuddy.bind_events FoxBuddy.keep_on_top ZenkoExtras.play_pose ZenkoExtras.show_prop ZenkoExtras.hide_prop
+ZenkoExtras.interact ZenkoExtras.give_gift ZenkoExtras.start_sulk ZenkoExtras.forgive ZenkoExtras.fox_clicked
+ZenkoExtras.bond_add ZenkoExtras.save_extra ZenkoExtras.menu_extras ZenkoExtras.fox_name ZenkoLife.interact ZenkoLife.feed
+ZenkoLife.hunger ZenkoLife.menu_extras Zenko.interact Zenko.fox_clicked Zenko.forgive""".split())
 n_items = n_ported = 0
 out.append("## Module-level functions and data")
 out.append("")
