@@ -21,6 +21,11 @@ data = {
     "EXAM_DATE_DEFAULT": Z.EXAM_DATE_DEFAULT,
     "FOODS": [[list(e[0]), e[1], e[2], e[3], e[4]] for e in Z.FOODS],
     "GYM_ALL": [[d["kanji"], d["name"]] for d in Z.GYM_ALL],
+    "BOOKS": [[b[0], b[1]] for b in Z.BOOKS],
+    "BIO_FACTS": [list(f) for f in Z.BIO_FACTS],
+    "ENGLISH_TIPS": [list(t) for t in Z.ENGLISH_TIPS],
+    "GRADE_KINDS": Z.GRADE_KINDS,
+    "VISION_PULL": Z.VISION_PULL,
 }
 out = os.path.join(os.path.dirname(__file__), "..", "crates", "zenko-desktop", "data", "routes.json")
 with open(out, "w", encoding="utf-8") as f:

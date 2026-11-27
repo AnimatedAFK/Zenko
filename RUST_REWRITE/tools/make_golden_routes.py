@@ -90,7 +90,15 @@ CONVO = ["go fishing", "cast a line", "catch a koi", "my koi book", "fish dex", 
          "i just ate two slices of bread with butter for breakfast", "i drank 2 glasses of water", "water",
          "+1 water", "drank a bottle of water", "today is back day", "what's my workout", "today is day 3",
          "i'm resting today", "gym today", "chest day today", "it's my pull day", "slept badly", "i slept 4/5",
-         "slept really well", "open the gym", "i weigh 20 kg", "ate 1/2 apple", "ate 250ml milk and 2 bananas each"]
+         "slept really well", "open the gym", "i weigh 20 kg", "ate 1/2 apple", "ate 250ml milk and 2 bananas each",
+         # ZenkoBooks: the 急 delay, grades, books, bedtime, downloads, facts and tips
+         "add 9am history 30 daily", "add 4pm study renal 45", "add 11:50pm late reading 30", "start reading 25",
+         "something came up", "i need to talk to my parents for 30 min", "im back", "delay 20 min", "undo delay",
+         "undo delay", "resume", "push back everything by 1 hour", "i got 34/40 on bio paper 1",
+         "got a 6 in chem mya", "i scored 72% on my psych test", "bio mid year got 30 out of 40",
+         "i got 50/40 in maths", "biology result 36/40 mock", "my grades", "vocab drill", "open my bio book",
+         "open study book", "my bookshelf", "bedtime 22:30", "bedtime 11pm", "bedtime 25", "download status",
+         "get my eyes", "bio fact", "give me an english tip", "paper 1 tip"]
 out = [{"now": NOW[0], "life": LIFE, "browser": BROWSER, "stats": {"2025-12-01": 30000, "2025-12-05": 9000.5}}]
 caught, cmds = [], []
 app.chat_line = lambda who, text: (caught.append(["line", who, text]), app.chat_log.append((who, text)))
@@ -98,6 +106,8 @@ app.ask_llm = lambda q: caught.append(["llm", q])
 app.say = lambda text, secs=9, choices=None: caught.append(["say", text, [c[0] for c in (choices or [])]])
 app.speak = lambda *a, **k: None
 app.open_hub = lambda page=None, *a, **k: cmds.append("open_hub:%s" % page)
+app.book_open = lambda k, anim=True: cmds.append("book_open:%s" % k)
+app.brain_pull = lambda m: cmds.append("brain_pull:%s" % m)
 for name in ("fish_cast", "koi_book", "open_ptable", "open_calc", "open_french_dict", "update_check_now",
              "delay_picker"):
     setattr(app, name, (lambda n: lambda *a, **k: cmds.append(n))(name))
@@ -112,11 +122,15 @@ for i, q in enumerate(CONVO):
     for _ in range(3):
         app.root.update()
     fox = [c[2] for c in caught if c[0] == "line" and c[1] == "Fox"]
-    got = [c for c in caught if not (c[0] == "say" and any(f.split("\n")[0] == c[1] for f in fox))]
-    out.append({"q": q, "now": NOW[0], "out": got, "cmds": list(cmds),
+    got = [c for c in caught if c[0] != "say"]
+    says = [c for c in caught if c[0] == "say" and not any(f.split("\n")[0] == c[1] for f in fox)]
+    out.append({"q": q, "now": NOW[0], "out": got, "says": says, "cmds": list(cmds),
                 "ib": [[t["kind"], t["subject"], t["unit"], t["target"], t["words"], t["title"], t["due"], [list(h) for h in t["hist"]]]
                        for t in app.life.get("ibtasks", [])],
-                "rules": app.cfg.get("zk_rules") or [], "gym": json.loads(json.dumps(app.life.get("gym"))), "paused": app.life["screen"].get("paused_until", 0) > 0})
+                "rules": app.cfg.get("zk_rules") or [], "gym": json.loads(json.dumps(app.life.get("gym"))),
+                "tt": json.loads(json.dumps(app.tt)), "grades": json.loads(json.dumps(app.life.get("grades"))),
+                "session": None if not app.session else [app.session["task"], app.session["paused"]],
+                "bedtime": [app.cfg.get("bedtime"), app.cfg.get("sleep_guard")], "paused": app.life["screen"].get("paused_until", 0) > 0})
 with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "golden", "routes.json"), "w") as f:
     json.dump(out, f, ensure_ascii=False, indent=0)
 for o in out[1:]:

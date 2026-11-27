@@ -644,7 +644,7 @@ mod win {
                 let task = it["task"].as_str().map(String::from).unwrap_or_else(|| it["task"].to_string());
                 fox.start_session_item(t, &task, it["mins"].as_f64().unwrap_or(30.0), Some(i));
             }
-        } else if fox.ema_ring_button(c) {
+        } else if fox.ema_ring_button(c) || fox.books_button(t, c) {
         } else if let Some(id) = c.strip_prefix("ema_done:") {
             fox.ema_set_done(id);
         } else if c == "music_apply" {

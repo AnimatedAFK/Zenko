@@ -39,6 +39,7 @@ pub mod plan;
 pub mod z22;
 pub mod routes17;
 pub mod gym;
+pub mod books;
 pub mod chat_data;
 pub mod pydifflib;
 pub mod mdtext;
@@ -452,6 +453,8 @@ pub struct Companion {
     pub brain: chat::Brain,
     /// the study planner's state (plan.rs)
     pub planner: plan::Planner,
+    /// the 急 delay (books.rs)
+    pub books: books::BooksState,
     /// how many lines chat_line has ever added (the chat page types the new ones)
     pub chat_n: u64,
     /// the hub page on show while the hub window is open and not minimised (gym_look_on, the sidebar fox)
@@ -516,6 +519,7 @@ impl Companion {
             slow: Default::default(),
             chat_log: vec![],
             planner: plan::Planner::default(),
+            books: books::BooksState::default(),
             brain: chat::Brain::new(now.to_bits()),
             chat_n: 0,
             hub_page: None,

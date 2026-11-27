@@ -269,6 +269,8 @@ pub enum Later {
     Announce(String),
     /// fox_reply(msg): a chat line and its first line in her bubble
     FoxReply(String),
+    /// the 急 delay's time is up (its job number)
+    DelayOver(u64),
 }
 
 #[derive(Clone, Debug, Default)]
@@ -424,6 +426,7 @@ impl Companion {
                 Later::Ui(k) => self.events.push(crate::Ev::Ui(k)),
                 Later::PlanMaybe => self.plan_maybe(),
                 Later::Announce(id) => self.z23_announce(&id),
+                Later::DelayOver(j) => self.delay_over(now, j),
                 Later::FoxReply(msg) => {
                     self.chat_line(now, "Fox", &msg);
                     let first = crate::mdtext::md_plain(&msg).split('\n').next().unwrap_or("").to_string();

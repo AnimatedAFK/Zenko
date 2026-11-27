@@ -46,10 +46,11 @@ fn routes_match_zenko_py() {
         let first: Vec<String> = fox.chat_log.iter().filter(|(w, _)| w == "Fox")
             .map(|(_, t)| t.split('\n').next().unwrap().to_string()).collect();
         let mut cmds = vec![];
+        let mut says = vec![];
         for ev in &fox.events {
             match ev {
                 Ev::Say { text, choices, .. } if !first.contains(text) => {
-                    got.push(json!(["say", text, choices.iter().map(|c| c.0.clone()).collect::<Vec<_>>()]))
+                    says.push(json!(["say", text, choices.iter().map(|c| c.0.clone()).collect::<Vec<_>>()]))
                 }
                 Ev::Command(c) => cmds.push(json!(c)),
                 _ => {}
@@ -61,7 +62,13 @@ fn routes_match_zenko_py() {
         let rules = fox.cfg.raw.get("zk_rules").cloned().unwrap_or(json!([]));
         let paused = life["screen"]["paused_until"].as_f64().unwrap_or(0.0) > 0.0;
         let gym = if i >= gym_from { life.get("gym").cloned().unwrap_or(Value::Null) } else { e["gym"].clone() };
-        let checks = [("gym", gym, e["gym"].clone()), ("out", Value::Array(got), e["out"].clone()), ("cmds", Value::Array(cmds), e["cmds"].clone()),
+        let sess = fox.session.as_ref().map(|s| json!([s.task, s.paused])).unwrap_or(Value::Null);
+        let bed = json!([fox.cfg.raw.get("bedtime").cloned().unwrap_or(json!("23:00")),
+                         fox.cfg.raw.get("sleep_guard").cloned().unwrap_or(Value::Null)]);
+        let checks = [("gym", gym, e["gym"].clone()), ("tt", Value::Array(fox.tt.clone()), e["tt"].clone()),
+                      ("grades", life.get("grades").cloned().unwrap_or(Value::Null), e["grades"].clone()),
+                      ("session", sess, e["session"].clone()), ("bedtime", bed, e["bedtime"].clone()), ("out", Value::Array(got), e["out"].clone()), ("cmds", Value::Array(cmds), e["cmds"].clone()),
+                      ("says", Value::Array(says), e["says"].clone()),
                       ("ib", Value::Array(ib), e["ib"].clone()), ("rules", rules, e["rules"].clone()),
                       ("paused", json!(paused), e["paused"].clone())];
         for (k, a, b) in checks {
