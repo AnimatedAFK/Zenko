@@ -555,6 +555,47 @@
 "Silver",
 "Gold"
 ],
+"BADGE_SECRET": [
+"s_3am",
+"s_birthday",
+"s_comeback",
+"s_dawn",
+"s_fri13",
+"s_fullmoon",
+"s_iron",
+"s_kyubi",
+"s_legend",
+"s_meow",
+"s_newyear",
+"s_rainbow"
+],
+"MOODS": [
+[
+"great",
+"Great",
+"#5fd39a"
+],
+[
+"good",
+"Good",
+"#9ad35f"
+],
+[
+"okay",
+"Okay",
+"#e9c46a"
+],
+[
+"meh",
+"Meh",
+"#f29b5a"
+],
+[
+"rough",
+"Rough",
+"#ff6b7d"
+]
+],
 "GARDEN_STAGES": [
 [
 0,

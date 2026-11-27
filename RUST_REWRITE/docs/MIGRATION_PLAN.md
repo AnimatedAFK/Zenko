@@ -79,7 +79,7 @@ order is kept where it changes the result (tail outlines, eye cells).
 | Desktop fox, rest | music tablet, battery, weather particles, the visiting fox, slide, focus glow, exam countdown on the ema | **music tablet, weather particles + real weather, visiting fox, 30 s life tick done**; battery, slide, glow, ema countdown to do |
 | Session rewards | garden growth, journey minutes, badges, hunger after a session or lock-in, timetable marking, pomodoro, music hooks | **all done** (byte-for-byte vs zenko.py), except the Spotify-account music hooks |
 | Hub shell | sidebar with pixel icons, rearrange, accents, text scaling, themed scrollbars, Ctrl+K search, page transitions, living sidebar fox | **window frame, sidebar sky + menu, living fox, stars/particles, tips, status, drag/resize/buttons, text re-fit done**; page slide, Ctrl+K palette, focus glow, scrollbars to do |
-| Home, Daily, You | streak, mood/hunger, 61 badges, check-ins, journal | |
+| Home, Daily, You | streak, mood/hunger, 61 badges, check-ins, journal | **done (4a)**: pages match zenko.py, golden-tested |
 | Timetable, Upcoming, Japanese clock, planner, reminders rack | free hours, half-hour slots, plan/replan, countdowns, emas that auto-plan, PDF export | **planner, ema rack, emas that auto-plan done** (pages to do) |
 | Chat + brain | commands, shorthand learning, her voice, Ollama local models, online brain (Gemini) with IB-terms recheck, web search + summaries, Markdown/LaTeX, screenshot reading | **offline router about half done** (core, version routes, Exercise, books); brains/web to do |
 | Study | Notebook tutor, Notes scratchpad + folder import, Books + practice, IA/EE/TOK, grades, flashcards/SRS, pop quizzes | |

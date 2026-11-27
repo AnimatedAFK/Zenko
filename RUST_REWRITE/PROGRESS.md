@@ -7,7 +7,7 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
 1. ~~3e: zenko8 study tracking + study_route~~ (done)
 2. ~~3f: the remaining chat routes~~ (done)
 3. ~~3g: desktop leftovers~~ (done; Ctrl K moved to 4c, since it searches the Settings/Customize cards)
-4. 4a: hub pages Home, Daily, You
+4. ~~4a: hub pages Home, Daily, You~~ (done)
 5. 4b: Timetable, Upcoming (Japanese clock), Reminders, Deadlines pages
 6. 4c: Settings and Customize pages, plus the Ctrl K search palette (ZkPalette, z20_items)
 7. 4d: Study pages: Notebook, study Books, Notes
@@ -87,7 +87,20 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
   The windows those lines open (periodic table, calculator, dictionary, Bible, koi book, fishing, delay picker, study
   books) are sent as commands the window side doesn't handle yet.
 
-- **Stage 3g (latest):** guard.rs: deadline_reminders (15 s after start, then every 30 min), books_slow every 30 s
+- **Stage 4a (latest):** the Home, Daily and About you pages, each matching zenko.py's widget tree (place, size, text,
+  font) in every golden case, plus their canvases (week chart, mood dots, 61-badge shelf) and pictures.
+  homepage.rs, dailypage.rs, youpage.rs (new), pagekit.rs (new: hub_card, tt_btn/tt_entry, hub_scroller + wheel +
+  scrollbar, glow_bar, zk_fonts, Zenko21's zk_wrap with z21_unwrap / flow + grid reflow / column stacking /
+  z21_note_reflows). ui.rs: Checkbutton/Radiobutton (Windows and X11 geometry, `ui.x11` for tests), editable Text,
+  label -width, pack(in_=), lift, uniform grid columns, destroy. hubw.rs: the three pages built on first show, Home's
+  count-up and 1 s refresh, its buttons/Return/music keys, You's Save (button, Return, leaving a field), switches and
+  Forget everything, Daily's moods, cards, check-in, breathing (command), homework, facts add/forget, badge views,
+  badge hover tips and pin clicks, daily_refresh every second (skipped while typing), wheel on all three.
+  Golden: tools/make_golden_page.py home|you|daily (records wrap pieces for wrapped labels and canvas text; the
+  resized "small" cases also record them near the built font sizes). Tests: tests/home_page.rs, you_page.rs,
+  daily_page.rs. The resized cases replay zenko.py's order (fonts scaled at the first size, first wrap at the new size).
+  The breathing window itself isn't ported yet (garden, 4e); its button sends open_breathing.
+- **Stage 3g:** guard.rs: deadline_reminders (15 s after start, then every 30 min), books_slow every 30 s
   (wind-down, bedtime nag with "10 more min" / "Goodnight~", burnout cap with a 15-min break, the rest-day and
   late-night lines; bedtime/wake default to DEFAULT_CONFIG's 23:00/06:00) + gym_water_nudge, screen_tick after
   study_tick (screen_classify/screen_site/screen_excluded, private windows remembered by handle, YouTube study
@@ -166,7 +179,7 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 ## Open problems
 - Nothing has run on real Windows yet (Wine is broken here). The bubble, menu, panel, dialog and pounce still need screenshots from the user.
 - Chips like "Show me" / "See the map" now open `hub:garden` / `hub:map`, but those pages are empty until 4e/4f.
-- Only the Ask Zenko page exists; the other pages are empty. Ctrl K does nothing yet (4c), and the sidebar's
+- Only the Ask Zenko, Home, Daily and You pages exist; the other pages are empty. Ctrl K does nothing yet (4c), and the sidebar's
   "Browser" link dot and side scenes are off (zb_linked and z22_unlocked aren't ported). Only the smooth motion
   level (45 ms) is used. The tkpaint StrokeInPieces path follows Tk core-8-6-branch; older 8.6 builds may differ.
 - Not ported yet: the Spotify account (tablet buttons use media keys, like zenko.py without an account), her VOICEVOX
@@ -183,7 +196,7 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 - The rewards test doesn't replay the 5 s follow-up badge check (in these cases it awards nothing in Python either).
 
 ## Next recommended task
-Stage 4a: hub pages Home, Daily, You. Then the rest of the hub pages one by one (each: a golden dump with tools/make_golden_page.py's walk(), then the Rust tree checked against it).
+Stage 4b: Timetable, Upcoming (Japanese clock, planner, IA/EE/TOK tracker), Reminders (ema rack). Then the rest of the hub pages one by one (each: a golden dump with tools/make_golden_page.py's walk(), then the Rust tree checked against it).
 
 ## Gotchas
 - The repo root has a tracked `__pycache__/`. Never delete it, and run Python with bytecode writing turned off.

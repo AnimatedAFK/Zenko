@@ -185,12 +185,16 @@ pub struct EntryText {
 #[derive(Clone, Debug)]
 pub enum Kind {
     Frame,
-    Label { text: String, font: Font, fg: String, anchor: Anchor, wrap: i32 },
+    Label { text: String, font: Font, fg: String, anchor: Anchor, wrap: i32, image: Option<std::rc::Rc<crate::tkcanvas::Photo>>,
+            left: bool },
     /// zenko.py PixelButton (a canvas): its own colour, font (bold), padding, hover / press state and command
     Button { text: String, font: Font, color: String, fg: String, padx: i32, pady: i32, enabled: bool,
              shape: &'static str, hover: bool, down: bool, cmd: String },
     Entry { font: Font, chars: i32, e: EntryText },
     Canvas { items: Vec<Item>, card: Option<Card>, tk: Option<Box<crate::tkcanvas::Canvas>> },
+    /// a tk.Checkbutton / tk.Radiobutton with its indicator: `select` is selectcolor, `cmd` what a click does
+    Check { text: String, font: Font, fg: String, on: bool, anchor: Anchor, wrap: i32, left: bool, select: String,
+            cmd: String, radio: bool },
     /// a tk.Text (tktext.rs); `ring` is its highlightbackground
     Text { t: Box<crate::tktext::Text>, ring: String },
 }
@@ -226,6 +230,31 @@ pub struct W {
     pub low: bool,
     /// when it was packed: the packer's order is the order of the pack calls
     pub pack_seq: u64,
+    /// grid(row, column, sticky, padx, pady); None = not gridded (or grid_remove'd)
+    pub grid: Option<Grid>,
+    /// grid_columnconfigure / grid_rowconfigure weights of a container
+    pub gw_cols: Vec<i32>,
+    pub gw_rows: Vec<i32>,
+    /// grid_columnconfigure(uniform=...): each column's group ("" = none)
+    pub gu_cols: Vec<&'static str>,
+    /// a frame shown in its parent canvas by create_window(0, 0, anchor nw) with the canvas's width
+    pub cwin: bool,
+    /// a canvas's yview: how far its window item is scrolled up
+    pub yoff: i32,
+    /// zk_font's _zk_f0: the font size the widget was made with (0 = not seen yet)
+    pub f0: i32,
+    /// pack(in_=master): packed into a sibling frame instead of its parent
+    pub pack_in: Option<usize>,
+}
+
+/// grid() options
+#[derive(Clone, Debug, Default)]
+pub struct Grid {
+    pub row: usize,
+    pub col: usize,
+    pub sticky: &'static str,
+    pub padx: (i32, i32),
+    pub pady: (i32, i32),
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -238,6 +267,8 @@ pub enum Cursor {
 #[derive(Default)]
 pub struct Ui {
     pub ws: Vec<W>,
+    /// size check- and radiobuttons by X11 Tk's rules (the golden runs) instead of Windows Tk's
+    pub x11: bool,
     pub focus: Option<usize>,
     pub active: bool,
     pressed: Option<usize>,
@@ -314,7 +345,8 @@ impl Ui {
         let id = self.ws.len();
         self.ws.push(W { kind, parent, kids: vec![], bg: bg.into(), zk_fill: None, bd: 0, hl: 0, padx: 0, pady: 0,
                          opt_w: 0, opt_h: 0, pack: None, place: None, propagate: true, name: String::new(), x: 0, y: 0,
-                         w: 1, h: 1, rw: 1, rh: 1, mapped: parent.is_none(), low: false, pack_seq: 0 });
+                         w: 1, h: 1, rw: 1, rh: 1, mapped: parent.is_none(), low: false, pack_seq: 0, grid: None,
+                         gw_cols: vec![], gw_rows: vec![], gu_cols: vec![], cwin: false, yoff: 0, f0: 0, pack_in: None });
         if let Some(p) = parent {
             self.ws[p].kids.push(id);
         }
@@ -333,9 +365,20 @@ impl Ui {
     /// tk.Label(parent, text, bg, fg, font, anchor, wraplength): borderwidth 2, padx 1, pady 1
     pub fn label(&mut self, parent: usize, text: &str, bg: &str, fg: &str, font: Font) -> usize {
         let id = self.add(Some(parent), Kind::Label { text: text.into(), font, fg: fg.into(), anchor: Anchor::Center,
-                                                      wrap: 0 }, bg);
+                                                      wrap: 0, image: None, left: false }, bg);
         let w = &mut self.ws[id];
         (w.bd, w.padx, w.pady) = (2, 1, 1);
+        id
+    }
+
+    /// tk.Checkbutton(parent, text, bg, fg, font, anchor, selectcolor, highlightthickness, bd); padx = pady = 1
+    #[allow(clippy::too_many_arguments)]
+    pub fn check(&mut self, parent: usize, text: &str, bg: &str, fg: &str, font: Font, on: bool, select: &str, cmd: &str,
+                 hl: i32, bd: i32) -> usize {
+        let id = self.add(Some(parent), Kind::Check { text: text.into(), font, fg: fg.into(), on, anchor: Anchor::W, wrap: 0,
+                                                      left: false, select: select.into(), cmd: cmd.into(), radio: false }, bg);
+        let w = &mut self.ws[id];
+        (w.bd, w.hl, w.padx, w.pady) = (bd, hl, 1, 1);
         id
     }
 
@@ -388,10 +431,25 @@ impl Ui {
     }
 
     pub fn pack(&mut self, id: usize, p: Pack) -> usize {
+        self.ws[id].pack_in = None;
         self.ws[id].pack = Some(p);
         self.pack_n += 1;
         self.ws[id].pack_seq = self.pack_n;
         id
+    }
+
+    /// pack(in_=master): `master` is a frame beside the widget (the same parent)
+    pub fn pack_into(&mut self, id: usize, master: usize, p: Pack) {
+        self.pack(id, p);
+        self.ws[id].pack_in = Some(master);
+    }
+
+    /// tk.Misc.lift: to the top of its siblings' stacking order (winfo_children order)
+    pub fn lift(&mut self, id: usize) {
+        if let Some(p) = self.ws[id].parent {
+            self.ws[p].kids.retain(|&k| k != id);
+            self.ws[p].kids.push(id);
+        }
     }
 
     pub fn named(&mut self, id: usize, name: &str) -> usize {
@@ -409,6 +467,11 @@ impl Ui {
         match w.kind {
             Kind::Frame => (w.bd + w.hl + w.padx, w.bd + w.hl + w.pady),
             Kind::Label { .. } => (w.bd + w.hl, w.bd + w.hl),
+            // Windows Tk adds a pixel for the focus ring
+            Kind::Check { .. } => {
+                let i = w.bd + w.hl + if self.x11 { 0 } else { 1 };
+                (i, i)
+            }
             Kind::Entry { .. } => (w.bd + w.hl + 1, w.bd + w.hl + 1),
             // Tk_SetInternalBorderEx: border + highlight + padding
             Kind::Text { ref t, .. } => (t.bd + t.hl + t.padx, t.bd + t.hl + t.pady),
@@ -423,11 +486,38 @@ impl Ui {
             Kind::Frame => {
                 if w.opt_w > 0 || w.opt_h > 0 { (w.opt_w, w.opt_h) } else { (1, 1) }
             }
+            Kind::Label { image: Some(img), .. } => {
+                // (-padx / -pady pad text only)
+                let inset = w.bd + w.hl;
+                (img.w as i32 + 2 * inset, img.h as i32 + 2 * inset)
+            }
             Kind::Label { text, font, wrap, .. } => {
                 let (lines, tw) = text_layout(fonts, font, text, *wrap);
+                // -width in characters: that many "0"s wide
+                let tw = if w.opt_w > 0 { w.opt_w * fonts.width(font, "0") } else { tw };
                 let th = if text.is_empty() { fonts.linespace(font) } else { lines.len() as i32 * fonts.linespace(font) };
                 let inset = w.bd + w.hl;
                 (tw + 2 * w.padx + 2 * inset, th + 2 * w.pady + 2 * inset)
+            }
+            Kind::Check { text, font, wrap, radio, .. } => {
+                let (lines, tw) = text_layout(fonts, font, text, *wrap);
+                let ls = fonts.linespace(font);
+                let th = if text.is_empty() { 0 } else { lines.len() as i32 * ls };
+                let (ib, _) = self.ib(id);
+                if self.x11 {
+                    // tkUnixButton.c: an indicator 80% (check) of a line, then one "0" of space
+                    let d = if *radio { ls } else { 80 * ls / 100 };
+                    let space = d + fonts.width(font, "0");
+                    (tw + 2 * w.padx + space + 2 * ib, th + 2 * w.pady + 2 * ib)
+                } else {
+                    // tkWinButton.c: 10 DLUs high less the 4 pixels of default padding, a 13-pixel box and 3 DLUs
+                    let avg = (fonts.width(font, "abcdefghijklmnopqurstuvwzyABCDEFGHIJKLMNOPQURSTUVWZY") + 26) / 52;
+                    let (hdlu, vdlu) = (avg as f64 / 4.0, ls as f64 / 8.0);
+                    let mut h = th + (0.5 + 2.0 * vdlu) as i32 - 4 + 2 * w.pady;
+                    h = h.max(13);
+                    let space = 13 + (0.5 + 3.0 * hdlu) as i32;
+                    (tw + 2 * w.padx + space + 2 * ib, h + 2 * ib)
+                }
             }
             Kind::Button { text, font, padx, pady, .. } => {
                 (fonts.width(font, text) + 2 * padx + 10, fonts.linespace(font) + 2 * pady + 6)
@@ -510,14 +600,22 @@ impl Ui {
         }
     }
 
-    fn packed(&self, id: usize) -> Vec<usize> {
-        let mut v: Vec<usize> = self.ws[id].kids.iter().copied().filter(|&k| self.ws[k].pack.is_some()).collect();
+    /// pack_slaves(): what is packed into `id`, in packing order
+    pub fn packed(&self, id: usize) -> Vec<usize> {
+        let mut v: Vec<usize> = self.ws[id].kids.iter().copied()
+            .filter(|&k| self.ws[k].pack.is_some() && self.ws[k].pack_in.is_none()).collect();
+        if let Some(p) = self.ws[id].parent {
+            v.extend(self.ws[p].kids.iter().copied().filter(|&k| self.ws[k].pack.is_some() && self.ws[k].pack_in == Some(id)));
+        }
         v.sort_by_key(|&k| self.ws[k].pack_seq);
         v
     }
 
     fn req(&mut self, fonts: &dyn Fonts, id: usize) {
-        for k in self.ws[id].kids.clone() {
+        // frames that other kids are packed into come after those kids
+        let kids = self.ws[id].kids.clone();
+        let into: Vec<usize> = kids.iter().filter_map(|&k| self.ws[k].pack_in).collect();
+        for &k in kids.iter().filter(|k| !into.contains(k)).chain(kids.iter().filter(|k| into.contains(k))) {
             self.req(fonts, k);
         }
         let (mut rw, mut rh) = self.own_req(fonts, id);
@@ -540,6 +638,16 @@ impl Ui {
             }
             rw = max_w.max(width);
             rh = max_h.max(height);
+        }
+        let gridded = self.gridded(id);
+        if !gridded.is_empty() && self.ws[id].propagate {
+            let (bx, by) = self.ib(id);
+            let mut cells = self.cells(&gridded);
+            for (col, w) in self.uniform_cols(id, &cells) {
+                cells.push(crate::tkgrid::Cell::new(0, col, w, 0));
+            }
+            let ((gw, gh), _) = crate::tkgrid::grid(&cells, bx, by);
+            (rw, rh) = (gw + 2 * bx, gh + 2 * by);
         }
         let w = &mut self.ws[id];
         (w.rw, w.rh) = (rw.max(1), rh.max(1));
@@ -615,7 +723,11 @@ impl Ui {
                 Anchor::SE | Anchor::S | Anchor::SW => frame_y + frame_h - height - bb,
                 _ => frame_y + bt,
             };
-            let (x, y) = (cx(p.anchor), cy(p.anchor));
+            let (mut x, mut y) = (cx(p.anchor), cy(p.anchor));
+            if self.ws[c].pack_in.is_some() {
+                // (the master is a sibling: the widget's place is relative to their parent)
+                (x, y) = (x + self.ws[id].x, y + self.ws[id].y);
+            }
             let w = &mut self.ws[c];
             if width <= 0 || height <= 0 {
                 w.mapped = false;
@@ -656,11 +768,172 @@ impl Ui {
                 (w.x, w.y, w.w, w.h, w.mapped) = (x, y, width, height, true);
             }
         }
+        self.grid_arrange(id);
+        for k in self.ws[id].kids.clone() {
+            if self.ws[k].cwin {
+                // the canvas's window item: at (0, -yview), the canvas's width, its own requested height
+                let (cw, rh, yo) = (self.ws[id].w, self.ws[k].rh, self.ws[id].yoff);
+                let w = &mut self.ws[k];
+                (w.x, w.y, w.w, w.h, w.mapped) = (0, -yo, cw, rh, true);
+            }
+        }
         for k in self.ws[id].kids.clone() {
             if self.ws[k].mapped {
                 self.arrange(k);
             }
         }
+    }
+
+    /// tkGrid.c step 2b: the columns of a uniform group all get the group's largest (per weight) minimum size;
+    /// returned as extra one-column demands
+    fn uniform_cols(&self, id: usize, cells: &[crate::tkgrid::Cell]) -> Vec<(usize, i32)> {
+        let gu = &self.ws[id].gu_cols;
+        if gu.iter().all(|g| g.is_empty()) {
+            return vec![];
+        }
+        let weight = |c: usize| self.ws[id].gw_cols.get(c).copied().unwrap_or(0).max(1);
+        let mut min = vec![0; gu.len()];
+        for c in cells.iter().filter(|c| c.cols == 1 && c.col < gu.len()) {
+            min[c.col] = min[c.col].max(c.w + c.padx.0 + c.padx.1);
+        }
+        let mut out = vec![];
+        for (c, g) in gu.iter().enumerate().filter(|(_, g)| !g.is_empty()) {
+            let m = gu.iter().enumerate().filter(|(_, h)| *h == g).map(|(k, _)| (min[k] + weight(k) - 1) / weight(k)).max().unwrap_or(0);
+            out.push((c, m * weight(c)));
+        }
+        out
+    }
+
+    fn gridded(&self, id: usize) -> Vec<usize> {
+        self.ws[id].kids.iter().copied().filter(|&k| self.ws[k].grid.is_some()).collect()
+    }
+
+    fn cells(&self, ks: &[usize]) -> Vec<crate::tkgrid::Cell> {
+        ks.iter().map(|&k| {
+            let g = self.ws[k].grid.clone().unwrap();
+            crate::tkgrid::Cell::new(g.row, g.col, self.ws[k].rw, self.ws[k].rh).sticky(g.sticky)
+                .padx(g.padx.0, g.padx.1).pady(g.pady.0, g.pady.1)
+        }).collect()
+    }
+
+    /// tkGrid.c ArrangeGrid: slots at their natural sizes, the container's extra room shared out by weight
+    /// (AdjustOffsets), anchor nw, then each widget stuck into its cell
+    fn grid_arrange(&mut self, id: usize) {
+        for k in self.ws[id].kids.clone() {
+            // forgotten / grid_remove'd: not on screen
+            if self.ws[k].pack.is_none() && self.ws[k].place.is_none() && !self.ws[k].cwin && self.ws[k].grid.is_none() {
+                self.ws[k].mapped = false;
+            }
+        }
+        let ks = self.gridded(id);
+        if ks.is_empty() {
+            return;
+        }
+        let (bx, by) = self.ib(id);
+        let cells = self.cells(&ks);
+        let axis = |items: Vec<(usize, usize, i32)>, weights: &[i32], size: i32| -> Vec<i32> {
+            let (mut off, _) = crate::tkgrid::resolve(&items);
+            let n = off.len();
+            let ws: Vec<i32> = (0..n).map(|i| weights.get(i).copied().unwrap_or(0)).collect();
+            let total: i32 = ws.iter().sum();
+            let diff = size - off.last().copied().unwrap_or(0);
+            if total > 0 && diff != 0 {
+                let mut acc = 0;
+                for i in 0..n {
+                    acc += ws[i];
+                    off[i] += diff * acc / total;
+                }
+            }
+            off
+        };
+        let mut cols: Vec<_> = cells.iter().map(|c| (c.col, c.cols, c.w + c.padx.0 + c.padx.1)).collect();
+        cols.extend(self.uniform_cols(id, &cells).into_iter().map(|(c, w)| (c, 1, w)));
+        let rows: Vec<_> = cells.iter().map(|c| (c.row, c.rows, c.h + c.pady.0 + c.pady.1)).collect();
+        let (cw0, ch0) = (self.ws[id].w - 2 * bx, self.ws[id].h - 2 * by);
+        let co = axis(cols, &self.ws[id].gw_cols.clone(), cw0);
+        let ro = axis(rows, &self.ws[id].gw_rows.clone(), ch0);
+        for (c, &k) in cells.iter().zip(&ks) {
+            let mut x = if c.col > 0 { co[c.col - 1] } else { 0 };
+            let mut y = if c.row > 0 { ro[c.row - 1] } else { 0 };
+            let mut cw = co[c.col + c.cols - 1] - x;
+            let mut ch = ro[c.row + c.rows - 1] - y;
+            x += bx + c.padx.0;
+            cw -= c.padx.0 + c.padx.1;
+            y += by + c.pady.0;
+            ch -= c.pady.0 + c.pady.1;
+            let (rw, rh) = (c.w, c.h);
+            let (mut dx, mut dy) = (0, 0);
+            if cw > rw {
+                dx = cw - rw;
+                cw = rw;
+            }
+            if ch > rh {
+                dy = ch - rh;
+                ch = rh;
+            }
+            let st = |q: char| c.sticky.contains(q);
+            if st('e') && st('w') {
+                cw += dx;
+            }
+            if st('n') && st('s') {
+                ch += dy;
+            }
+            if !st('w') {
+                x += if st('e') { dx } else { dx / 2 };
+            }
+            if !st('n') {
+                y += if st('s') { dy } else { dy / 2 };
+            }
+            let w = &mut self.ws[k];
+            if cw <= 0 || ch <= 0 {
+                w.mapped = false;
+            } else {
+                (w.x, w.y, w.w, w.h, w.mapped) = (x, y, cw, ch, true);
+            }
+        }
+    }
+
+    pub fn grid(&mut self, id: usize, g: Grid) -> usize {
+        self.ws[id].grid = Some(g);
+        id
+    }
+
+    /// a label showing a picture (tk.Label(image=...)); bd as given
+    /// destroy(): the widget and everything inside it leave the tree (their slots stay, unreachable)
+    pub fn destroy(&mut self, id: usize) {
+        if let Some(p) = self.ws[id].parent.take() {
+            self.ws[p].kids.retain(|&k| k != id);
+        }
+        let mut stack = vec![id];
+        while let Some(x) = stack.pop() {
+            let w = &mut self.ws[x];
+            (w.pack, w.place, w.grid, w.mapped) = (None, None, None, false);
+            stack.extend(w.kids.iter().copied());
+        }
+        if self.focus.is_some_and(|f| self.under(f, id)) {
+            self.focus = None;
+        }
+    }
+
+    fn under(&self, mut x: usize, root: usize) -> bool {
+        loop {
+            if x == root {
+                return true;
+            }
+            match self.ws[x].parent {
+                Some(p) => x = p,
+                None => return false,
+            }
+        }
+    }
+
+    pub fn image_label(&mut self, parent: usize, img: std::rc::Rc<crate::tkcanvas::Photo>, bg: &str, bd: i32) -> usize {
+        let id = self.label(parent, "", bg, "#000000", Font::new("TkDefaultFont", 9, false));
+        if let Kind::Label { image, .. } = &mut self.ws[id].kind {
+            *image = Some(img);
+        }
+        self.ws[id].bd = bd;
+        id
     }
 
     fn x_expansion(&self, rest: &[usize], mut cav_w: i32) -> i32 {
@@ -755,8 +1028,17 @@ impl Ui {
         out.push(Draw::Rect { x: ax, y: ay, w: w.w, h: w.h, color: w.bg.clone() });
         match &w.kind {
             Kind::Frame => {}
-            Kind::Label { text, font, fg, anchor, wrap } => {
+            Kind::Label { image: Some(img), .. } => {
+                let ib = w.bd + w.hl;
+                let (iw, ih) = (img.w as i32, img.h as i32);
+                let x = (w.w - iw - 2 * ib) / 2 + ib;
+                let y = (w.h - ih - 2 * ib) / 2 + ib;
+                out.push(Draw::Tk { x: ax, y: ay, ops: vec![crate::canvasdraw::TkOp::Photo { x, y, img: img.clone() }] });
+            }
+            Kind::Label { text, font, fg, anchor, wrap, left, .. } => {
                 let (lines, tw) = text_layout(fonts, font, text, *wrap);
+                // -width in characters: that many "0"s wide
+                let tw = if w.opt_w > 0 { w.opt_w * fonts.width(font, "0") } else { tw };
                 let ls = fonts.linespace(font);
                 let th = lines.len() as i32 * ls;
                 let ib = w.bd + w.hl;
@@ -772,8 +1054,45 @@ impl Ui {
                 };
                 for (i, l) in lines.iter().enumerate() {
                     let lw = fonts.width(font, l.trim_end_matches(' '));
-                    // justify center (the Label default)
-                    let lx = x + (tw - lw) / 2;
+                    // justify center (the Label default) or left
+                    let lx = if *left { x } else { x + (tw - lw) / 2 };
+                    out.push(Draw::Text { x: ax + lx, y: ay + y + i as i32 * ls, text: l.clone(), font: font.clone(),
+                                          color: fg.clone() });
+                }
+            }
+            Kind::Check { text, font, fg, on, wrap, left, select, radio, anchor, .. } => {
+                let (lines, tw) = text_layout(fonts, font, text, *wrap);
+                let ls = fonts.linespace(font);
+                let th = lines.len() as i32 * ls;
+                let (ib, _) = self.ib(id);
+                let (rw, _) = self.own_req(fonts, id);
+                let space = rw - tw - 2 * w.padx - 2 * ib;
+                let x = match anchor {
+                    Anchor::Center | Anchor::N | Anchor::S => (w.w - rw) / 2 + ib + space + w.padx,
+                    _ => ib + space + w.padx,
+                };
+                let y = (w.h - th) / 2;
+                // the indicator: a 13-pixel box (round for a radiobutton) in selectcolor, its mark when on
+                let (bx, by) = (ax + x - space, ay + (w.h - 13) / 2);
+                if *radio {
+                    out.push(Draw::Oval { x1: bx, y1: by, x2: bx + 13, y2: by + 13, fill: t.line.clone() });
+                    out.push(Draw::Oval { x1: bx + 1, y1: by + 1, x2: bx + 12, y2: by + 12, fill: select.clone() });
+                    if *on {
+                        out.push(Draw::Oval { x1: bx + 4, y1: by + 4, x2: bx + 9, y2: by + 9, fill: fg.clone() });
+                    }
+                } else {
+                    out.push(Draw::Rect { x: bx, y: by, w: 13, h: 13, color: t.line.clone() });
+                    out.push(Draw::Rect { x: bx + 1, y: by + 1, w: 11, h: 11, color: select.clone() });
+                    if *on {
+                        for (k, (dx, dy)) in [(3, 5), (4, 6), (5, 7), (6, 6), (7, 5), (8, 4), (9, 3)].iter().enumerate() {
+                            let _ = k;
+                            out.push(Draw::Rect { x: bx + dx, y: by + dy, w: 1, h: 3, color: fg.clone() });
+                        }
+                    }
+                }
+                for (i, l) in lines.iter().enumerate() {
+                    let lw = fonts.width(font, l.trim_end_matches(' '));
+                    let lx = if *left { x } else { x + (tw - lw) / 2 };
                     out.push(Draw::Text { x: ax + lx, y: ay + y + i as i32 * ls, text: l.clone(), font: font.clone(),
                                           color: fg.clone() });
                 }
@@ -816,6 +1135,14 @@ impl Ui {
             }
             Kind::Text { t, ring } => {
                 out.push(Draw::Tk { x: ax, y: ay, ops: t.ops(fonts, ring) });
+                // the insertion cursor of a focused editable box (blinking like an entry's)
+                if let Some(off) = t.edit
+                    && self.active && self.focus == Some(id) && (now * 1000.0) as i64 % 900 < 600 {
+                    let idx = t.index_of(off);
+                    if let Some(b) = t.bbox(fonts, idx).or_else(|| t.dlineinfo(fonts, idx).map(|d| [d[0], d[1], 0, d[3]])) {
+                        out.push(Draw::Rect { x: ax + b[0], y: ay + b[1], w: 2, h: b[3], color: t.fg.clone() });
+                    }
+                }
             }
             Kind::Button { .. } | Kind::Canvas { .. } => {
                 for it in self.items_of(id, t) {
@@ -998,6 +1325,13 @@ impl Ui {
                 }
                 self.pressed = Some(i);
             }
+            Kind::Check { .. } => self.pressed = Some(i),
+            Kind::Text { t, .. } if t.edit.is_some() => {
+                self.focus = Some(i);
+                if let Kind::Text { t, .. } = &mut self.ws[i].kind {
+                    t.edit = Some(t.plain().chars().count());
+                }
+            }
             Kind::Entry { .. } => {
                 let k = self.index_at(fonts, i, x);
                 self.focus = Some(i);
@@ -1037,13 +1371,20 @@ impl Ui {
                 return Some(cmd.clone());
             }
         }
+        let inside = ax <= x && x < ax + ww && ay <= y && y < ay + wh;
+        if let Kind::Check { on, radio, cmd, .. } = &mut self.ws[i].kind
+            && inside {
+            // a checkbutton flips; a radiobutton is chosen (its command sets the others)
+            *on = if *radio { true } else { !*on };
+            return Some(cmd.clone());
+        }
         None
     }
 
     pub fn text_of(&self, id: usize) -> String {
         match &self.ws[id].kind {
             Kind::Entry { e, .. } => String::from_utf16_lossy(&e.text),
-            Kind::Label { text, .. } | Kind::Button { text, .. } => text.clone(),
+            Kind::Label { text, .. } | Kind::Button { text, .. } | Kind::Check { text, .. } => text.clone(),
             _ => String::new(),
         }
     }
@@ -1057,8 +1398,26 @@ impl Ui {
         }
     }
 
+    /// the focused editable Text box: its plain text and cursor
+    fn text_edit(&mut self) -> Option<&mut crate::tktext::Text> {
+        let f = self.focus?;
+        match &mut self.ws[f].kind {
+            Kind::Text { t, .. } if t.edit.is_some() => Some(t),
+            _ => None,
+        }
+    }
+
     /// typed characters into the focused entry
     pub fn insert(&mut self, fonts: &dyn Fonts, s: &[u16], now: f64) {
+        if let Some(t) = self.text_edit() {
+            let mut v: Vec<char> = t.plain().chars().collect();
+            let at = t.edit.unwrap().min(v.len());
+            let add: Vec<char> = String::from_utf16_lossy(s).chars().collect();
+            v.splice(at..at, add.iter().copied());
+            t.set_plain(fonts, &v.iter().collect::<String>());
+            t.edit = Some(at + add.len());
+            return;
+        }
         if let Some((e, font, inner)) = self.entry_mut() {
             del_sel(e);
             for (k, c) in s.iter().enumerate() {
@@ -1089,6 +1448,38 @@ impl Ui {
 
     /// Tk's entry bindings for the editing keys (virtual-key codes); true when handled
     pub fn key(&mut self, fonts: &dyn Fonts, vk: u16, shift: bool, ctrl: bool, now: f64) -> bool {
+        if let Some(t) = self.text_edit() {
+            // an editable Text box: arrows, Home / End of the line, Backspace, Delete and Return
+            let mut v: Vec<char> = t.plain().chars().collect();
+            let at = t.edit.unwrap().min(v.len());
+            let bol = v[..at].iter().rposition(|&c| c == '\n').map(|i| i + 1).unwrap_or(0);
+            let eol = v[at..].iter().position(|&c| c == '\n').map(|i| at + i).unwrap_or(v.len());
+            let to = match vk {
+                0x25 => at.saturating_sub(1),
+                0x27 => (at + 1).min(v.len()),
+                0x24 => bol,
+                0x23 => eol,
+                0x08 if at > 0 => {
+                    v.remove(at - 1);
+                    t.set_plain(fonts, &v.iter().collect::<String>());
+                    at - 1
+                }
+                0x2E if at < v.len() => {
+                    v.remove(at);
+                    t.set_plain(fonts, &v.iter().collect::<String>());
+                    at
+                }
+                0x0D => {
+                    v.insert(at, '\n');
+                    t.set_plain(fonts, &v.iter().collect::<String>());
+                    at + 1
+                }
+                0x08 | 0x2E => at,
+                _ => return false,
+            };
+            t.edit = Some(to);
+            return true;
+        }
         let Some((e, font, inner)) = self.entry_mut() else { return false };
         let n = e.text.len();
         let word_left = |e: &EntryText| {

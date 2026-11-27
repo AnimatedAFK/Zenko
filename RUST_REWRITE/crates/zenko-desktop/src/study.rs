@@ -389,7 +389,7 @@ fn word_num(n: &str) -> f64 {
 // ---- the fox's side ----------------------------------------------------------------------------------------------------
 
 impl Companion {
-    fn life_now(&self) -> Value {
+    pub(crate) fn life_now(&self) -> Value {
         read_json("zenko_life.json")
     }
 

@@ -392,7 +392,7 @@ impl Companion {
         self.rand()
     }
 
-    pub(crate) fn life_do<R>(&mut self, f: impl FnOnce(&mut Value) -> R) -> R {
+    pub fn life_do<R>(&mut self, f: impl FnOnce(&mut Value) -> R) -> R {
         let mut seq: Vec<f64> = (0..4).map(|_| self.rnd()).collect();
         let mut r = || seq.pop().unwrap_or(0.5);
         update_life(&mut r, f)

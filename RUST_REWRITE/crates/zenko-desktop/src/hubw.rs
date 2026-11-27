@@ -16,6 +16,11 @@ use zenko_desktop::hubside::SideCtx;
 use zenko_desktop::hubwin::{Hub, zk_factor};
 use zenko_desktop::theme::Theme;
 use zenko_desktop::chatpage::ChatPage;
+use zenko_desktop::homepage::HomePage;
+use zenko_desktop::youpage::YouPage;
+use zenko_desktop::dailypage::{DailyData, DailyPage};
+use serde_json::Value;
+use zenko_desktop::pagekit::Faces;
 use zenko_desktop::ui::{Draw, Kind, Place};
 
 /// what the app hands the window when it opens
@@ -75,6 +80,17 @@ struct HubW {
     chat_q: std::collections::VecDeque<(String, String)>,
     typing: Option<(Vec<(String, Vec<String>)>, usize, f64)>,
     sb_drag: Option<(f64, f64)>,
+    /// the Home page, its next once-a-second refresh and hub_intro's count-up (when it started)
+    home: Option<HomePage>,
+    home_next: f64,
+    home_intro: Option<f64>,
+    /// music_playing: what the play / pause button shows
+    music_playing: bool,
+    you: Option<YouPage>,
+    daily: Option<DailyPage>,
+    /// what the Daily page was last rendered from
+    daily_d: DailyData,
+    daily_next: f64,
 }
 
 /// z21_show's vertical slide: the new page comes in from below (or above), the old one goes out the other way
@@ -172,7 +188,337 @@ fn finish_slide(x: &mut HubW) {
 }
 
 /// hub_after_show: the chat's entry takes the keyboard
+fn faces(x: &HubW) -> Faces {
+    Faces { ui: x.hub.font_ui.clone(), title: String::new() }
+}
+
+/// hub_refresh_home with what the app has now; `force` rebuilds the focus card
+fn home_refresh(x: &mut HubW, force: bool) {
+    let Some(d) = crate::win::with_fox(|fox, _| fox.home_data()) else { return };
+    let n = now(x);
+    let counting = x.home_intro.is_some_and(|t0| n <= t0 + 0.7);
+    let (th, f) = (x.hub.t.clone(), faces(x));
+    if let Some(hp) = x.home.as_mut() {
+        hp.refresh(&mut x.hub.ui, &th, &f, &d, force, counting);
+        if counting {
+            let t = ((n - x.home_intro.unwrap()) / 0.65).min(1.0);
+            hp.intro_frame(&mut x.hub.ui, &th, &f, &d, 1.0 - (1.0 - t).powi(3));
+        }
+    }
+    relayout(x);
+}
+
+/// what the Home page's buttons do
+/// hub_ask(q): to the chat page, and ask her
+fn hub_ask(x: &mut HubW, q: &str) {
+    show(x, "chat");
+    let q = q.to_string();
+    crate::win::with_fox_at(move |fox, t, win| {
+        if let zenko_desktop::chat::Sent::Brain(_) = fox.chat_send(t, &q, win) {
+            fox.brain_fallback(t);
+        }
+    });
+}
+
+fn home_cmd(x: &mut HubW, cmd: &str) {
+    let Some(hp) = x.home.as_ref() else { return };
+    let (te, me) = (hp.task_entry, hp.min_entry);
+    let get = |x: &HubW, e: Option<usize>| e.map(|e| x.hub.ui.text_of(e)).unwrap_or_default();
+    if let Some(q) = cmd.strip_prefix("hub_ask:") {
+        hub_ask(x, q);
+        return;
+    }
+    if let Some(v) = cmd.strip_prefix("home_min:") {
+        if let Some(e) = me
+            && let Kind::Entry { e, .. } = &mut x.hub.ui.ws[e].kind {
+            e.text = v.encode_utf16().collect();
+            (e.pos, e.anchor, e.sel, e.left) = (e.text.len(), e.text.len(), None, 0);
+        }
+        return;
+    }
+    let (task, mins) = (get(x, te), get(x, me));
+    let done = crate::win::with_fox(|fox, t| match cmd {
+        "home_go" => {
+            // go(): 1..240 minutes (25 when it isn't a number), "Focus session" when nothing was typed
+            let n = mins.trim().parse::<f64>().ok().filter(|v| v.is_finite()).map(|v| (v.trunc() as i64).clamp(1, 240)).unwrap_or(25);
+            let name = if task.trim().is_empty() { "Focus session".to_string() } else { task.trim().to_string() };
+            let tt = task.trim().to_string();
+            zenko_desktop::update_config(&mut fox.cfg, |v| {
+                v["last_task"] = tt.clone().into();
+                v["last_minutes"] = n.into();
+            });
+            fox.start_session(t, &name, n as f64);
+            true
+        }
+        "home_start_item" => {
+            if let Some(i) = fox.focus_item() {
+                let (task, m) = (fox.tt[i]["task"].as_str().unwrap_or("").to_string(), fox.tt[i]["mins"].as_f64().unwrap_or(30.0));
+                fox.start_session_item(t, &task, m, Some(i));
+            }
+            true
+        }
+        "toggle_pause" => {
+            fox.toggle_pause();
+            true
+        }
+        "end_session" => {
+            fox.end_session(t, false);
+            true
+        }
+        "start_break" => {
+            fox.start_break(t, None);
+            true
+        }
+        "end_break" => {
+            fox.end_break(t, false);
+            true
+        }
+        _ => false,
+    }).unwrap_or(false);
+    if done {
+        home_refresh(x, false);
+    }
+}
+
+/// the About you page: save (the button, Return in a field, or leaving a field), the two switches, Forget everything
+fn you_cmd(x: &mut HubW, cmd: &str) {
+    let Some(yp) = x.you.as_ref() else { return };
+    match cmd {
+        "you_save" => {
+            let vals = yp.values(&x.hub.ui);
+            let short = crate::win::with_fox(|fox, _| {
+                zenko_desktop::update_config(&mut fox.cfg, |v| {
+                    for (k, s) in &vals {
+                        v[*k] = s.clone().into();
+                    }
+                });
+                fox.cfg.raw.get("user_name").and_then(|v| v.as_str()).unwrap_or("").trim().split(' ').next()
+                    .unwrap_or("").to_string()
+            }).unwrap_or_default();
+            let msg = if short.is_empty() { "Saved. ".to_string() } else { format!("Saved. Nice to meet you, {short}!") };
+            yp.set_status(&mut x.hub.ui, &msg);
+        }
+        "you_learn" | "you_style" => {
+            let (id, key) = if cmd == "you_learn" { (yp.learn, "learn_habits") } else { (yp.style, "learn_style") };
+            let on = YouPage::checked(&x.hub.ui, id);
+            crate::win::with_fox(|fox, _| zenko_desktop::update_config(&mut fox.cfg, |v| v[key] = on.into()));
+        }
+        "you_forget" => {
+            zenko_desktop::chat::forget_reply("everything");
+            yp.set_info(&mut x.hub.ui, &zenko_desktop::chat::learned_summary());
+            crate::win::with_fox(|fox, _| fox.say("Okay, I've forgotten everything I learned. Fresh start!", 5.0));
+        }
+        _ => return,
+    }
+    relayout(x);
+}
+
+/// daily_render() with the app's data now
+fn daily_render(x: &mut HubW) {
+    let d = crate::win::with_fox(|fox, _| fox.daily_data()).unwrap_or_default();
+    let (th, f) = (x.hub.t.clone(), faces(x));
+    let cm10 = (100.0 * x.dpi / 25.4 + 0.5) as i32;
+    if let Some(dp) = x.daily.as_mut() {
+        dp.render(&mut x.hub.ui, &th, &f, cm10, &d);
+    }
+    x.daily_d = d;
+    relayout(x);
+}
+
+/// daily_refresh(): the page shows what changed, unless she's typing in one of its fields (then on the next show)
+fn daily_refresh(x: &mut HubW) {
+    if x.daily.is_none() || x.hub.side.page.as_deref() != Some("daily") {
+        return;
+    }
+    let d = crate::win::with_fox(|fox, _| fox.daily_data()).unwrap_or_default();
+    let o = &x.daily_d;
+    if (&d.life, d.streak, d.due, &d.cfg) == (&o.life, o.streak, o.due, &o.cfg) {
+        return;
+    }
+    let typing = x.hub.ui.focus.is_some_and(|f| matches!(x.hub.ui.ws[f].kind, Kind::Entry { .. } | Kind::Text { .. }));
+    if !typing {
+        daily_render(x);
+    }
+}
+
+/// the Daily page's buttons
+fn daily_cmd(x: &mut HubW, cmd: &str) {
+    let Some(dp) = x.daily.as_ref() else { return };
+    let ui = &x.hub.ui;
+    let text_of = |id: usize| match &ui.ws[id].kind {
+        Kind::Text { t, .. } => t.get(),
+        _ => ui.text_of(id),
+    };
+    let (note, q, a, hw, fact) = (text_of(dp.note), text_of(dp.q), text_of(dp.a), text_of(dp.hw), text_of(dp.fact));
+    if let Some(m) = cmd.strip_prefix("daily_mood:") {
+        let m = m.to_string();
+        crate::win::with_fox(move |fox, t| fox.checkin_save(t, &m, &note));
+        daily_render(x);
+    } else if cmd == "daily_card_add" {
+        if !q.trim().is_empty() && !a.trim().is_empty() {
+            crate::win::with_fox(move |fox, _| {
+                let s = fox.card_add(&q, &a);
+                fox.say(&s, 6.0);
+            });
+            daily_refresh(x);
+        }
+    } else if cmd == "daily_breathe" {
+        crate::win::with_fox(|fox, _| fox.events.push(zenko_desktop::Ev::Command("open_breathing".into())));
+    } else if cmd == "daily_checkin" {
+        crate::win::with_fox(|fox, _| fox.events.push(zenko_desktop::Ev::Command("open_checkin_force".into())));
+    } else if cmd == "daily_homework" {
+        let q = hw.trim().to_string();
+        if !q.is_empty() {
+            hub_ask(x, &format!("homework: {q}"));
+        }
+    } else if cmd == "daily_fact_add" {
+        let s = fact.trim().to_string();
+        if !s.is_empty() {
+            let low = s.to_lowercase();
+            let s = if low.starts_with("my ") || low.starts_with("remember") { s } else { format!("remember {s}") };
+            crate::win::with_fox(move |fox, t| {
+                let r = fox.life_route(t, &s).unwrap_or_else(|| "Noted~".into());
+                fox.say(&r, 6.0);
+            });
+            daily_render(x);
+        }
+    } else if let Some(i) = cmd.strip_prefix("daily_forget:") {
+        let Some(what) = i.parse::<usize>().ok().and_then(|i| dp.forget.get(i)).map(|f| f.1.clone()) else { return };
+        crate::win::with_fox(move |fox, _| fox.life_do(|l| {
+            if let Some(k) = what.strip_prefix("fact:") {
+                if let Some(o) = l["facts"].as_object_mut() {
+                    o.remove(k);
+                }
+            } else if let Some(n) = what.strip_prefix("note:")
+                && let Some(v) = l["notes"].as_array_mut()
+                && let Some(p) = v.iter().position(|e| e.as_str() == Some(n)) {
+                v.remove(p);
+            }
+        }));
+        daily_render(x);
+    } else if let Some(v) = cmd.strip_prefix("daily_badges:") {
+        let v = v.to_string();
+        let v2 = v.clone();
+        crate::win::with_fox(move |fox, _| zenko_desktop::update_config(&mut fox.cfg, |c| c["badge_view"] = v2.clone().into()));
+        x.daily_d.cfg["badge_view"] = v.clone().into();
+        let (th, f) = (x.hub.t.clone(), faces(x));
+        let d = x.daily_d.clone();
+        if let Some(dp) = x.daily.as_mut() {
+            dp.set_mode(&mut x.hub.ui, &th, &f, &d, &v);
+        }
+        relayout(x);
+    } else if cmd == "open_hub:notebook" {
+        show(x, "notebook");
+    }
+}
+
+/// the badge shelf under the mouse: the tip line says how to earn the plaque (a hand over earned ones)
+fn daily_hover(x: &mut HubW, mx: i32, my: i32) -> bool {
+    let Some(dp) = x.daily.as_ref() else { return false };
+    if x.hub.side.page.as_deref() != Some("daily") {
+        return false;
+    }
+    let cv = dp.badges_cv;
+    let (cx, cy) = x.hub.ui.abs(cv);
+    let inside = mx >= cx && my >= cy && mx < cx + x.hub.ui.ws[cv].w && my < cy + x.hub.ui.ws[cv].h;
+    let bid = if inside { dp.badge_at((mx - cx) as f64, (my - cy) as f64) } else { None };
+    let msg = match &bid {
+        Some(b) => {
+            let m = zenko_desktop::rewards::metrics(&x.daily_d.life);
+            DailyPage::badge_info(&x.daily_d, b, &m)
+        }
+        None => "Hover a plaque to see how to earn it.".into(),
+    };
+    let ch = dp.set_tip(&mut x.hub.ui, &msg);
+    if bid.as_ref().is_some_and(|b| x.daily_d.life["badges"].get(b).is_some()) {
+        x.cursor = IDC_HAND;
+    }
+    if ch {
+        relayout(x);
+    }
+    ch
+}
+
+/// a click on an earned plaque pins it to the sidebar (three at most) or unpins it
+fn daily_badge_click(x: &mut HubW, mx: i32, my: i32) {
+    let Some(dp) = x.daily.as_ref() else { return };
+    let cv = dp.badges_cv;
+    let (cx, cy) = x.hub.ui.abs(cv);
+    if mx < cx || my < cy || mx >= cx + x.hub.ui.ws[cv].w || my >= cy + x.hub.ui.ws[cv].h {
+        return;
+    }
+    let Some(bid) = dp.badge_at((mx - cx) as f64, (my - cy) as f64) else { return };
+    if x.daily_d.life["badges"].get(&bid).is_none() {
+        return;
+    }
+    let b2 = bid.clone();
+    let pins = crate::win::with_fox(move |fox, _| fox.life_do(|l| {
+        let mut p: Vec<Value> = l["badge_pins"].as_array().cloned().unwrap_or_default();
+        if let Some(i) = p.iter().position(|v| v.as_str() == Some(b2.as_str())) {
+            p.remove(i);
+        } else {
+            if p.len() >= 3 {
+                p.remove(0);
+            }
+            p.push(b2.clone().into());
+        }
+        l["badge_pins"] = Value::Array(p.clone());
+        p
+    })).unwrap_or_default();
+    out("sound:tap");
+    x.daily_d.life["badge_pins"] = Value::Array(pins);
+    let (th, f) = (x.hub.t.clone(), faces(x));
+    let d = x.daily_d.clone();
+    if let Some(dp) = x.daily.as_mut() {
+        dp.draw_badges(&mut x.hub.ui, &th, &f, &d);
+    }
+    relayout(x);
+}
+
+/// <FocusOut> on a profile field saves it
+fn you_focus_left(x: &mut HubW, old: Option<usize>) {
+    let Some(yp) = x.you.as_ref() else { return };
+    if old.is_some_and(|o| x.hub.ui.focus != Some(o) && yp.fields.iter().any(|f| f.1 == o)) {
+        you_cmd(x, "you_save");
+    }
+}
+
+/// the music card's round buttons (labels with pictures): previous, play / pause, next
+fn home_music_click(x: &mut HubW, mx: i32, my: i32) -> bool {
+    let Some(id) = x.hub.ui.hit(mx, my) else { return false };
+    let Some(k) = x.hub.ui.ws[id].name.strip_prefix("music:").map(String::from) else { return false };
+    out("sound:tap");
+    let key = match k.as_str() {
+        "prev" => "previous",
+        "next" => "next",
+        _ => "playpause",
+    };
+    crate::win::with_fox(|fox, _| fox.events.push(zenko_desktop::Ev::Media(key.into())));
+    if k == "pp" {
+        x.music_playing = !x.music_playing;
+    }
+    let playing = x.music_playing;
+    if let Some(hp) = x.home.as_ref() {
+        let img = if playing { hp.icons.pause.0.clone() } else { hp.icons.play.0.clone() };
+        if let Kind::Label { image, .. } = &mut x.hub.ui.ws[hp.pp].kind {
+            *image = Some(img);
+        }
+    }
+    true
+}
+
 fn after_show(x: &mut HubW, page: &str) {
+    if page == "home" {
+        x.home_intro = Some(now(x));
+        home_refresh(x, true);
+    }
+    if page == "daily" && x.daily.is_some() {
+        // (zenko.py renders on show when something changed while it was hidden)
+        let d = crate::win::with_fox(|fox, _| fox.daily_data()).unwrap_or_default();
+        if d.life != x.daily_d.life || d.streak != x.daily_d.streak || d.due != x.daily_d.due {
+            daily_render(x);
+        }
+    }
     if page == "chat" {
         if let Some(cp) = &x.chat {
             x.hub.ui.focus = Some(cp.entry);
@@ -195,6 +541,35 @@ fn page_frame(x: &mut HubW, page: &str) -> Option<usize> {
             x.chat_seen = None;
             pg
         }
+        "home" => {
+            let th = x.hub.t.clone();
+            let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
+            let cm10 = (100.0 * x.dpi / 25.4 + 0.5) as i32;
+            let d = crate::win::with_fox(|fox, _| fox.home_data()).unwrap_or_default();
+            let f = faces(x);
+            x.home = Some(HomePage::build(&mut x.hub.ui, pg, &th, &f, cm10, &d));
+            pg
+        }
+        "daily" => {
+            let th = x.hub.t.clone();
+            let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
+            let cm10 = (100.0 * x.dpi / 25.4 + 0.5) as i32;
+            let d = crate::win::with_fox(|fox, _| fox.daily_data()).unwrap_or_default();
+            let f = faces(x);
+            x.daily = Some(DailyPage::build(&mut x.hub.ui, pg, &th, &f, cm10, &d));
+            x.daily_d = d;
+            pg
+        }
+        "you" => {
+            let th = x.hub.t.clone();
+            let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
+            let cm10 = (100.0 * x.dpi / 25.4 + 0.5) as i32;
+            let cfg = crate::win::with_fox(|fox, _| fox.cfg.raw.clone()).unwrap_or_default();
+            let f = faces(x);
+            let learned = zenko_desktop::chat::learned_summary();
+            x.you = Some(YouPage::build(&mut x.hub.ui, pg, &th, &f, cm10, &cfg, &learned));
+            pg
+        }
         _ => return None,
     };
     x.pages.push((page.into(), pg));
@@ -215,6 +590,34 @@ fn relayout(x: &mut HubW) {
             x.hub.layout(&x.fonts, w, h);
         }
         cp.sync_scroll(&mut x.hub.ui, &x.fonts, &th);
+    }
+    if let Some(yp) = x.you.as_mut() {
+        let (th, f) = (x.hub.t.clone(), Faces { ui: x.hub.font_ui.clone(), title: String::new() });
+        yp.fit(&mut x.hub.ui, &x.fonts, &th, &f, x.hub.zk_f, w, h);
+        let sc = yp.sc.clone();
+        let y = x.hub.ui.ws[sc.cv].yoff;
+        sc.set_y(&mut x.hub.ui, y);
+        x.hub.ui.layout_at(&x.fonts, w, h);
+        sc.draw_bar(&mut x.hub.ui, false, &th);
+    }
+    if let Some(dp) = x.daily.as_mut() {
+        let (th, f) = (x.hub.t.clone(), Faces { ui: x.hub.font_ui.clone(), title: String::new() });
+        let d = x.daily_d.clone();
+        dp.fit(&mut x.hub.ui, &x.fonts, &th, &f, &d, x.hub.zk_f, w, h);
+        let sc = dp.sc.clone();
+        let y = x.hub.ui.ws[sc.cv].yoff;
+        sc.set_y(&mut x.hub.ui, y);
+        x.hub.ui.layout_at(&x.fonts, w, h);
+        sc.draw_bar(&mut x.hub.ui, false, &th);
+    }
+    if let Some(hp) = x.home.as_mut() {
+        let (th, f) = (x.hub.t.clone(), Faces { ui: x.hub.font_ui.clone(), title: String::new() });
+        hp.fit(&mut x.hub.ui, &x.fonts, &th, &f, x.hub.zk_f, w, h);
+        let sc = hp.sc.clone();
+        let y = x.hub.ui.ws[sc.cv].yoff;
+        sc.set_y(&mut x.hub.ui, y);
+        x.hub.ui.layout_at(&x.fonts, w, h);
+        sc.draw_bar(&mut x.hub.ui, false, &th);
     }
 }
 
@@ -322,6 +725,35 @@ fn chat_cmd(x: &mut HubW, cmd: &str) {
 }
 
 /// z17_wheel over the chat text (3 lines a notch, only while there's somewhere to go)
+/// the wheel over the Home page scrolls it
+fn page_wheel(x: &mut HubW, mx: i32, my: i32, delta: i32) -> bool {
+    let sc = match x.hub.side.page.as_deref() {
+        Some("home") => x.home.as_ref().map(|p| p.sc.clone()),
+        Some("you") => x.you.as_ref().map(|p| p.sc.clone()),
+        Some("daily") => x.daily.as_ref().map(|p| p.sc.clone()),
+        _ => None,
+    };
+    let Some(sc) = sc else { return false };
+    let mut over = x.hub.ui.hit(mx, my);
+    while let Some(i) = over {
+        if i == sc.boxf {
+            break;
+        }
+        over = x.hub.ui.ws[i].parent;
+    }
+    if over.is_none() {
+        return false;
+    }
+    if sc.wheel(&mut x.hub.ui, delta) {
+        let (w, h) = x.size;
+        x.hub.layout(&x.fonts, w, h);
+        let th = x.hub.t.clone();
+        sc.draw_bar(&mut x.hub.ui, false, &th);
+        return true;
+    }
+    false
+}
+
 fn chat_wheel(x: &mut HubW, mx: i32, my: i32, delta: i32) -> bool {
     let Some(cp) = x.chat.as_mut() else { return false };
     let tid = cp.text;
@@ -466,7 +898,7 @@ pub fn open(page: Option<&str>, init: HubInit) {
             size: (w, h), min, cursor: IDC_ARROW, faded: false,
             anim: zenko_desktop::hubanim::HubAnim::new(0.0, (x0 as u64) << 20 ^ 0x9e37_79b9),
             theme: init.theme.clone(), living: init.living, glow_next: 0.0, burst: None, particles: init.particles, minimized: false,
-            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None,
+            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0,
             chat_q: Default::default(), typing: None, sb_drag: None,
         }));
         with(|x| {
@@ -657,6 +1089,19 @@ fn step(x: &mut HubW) -> bool {
         }
     }
     chat_step(x);
+    // daily_refresh: what changed (a badge, a check-in, a card) shows while the page is open
+    if x.hub.side.page.as_deref() == Some("daily") && x.slide.is_none() && n >= x.daily_next {
+        x.daily_next = n + 1.0;
+        daily_refresh(x);
+    }
+    // hub_tick (Home: once a second) and hub_intro's count-up (every 28 ms for 0.65 s)
+    if x.hub.side.page.as_deref() == Some("home") && x.home.is_some() && x.slide.is_none() {
+        let counting = x.home_intro.is_some_and(|t0| n <= t0 + 0.75);
+        if n >= x.home_next || counting {
+            x.home_next = n + 1.0;
+            home_refresh(x, false);
+        }
+    }
     true
 }
 
@@ -799,6 +1244,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     let n = now(x);
                     x.hub.ui.motion(&x.fonts, mx, my, n);
                     sb_event(x, mx, my, "move");
+                    daily_hover(x, mx, my);
                     if x.cursor == IDC_ARROW && x.hub.part_at(mx, my) == "page" {
                         x.cursor = match x.hub.ui.cursor_at(mx, my) {
                             zenko_desktop::ui::Cursor::Hand => IDC_HAND,
@@ -833,7 +1279,9 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     if zone.is_empty() && part == "page" {
                         if !sb_event(x, mx, my, "press") {
                             let n = now(x);
+                            let old = x.hub.ui.focus;
                             x.hub.ui.press(&x.fonts, mx, my, n, msg == WM_LBUTTONDBLCLK);
+                            you_focus_left(x, old);
                         }
                         return;
                     }
@@ -871,7 +1319,20 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     sb_event(x, mx, my, "release");
                     if let Some(cmd) = x.hub.ui.release(mx, my) {
                         out("sound:click");
-                        chat_cmd(x, &cmd);
+                        if cmd.starts_with("you_") {
+                            you_cmd(x, &cmd);
+                        } else if cmd.starts_with("daily_") || cmd == "open_hub:notebook" {
+                            daily_cmd(x, &cmd);
+                        } else if cmd.starts_with("hub_ask:") || cmd.starts_with("home_") || matches!(cmd.as_str(),
+                            "toggle_pause" | "end_session" | "start_break" | "end_break") {
+                            home_cmd(x, &cmd);
+                        } else {
+                            chat_cmd(x, &cmd);
+                        }
+                    } else if x.hub.side.page.as_deref() == Some("home") {
+                        home_music_click(x, mx, my);
+                    } else if x.hub.side.page.as_deref() == Some("daily") {
+                        daily_badge_click(x, mx, my);
                     }
                     let moved = x.drag.is_some() && x.drag_moved;
                     x.rs = None;
@@ -919,7 +1380,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                 let delta = ((wp >> 16) & 0xffff) as i16 as i32;
                 let mut p = POINT { x: (lp & 0xffff) as i16 as i32, y: ((lp >> 16) & 0xffff) as i16 as i32 };
                 ScreenToClient(hwnd, &mut p);
-                if with(|x| chat_wheel(x, p.x, p.y, delta)) == Some(true) {
+                if with(|x| chat_wheel(x, p.x, p.y, delta) || page_wheel(x, p.x, p.y, delta)) == Some(true) {
                     redraw();
                 }
                 0
@@ -931,8 +1392,18 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                 with(|x| {
                     let n = now(x);
                     let entry = x.chat.as_ref().map(|c| c.entry);
+                    let home_task = x.home.as_ref().and_then(|h| h.task_entry);
+                    let you_entry = x.you.as_ref().is_some_and(|y| y.fields.iter().any(|f| !f.2 && Some(f.1) == x.hub.ui.focus));
                     if vk == VK_RETURN && entry.is_some() && x.hub.ui.focus == entry {
                         chat_cmd(x, "chat_send");
+                    } else if vk == VK_RETURN && home_task.is_some() && x.hub.ui.focus == home_task {
+                        home_cmd(x, "home_go");
+                    } else if vk == VK_RETURN && you_entry {
+                        you_cmd(x, "you_save");
+                    } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.a)) {
+                        daily_cmd(x, "daily_card_add");
+                    } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.fact)) {
+                        daily_cmd(x, "daily_fact_add");
                     } else if ctrl && vk == b'A' as u16 {
                         x.hub.ui.select_all(&x.fonts);
                     } else if ctrl && (vk == b'C' as u16 || vk == b'X' as u16) {

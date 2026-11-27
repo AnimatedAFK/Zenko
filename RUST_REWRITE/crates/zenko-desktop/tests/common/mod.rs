@@ -4,7 +4,7 @@
 use serde_json::Value;
 use std::collections::HashMap;
 use zenko_desktop::tkcanvas::{CKind, Canvas};
-use zenko_desktop::ui::{Font, Fonts};
+use zenko_desktop::ui::{Font, Fonts, Kind, Ui};
 
 pub fn font_of(s: &str) -> (String, i32, bool) {
     let (fam, rest) = if let Some(r) = s.strip_prefix('{') {
@@ -125,3 +125,73 @@ pub fn check_items(at: &str, cv: &Canvas, want: &[Value], images: &Value, fonts:
         }
     }
 }
+
+// ---- hub pages: the widget tree against a golden page dump ----
+
+pub fn cmp_tree(ui: &Ui, id: usize, g: &Value, ox: i32, oy: i32, at: &str, bad: &mut Vec<String>) {
+    let w = &ui.ws[id];
+    let (ax, ay) = ui.abs(id);
+    let gi = |k: &str| g[k].as_i64().unwrap() as i32;
+    let want = (gi("x") - ox, gi("y") - oy, gi("w"), gi("h"), g["mapped"].as_bool().unwrap());
+    if !want.4 {
+        if w.mapped {
+            bad.push(format!("{at} {}: mapped, want unmapped", g["cls"]));
+        }
+        return;
+    }
+    let got = (ax, ay, w.w, w.h, w.mapped);
+    if got != want {
+        bad.push(format!("{at} {}: {got:?} want {want:?} (req {}x{} want {}x{})", g["cls"], w.rw, w.rh, gi("rw"), gi("rh")));
+    }
+    let o = &g["opts"];
+    if g["cls"] == "Label" || g["cls"] == "Checkbutton" {
+        if let Kind::Label { text, font, image: None, .. } | Kind::Check { text, font, .. } = &w.kind {
+            let wt = o["text"].as_str().unwrap_or("");
+            if text != wt {
+                bad.push(format!("{at}: text {text:?} want {wt:?}"));
+            }
+            let (fam, n, b) = font_of(o["font"].as_str().unwrap());
+            let fam = if fam == "Segoe UI" { "Segoe UI".to_string() } else { fam };
+            if (font.size, font.bold) != (n, b) || (fam != font.family && fam != "Consolas") {
+                bad.push(format!("{at}: font {font:?} want {}", o["font"]));
+            }
+        }
+    }
+    let kids = g["kids"].as_array().unwrap();
+    if kids.len() != w.kids.len() {
+        bad.push(format!("{at}: {} kids, want {}", w.kids.len(), kids.len()));
+        return;
+    }
+    for (k, (&c, gk)) in w.kids.iter().zip(kids).enumerate() {
+        cmp_tree(ui, c, gk, ox, oy, &format!("{at}/{k}"), bad);
+    }
+}
+
+pub fn find<'a>(g: &'a Value, pred: &dyn Fn(&Value) -> bool, out: &mut Vec<&'a Value>) {
+    if pred(g) {
+        out.push(g);
+    }
+    for k in g["kids"].as_array().unwrap() {
+        find(k, pred, out);
+    }
+}
+
+pub fn fonts_of(c: &Value) -> Table {
+    let mut fonts = table(c);
+    let alias: Vec<_> = fonts.0.iter().filter(|(k, _)| k.0 == "Inter").map(|(k, v)| (k.clone(), v.clone())).collect();
+    for (k, v) in alias {
+        let e = fonts.0.entry(("Segoe UI".into(), k.1, k.2, k.3)).or_insert_with(|| v.clone());
+        for (s, n) in v.2 {
+            e.2.entry(s).or_insert(n);
+        }
+    }
+    let dv: Vec<_> = fonts.0.iter().filter(|(k, _)| k.0 == "DejaVu Sans Mono").map(|(k, v)| (k.clone(), v.clone())).collect();
+    for (k, v) in dv {
+        let e = fonts.0.entry(("Consolas".into(), k.1, k.2, k.3)).or_insert_with(|| v.clone());
+        for (s, n) in v.2 {
+            e.2.entry(s).or_insert(n);
+        }
+    }
+    fonts
+}
+

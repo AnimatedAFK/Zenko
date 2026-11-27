@@ -48,6 +48,8 @@ fn cls(k: &Kind, id: usize) -> &'static str {
         Kind::Entry { .. } => "Entry",
         Kind::Button { .. } | Kind::Canvas { .. } => "Canvas",
         Kind::Text { .. } => "Text",
+        Kind::Check { radio: true, .. } => "Radiobutton",
+        Kind::Check { .. } => "Checkbutton",
     }
 }
 

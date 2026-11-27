@@ -119,6 +119,8 @@ pub struct Text {
     pub w: i32,
     pub h: i32,
     pub dlines: Vec<DLine>,
+    /// an editable box (the profile fields): where the insertion cursor is, in characters; None = display only
+    pub edit: Option<usize>,
 }
 
 fn nl_run() -> Run {
@@ -148,6 +150,7 @@ impl Text {
             w: 1,
             h: 1,
             dlines: vec![],
+            edit: None,
         }
     }
 
@@ -206,6 +209,36 @@ impl Text {
         }
         cur.push(fin);
         self.lines.push(cur);
+    }
+
+    /// the text without Tk's final newline (get("1.0", "end-1c"))
+    pub fn plain(&self) -> String {
+        let mut s = self.get();
+        if s.ends_with('\n') {
+            s.pop();
+        }
+        s
+    }
+
+    /// replace all of the text with plain `s` and lay it out again
+    pub fn set_plain(&mut self, f: &dyn Fonts, s: &str) {
+        self.delete_all();
+        self.insert_end(s, &[]);
+        self.relayout(f);
+    }
+
+    /// a character offset into plain() as a (line, char) index
+    pub fn index_of(&self, off: usize) -> (usize, usize) {
+        let (mut line, mut ch) = (1, 0);
+        for c in self.plain().chars().take(off) {
+            if c == '\n' {
+                line += 1;
+                ch = 0;
+            } else {
+                ch += 1;
+            }
+        }
+        (line, ch)
     }
 
     /// number of real lines (Tk's "end" is the line after them)

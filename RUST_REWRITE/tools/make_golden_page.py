@@ -81,7 +81,8 @@ tk.Text.configure = tk.Text.config = _tcfg_rec
 
 
 def windows_defaults(root):
-    for k, v in (("*Label.borderWidth", 2), ("*Label.padX", 1), ("*Label.padY", 1), ("*Label.highlightThickness", 0),
+    for k, v in (("*Checkbutton.borderWidth", 2), ("*Radiobutton.borderWidth", 2), ("*Checkbutton.highlightThickness", 1),
+                 ("*Radiobutton.highlightThickness", 1), ("*Label.borderWidth", 2), ("*Label.padX", 1), ("*Label.padY", 1), ("*Label.highlightThickness", 0),
                  ("*Entry.borderWidth", 1), ("*Frame.borderWidth", 0), ("*Frame.highlightThickness", 0),
                  ("*Canvas.borderWidth", 0)):
         root.option_add(k, v)
@@ -100,6 +101,22 @@ def photo_px(tkapp, nm):
                 row.append("#%02x%02x%02xff" % (r, g, b))
         rows.append(row)
     return rows
+
+
+WIDE_PIECES = [False]                     # (set for the resized-window cases)
+
+
+def wrap_pieces(text):
+    """every run of a paragraph that starts a line when it wraps (at its start or after a space)"""
+    out = set()
+    for para in text.split("\n"):
+        if " " not in para:
+            continue
+        for i in range(len(para)):
+            if i == 0 or para[i - 1] == " ":
+                for j in range(i + 1, len(para) + 1):
+                    out.add(para[i:j])
+    return out
 
 
 def walk(w, top, skip, images, fonts):
@@ -127,6 +144,9 @@ def walk(w, top, skip, images, fonts):
                 for line in io["text"].split("\n"):
                     for k in range(len(line) + 1):
                         ent["w"][line[:k]] = f.measure(line[:k])
+                if io.get("width", "0") not in ("0", ""):          # wrapped canvas text measures runs from each line start
+                    for piece in wrap_pieces(io["text"]):
+                        ent["w"][piece] = f.measure(piece)
                 a = f.actual()                   # the same face at other sizes (pages lay out before zk_fit scales)
                 for n in range(6, 17):
                     g = tkfont.Font(family=a["family"], size=n, weight=a["weight"], slant=a["slant"])
@@ -135,15 +155,39 @@ def walk(w, top, skip, images, fonts):
                     e2 = fonts.setdefault(key, {"ascent": g.metrics("ascent"), "descent": g.metrics("descent"), "w": {}})
                     e2["w"][io["text"]] = g.measure(io["text"])
                     e2["w"]["0"] = g.measure("0")
+                    if io.get("width", "0") not in ("0", ""):      # (a wrap that runs before the fonts are fitted)
+                        for piece in wrap_pieces(io["text"]):
+                            e2["w"][piece] = g.measure(piece)
             items.append(it)
         rec["items"] = items
-    if rec["cls"] == "Label" and o.get("font"):
+    if rec["cls"] == "Label" and o.get("image") and o["image"] not in images:
+        images[o["image"]] = REG.get(o["image"]) or photo_px(w.tk, o["image"])
+    if rec["cls"] in ("Label", "Checkbutton", "Radiobutton") and o.get("font"):
         f = tkfont.Font(font=o["font"])
         ent = fonts.setdefault(o["font"], {"ascent": f.metrics("ascent"), "descent": f.metrics("descent"), "actual": f.actual(), "w": {}})
         ent["w"][o.get("text", "")] = f.measure(o.get("text", ""))
         ent["w"]["0"] = f.measure("0")
+        for piece in wrap_pieces(o.get("text", "")):              # what wrapping the label measures
+            ent["w"][piece] = f.measure(piece)
+        f0 = getattr(w, "_zk_f0", None)          # and near its built size (a resized window wraps before zk_fit scales it)
+        if f0 and WIDE_PIECES[0]:
+            a0 = f.actual()
+            for n0 in range(max(6, f0[1] - 1), f0[1] + 3):
+                if n0 == a0["size"]:
+                    continue
+                g = tkfont.Font(family=a0["family"], size=n0, weight=a0["weight"], slant=a0["slant"])
+                key = "{%s} %d%s%s" % (a0["family"], n0, " bold" if a0["weight"] == "bold" else "", " italic" if a0["slant"] == "italic" else "")
+                e2 = fonts.setdefault(key, {"ascent": g.metrics("ascent"), "descent": g.metrics("descent"), "w": {}})
+                for piece in wrap_pieces(o.get("text", "")):
+                    e2["w"][piece] = g.measure(piece)
         a = f.actual()
         for n in range(6, 17):
+            g = tkfont.Font(family=a["family"], size=n, weight=a["weight"], slant=a["slant"])
+            key = "{%s} %d%s%s" % (a["family"], n, " bold" if a["weight"] == "bold" else "", " italic" if a["slant"] == "italic" else "")
+            e2 = fonts.setdefault(key, {"ascent": g.metrics("ascent"), "descent": g.metrics("descent"), "w": {}})
+            e2["w"][o.get("text", "")] = g.measure(o.get("text", ""))
+            e2["w"]["0"] = g.measure("0")
+        for n in range(17, 61):                                   # (big text sizes: the whole text only)
             g = tkfont.Font(family=a["family"], size=n, weight=a["weight"], slant=a["slant"])
             key = "{%s} %d%s%s" % (a["family"], n, " bold" if a["weight"] == "bold" else "", " italic" if a["slant"] == "italic" else "")
             e2 = fonts.setdefault(key, {"ascent": g.metrics("ascent"), "descent": g.metrics("descent"), "w": {}})
@@ -229,6 +273,109 @@ SCROLLS = [("units", -3), ("units", -3), ("pages", -1), ("moveto", 0.3), ("units
            ("moveto", 0.0), ("units", -3), ("units", 3), ("pages", 1), ("moveto", 0.55), ("units", -1), ("moveto", 1.0)]
 
 
+OUT, SETUP = "hub_pages.json", {}
+if len(sys.argv) > 1 and sys.argv[1] == "home":
+    # golden/hub_home.json: the Home page (stat cards, the focus card in its states, "Coming up today", the week
+    # chart, quick ask, music) with a timetable, deadlines and focus history set up; time.time is pinned too
+    OUT = "hub_home.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 9.5 * 3600          # Thursday 11 Dec 2025, 09:30
+    CASES = [("home_idle", T0, {"theme": "snow", "user_name": "Anoop Jalan"}, None, "home"),
+             ("home_focus", T0, {"theme": "snow"}, None, "home"),
+             ("home_paused", T0 + 6 * 3600, {"theme": "midnight"}, (1120, 720), "home"),
+             ("home_break", T0 + 12 * 3600, {"theme": "snow", "user_name": "Anoop"}, None, "home"),
+             ("home_empty", T0 - 3 * 3600, {"theme": "snow"}, None, "home")]
+
+    def _data(app, name):
+        if name == "home_empty":
+            return
+        day = lambda n: (_dt.date(2025, 12, 11) + _dt.timedelta(days=n)).isoformat()
+        tt = [{"start": "08:00", "mins": 50, "task": "Bio reading", "daily": True, "done": [day(0)]},
+              {"start": "10:00", "mins": 45, "task": "Chemistry past paper 2 with the long mark scheme", "daily": True, "done": []},
+              {"start": "13:00", "mins": 30, "task": "Lunch", "daily": True, "done": []},
+              {"start": "15:00", "mins": 90, "task": "Maths AA SL", "daily": True, "done": []},
+              {"start": "17:00", "mins": 25, "task": "French vocab", "daily": True, "done": []},
+              {"start": "19:00", "mins": 60, "task": "English essay", "daily": True, "done": []},
+              {"start": "21:00", "mins": 20, "task": "Read", "daily": True, "done": []}]
+        app.tt[:] = tt
+        Z.save_tt(app.tt)
+        Z.save_deadlines([{"id": "d1", "title": "Biology MYA paper one", "kind": "Exam", "date": day(3)}])
+        st = {day(-k): v for k, v in ((0, 2700), (1, 5400), (2, 0), (3, 1800), (4, 9000), (5, 600), (6, 3000))}
+        with open(os.path.join(Z.DATA_DIR, "stats.json"), "w") as f:
+            json.dump(st, f)
+        if name == "home_focus":
+            app.start_session("Bio reading", 45)
+            app.session["elapsed"], app.session["dist"], app.session["closed"] = 900.0, 130.0, 2
+        elif name == "home_paused":
+            app.start_session("Chemistry past paper 2 with the long mark scheme", 30)
+            app.session["elapsed"], app.session["paused"] = 1200.0, True
+        elif name == "home_break":
+            app.start_break(10)
+            app.brk["elapsed"] = 125.0
+    SETUP["data"] = _data
+
+
+if len(sys.argv) > 1 and sys.argv[1] == "you":
+    # golden/hub_you.json: the About you page, empty and filled in (Text boxes, checkbuttons, what she learned)
+    OUT = "hub_you.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 9.5 * 3600
+    YOU = {"user_name": "Anoop Jalan", "user_role": "IB Diploma student in year two",
+           "user_studying": "Biology HL internal assessment on enzyme kinetics and the chemistry of buffers",
+           "user_goals": "A 7 in Bio HL\nFinish the EE draft by January\nSleep before 23:00",
+           "user_notes": "Be gentle but push me a bit. I like short answers with one example. " * 3,
+           "learn_style": False}
+    CASES = [("you_empty", T0, {"theme": "snow"}, None, "you"),
+             ("you_filled", T0, dict(YOU, theme="midnight"), (1120, 720), "you"),
+             ("you_learned", T0, dict(YOU, theme="snow"), None, "you")]
+
+    def _data(app, name):
+        if name == "you_learned":
+            d = Z.load_learned()
+            d["replies"] = {"good morning": "Ohayo!", "gn": "Oyasumi~"}
+            d.setdefault("style", {})["aliases"] = {"sched": "timetable", "hw": "homework"}
+            Z.save_learned(d)
+    SETUP["data"] = _data
+
+
+if len(sys.argv) > 1 and sys.argv[1] == "daily":
+    # golden/hub_daily.json: the Daily page (stat plaques, check-in with the 14-day dots, flashcards, wellbeing, the
+    # 61 ema badges with tiers / pins / secrets, homework buddy, things she remembers) with a life set up, and empty
+    OUT = "hub_daily.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 9.5 * 3600
+    CASES = [("daily_snow", T0, {"theme": "snow"}, None, "daily"),
+             ("daily_midnight_small", T0, {"theme": "midnight", "badge_view": "earned", "remind_water": False,
+                                           "daynight": False}, (1120, 720), "daily"),
+             ("daily_empty", T0, {"theme": "sakura"}, None, "daily")]
+
+    def _data(app, name):
+        L = app.life
+        day = lambda n: (_dt.date(2025, 12, 11) + _dt.timedelta(days=n)).isoformat()
+        if name == "daily_empty":
+            for k in ("journal", "cards", "notes", "found"):
+                L[k] = []
+            L["badges"], L["facts"], L["btier"], L["badge_pins"] = {}, {}, {}, []
+            app.life_save()
+            return
+        L["journal"] = [{"date": day(-k), "mood": m, "note": n, "t": 0} for k, m, n in
+                        ((12, "good", ""), (9, "meh", "Tired after the mock exam, but the chemistry went fine I think"),
+                         (5, "great", "Got a 7 on the bio quiz!"), (3, "rough", ""), (1, "okay", "Long day"), (0, "good", ""))]
+        L["cards"] = [{"id": "c%d" % i, "q": q, "a": a, "box": b, "wrong": w, "right": 1, "due": day(dd)} for i, (q, a, b, w, dd) in
+                      enumerate((("What is the function of ATP synthase in oxidative phosphorylation?", "Makes ATP from ADP + Pi", 1, 4, -1),
+                                 ("Avogadro's number", "6.022e23", 0, 0, 0), ("Le Chatelier", "System opposes change", 2, 2, 3),
+                                 ("pH of a buffer", "pKa + log(A/HA)", 1, 1, -2)))]
+        L["badges"] = {"first": day(-30), "streak3": day(-20), "t_angler": day(-10), "night": day(-5)}
+        L["btier"] = {"t_angler": 2}
+        L["badge_pins"] = ["t_angler"]
+        L["facts"] = {"favourite subject": "biology", "birthday": "05-14", "pet": "a cat called Miso"}
+        L["notes"] = ["I have piano on Tuesdays", "Mum's birthday is in March and I should plan something nice for it"]
+        L["found"] = [{"what": "a maple leaf"}, {"what": "a shiny pebble"}]
+        app.well.update({"eyes": 600, "posture": 1500, "water": 100})
+        app.life_save()
+    SETUP["data"] = _data
+
+
 def scroll_rec(t):
     """the wheel and the scrollbar: yview after each 'yview scroll' / 'yview moveto', and the top line then"""
     rec = []
@@ -242,6 +389,17 @@ def scroll_rec(t):
         rec.append({"op": [how, v], "yview": [float(x) for x in t.yview()], "top": t.index(top + " display linestart"),
                     "top_box": list(t.dlineinfo(top) or [])})
     return rec
+if os.environ.get("ZK_TRACE"):                                   # debugging: which renders / wraps run, and when
+    import traceback
+    for _m in ("daily_render", "zk_flow_reflow", "z21_unwrap", "zk_fit"):
+        def _wrap(f, m=_m):
+            def g(self, *a, **k):
+                print("TRACE", m, [x.name for x in traceback.extract_stack()[-6:-1]], flush=True)
+                return f(self, *a, **k)
+            return g
+        setattr(Z.Zenko23, _m, _wrap(getattr(Z.Zenko23, _m)))
+    if os.environ.get("ZK_ONLY"):
+        CASES = [c for c in CASES if c[0] == os.environ["ZK_ONLY"]]
 out = []
 for name, t, cfg, size, page in CASES:
     NOW[0] = t
@@ -251,6 +409,8 @@ for name, t, cfg, size, page in CASES:
     app.cfg.update(cfg)
     Z.apply_theme(app.cfg.get("theme", "snow"))
     app.root.update()
+    if "data" in SETUP:
+        SETUP["data"](app, name)
     if name in ("chat_long", "chat_typed"):
         app.chat_log = list(LONG_LOG[:3] if name == "chat_typed" else LONG_LOG)
     app.open_hub(page)
@@ -261,6 +421,13 @@ for name, t, cfg, size, page in CASES:
     for _ in range(12):
         app.root.update()
         time.sleep(0.05)
+    while time.monotonic() < getattr(app, "_count_until", 0) + 0.15:      # Home's count-up has finished
+        app.root.update()
+        time.sleep(0.02)
+    if page != "chat":
+        app.zk_fit()                       # the settled page: widgets rebuilt by a refresh get their fitted fonts too
+        for _ in range(3):
+            app.root.update()
     if name == "chat_typed":
         # her reply typed out by _chat_pump, a few letters every 14 ms
         app.chat_line("Fox", LONG_LOG[3][1])
@@ -273,6 +440,7 @@ for name, t, cfg, size, page in CASES:
             app.root.update()
             time.sleep(0.02)
     images, fonts = {}, {}
+    WIDE_PIECES[0] = "small" in name
     pg = h["pages"][page]
     tree = walk(pg, w, set(), images, fonts)
     texts = []
@@ -286,13 +454,25 @@ for name, t, cfg, size, page in CASES:
     if name == "chat_long":
         texts[0]["scrolls"] = scroll_rec(pg.nametowidget(texts[0]["path"]))
     out.append({"name": name, "now": t, "cfg_all": cfg, "page": page, "geometry": w.geometry(), "zk_f": app.zk_f,
-                "chat_log": list(app.chat_log), "tree": tree, "texts": texts, "images": images, "fonts": fonts})
+                "chat_log": list(app.chat_log), "session": json.loads(json.dumps(app.session, default=str)),
+                "brk": json.loads(json.dumps(app.brk, default=str)),
+                "tt": json.loads(json.dumps(app.tt, default=str)), "deadlines": Z.load_deadlines(), "stats": Z.load_stats(),
+                "cfg": {k: app.cfg.get(k) for k in ("last_task", "last_minutes", "music_presets", "user_name", "theme", "badge_view",
+                                                     "remind_eyes", "remind_posture", "remind_water", "daynight", "bedtime",
+                                                     "fox_name")},
+                "life": json.loads(json.dumps({k: app.life.get(k) for k in ("journal", "cards", "badges", "btier", "badge_pins",
+                                                                           "facts", "notes", "found", "stats", "fishing")}, default=str)),
+                "well": dict(getattr(app, "well", {}) or {}), "jp": Z._jp_font(app.root),
+                "mood_word": app.mood_word() if hasattr(app, "mood_word") else "", "hunger": app.hunger() if hasattr(app, "hunger") else 0,
+                "spirit": app.spirit() if hasattr(app, "spirit") else 0, "streak": app.streak() if hasattr(app, "streak") else 0,
+                "total_hours": app.total_hours() if hasattr(app, "total_hours") else 0,
+                "tree": tree, "texts": texts, "images": images, "fonts": fonts})
     try:
         app.hub_close()
         app.root.destroy()
     except Exception:
         pass
-with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "golden", "hub_pages.json"), "w") as f:
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "golden", OUT), "w") as f:
     json.dump(out, f)
 for c in out:
     print(c["name"], c["geometry"], len(c["images"]), list(c["fonts"]), [len(x["lines"]) for x in c["texts"]])

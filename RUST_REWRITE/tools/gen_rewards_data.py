@@ -12,6 +12,8 @@ data = {
     "BADGES": [list(b[:4]) for b in Z.BADGES],
     "BADGE_TIERED": [list(b) for b in Z.BADGE_TIERED],
     "BADGE_TIER_NAME": Z.BADGE_TIER_NAME,
+    "BADGE_SECRET": sorted(Z.BADGE_SECRET),
+    "MOODS": [list(m) for m in Z.MOODS],
     "GARDEN_STAGES": [list(s[:4]) for s in Z.GARDEN_STAGES],
     "JOURNEY_ALL": [[p[0], p[1], p[2], p[6], p[9]] for p in Z.JOURNEY_ALL],
     "JMAP_PLACES": [p[0] for p in Z.JMAP_PLACES],

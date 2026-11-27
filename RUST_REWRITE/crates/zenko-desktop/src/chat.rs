@@ -580,7 +580,7 @@ impl Companion {
     }
 
     /// life_route: the parts ported so far (breathing, the daily check-in)
-    fn life_route(&mut self, now: f64, text: &str) -> Option<String> {
+    pub fn life_route(&mut self, now: f64, text: &str) -> Option<String> {
         let low = text.trim().to_lowercase();
         let lw = low.trim_end_matches([' ', '!', '.', '?', '~']);
         if rx!(r"^(?:let'?s |can we |i want to |help me )?(?:do (?:a |some )?|start (?:a )?)?(?:breath(?:e|ing)(?: exercise)?|calm me down|i'?m (?:so )?(?:stressed|anxious|panicking|overwhelmed))").is_match(lw) {
