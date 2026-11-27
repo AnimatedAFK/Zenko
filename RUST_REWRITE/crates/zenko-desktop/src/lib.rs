@@ -36,6 +36,8 @@ pub mod chatpage;
 pub mod chat;
 pub mod ema;
 pub mod plan;
+pub mod z22;
+pub mod routes17;
 pub mod chat_data;
 pub mod pydifflib;
 pub mod mdtext;

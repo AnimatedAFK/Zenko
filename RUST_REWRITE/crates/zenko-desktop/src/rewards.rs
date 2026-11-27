@@ -160,7 +160,7 @@ fn py_round1(x: f64) -> f64 {
 }
 
 /// Days since 1970-01-01 in local time, and the ISO date `k` days before today.
-fn local_days() -> i64 {
+pub(crate) fn local_days() -> i64 {
     let (y, m, d, _, _, _) = crate::local_now();
     days_from_civil(y as i64, m as i64, d as i64)
 }
@@ -276,7 +276,7 @@ pub struct Rewards {
     pub next_tick: Option<f64>,
 }
 
-fn garden_stage(xp: f64) -> usize {
+pub(crate) fn garden_stage(xp: f64) -> usize {
     let mut i = 0;
     for (k, st) in arr(&rdata()["GARDEN_STAGES"]).iter().enumerate() {
         if xp >= st[0].as_f64().unwrap_or(0.0) {
@@ -287,7 +287,7 @@ fn garden_stage(xp: f64) -> usize {
 }
 
 /// garden_health: one day off is a free rest day, after that each skipped day costs a quarter
-fn garden_health(g: &Value) -> f64 {
+pub(crate) fn garden_health(g: &Value) -> f64 {
     let h = g["health"].as_f64().unwrap_or(1.0);
     let Some(last) = arr(&g["active"]).last().and_then(|v| v.as_str()) else { return h };
     let Some(ld) = parse_iso(last) else { return h };

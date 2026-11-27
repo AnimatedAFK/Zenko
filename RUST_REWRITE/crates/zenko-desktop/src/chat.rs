@@ -690,13 +690,28 @@ impl Companion {
         if let Some(r) = self.z23_route(now, text) {
             return Some(r);
         }
+        if let Some(r) = self.z22_route(now, text) {
+            return Some(r);
+        }
         if let Some(r) = self.z19_route(now, text, win) {
             return Some(r);
         }
         if let Some(r) = self.z18_route(now, text) {
             return Some(r);
         }
+        if let Some(r) = self.z17_route(now, text) {
+            return Some(r);
+        }
         if let Some(r) = self.z16_route(now, text) {
+            return Some(r);
+        }
+        if let Some(r) = self.z15_route(now, text) {
+            return Some(r);
+        }
+        if let Some(r) = self.ib_route(now, text) {
+            return Some(r);
+        }
+        if let Some(r) = self.garden_route(now, text) {
             return Some(r);
         }
         if let Some(r) = self.life_route(now, text) {

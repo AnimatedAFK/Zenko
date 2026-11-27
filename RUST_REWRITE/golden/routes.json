@@ -1,0 +1,4879 @@
+[
+{
+"now": 1765440000.0,
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 5000.5,
+"VS Code": 1830.2,
+"Zenko": 400,
+"Word": 75.3
+},
+"sites": {
+"YouTube": 3725.0,
+"Other websites": 900,
+"Reddit": 59.6
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+]
+}
+}
+},
+"garden": {
+"xp": 200.0,
+"health": 0.9,
+"active": [
+"2025-12-08"
+],
+"log": [],
+"grove": [],
+"seed": 7,
+"planted": "2025-11-01"
+},
+"badges": {
+"first": "2025-12-01",
+"spotless": "2025-12-02"
+},
+"fishing_book": {
+"koi": {
+"n": 1
+},
+"carp": {
+"n": 2
+}
+}
+},
+"browser": {
+"time": 1765440100.0,
+"title": "Photosynthesis - Wikipedia",
+"host": "en.wikipedia.org",
+"version": "0.4.0"
+},
+"stats": {
+"2025-12-01": 30000,
+"2025-12-05": 9000.5
+}
+},
+{
+"q": "go fishing",
+"now": 1765440007.0,
+"out": [
+[
+"line",
+"You",
+"go fishing"
+],
+[
+"line",
+"Fox",
+"Yatta! To the pond~ Answer right and something bites~kon!"
+]
+],
+"cmds": [
+"open_hub:garden",
+"fish_cast"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "cast a line",
+"now": 1765440014.0,
+"out": [
+[
+"line",
+"You",
+"cast a line"
+],
+[
+"line",
+"Fox",
+"Ehehe~ To the pond~ Answer right and something bites~kon!"
+]
+],
+"cmds": [
+"open_hub:garden",
+"fish_cast"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "catch a koi",
+"now": 1765440021.0,
+"out": [
+[
+"line",
+"You",
+"catch a koi"
+],
+[
+"line",
+"Fox",
+"Waai~ To the pond~ Answer right and something bites!"
+]
+],
+"cmds": [
+"open_hub:garden",
+"fish_cast"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "my koi book",
+"now": 1765440028.0,
+"out": [
+[
+"line",
+"You",
+"my koi book"
+],
+[
+"line",
+"Fox",
+"Waai~ Here's your koi book: 2 of 32 kinds caught~"
+]
+],
+"cmds": [
+"koi_book"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "fish dex",
+"now": 1765440035.0,
+"out": [
+[
+"line",
+"You",
+"fish dex"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Here's your koi book: 2 of 32 kinds caught~"
+]
+],
+"cmds": [
+"koi_book"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "my passport",
+"now": 1765440042.0,
+"out": [
+[
+"line",
+"You",
+"my passport"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Your passport~ 6 places stamped so far~kon!"
+]
+],
+"cmds": [
+"open_hub:map"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "badges",
+"now": 1765440049.0,
+"out": [
+[
+"line",
+"You",
+"badges"
+],
+[
+"line",
+"Fox",
+"Waai~ Here are your ema badges~ 2 earned."
+]
+],
+"cmds": [
+"open_hub:daily"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "global chat",
+"now": 1765440056.0,
+"out": [
+[
+"line",
+"You",
+"global chat"
+],
+[
+"line",
+"Fox",
+"Ehehe~ The Town square~ Be kind out there!"
+]
+],
+"cmds": [
+"open_hub:square"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "square",
+"now": 1765440063.0,
+"out": [
+[
+"line",
+"You",
+"square"
+],
+[
+"line",
+"Fox",
+"Kon! To the winter lantern festival~ (冬祭り)"
+]
+],
+"cmds": [
+"open_hub:square"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "browser",
+"now": 1765440070.0,
+"out": [
+[
+"line",
+"You",
+"browser"
+],
+[
+"line",
+"Fox",
+"Yatta! Linked with Zenko Browser 0.4.0~ You're on “Photosynthesis - Wikipedia”. Right-click any page there to summarise it, quiz yourself or add dates to me."
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "are you linked?",
+"now": 1765440077.0,
+"out": [
+[
+"line",
+"You",
+"are you linked?"
+],
+[
+"line",
+"Fox",
+"Sugoi! Linked with Zenko Browser 0.4.0~ You're on “Photosynthesis - Wikipedia”. Right-click any page there to summarise it, quiz yourself or add dates to me~kon!"
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "periodic table",
+"now": 1765440084.0,
+"out": [
+[
+"line",
+"You",
+"periodic table"
+],
+[
+"line",
+"Fox",
+"Waai~ Here's the periodic table~ click an element for its details."
+]
+],
+"cmds": [
+"open_ptable"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "open the calculator",
+"now": 1765440091.0,
+"out": [
+[
+"line",
+"You",
+"open the calculator"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Calculator's open! MENU for Graph, Equation, Statistics and Distribution~"
+]
+],
+"cmds": [
+"open_calc"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "cg50",
+"now": 1765440098.0,
+"out": [
+[
+"line",
+"You",
+"cg50"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Calculator's open! MENU for Graph, Equation, Statistics and Distribution~"
+]
+],
+"cmds": [
+"open_calc"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "french dictionary",
+"now": 1765440105.0,
+"out": [
+[
+"line",
+"You",
+"french dictionary"
+],
+[
+"line",
+"Fox",
+"Sugoi! Dictionnaire ouvert~ type a word in French or English~kon!"
+]
+],
+"cmds": [
+"open_french_dict"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "bible",
+"now": 1765440112.0,
+"out": [
+[
+"line",
+"You",
+"bible"
+],
+[
+"line",
+"Fox",
+"Waai~ Your Bible is open~ click a verse for the Hebrew or Greek."
+]
+],
+"cmds": [
+"open_bible:"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "open bible at john 3:16",
+"now": 1765440119.0,
+"out": [
+[
+"line",
+"You",
+"open bible at john 3:16"
+],
+[
+"line",
+"Fox",
+"Yatta! Opening John 3:16~"
+]
+],
+"cmds": [
+"open_bible:john 3:16"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "read psalm 23",
+"now": 1765440126.0,
+"out": [
+[
+"line",
+"You",
+"read psalm 23"
+],
+[
+"line",
+"Fox",
+"Kon! Opening Psalm 23~"
+]
+],
+"cmds": [
+"open_bible:psalm 23"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "read harry 5",
+"now": 1765440133.0,
+"out": [
+[
+"line",
+"You",
+"read harry 5"
+],
+[
+"llm",
+"read harry 5"
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "bible at nonsense words",
+"now": 1765440140.0,
+"out": [
+[
+"line",
+"You",
+"bible at nonsense words"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Your Bible is open~ click a verse for the Hebrew or Greek~kon!"
+]
+],
+"cmds": [
+"open_bible:"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "read 1 cor 13",
+"now": 1765440147.0,
+"out": [
+[
+"line",
+"You",
+"read 1 cor 13"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Opening 1 Cor 13~"
+]
+],
+"cmds": [
+"open_bible:1 cor 13"
+],
+"ib": [],
+"rules": [],
+"paused": false
+},
+{
+"q": "keep youtube if it has biology, chem",
+"now": 1765440154.0,
+"out": [
+[
+"line",
+"You",
+"keep youtube if it has biology, chem"
+],
+[
+"line",
+"Fox",
+"Kon! Got it~ new rule: Keep YouTube whose title has “biology”, “chem” open. (All rules: Settings > Close or keep.)"
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "always close reddit",
+"now": 1765440161.0,
+"out": [
+[
+"line",
+"You",
+"always close reddit"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Got it~ new rule: Close Reddit. (All rules: Settings > Close or keep.)"
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "block tiktok when the title has dance",
+"now": 1765440168.0,
+"out": [
+[
+"line",
+"You",
+"block tiktok when the title has dance"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Got it~ new rule: Close TikTok whose title has “dance”. (All rules: Settings > Close or keep.)"
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "never close notion",
+"now": 1765440175.0,
+"out": [
+[
+"line",
+"You",
+"never close notion"
+],
+[
+"line",
+"Fox",
+"Kon! Got it~ new rule: Keep Notion open. (All rules: Settings > Close or keep.)"
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "my rules",
+"now": 1765440182.0,
+"out": [
+[
+"line",
+"You",
+"my rules"
+],
+[
+"line",
+"Fox",
+"Your rules (first match wins):\n1. Keep YouTube whose title has “biology”, “chem” open\n2. Close Reddit\n3. Close TikTok whose title has “dance”\n4. Keep Notion open"
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "close rules",
+"now": 1765440189.0,
+"out": [
+[
+"line",
+"You",
+"close rules"
+],
+[
+"line",
+"Fox",
+"Your rules (first match wins):\n1. Keep YouTube whose title has “biology”, “chem” open\n2. Close Reddit\n3. Close TikTok whose title has “dance”\n4. Keep Notion open"
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "screen time",
+"now": 1765440196.0,
+"out": [
+[
+"line",
+"You",
+"screen time"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Longest today: YouTube, 1 hour 2 min. Then VS Code 31m, Zenko 7m. Total screen time: 2 hours 2 min~"
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "open my screen time",
+"now": 1765440203.0,
+"out": [
+[
+"line",
+"You",
+"open my screen time"
+],
+[
+"line",
+"Fox",
+"Waai~ Longest today: YouTube, 1 hour 2 min. Then VS Code 31m, Zenko 7m. Total screen time: 2 hours 2 min~"
+]
+],
+"cmds": [
+"open_hub:screen"
+],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "where did my day go",
+"now": 1765440210.0,
+"out": [
+[
+"line",
+"You",
+"where did my day go"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Longest today: YouTube, 1 hour 2 min. Then VS Code 31m, Zenko 7m. Total screen time: 2 hours 2 min~"
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "how long have i been on youtube today",
+"now": 1765440217.0,
+"out": [
+[
+"line",
+"You",
+"how long have i been on youtube today"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! YouTube: 1 hour 2 min today~"
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "how long was i on netflix",
+"now": 1765440224.0,
+"out": [
+[
+"line",
+"You",
+"how long was i on netflix"
+],
+[
+"line",
+"Fox",
+"Ehehe~ I haven't seen netflix today (and private windows never count)."
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "how long did i spend on code",
+"now": 1765440231.0,
+"out": [
+[
+"line",
+"You",
+"how long did i spend on code"
+],
+[
+"line",
+"Fox",
+"Yatta! VS Code: 31 min today~"
+]
+],
+"cmds": [],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "world map",
+"now": 1765440238.0,
+"out": [
+[
+"line",
+"You",
+"world map"
+],
+[
+"line",
+"Fox",
+"Sugoi! Your passport~ 6 places stamped so far~kon!"
+]
+],
+"cmds": [
+"open_hub:map"
+],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "where are we",
+"now": 1765440245.0,
+"out": [
+[
+"line",
+"You",
+"where are we"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! We're at 熊野古道 Kumano Kodō~ Next stop: Kusatsu Onsen in 2.2 focus hours."
+]
+],
+"cmds": [
+"open_hub:map"
+],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "journey",
+"now": 1765440252.0,
+"out": [
+[
+"line",
+"You",
+"journey"
+],
+[
+"line",
+"Fox",
+"Yatta! Your passport~ 6 places stamped so far~kon!"
+]
+],
+"cmds": [
+"open_hub:map"
+],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "check for updates",
+"now": 1765440259.0,
+"out": [
+[
+"line",
+"You",
+"check for updates"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Checking for a new version~"
+]
+],
+"cmds": [
+"update_check_now"
+],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "any updates?",
+"now": 1765440266.0,
+"out": [
+[
+"line",
+"You",
+"any updates?"
+],
+[
+"line",
+"Fox",
+"Kon! Checking for a new version~"
+]
+],
+"cmds": [
+"update_check_now"
+],
+"ib": [],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "my bio ia is 1,200 words",
+"now": 1765440273.0,
+"out": [
+[
+"line",
+"You",
+"my bio ia is 1,200 words"
+],
+[
+"line",
+"Fox",
+"Kon! Biology HL IA: 1,200 words of 3,000. +1,200 since last time. Yatta~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+1200,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+]
+]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "bio ia at 3400 words",
+"now": 1765440280.0,
+"out": [
+[
+"line",
+"You",
+"bio ia at 3400 words"
+],
+[
+"line",
+"Fox",
+"Sugoi! Biology HL IA: 3,400 words of 3,000. That's over the limit by 400: the examiner stops reading at 3,000, so trim it~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "my ee is 2500 words",
+"now": 1765440287.0,
+"out": [
+[
+"line",
+"You",
+"my ee is 2500 words"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Extended Essay: 2,500 words of 4,000. +2,500 since last time. Yatta~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+2500,
+"Extended Essay",
+"",
+[
+[
+"2025-12-11",
+2500
+]
+]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "tok essay is 900 words",
+"now": 1765440294.0,
+"out": [
+[
+"line",
+"You",
+"tok essay is 900 words"
+],
+[
+"line",
+"Fox",
+"Ehehe~ TOK essay: 900 words of 1,600. +900 since last time. Yatta~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+2500,
+"Extended Essay",
+"",
+[
+[
+"2025-12-11",
+2500
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"",
+[
+[
+"2025-12-11",
+900
+]
+]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "tok exhibition 400 words",
+"now": 1765440301.0,
+"out": [
+[
+"line",
+"You",
+"tok exhibition 400 words"
+],
+[
+"line",
+"Fox",
+"Waai~ TOK exhibition: 400 words of 950. +400 since last time. Yatta~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+2500,
+"Extended Essay",
+"",
+[
+[
+"2025-12-11",
+2500
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "ee limit 4000",
+"now": 1765440308.0,
+"out": [
+[
+"line",
+"You",
+"ee limit 4000"
+],
+[
+"line",
+"Fox",
+"Okay~ Extended Essay limit set to 4,000."
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+2500,
+"Extended Essay",
+"",
+[
+[
+"2025-12-11",
+2500
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "ee is now 4,100 words",
+"now": 1765440315.0,
+"out": [
+[
+"line",
+"You",
+"ee is now 4,100 words"
+],
+[
+"line",
+"Fox",
+"Waai~ Extended Essay: 4,100 words of 4,000. That's over the limit by 100: the examiner stops reading at 4,000, so trim it~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "my maths ia is at 12 pages",
+"now": 1765440322.0,
+"out": [
+[
+"line",
+"You",
+"my maths ia is at 12 pages"
+],
+[
+"line",
+"Fox",
+"Waai~ Math AA SL IA: 12 pages logged~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+12,
+"Math AA SL IA",
+"",
+[
+[
+"2025-12-11",
+12
+]
+]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "math ia is 1 page",
+"now": 1765440329.0,
+"out": [
+[
+"line",
+"You",
+"math ia is 1 page"
+],
+[
+"line",
+"Fox",
+"Kon! Math AA SL IA: 1 page logged~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "math ia is due on 12th march",
+"now": 1765440336.0,
+"out": [
+[
+"line",
+"You",
+"math ia is due on 12th march"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Noted~ Math AA SL IA due Thu 12 Mar (91 days). I'll nudge you if it goes quiet."
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "ee is due by 2026-01-20",
+"now": 1765440343.0,
+"out": [
+[
+"line",
+"You",
+"ee is due by 2026-01-20"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Noted~ Extended Essay due Tue 20 Jan (40 days). I'll nudge you if it goes quiet~kon!"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "tok essay due 5 dec",
+"now": 1765440350.0,
+"out": [
+[
+"line",
+"You",
+"tok essay due 5 dec"
+],
+[
+"line",
+"Fox",
+"Waai~ Noted~ TOK essay due Sat 05 Dec (359 days). I'll nudge you if it goes quiet."
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "chem ia due march 3 2026",
+"now": 1765440357.0,
+"out": [
+[
+"line",
+"You",
+"chem ia due march 3 2026"
+],
+[
+"line",
+"Fox",
+"Noted~ Chemistry HL IA due Tue 03 Mar (82 days). I'll nudge you if it goes quiet."
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "psych ia due 3/2/2026",
+"now": 1765440364.0,
+"out": [
+[
+"line",
+"You",
+"psych ia due 3/2/2026"
+],
+[
+"line",
+"Fox",
+"Sugoi! Noted~ Psychology SL IA due Tue 03 Feb (54 days). I'll nudge you if it goes quiet~kon!"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "tok exhibition due tomorrow",
+"now": 1765440371.0,
+"out": [
+[
+"line",
+"You",
+"tok exhibition due tomorrow"
+],
+[
+"llm",
+"tok exhibition due tomorrow"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "ia tracker",
+"now": 1765440378.0,
+"out": [
+[
+"line",
+"You",
+"ia tracker"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Here's your IA · EE · TOK tracker (bottom of Upcoming)~"
+]
+],
+"cmds": [
+"open_hub:deadlines"
+],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "ib tasks",
+"now": 1765440385.0,
+"out": [
+[
+"line",
+"You",
+"ib tasks"
+],
+[
+"line",
+"Fox",
+"Waai~ Here's your IA · EE · TOK tracker (bottom of Upcoming)~"
+]
+],
+"cmds": [
+"open_hub:deadlines"
+],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "exam countdown",
+"now": 1765440392.0,
+"out": [
+[
+"line",
+"You",
+"exam countdown"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! 498 days until your first exam (23 Apr 2027). Ganbatte~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "how many days until my exams",
+"now": 1765440399.0,
+"out": [
+[
+"line",
+"You",
+"how many days until my exams"
+],
+[
+"line",
+"Fox",
+"Kon! 498 days until your first exam (23 Apr 2027). Ganbatte~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "garden",
+"now": 1765440406.0,
+"out": [
+[
+"line",
+"You",
+"garden"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Your tree is a sapling (若木) right now, vitality 65%~"
+]
+],
+"cmds": [
+"open_hub:garden"
+],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "how's my tree",
+"now": 1765440413.0,
+"out": [
+[
+"line",
+"You",
+"how's my tree"
+],
+[
+"line",
+"Fox",
+"Waai~ Your tree is a sapling (若木) right now, vitality 65%~"
+]
+],
+"cmds": [
+"open_hub:garden"
+],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "pick what to delay",
+"now": 1765440420.0,
+"out": [
+[
+"line",
+"You",
+"pick what to delay"
+],
+[
+"line",
+"Fox",
+"Waai~ Tick what you want to push back~"
+]
+],
+"cmds": [
+"delay_picker"
+],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "delay some things",
+"now": 1765440427.0,
+"out": [
+[
+"line",
+"You",
+"delay some things"
+],
+[
+"line",
+"Fox",
+"Sugoi! Tick what you want to push back~"
+]
+],
+"cmds": [
+"delay_picker"
+],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "pause screen time",
+"now": 1765440434.0,
+"out": [
+[
+"line",
+"You",
+"pause screen time"
+],
+[
+"line",
+"Fox",
+"Sugoi! Longest today: YouTube, 1 hour 2 min. Then VS Code 31m, Zenko 7m. Total screen time: 2 hours 2 min~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "screen time",
+"now": 1765440441.0,
+"out": [
+[
+"line",
+"You",
+"screen time"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Longest today: YouTube, 1 hour 2 min. Then VS Code 31m, Zenko 7m. Total screen time: 2 hours 2 min~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "Zenko, please go fishing",
+"now": 1765440448.0,
+"out": [
+[
+"line",
+"You",
+"Zenko, please go fishing"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! To the pond~ Answer right and something bites~kon!"
+]
+],
+"cmds": [
+"open_hub:garden",
+"fish_cast"
+],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+},
+{
+"q": "hey zenko can you open the square",
+"now": 1765440455.0,
+"out": [
+[
+"line",
+"You",
+"hey zenko can you open the square"
+],
+[
+"line",
+"Fox",
+"Kon kon~ To the winter lantern festival~ (冬祭り)"
+]
+],
+"cmds": [
+"open_hub:square"
+],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"paused": false
+}
+]
