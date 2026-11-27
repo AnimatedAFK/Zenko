@@ -48,8 +48,9 @@ impl Fonts for GdiFonts {
 }
 
 /// the display list as GDI ops
+/// the plain drawing calls (a Tk canvas's own calls, Draw::Tk, are painted by tkpaint and left out here)
 pub fn to_ops(fonts: &GdiFonts, d: &[Draw]) -> Vec<Op> {
-    d.iter().map(|x| match x {
+    d.iter().filter(|x| !matches!(x, Draw::Tk { .. })).map(|x| match x {
         Draw::Rect { x, y, w, h, color } => Op::Rect { x: *x, y: *y, w: *w, h: *h, color: rgb(color) },
         Draw::Poly { pts, fill, outline } => Op::Poly { pts: pts.clone(), fill: fill.as_deref().map(rgb),
                                                         outline: outline.as_deref().map(rgb), width: 1 },
@@ -60,6 +61,7 @@ pub fn to_ops(fonts: &GdiFonts, d: &[Draw]) -> Vec<Op> {
             Op::Text { x: *x, y: *y, lay: gdi::layout(h, text, 0), font: h, color: rgb(color), right: false }
         }
         Draw::Clip(c) => Op::Clip(*c),
+        Draw::Tk { .. } => unreachable!(),
     }).collect()
 }
 

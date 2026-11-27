@@ -144,7 +144,7 @@ impl Hub {
             ui.pack(lab, Pack::default().side(PSide::Left).padx(16, 16));
             let btns = ui.frame(bar, &night);
             ui.pack(btns, Pack::default().side(PSide::Right).fill(Fill::Y));
-            let mut mk = |ui: &mut Ui| {
+            let mk = |ui: &mut Ui| {
                 let c = ui.canvas(btns, &night, 46, 34);
                 ui.pack(c, Pack::default().side(PSide::Left));
                 c
@@ -347,5 +347,116 @@ impl Hub {
         }
         self.tip_now = Some(tip);
         true
+    }
+}
+
+/// z22_side_extras' pins: the pinned badges you have (at most 3) as (id, kanji, name, tier)
+pub fn side_pins(life: &serde_json::Value) -> Vec<(String, String, String, i64)> {
+    let d = crate::rewards::rdata();
+    let empty = vec![];
+    let badges = d["BADGES"].as_array().unwrap_or(&empty);
+    let tiered = d["BADGE_TIERED"].as_array().unwrap_or(&empty);
+    life["badge_pins"].as_array().unwrap_or(&empty).iter().filter_map(|b| b.as_str())
+        .filter(|b| life["badges"].get(*b).is_some()).take(3)
+        .filter_map(|bid| {
+            let b = badges.iter().find(|b| b[0] == bid)?;
+            let tier = if tiered.iter().any(|t| t[0] == bid) { life["btier"][bid].as_i64().unwrap_or(0) } else { 0 };
+            Some((bid.to_string(), b[1].as_str()?.to_string(), b[2].as_str()?.to_string(), tier))
+        }).collect()
+}
+
+/// zenko20 z20_nav_list (with Zenko22's Town square after Chat): the menu in your order, minus the hidden ones
+pub fn nav_list(cfg: &crate::Cfg) -> Vec<(String, String)> {
+    let all = [("home", "Home"), ("timetable", "Timetable"), ("deadlines", "Upcoming"), ("reminders", "Reminders"),
+               ("notebook", "Study books"), ("daily", "Daily"), ("exercise", "Exercise"), ("garden", "Zen garden"),
+               ("map", "World map"), ("screen", "Screen time"), ("chat", "Chat"), ("square", "Town square"),
+               ("notes", "Notes"), ("you", "You"), ("customize", "Customize"), ("settings", "Settings")];
+    let strs = |k: &str| -> Vec<String> {
+        cfg.raw.get(k).and_then(|v| v.as_array()).map(|a| a.iter().filter_map(|x| x.as_str().map(String::from)).collect())
+            .unwrap_or_default()
+    };
+    let mut order: Vec<String> = strs("nav_order").into_iter().filter(|k| all.iter().any(|a| a.0 == k)).collect();
+    for (k, _) in all {
+        if !order.iter().any(|o| o == k) {
+            order.push(k.into());
+        }
+    }
+    let hidden: Vec<String> = strs("nav_hidden").into_iter().filter(|k| k != "home" && k != "settings").collect();
+    order.into_iter().filter(|k| !hidden.contains(k))
+        .map(|k| { let l = all.iter().find(|a| a.0 == k).unwrap().1; (k, l.to_string()) }).collect()
+}
+
+impl Hub {
+    /// hub_anim's menu pill glide: a third of the way to the chosen item each frame
+    pub fn glide(&mut self, c: &crate::hubside::SideCtx) -> bool {
+        let (Some(to), Some(y)) = (self.side.pill_to, self.side.pill_y) else { return false };
+        if (to - y).abs() <= 0.5 {
+            return false;
+        }
+        let dy = (to - y) * 0.32;
+        self.side.pill_y = Some(y + if dy.abs() > 0.5 { dy } else { to - y });
+        self.side.nav(c);
+        true
+    }
+
+    /// FoxBuddy.hub_zone: which window edge the mouse is on ("l", "r", "b", "lb", "rb" or ""), with Zenko's wider
+    /// grab inside the 11 px shrine frame
+    pub fn zone(&self, x: i32, y: i32, maxed: bool) -> String {
+        if maxed {
+            return String::new();
+        }
+        let (w, h) = (self.ui.ws[0].w, self.ui.ws[0].h);
+        let z = format!("{}{}", if x <= 5 { "l" } else if x >= w - 6 { "r" } else { "" }, if y >= h - 6 { "b" } else { "" });
+        if !z.is_empty() || self.ids.border.is_none() {
+            return z;
+        }
+        let b = BORDER;
+        format!("{}{}", if x <= b { "l" } else if x >= w - b - 1 { "r" } else { "" }, if y >= h - b - 1 { "b" } else { "" })
+    }
+}
+
+impl Hub {
+    /// hub_tick's self.hub_status.config(text=...): the sidebar's status line
+    pub fn set_status(&mut self, text: &str) -> bool {
+        if self.side.status_text == text {
+            return false;
+        }
+        self.side.status_text = text.into();
+        if let Some(id) = self.side.status_item
+            && let Some(it) = self.side.cv.get(id) {
+            it.text = text.into();
+        }
+        true
+    }
+
+    /// which window part is at (x, y) in window pixels
+    pub fn part_at(&self, x: i32, y: i32) -> &'static str {
+        let inside = |id: Option<usize>| id.is_some_and(|id| {
+            let w = &self.ui.ws[id];
+            let (ax, ay) = self.ui.abs(id);
+            w.mapped && x >= ax && y >= ay && x < ax + w.w && y < ay + w.h
+        });
+        if inside(self.ids.bmin) { return "min"; }
+        if inside(self.ids.bmax) { return "max"; }
+        if inside(self.ids.bclose) { return "close"; }
+        if inside(self.ids.pill) { return "pill"; }
+        if inside(self.ids.title) { return "title"; }
+        if inside(self.ids.bar) { return "bar"; }
+        if inside(Some(self.ids.side_cv)) { return "side"; }
+        if inside(Some(self.ids.stage)) || inside(Some(self.ids.tipbar)) || inside(Some(self.ids.line)) { return "page"; }
+        if self.ids.border.is_some() { "border" } else { "" }
+    }
+}
+
+/// hub_tick's status line: the session's task and time left, a break, or today's focus minutes
+pub fn status_line(session: Option<(&str, f64, f64)>, on_break: bool, today_min: i64) -> String {
+    if let Some((task, planned, elapsed)) = session {
+        let left = (planned - elapsed).max(0.0);
+        format!("{}\n{:02}:{:02} left", crate::session::clip(task, 22), (left / 60.0).floor() as i64,
+                (left % 60.0) as i64)
+    } else if on_break {
+        "On a break".into()
+    } else {
+        format!("Idle  \u{b7}  {today_min} min focused today")
     }
 }

@@ -90,7 +90,7 @@ pub struct Setup {
     pub icon_px: Vec<[u8; 4]>,
 }
 
-fn make_icon(px: &[[u8; 4]]) -> HICON {
+pub(crate) fn make_icon(px: &[[u8; 4]]) -> HICON {
     unsafe {
         let mut bi: BITMAPINFO = std::mem::zeroed();
         bi.bmiHeader.biSize = std::mem::size_of::<BITMAPINFOHEADER>() as u32;

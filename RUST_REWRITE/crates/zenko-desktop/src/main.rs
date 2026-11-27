@@ -33,6 +33,8 @@ mod net;
 mod uiwin;
 #[cfg(windows)]
 mod tkpaint;
+#[cfg(windows)]
+mod hubw;
 
 #[cfg(windows)]
 fn main() {
@@ -101,6 +103,8 @@ mod win {
         next_batt: f64,
         eating: Option<zenko_desktop::lockin::Eat>,
         next_top: f64,
+        /// hub_tick / z19_hub_loop: the hub's sidebar news, once a second
+        next_hub: f64,
         hwnd: HWND,
     }
 
@@ -483,6 +487,15 @@ mod win {
                     crate::uiwin::close("checkin");
                 }
             }
+            for o in crate::hubw::OUT.with(|q| std::mem::take(&mut *q.borrow_mut())) {
+                if let Some(k) = o.strip_prefix("sound:") {
+                    app.fox.events.push(Ev::Ui(k.into()));
+                }
+            }
+            if t >= app.next_hub && crate::hubw::is_open() {
+                app.next_hub = t + 1.0;
+                crate::hubw::update(side_ctx(app), &hub_status(app));
+            }
             if t >= app.next_top {
                 app.next_top = t + 2.5; // keep_on_top
                 unsafe {
@@ -614,6 +627,9 @@ mod win {
             fox.ema_set_done(id);
         } else if c == "music_apply" {
             fox.music_apply();
+        } else if c == "open_hub" || c.starts_with("open_hub:") {
+            open_hub(app, c.strip_prefix("open_hub:"));
+            return;
         } else if c == "open_checkin" || c == "open_checkin_force" {
             open_checkin(app, t, c == "open_checkin_force");
             return;
@@ -632,6 +648,65 @@ mod win {
         } else if c == "quit" {
             unsafe { DestroyWindow(app.hwnd) };
         }
+    }
+
+    /// _jp_font: a Japanese-capable font if Windows has one, else ""
+    fn jp_font() -> String {
+        ["Yu Gothic UI", "Yu Gothic", "Meiryo UI", "Meiryo", "MS Gothic", "Noto Sans CJK JP", "Noto Sans JP", "IPAGothic"]
+            .iter().find(|n| crate::gdi::font_exists(n)).map(|n| n.to_string()).unwrap_or_default()
+    }
+
+    /// what the hub's sidebar shows about the app right now
+    fn side_ctx(app: &App) -> zenko_desktop::hubside::SideCtx {
+        let fox = &app.fox;
+        let c = &fox.cfg;
+        let (_, month, _, hh, mm, _) = zenko_desktop::local_now();
+        let fname = c.s("fox_name", "");
+        let fname: String = fname.trim().chars().take(20).collect();
+        let cp = c.s("catchphrase", "");
+        let cp: String = cp.trim().chars().take(40).collect();
+        zenko_desktop::hubside::SideCtx {
+            t: theme(c),
+            font_ui: crate::gdi::ui_font(&c.s("app_font", "")),
+            jp: jp_font(),
+            fox_name: if fname.is_empty() { "Zenko".into() } else { fname },
+            catchphrase: if cp.is_empty() { "Kon! Kon!".into() } else { cp },
+            part: zenko_desktop::hubside::daypart(hh, mm).0.into(),
+            season: zenko_desktop::hubside::season_of(month).into(),
+            sky: c.b("sky_daynight", true),
+            seasons: c.b("sky_seasons", true),
+            weather: fox.slow.wx.code.map(|_| fox.wx_kind().to_string()),
+            nav_compact: c.b("nav_compact", false),
+            zk_f: 1.0,
+            hd: c.b("hd_art", true),
+            pins: zenko_desktop::hubwin::side_pins(&zenko_desktop::read_json("zenko_life.json")),
+            linked: false,
+            scene: String::new(),
+        }
+    }
+
+    fn hub_status(app: &App) -> String {
+        let fox = &app.fox;
+        zenko_desktop::hubwin::status_line(fox.session.as_ref().map(|s| (s.task.as_str(), s.planned, s.elapsed)),
+                                           fox.brk.is_some(), zenko_desktop::slow::today_focus_minutes())
+    }
+
+    /// open_hub(page): the main window
+    fn open_hub(app: &mut App, page: Option<&str>) {
+        let c = &app.fox.cfg;
+        let t = theme(c);
+        let init = crate::hubw::HubInit {
+            t,
+            font_ui: crate::gdi::ui_font(&c.s("app_font", "")),
+            navkeys: zenko_desktop::hubwin::nav_list(c),
+            ctx: side_ctx(app),
+            status: hub_status(app),
+            dpi: app.dpi,
+            icon_px: zenko_desktop::icon::icon_pixels(&c.s("theme", "snow")),
+            ui_border: c.b("ui_border", true),
+            text_scale: c.f("text_scale", 1.0),
+        };
+        crate::hubw::open(page, init);
     }
 
     /// open_checkin(force): the daily "how are you feeling?" card beside her
@@ -723,7 +798,7 @@ mod win {
                                 it["mins"].as_i64().unwrap_or(30)), &format!("tt_start:{i}")));
         }
         m.push(Item::Sep);
-        m.push(later("Open Zenko window"));
+        m.push(cmd("Open Zenko window", "open_hub"));
         m.push(later("Chat with the fox..."));
         m.push(later("Talk with her out loud"));
         m.push(later("Breathe with me (Zen garden)"));
@@ -995,12 +1070,20 @@ mod win {
                     next_batt: 1001.5,
                     eating: None,
                     next_top: 1002.5,
+                    next_hub: 1001.0,
                     hwnd,
                 })
             });
             APP.with(|a| {
                 if let Some(app) = a.borrow_mut().as_mut() {
                     app.fox.delayed.push((1003.5, Ev::Command("music_apply".into())));
+                }
+            });
+            // open_hub_on_start: the main window comes up 250 ms after the fox (zenko20)
+            APP.with(|a| {
+                if let Some(app) = a.borrow_mut().as_mut()
+                    && app.fox.cfg.b("open_hub_on_start", true) {
+                    app.fox.delayed.push((1000.25, Ev::Command("open_hub".into())));
                 }
             });
             if Companion::lockin_pending() {
