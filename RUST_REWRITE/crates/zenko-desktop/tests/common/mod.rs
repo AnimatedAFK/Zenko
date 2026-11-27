@@ -237,3 +237,11 @@ pub fn fonts_of(c: &Value) -> Table {
     fonts
 }
 
+
+/// the card titles Ctrl+K finds on a page (zenko.py's _z20_cards for it, golden/hub_palette.json)
+pub fn palette_cards(label: &str) -> Vec<String> {
+    let g: Vec<serde_json::Value> = serde_json::from_str(&std::fs::read_to_string("../../golden/hub_palette.json").unwrap()).unwrap();
+    g[0]["items"].as_array().unwrap().iter()
+        .filter(|v| (v["kind"] == "Setting" || v["kind"] == "Section") && v["sub"] == label)
+        .map(|v| v["words"].as_str().unwrap().to_string()).collect()
+}

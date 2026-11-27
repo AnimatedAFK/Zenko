@@ -618,11 +618,16 @@ mod win {
         if c.starts_with("size:") {
             run_command(app, c);
         } else if c.starts_with("theme:") {
+            // set_theme: the window opens again on the page it was on
+            let page = app.fox.hub_page.clone().unwrap_or_else(|| "settings".into());
             run_command(app, c);
             if crate::hubw::is_open() {
                 crate::hubw::close();
-                open_hub(app, Some("settings"));
+                open_hub(app, Some(&page));
             }
+        } else if let Some(k) = c.strip_prefix("cmd:") {
+            // a palette row that does what the fox's menu does (a focus session, pause, stop, lock in, a break)
+            run_command(app, k);
         } else if c == "app_font" {
             if crate::hubw::is_open() {
                 crate::hubw::close();

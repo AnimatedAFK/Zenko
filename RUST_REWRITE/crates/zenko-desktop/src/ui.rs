@@ -188,6 +188,8 @@ pub struct EntryText {
     pub ph: Option<String>,
     /// -show: every character drawn as this one (a password box)
     pub show: Option<char>,
+    /// a plain tk.Entry (relief flat, bd 0, no ring) on the widget's bg: its (fg, insertbackground)
+    pub flat: Option<(String, String)>,
 }
 
 #[derive(Clone, Debug)]
@@ -1315,11 +1317,20 @@ impl Ui {
                 let focus = self.active && self.focus == Some(id);
                 let ib = w.bd + w.hl + 1;
                 let (x, y, wd, ht) = (ax, ay, w.w, w.h);
-                out.push(Draw::Rect { x, y, w: wd, h: ht, color: t.field.clone() });
-                let ring = if focus { t.gold.clone() } else { t.line.clone() };
-                for (rx, ry, rw, rh) in [(x, y, wd, 1), (x, y + ht - 1, wd, 1), (x, y, 1, ht), (x + wd - 1, y, 1, ht)] {
-                    out.push(Draw::Rect { x: rx, y: ry, w: rw, h: rh, color: ring.clone() });
-                }
+                let (ink, ins) = match &e.flat {
+                    Some((fg, ic)) => {
+                        out.push(Draw::Rect { x, y, w: wd, h: ht, color: w.bg.clone() });
+                        (fg.clone(), ic.clone())
+                    }
+                    None => {
+                        out.push(Draw::Rect { x, y, w: wd, h: ht, color: t.field.clone() });
+                        let ring = if focus { t.gold.clone() } else { t.line.clone() };
+                        for (rx, ry, rw, rh) in [(x, y, wd, 1), (x, y + ht - 1, wd, 1), (x, y, 1, ht), (x + wd - 1, y, 1, ht)] {
+                            out.push(Draw::Rect { x: rx, y: ry, w: rw, h: rh, color: ring.clone() });
+                        }
+                        (t.ink.clone(), t.ink.clone())
+                    }
+                };
                 let (asc, desc) = fonts.metrics(font);
                 let ls = asc + desc;
                 let ty = y + (ht + asc - desc) / 2 - asc;
@@ -1337,7 +1348,7 @@ impl Ui {
                     Some(ph) if e.text.is_empty() && !focus => out.push(Draw::Text { x: x + ib, y: ty, text: ph.clone(),
                                                                                     font: font.clone(), color: t.grey.clone() }),
                     _ => out.push(Draw::Text { x: tx, y: ty, text: String::from_utf16_lossy(&shown), font: font.clone(),
-                                               color: t.ink.clone() }),
+                                               color: ink.clone() }),
                 }
                 if let Some((a, b)) = e.sel {
                     out.push(Draw::Text { x: tx + xo(a), y: ty, text: String::from_utf16_lossy(&shown[a..b]),
@@ -1345,7 +1356,7 @@ impl Ui {
                 }
                 // the insertion cursor: 2 pixels wide, blinking 600 ms on / 300 ms off while focused
                 if focus && ((now - e.blink_t0) * 1000.0) as i64 % 900 < 600 {
-                    out.push(Draw::Rect { x: tx + xo(e.pos) - 1, y: ty, w: 2, h: ls, color: t.ink.clone() });
+                    out.push(Draw::Rect { x: tx + xo(e.pos) - 1, y: ty, w: 2, h: ls, color: ins });
                 }
                 out.push(Draw::Clip(Some(me)));
             }

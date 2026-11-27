@@ -45,6 +45,7 @@ fn daily_page_matches_zenko_py() {
         let mut ui = Ui::new(&th.paper);
         ui.x11 = true;
         let mut dp = DailyPage::build(&mut ui, 0, &th, &faces, cm10, &d);
+        assert_eq!(zenko_desktop::palette::card_titles(&ui, 0), common::palette_cards("Daily"), "{name}: Ctrl+K cards");
         let zk = c["zk_f"].as_f64().unwrap();
         if small {
             // zenko.py: the window opened at 1320x900, where the first zk_fits scaled the fonts (zk_f for that size) but

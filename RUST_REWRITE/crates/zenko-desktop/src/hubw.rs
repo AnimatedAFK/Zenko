@@ -30,6 +30,8 @@ mod hubrem;
 mod hubset;
 #[path = "hubcust.rs"]
 mod hubcust;
+#[path = "paletwin.rs"]
+mod paletwin;
 use serde_json::Value;
 use zenko_desktop::pagekit::Faces;
 use zenko_desktop::ui::{Draw, Kind, Place};
@@ -127,6 +129,10 @@ struct HubW {
     cust_anim: f64,
     /// seconds from the app's start to this window opening
     opened_s: f64,
+    /// Ctrl+K: a card to glide to (page, title, when), its glow (card, its own items, start) and the next prebuild
+    reveal: Option<(String, String, f64)>,
+    flash: Option<(usize, usize, f64)>,
+    prebuild_at: f64,
     rem_d: zenko_desktop::rempage::RemData,
     rem_anim: f64,
     rem_chk: f64,
@@ -923,8 +929,9 @@ fn chat_cmd(x: &mut HubW, cmd: &str) {
 
 /// z17_wheel over the chat text (3 lines a notch, only while there's somewhere to go)
 /// the wheel over the Home page scrolls it
-fn page_wheel(x: &mut HubW, mx: i32, my: i32, delta: i32) -> bool {
-    let sc = match x.hub.side.page.as_deref() {
+/// a page's scroller
+fn page_sc(x: &HubW, page: Option<&str>) -> Option<zenko_desktop::pagekit::Scroller> {
+    match page {
         Some("home") => x.home.as_ref().map(|p| p.sc.clone()),
         Some("you") => x.you.as_ref().map(|p| p.sc.clone()),
         Some("daily") => x.daily.as_ref().map(|p| p.sc.clone()),
@@ -934,8 +941,11 @@ fn page_wheel(x: &mut HubW, mx: i32, my: i32, delta: i32) -> bool {
         Some("settings") => x.set.as_ref().map(|p| p.sc.clone()),
         Some("customize") => x.cust.as_ref().map(|p| p.sc.clone()),
         _ => None,
-    };
-    let Some(sc) = sc else { return false };
+    }
+}
+
+fn page_wheel(x: &mut HubW, mx: i32, my: i32, delta: i32) -> bool {
+    let Some(sc) = page_sc(x, x.hub.side.page.as_deref()) else { return false };
     let mut over = x.hub.ui.hit(mx, my);
     while let Some(i) = over {
         if i == sc.boxf {
@@ -1100,7 +1110,7 @@ pub fn open(page: Option<&str>, init: HubInit) {
             size: (w, h), min, cursor: IDC_ARROW, faded: false,
             anim: zenko_desktop::hubanim::HubAnim::new(0.0, (x0 as u64) << 20 ^ 0x9e37_79b9),
             theme: init.theme.clone(), living: init.living, glow_next: 0.0, burst: None, particles: init.particles, minimized: false,
-            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, set: None, set_try: String::new(), set_focus: None, set_rule_do: String::new(), cust: None, cust_focus: None, cust_anim: 0.0, opened_s: init.opened_s, ask: None,
+            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, set: None, set_try: String::new(), set_focus: None, set_rule_do: String::new(), cust: None, cust_focus: None, cust_anim: 0.0, opened_s: init.opened_s, reveal: None, flash: None, prebuild_at: 2.5, ask: None,
             chat_q: Default::default(), typing: None, sb_drag: None,
         }));
         with(|x| {
@@ -1140,6 +1150,7 @@ pub fn update(ctx: SideCtx, status: &str) {
 }
 
 pub fn close() {
+    paletwin::close();
     let h = HUB.with(|v| v.borrow_mut().take());
     if let Some(x) = h {
         unsafe { DestroyWindow(x.hwnd) };
@@ -1212,6 +1223,9 @@ unsafe fn paint(x: &mut HubW, dc: HDC) {
 /// one animation step (hub_anim's frame parts at the "smooth" motion level), the fade-in and a pending zk_fit
 fn step(x: &mut HubW) -> bool {
     let n = now(x);
+    if palette_tick(x, n) {
+        unsafe { InvalidateRect(x.hwnd, std::ptr::null(), 0) };
+    }
     // hub_fade_in: 0.22 s, easing out
     if !x.faded {
         let a = (n / 0.22).min(1.0);
@@ -1602,6 +1616,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     let part = x.hub.part_at(mx, my);
                     match part {
                         "min" | "max" | "close" => act = Some(part),
+                        "pill" if !moved => palette_open(x),
                         "side" if !moved => {
                             let (_, ay) = x.hub.ui.abs(x.hub.ids.side_cv);
                             if let Some(k) = x.hub.side.key_at(my - ay, x.ctx.nav_compact) {
@@ -1665,7 +1680,11 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     let entry = x.chat.as_ref().map(|c| c.entry);
                     let home_task = x.home.as_ref().and_then(|h| h.task_entry);
                     let you_entry = x.you.as_ref().is_some_and(|y| y.fields.iter().any(|f| !f.2 && Some(f.1) == x.hub.ui.focus));
-                    if vk == VK_RETURN && entry.is_some() && x.hub.ui.focus == entry {
+                    if ctrl && vk == b'K' as u16 {
+                        palette_open(x);
+                    } else if ctrl && (b'1' as u16..=b'9' as u16).contains(&vk) {
+                        nav_jump(x, (vk - b'1' as u16) as usize);
+                    } else if vk == VK_RETURN && entry.is_some() && x.hub.ui.focus == entry {
                         chat_cmd(x, "chat_send");
                     } else if vk == VK_RETURN && home_task.is_some() && x.hub.ui.focus == home_task {
                         home_cmd(x, "home_go");
@@ -1717,5 +1736,168 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
             }
             _ => DefWindowProcW(hwnd, msg, wp, lp),
         }
+    }
+}
+
+/// Zenko20.PREBUILD: the pages made in the background, one at a time, once the window has settled (z20_prewarm)
+const PREBUILD: [&str; 14] = ["timetable", "deadlines", "reminders", "daily", "notebook", "customize", "settings", "you",
+                              "garden", "exercise", "screen", "map", "chat", "notes"];
+
+/// z20_nav_jump: Ctrl+1..9, the sidebar's pages in order
+fn nav_jump(x: &mut HubW, i: usize) {
+    if let Some(k) = x.hub.side.navkeys.get(i).map(|n| n.0.clone()) {
+        if x.hub.side.page.as_deref() != Some(k.as_str()) {
+            out("sound:nav");
+        }
+        show(x, &k);
+    }
+}
+
+/// z20_palette: Ctrl+K or the title bar's search pill (z20_items from what the window has now)
+fn palette_open(x: &mut HubW) {
+    use zenko_desktop::palette::{ItemsIn, Palette, card_titles, items};
+    let nav: Vec<(String, String)> = zenko_desktop::custpage::NAV_ALL.iter().map(|(k, l)| (k.to_string(), l.to_string())).collect();
+    let visible: Vec<String> = x.hub.side.navkeys.iter().map(|n| n.0.clone()).collect();
+    let mut cards = vec![];
+    for (k, pg) in &x.pages {
+        for t in card_titles(&x.hub.ui, *pg) {
+            cards.push((k.clone(), t));
+        }
+    }
+    let (fox, session) = crate::win::with_fox(|f, _| (f.fox_name(), f.session.is_some()))
+        .unwrap_or_else(|| ("Zenko".into(), false));
+    let its = items(&ItemsIn { nav_all: &nav, visible: &visible, cards: &cards, session, fox: &fox });
+    let fonts = GdiFonts::new(x.dpi);
+    let p = Palette::new(&x.hub.t, &x.hub.font_ui, x.size.0, x.hub.zk_f, its, &fox, &fonts);
+    paletwin::open(p, fonts, x.hub.t.clone(), x.hwnd, window_rect(x.hwnd));
+}
+
+/// what a picked palette row does (ZkPalette.run: the nav sound, then its run)
+fn palette_do(x: &mut HubW, cmd: &str) {
+    out("sound:nav");
+    let page_now = x.hub.side.page.clone().unwrap_or_else(|| "home".into());
+    if let Some(k) = cmd.strip_prefix("page:") {
+        show(x, k);
+    } else if let Some(r) = cmd.strip_prefix("reveal:") {
+        let (page, title) = r.split_once('\t').unwrap_or((r, ""));
+        show(x, page);
+        x.reveal = Some((page.into(), title.into(), now(x) + 0.16));
+    } else if cmd.starts_with("book:") {
+        // book_open(k): the Study books page (its books aren't in this build yet)
+        show(x, "notebook");
+        out(&format!("run:{cmd}"));
+    } else if let Some(v) = cmd.strip_prefix("theme:") {
+        out(&format!("run:theme:{v}"));
+    } else if let Some(k) = cmd.strip_prefix("accent:") {
+        // z20_set_accent: set_theme(theme, announce=False) opens the window again on the same page
+        let k = k.to_string();
+        crate::win::with_fox(move |fox, _| fox.cfg_set("accent", Value::from(k)));
+        out(&format!("run:reopen:{page_now}"));
+    } else if let Some(k) = cmd.strip_prefix("motion:") {
+        let k = k.to_string();
+        crate::win::with_fox(move |fox, _| fox.cfg_set("motion_level", Value::from(k)));
+    } else if let Some(q) = cmd.strip_prefix("ask:") {
+        hub_ask(x, q);
+    } else if let Some(d) = cmd.strip_prefix("do:") {
+        match d {
+            "start" => out("run:cmd:focus"),
+            "pause" | "stop" | "lockin" | "break" => out(&format!("run:cmd:{d}")),
+            "breath_box" | "breath_478" => {
+                show(x, "garden");
+                out(&format!("run:{d}"));
+            }
+            _ => out(&format!("run:{d}")),
+        }
+    }
+}
+
+/// the palette's picks, a revealed card's glide and glow, and the pages made in the background
+fn palette_tick(x: &mut HubW, n: f64) -> bool {
+    let mut dirty = false;
+    for c in paletwin::PICKED.with(|q| std::mem::take(&mut *q.borrow_mut())) {
+        palette_do(x, &c);
+        dirty = true;
+    }
+    if let Some((page, title, at)) = x.reveal.clone()
+        && n >= at {
+        x.reveal = None;
+        reveal(x, &page, &title, n);
+        dirty = true;
+    }
+    if let Some((card, base, t0)) = x.flash {
+        // z20_flash: 14 steps of 70 ms, the border glowing up and back down
+        let i = ((n - t0) / 0.07) as i32;
+        if let Kind::Canvas { items, .. } = &mut x.hub.ui.ws[card].kind {
+            items.truncate(base);
+        }
+        if i >= 14 {
+            x.flash = None;
+        } else {
+            let a = 1.0 - (i as f64 - 7.0).abs() / 7.0;
+            let col = zenko_art::palette::mixhex(&x.hub.t.card, &x.hub.t.gold, 0.25 + 0.75 * a);
+            let (w, h) = (x.hub.ui.ws[card].w, x.hub.ui.ws[card].h);
+            if let Kind::Canvas { items, .. } = &mut x.hub.ui.ws[card].kind {
+                // rbox(1, 1, W-2, H-2, 12, outline, width=2)
+                for k in 0..2 {
+                    items.push(zenko_desktop::ui::Item::Poly {
+                        pts: zenko_desktop::shapes::round_pts(1 + k, 1 + k, w - 2 - k, h - 2 - k, 12 - k, 2, "round"),
+                        fill: None, outline: Some(col.clone()) });
+                }
+            }
+        }
+        dirty = true;
+    }
+    if n >= x.prebuild_at && x.slide.is_none() && !x.minimized {
+        x.prebuild_at = n + 0.35;
+        if let Some(p) = PREBUILD.iter().find(|p| !x.pages.iter().any(|(k, _)| k == *p) && page_built(p)) {
+            page_frame(x, p);
+        }
+    }
+    dirty
+}
+
+/// the pages this build can make
+fn page_built(p: &str) -> bool {
+    matches!(p, "chat" | "home" | "timetable" | "deadlines" | "reminders" | "settings" | "customize" | "daily" | "you")
+}
+
+/// z20_reveal's find: the card titled so (else the first whose title holds it), scrolled to 12 px from the top,
+/// then its glow
+fn reveal(x: &mut HubW, page: &str, title: &str, n: f64) {
+    let Some(pg) = x.pages.iter().find(|(k, _)| k == page).map(|p| p.1) else { return };
+    let mut ids = zenko_desktop::pagekit::walk(&x.hub.ui, pg);
+    ids.sort();
+    let row_title = |ui: &zenko_desktop::ui::Ui, id: usize| -> Option<String> {
+        let k = &ui.ws[id].kids;
+        if k.len() >= 2 && matches!(ui.ws[id].kind, Kind::Frame)
+            && matches!(&ui.ws[k[0]].kind, Kind::Label { text, .. } if text == "\u{25c6}")
+            && let Kind::Label { text, .. } = &ui.ws[k[1]].kind {
+            return Some(text.clone());
+        }
+        None
+    };
+    let rows: Vec<(usize, String)> = ids.iter().filter_map(|&i| row_title(&x.hub.ui, i).map(|t| (i, t))).collect();
+    let tl = title.to_lowercase();
+    let Some(row) = rows.iter().find(|r| r.1 == title).or_else(|| rows.iter().find(|r| r.1.to_lowercase().contains(&tl)))
+        .map(|r| r.0) else { return };
+    let Some(card) = x.hub.ui.ws[row].parent else { return };
+    let mut inner = x.hub.ui.ws[card].parent;
+    while let Some(i) = inner {
+        if x.hub.ui.ws[i].cwin {
+            break;
+        }
+        inner = x.hub.ui.ws[i].parent;
+    }
+    if let (Some(inner), Some(sc)) = (inner, page_sc(x, Some(page)))
+        && sc.inner == inner {
+        let y = x.hub.ui.abs(card).1 - x.hub.ui.abs(inner).1;
+        sc.set_y(&mut x.hub.ui, y - 12);
+        let (w, h) = x.size;
+        x.hub.layout(&x.fonts, w, h);
+        let th = x.hub.t.clone();
+        sc.draw_bar(&mut x.hub.ui, false, &th);
+    }
+    if let Kind::Canvas { items, card: Some(_), .. } = &x.hub.ui.ws[card].kind {
+        x.flash = Some((card, items.len(), n));
     }
 }

@@ -572,8 +572,51 @@ if len(sys.argv) > 1 and sys.argv[1] == "customize":
              ("cust_alt", T0, ALT, None, "customize")]
     SETUP["data"], SETUP["after"] = (lambda app, name: None), (lambda app, name: None)
 
+if len(sys.argv) > 1 and sys.argv[1] == "palette":
+    # golden/hub_palette.json: the Ctrl+K palette over the Settings page: every item it offers, what a few searches
+    # show (word starts, a typo matched by difflib, the "Ask" row) and the box itself, wide and in a small midnight window
+    OUT = "hub_palette.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 1.5 * 3600 + 754.25
+    QUERY = {"pal_empty": ("", 0), "pal_sett": ("sett", 0), "pal_typo_small": ("brething", 2), "pal_two": ("acc ja", 1)}
+    CASES = [("pal_empty", T0, {"theme": "snow"}, None, "settings"),
+             ("pal_sett", T0, {"theme": "snow"}, None, "settings"),
+             ("pal_typo_small", T0, {"theme": "midnight"}, (1120, 720), "settings"),
+             ("pal_two", T0, {"theme": "snow", "nav_hidden": ["garden"]}, None, "settings")]
+
+    def _open(app, name):
+        for pg in ("customize", "daily"):          # (pages built later, as prewarm builds them, list their cards)
+            app.z20_prebuild(pg)
+        app.root.update()
+        app.z20_palette()
+        P = app._z20_palette
+        P._maybe_close = lambda *a: None           # (the test display's focus comes and goes)
+        q, mv = QUERY[name]
+        P.var.set(q)
+        for _ in range(mv):
+            P.move(1)
+        for _ in range(10):                        # (zk_on_map scales each widget as the X server maps it)
+            app.root.update()
+            time.sleep(0.05)
+
+    def _tree(app, images, fonts):
+        _open(app, NAME[0])
+        P = app._z20_palette
+        P.win.update_idletasks()
+        keep = ("title", "kind", "sub", "words", "boost")
+        EXTRA[0] = {"items": [{k: it.get(k) for k in keep if k in it} for it in P.items],
+                    "shown": [{k: it.get(k) for k in keep if k in it} for it in P.shown], "sel": P.sel, "W": P.W,
+                    "query": P.var.get(), "hub_w": app.hub["win"].winfo_width(), "hub_h": app.hub["win"].winfo_height(),
+                    "pal_geo": P.win.geometry(), "navkeys": [k for k, _ in app.hub["navkeys"]],
+                    "hub_xy": [app.hub["win"].winfo_rootx(), app.hub["win"].winfo_rooty()]}
+        return walk(P.win, P.win, set(), images, fonts)
+    SETUP["data"], SETUP["tree"] = (lambda app, name: None), _tree
+
+EXTRA = [{}]
+NAME = [""]
 out = []
 for name, t, cfg, size, page in CASES:
+    NAME[0] = name
     NOW[0] = t
     HIST.clear()
     app = Z.Zenko23()
@@ -620,7 +663,7 @@ for name, t, cfg, size, page in CASES:
     images, fonts = {}, {}
     WIDE_PIECES[0] = "small" in name
     pg = h["pages"][page]
-    tree = walk(pg, w, set(), images, fonts)
+    tree = SETUP["tree"](app, images, fonts) if "tree" in SETUP else walk(pg, w, set(), images, fonts)
     texts = []
 
     def find_texts(wd):
@@ -655,7 +698,7 @@ for name, t, cfg, size, page in CASES:
                 "catch": app.catchphrase() if hasattr(app, "catchphrase") else "",
                 "z19_hours": app.z19_hours() if hasattr(app, "z19_hours") else 0,
                 "journey": json.loads(json.dumps(app.journey_state(), default=str)) if hasattr(app, "journey_state") else [],
-                "tree": tree, "texts": texts, "images": images, "fonts": fonts})
+                "tree": tree, "texts": texts, "images": images, "fonts": fonts, **EXTRA[0]})
     try:
         app.hub_close()
         app.root.destroy()

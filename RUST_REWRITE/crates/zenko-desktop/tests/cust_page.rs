@@ -134,6 +134,7 @@ fn cust_page_matches_zenko_py() {
         let mut ui = Ui::new(&th.paper);
         ui.x11 = true;
         let mut p = CustPage::build(&mut ui, 0, &th, &faces, cm10, &d);
+        assert_eq!(zenko_desktop::palette::card_titles(&ui, 0), common::palette_cards("Customize"), "{name}: Ctrl+K cards");
         // (the window's own fit when it opened, then the harness's zk_fit on the settled page: the second one's
         // z21_unwrap lets the labels the first pass wrapped while the columns were side by side go again)
         if small {

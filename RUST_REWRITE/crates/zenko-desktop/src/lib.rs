@@ -57,6 +57,7 @@ pub mod books;
 pub mod study;
 pub mod chat_data;
 pub mod pydifflib;
+pub mod palette;
 pub mod mdtext;
 pub mod mdtex_data;
 pub mod icon;
