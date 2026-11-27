@@ -172,3 +172,10 @@ pub fn get_close_matches(word: &str, possibilities: &[String], n: usize, cutoff:
     res.sort_by(|p, q| q.0.partial_cmp(&p.0).unwrap().then_with(|| q.1.cmp(p.1)));
     res.into_iter().take(n).map(|(_, x)| x.clone()).collect()
 }
+
+/// difflib.SequenceMatcher(None, a, b).ratio() on two strings (by character)
+pub fn ratio(a: &str, b: &str) -> f64 {
+    let a: Vec<char> = a.chars().collect();
+    let b: Vec<char> = b.chars().collect();
+    Matcher::new(&a, &b).ratio()
+}

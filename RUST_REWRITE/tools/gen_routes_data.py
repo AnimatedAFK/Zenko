@@ -32,6 +32,19 @@ data = {
     "FR_IRREG": {k: [v[0], v[1], v[2], v[3], v[4]] for k, v in Z.FR_IRREG.items()},
     "FR_ETRE_VERBS": sorted(Z.FR_ETRE_VERBS),
     "FR_PRONOUNS": Z.FR_PRONOUNS,
+    "OUTFITS": [list(o) for o in Z.OUTFITS],
+    "OUTFIT_WORDS": Z.OUTFIT_WORDS,
+    "BIB_COLOURS": [list(b) for b in Z.BIB_COLOURS],
+    "COATS": [[c[0], c[1]] for c in Z.COATS],
+    "TREAT_WORDS": Z.TREAT_WORDS,
+    "JP_WORDS": [list(w) for w in Z.JP_WORDS],
+    "OMIKUJI": [list(o) for o in Z.OMIKUJI],
+    "OMI_LINES": Z.OMI_LINES,
+    "OMI_LUCKY": Z.OMI_LUCKY,
+    "OMI_COLOURS": Z.OMI_COLOURS,
+    "LANGS": Z.LANGS,
+    "FACT_KEYS": list(Z.FACT_KEYS),
+    "DEADLINE_WORDS": Z.DEADLINE_WORDS,
 }
 out = os.path.join(os.path.dirname(__file__), "..", "crates", "zenko-desktop", "data", "routes.json")
 with open(out, "w", encoding="utf-8") as f:

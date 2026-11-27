@@ -22,6 +22,10 @@ pub mod tt;
 pub mod music;
 pub mod slow;
 pub mod battery;
+pub mod calc;
+pub mod extra;
+pub mod lifechat;
+pub mod miscroutes;
 pub mod ui;
 pub mod checkin;
 pub mod tkcanvas;
@@ -431,6 +435,16 @@ pub struct Companion {
     pub last_state: String,
     pub play: Option<Play>,
     pub sulk_until: f64,
+    /// what she did that has no event of its own (apply_look, music_apply): tests compare it with zenko.py's stubs
+    pub trace: Vec<String>,
+    /// tests: the omikuji's random.Random() seed (None = from the OS)
+    pub omikuji_seed: Option<u64>,
+    /// self.quiz: the flashcard quiz running in chat
+    pub quiz: Option<lifechat::Quiz>,
+    /// the host's open_app(name, as typed) (Windows: Start-menu apps, sites); None = not on Windows
+    pub open_app_hook: Option<fn(&str, &str) -> String>,
+    /// the last file dropped on her: (name, text)
+    pub last_file: Option<(String, String)>,
     pub pokes: Vec<f64>,
     pub events: Vec<Ev>,
     pub delayed: Vec<(f64, Ev)>,
@@ -507,6 +521,11 @@ impl Companion {
             last_state: String::new(),
             play: None,
             sulk_until: 0.0,
+            trace: vec![],
+            omikuji_seed: None,
+            quiz: None,
+            open_app_hook: None,
+            last_file: None,
             pokes: vec![],
             events: vec![],
             delayed: vec![],

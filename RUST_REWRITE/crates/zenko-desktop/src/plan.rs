@@ -225,9 +225,16 @@ pub fn save_deadlines(items: &mut [Value]) {
     let _ = std::fs::write(data_dir().join("deadlines.json"), crate::py_json_ascii_indent(&Value::Array(items.to_vec()), b" "));
 }
 
-fn getrandbits40(r: &mut zenko_sound::mt::PyRandom) -> u64 {
+pub(crate) fn getrandbits40(r: &mut zenko_sound::mt::PyRandom) -> u64 {
     let lo = r.genrand() as u64;
     let hi = (r.genrand() >> 24) as u64;
+    lo | (hi << 32)
+}
+
+/// random.getrandbits(36) (card ids)
+pub(crate) fn getrandbits36(r: &mut zenko_sound::mt::PyRandom) -> u64 {
+    let lo = r.genrand() as u64;
+    let hi = (r.genrand() >> 28) as u64;
     lo | (hi << 32)
 }
 
@@ -389,6 +396,8 @@ pub struct Planner {
     pub announced: std::collections::HashSet<String>,
     pub soon: bool,
     pub announce: Vec<String>,
+    /// the app time of the chat line being answered (chat_send sets it)
+    pub asked_at: Option<f64>,
 }
 
 impl Companion {
@@ -652,6 +661,8 @@ impl Companion {
 
     /// pump's start: the planner's after() timers
     pub(crate) fn planner_timers(&mut self, now: f64) {
+        // asked for during a chat line: the after() counts from that line, not from this pump
+        let now = self.planner.asked_at.take().map_or(now, |t| t.min(now));
         if std::mem::take(&mut self.planner.soon) {
             self.later(now + 0.6, Later::PlanMaybe);
         }

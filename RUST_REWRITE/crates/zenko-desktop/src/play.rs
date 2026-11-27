@@ -123,8 +123,7 @@ fn alt(now: f64, per: f64, a: i32, b: i32) -> i32 {
 
 impl Companion {
     fn pick<'a>(&mut self, v: &[&'a str]) -> &'a str {
-        let i = (self.rng.next() * v.len() as f64) as usize;
-        v[i.min(v.len() - 1)]
+        *self.brain.rng.choice(v) // Python's random.choice
     }
 
     pub fn say(&mut self, text: &str, secs: f64) {
@@ -216,7 +215,7 @@ impl Companion {
         });
         self.bond_add(3);
         let line = format!("A present? For me?! *unwraps* Uwaa~ {item}! I'll keep it in my treasure box forever~kon!");
-        self.delayed.push((now + 1.0, Ev::Say { text: line.clone(), secs: 8.0, choices: vec![] }));
+        self.later(now + 1.0, crate::rewards::Later::Say { text: line.clone(), secs: 8.0, choices: vec![], only_idle: false, beep: None });
         line
     }
 

@@ -922,7 +922,7 @@ impl Companion {
         (life["studied"].get(id).map(|v| num(v, 0.0)).unwrap_or(0.0), hrs * 60.0)
     }
 
-    fn upcoming_deadlines(&self, n: usize) -> Vec<Value> {
+    pub(crate) fn upcoming_deadlines(&self, n: usize) -> Vec<Value> {
         let today = iso(day_n(self.nl()));
         load_deadlines().into_iter()
             .filter(|d| !truthy(&d["done"]) && d["date"].as_str().unwrap_or("") >= today.as_str())
@@ -1166,7 +1166,7 @@ impl Companion {
     // ---- chat --------------------------------------------------------------------------------------------------------
 
     /// nb_ask's part in chat: she says she's thinking; the answer itself comes from the brains (Ev::Command nb_ask)
-    fn nb_ask_chat(&mut self, now: f64, sid: Option<String>, q: &str, mode: &str) -> String {
+    pub(crate) fn nb_ask_chat(&mut self, now: f64, sid: Option<String>, q: &str, mode: &str) -> String {
         let q = q.trim();
         if q.is_empty() {
             return "Ask me something first~".into();
@@ -1295,7 +1295,9 @@ impl Companion {
             self.later(now + 0.2, Later::Command(format!("nb_cards_from_file:{s}")));
             return Some("Pick your notes file (PDF, Word, PowerPoint or text) and I'll turn it into flashcards~".into());
         }
-        // "review my mistakes" (review_start) comes with the quiz (the remaining chat routes)
+        if rx!(r"^(?:review|practise|practice|redo) (?:my )?mistakes$").is_match(&lw) {
+            return Some(self.review_start());
+        }
         None
     }
 

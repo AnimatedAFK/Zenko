@@ -79,6 +79,20 @@ fn ci(p: &str) -> Regex {
 
 /// ema_parse(text): (clean text, epoch seconds or None, "daily" or None). Times with no am/pm from 1 to 7 mean the
 /// afternoon.
+/// (datetime.fromtimestamp(now) + timedelta(seconds=sec)).timestamp(): Python keeps whole microseconds, so the
+/// result is the second count plus microseconds / 1e6, not now + sec in floating point.
+pub fn py_dt_add(now: f64, sec: f64) -> f64 {
+    let t = now.trunc();
+    let mut us = ((now - t) * 1e6).round_ties_even() as i64;
+    let mut t = t as i64;
+    if us >= 1_000_000 {
+        t += 1;
+        us -= 1_000_000;
+    }
+    let total = t as i128 * 1_000_000 + us as i128 + (sec * 1e6).round_ties_even() as i128;
+    (total.div_euclid(1_000_000)) as f64 + (total.rem_euclid(1_000_000)) as f64 / 1e6
+}
+
 pub fn ema_parse(text: &str, now: f64) -> (String, Option<f64>, Option<&'static str>) {
     let mut st = format!(" {} ", text.trim());
     let low = |s: &String| s.to_lowercase();
@@ -104,7 +118,7 @@ pub fn ema_parse(text: &str, now: f64) -> (String, Option<f64>, Option<&'static 
             .unwrap_or_else(|| n.parse::<f64>().unwrap_or(1.0));
         let u = &c[2];
         let sec = v * if u.starts_with('h') { 3600.0 } else if u.starts_with('s') { 1.0 } else { 60.0 };
-        at = Some(now + sec.max(5.0));
+        at = Some(py_dt_add(now, sec.max(5.0)));
         let m = c.get(0).unwrap();
         cut(&mut st, m.start(), m.end());
     } else {

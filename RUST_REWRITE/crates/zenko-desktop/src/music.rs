@@ -43,6 +43,7 @@ fn font35(ch: char) -> Option<&'static [&'static str; 5]> {
 impl Companion {
     /// music_apply: start / stop / switch the background loop to match the settings (and focus-only mode)
     pub fn music_apply(&mut self) {
+        self.trace.push("music_apply".into());
         let mut on = self.cfg.b("bgm", true);
         if on && self.cfg.s("bgm_when", "always") == "focus" {
             on = self.session.is_some() || self.lockin.is_some();

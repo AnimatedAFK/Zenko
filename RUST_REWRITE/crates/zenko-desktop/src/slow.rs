@@ -295,7 +295,7 @@ impl Companion {
         let key = |s: &str| s.chars().take(24).collect::<String>();
         let fresh: Vec<String> = pool.iter().filter(|p| !seen.contains(&key(p))).cloned().collect();
         let fresh = if fresh.is_empty() { pool } else { fresh };
-        let pick = self.pick_s(&fresh);
+        let pick = self.brain.rng.choice(&fresh).clone(); // random.choice
         let k = key(&pick);
         self.life_do(|l| {
             if !l["haiku"].is_array() {
@@ -366,11 +366,12 @@ impl Companion {
 
     /// visitor_start: a friend fox spirit in her own coat comes to sit beside her for a little while
     pub fn visitor_start(&mut self, now: f64) {
+        self.trace.push("visitor_start".into());
         if self.slow.visitor.is_some() {
             return;
         }
         let vs = ldata()["VISITORS"].as_array().unwrap().clone();
-        let i = ((self.rand() * vs.len() as f64) as usize).min(vs.len() - 1);
+        let i = self.brain.rng.randbelow(vs.len() as u64) as usize; // random.choice
         let (name, coat, place) = (vs[i][0].as_str().unwrap().to_string(), vs[i][1].as_str().unwrap().to_string(),
                                    vs[i][2].as_str().unwrap().to_string());
         let mut pal = self.pal.clone();

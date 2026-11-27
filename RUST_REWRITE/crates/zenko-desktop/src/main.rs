@@ -652,7 +652,7 @@ mod win {
         } else if c == "music_apply" {
             fox.music_apply();
         } else if c == "open_hub" || c.starts_with("open_hub:") {
-            open_hub(app, c.strip_prefix("open_hub:"));
+            open_hub(app, c.strip_prefix("open_hub:").filter(|p| *p != "None"));
             return;
         } else if c == "open_checkin" || c == "open_checkin_force" {
             open_checkin(app, t, c == "open_checkin_force");

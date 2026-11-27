@@ -94,7 +94,7 @@ pub fn bible_parse_ref(text: &str) -> Option<(usize, i64, Option<i64>)> {
 }
 
 /// Python's str.title()
-fn py_title(s: &str) -> String {
+pub(crate) fn py_title(s: &str) -> String {
     let mut out = String::new();
     let mut prev = false;
     for c in s.chars() {

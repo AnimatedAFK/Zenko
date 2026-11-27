@@ -412,6 +412,7 @@ impl Companion {
 
     /// chat_send(q): `win` = the fox window's top-left (for her poses)
     pub fn chat_send(&mut self, now: f64, q: &str, win: (i32, i32)) -> Sent {
+        self.planner.asked_at = Some(now);
         self.chat_line(now, "You", q);
         let learning = self.cfg.b("learn_style", true);
         let mut ans = self.answer_local(now, q, win);
@@ -590,11 +591,11 @@ impl Companion {
             self.later(now + 0.2, Later::Command("open_checkin_force".into()));
             return Some("How are you feeling today? Pick one~".into());
         }
-        None
+        self.life_route_rest(now, text.trim())
     }
 
     /// life_forget: "forget my favourite colour" / a note she remembered
-    fn life_forget(&mut self, text: &str) -> Option<String> {
+    pub(crate) fn life_forget(&mut self, text: &str) -> Option<String> {
         let low = text.to_lowercase();
         let m = rx!(r"^forget (?:my |about my |that my )?(.+?)[.!~]*$").captures(low.trim())?;
         let k = m[1].trim().replace("favorite", "favourite").replace("color", "colour");
@@ -627,6 +628,11 @@ impl Companion {
         let cmd = fix_first(text);
         let low = fix_typos(text).to_lowercase().trim().to_string();
         let ts = text.trim();
+        if self.quiz.is_some() && !rx!(r"^(help|commands)$").is_match(&low) {
+            if let Some(r) = self.quiz_answer(now, text) {
+                return Some(r);
+            }
+        }
         if ["help", "?", "commands"].contains(&low.as_str()) {
             return Some(HELP.into());
         }
@@ -724,6 +730,12 @@ impl Companion {
             return Some(r);
         }
         if let Some(r) = self.life_route(now, text) {
+            return Some(r);
+        }
+        if let Some(r) = self.extra_route(now, text) {
+            return Some(r);
+        }
+        if let Some(r) = self.misc_routes(now, text, &low) {
             return Some(r);
         }
         if rx!(r"^(add|schedule)\b").is_match(&low) {
