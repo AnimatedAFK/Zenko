@@ -94,6 +94,7 @@ mod win {
         next_watch: f64,
         next_slow: f64,
         next_wx: f64,
+        next_batt: f64,
         eating: Option<zenko_desktop::lockin::Eat>,
         next_top: f64,
         hwnd: HWND,
@@ -171,8 +172,10 @@ mod win {
                 buf[i * 4 + 2] = (p[0] as u32 * a / 255) as u8;
                 buf[i * 4 + 3] = p[3];
             }
-            if app.fox.session.is_some() {
-                draw_panel(app, w, h, buf);
+            let (bdx, bdy, bcurl) = app.fox.batt_at;
+            let batt = app.fox.battery_shapes(bdx, bdy, bcurl);
+            if app.fox.session.is_some() || !batt.is_empty() {
+                draw_panel(app, w, h, buf, &batt);
             }
             let pt = POINT { x: app.x, y: app.y };
             let sz = SIZE { cx: w, cy: h };
@@ -190,7 +193,7 @@ mod win {
 
     /// draw_panel: the timer panel, drawn with GDI on a KEY-coloured bitmap and copied onto her frame (Tk draws it
     /// on the same see-through canvas as her).
-    unsafe fn draw_panel(app: &mut App, w: i32, h: i32, buf: &mut [u8]) {
+    unsafe fn draw_panel(app: &mut App, w: i32, h: i32, buf: &mut [u8], batt: &[zenko_desktop::battery::Shape]) {
         unsafe {
             let screen = GetDC(std::ptr::null_mut());
             if app.panel_dib.map(|d| (d.3, d.4)) != Some((w, h)) {
@@ -213,7 +216,7 @@ mod win {
             }
             ReleaseDC(std::ptr::null_mut(), screen);
             let (dc, _, bits, _, _) = app.panel_dib.unwrap();
-            let pw = app.fox.colw.min(w);
+            let pw = if batt.is_empty() { app.fox.colw.min(w) } else { w };
             let br = CreateSolidBrush(crate::gdi::KEY);
             let r = RECT { left: 0, top: 0, right: pw, bottom: h };
             FillRect(dc, &r, br);
@@ -221,7 +224,17 @@ mod win {
             let th = theme(&app.fox.cfg);
             let fam = app.family.clone();
             let fonts = crate::panel::Fonts::get(&mut app.panel_fonts, &fam, app.dpi);
-            let ops = crate::panel::ops(&app.fox, &th, fonts);
+            let mut ops = if app.fox.session.is_some() { crate::panel::ops(&app.fox, &th, fonts) } else { vec![] };
+            use crate::gdi::{Op, rgb};
+            use zenko_desktop::battery::Shape;
+            for b in batt {
+                ops.push(match b {
+                    Shape::Rect { x1, y1, x2, y2, fill, outline } => Op::RectO { x1: *x1, y1: *y1, x2: *x2, y2: *y2,
+                        fill: rgb(fill), outline: outline.as_ref().map(|(c, w)| (rgb(c), *w)) },
+                    Shape::Poly { pts, fill, outline } => Op::Poly { pts: pts.clone(), fill: Some(rgb(fill)),
+                        outline: Some(rgb(outline)), width: 1 },
+                });
+            }
             crate::gdi::draw(dc, &ops);
             GdiFlush();
             let src = std::slice::from_raw_parts(bits, (w * h * 4) as usize);
@@ -237,6 +250,18 @@ mod win {
                     }
                 }
             }
+        }
+    }
+
+    /// battery_status(): (percent, charging), or None on a desktop PC
+    fn battery_status() -> Option<(i64, bool)> {
+        use windows_sys::Win32::System::Power::{GetSystemPowerStatus, SYSTEM_POWER_STATUS};
+        unsafe {
+            let mut s: SYSTEM_POWER_STATUS = std::mem::zeroed();
+            if GetSystemPowerStatus(&mut s) == 0 || s.BatteryFlag == 128 || s.BatteryLifePercent == 255 {
+                return None;
+            }
+            Some((s.BatteryLifePercent as i64, s.ACLineStatus == 1))
         }
     }
 
@@ -483,6 +508,10 @@ mod win {
             }
             if crate::bgm::FAILED.swap(false, std::sync::atomic::Ordering::Relaxed) {
                 app.fox.say("Uu~ Windows wouldn't play the background music. (It still works for her other sounds.)", 8.0);
+            }
+            if t >= app.next_batt {
+                app.next_batt = t + 30.0; // battery_tick
+                app.fox.battery_tick(t, battery_status());
             }
             if t >= app.next_wx {
                 app.next_wx = t + 45.0 * 60.0; // weather_poll
@@ -929,6 +958,7 @@ mod win {
                     next_watch: 1008.0,
                     next_slow: 1006.0,
                     next_wx: 1009.0,
+                    next_batt: 1001.5,
                     eating: None,
                     next_top: 1002.5,
                     hwnd,

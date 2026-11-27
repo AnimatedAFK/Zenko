@@ -6,8 +6,12 @@ use zenko_desktop::slow::{forecast_url, geocode_pick, geocode_url, url_quote};
 use zenko_desktop::tt::parse_clock;
 use zenko_desktop::{Cfg, Companion};
 
+/// the fake clock and APPDATA are process-wide, so these tests take turns
+static CLOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
 #[test]
 fn life_bits_match_zenko_py() {
+    let _g = CLOCK.lock().unwrap_or_else(|e| e.into_inner());
     let g: Value = serde_json::from_str(include_str!("../../../golden/life.json")).unwrap();
     let d = std::env::temp_dir().join(format!("zk_lifebits_{}", std::process::id()));
     unsafe { std::env::set_var("APPDATA", &d) };
@@ -50,6 +54,7 @@ fn said(f: &mut Companion) -> Vec<String> {
 
 #[test]
 fn slow_tick_lines_and_visitor() {
+    let _g = CLOCK.lock().unwrap_or_else(|e| e.into_inner());
     let d = std::env::temp_dir().join(format!("zk_slow_{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&d);
     unsafe {
@@ -66,7 +71,8 @@ fn slow_tick_lines_and_visitor() {
     let s = said(&mut f);
     assert!(s.len() == 1 && s[0].contains("ood morning") || s[0].starts_with("Ohayou"), "{s:?}");
     f.life_slow(1066.0);
-    assert!(said(&mut f).is_empty(), "only once a day");
+    let s = said(&mut f);
+    assert!(s.is_empty(), "only once a day {s:?}");
     // a visiting friend: the friend badge, two lines, then she goes home after 13 s
     f.random_event(1100.0, Some("visitor"));
     assert!(f.slow.visitor.is_some());
@@ -91,5 +97,49 @@ fn slow_tick_lines_and_visitor() {
     // a haiku is remembered so she doesn't repeat it soon
     f.random_event(1400.0, Some("haiku"));
     assert_eq!(zenko_desktop::read_json("zenko_life.json")["haiku"].as_array().unwrap().len(), 1);
+    zenko_desktop::set_fake_now(None);
+}
+
+#[test]
+fn battery_matches_zenko_py() {
+    let _g = CLOCK.lock().unwrap_or_else(|e| e.into_inner());
+    use zenko_desktop::battery::Shape;
+    let g: Value = serde_json::from_str(include_str!("../../../golden/life.json")).unwrap();
+    let mut f = Companion::new(Cfg::from(json!({"theme": "snow"})), 1.0, 1000.0);
+    let r = |v: &Value| zenko_desktop::shapes::tk_coord(v.as_f64().unwrap());
+    for c in g["battery"].as_array().unwrap() {
+        f.battery = Some((c["st"][0].as_i64().unwrap(), c["st"][1].as_bool().unwrap()));
+        (f.z, f.colw, f.fox_y) = (c["z"].as_i64().unwrap() as i32, 37, 21);
+        f.pal.set(b'K', "#262b4a");
+        let got = f.battery_shapes(c["dx"].as_i64().unwrap() as i32, c["dy"].as_i64().unwrap() as i32, c["curled"].as_bool().unwrap());
+        let want: Vec<Shape> = c["ops"].as_array().unwrap().iter().map(|o| {
+            let a = o[1].as_array().unwrap();
+            let fill = o[2].as_str().unwrap().to_string();
+            if o[0] == "rect" {
+                let ol = o[3].as_str().unwrap();
+                Shape::Rect { x1: r(&a[0]), y1: r(&a[1]), x2: r(&a[2]), y2: r(&a[3]), fill,
+                              outline: (!ol.is_empty()).then(|| (ol.to_string(), o[4].as_i64().unwrap() as i32)) }
+            } else {
+                Shape::Poly { pts: a.chunks(2).map(|p| (r(&p[0]), r(&p[1]))).collect(), fill, outline: o[3].as_str().unwrap().into() }
+            }
+        }).collect();
+        assert_eq!(got, want, "battery {c}");
+    }
+}
+
+#[test]
+fn ema_countdown_on_the_plaque() {
+    let _g = CLOCK.lock().unwrap_or_else(|e| e.into_inner());
+    unsafe { std::env::set_var("ZK_TZ_OFFSET", "0") };
+    // 2025-11-26 10:00:01 UTC; exams on 2026-04-27 = 152 days
+    zenko_desktop::set_fake_now(Some(1764151201.0));
+    let mut f = Companion::new(Cfg::from(json!({"exam_date": "2026-04-27"})), 1.0, 1000.0);
+    assert_eq!(f.exam_days(), 152);
+    assert_eq!(f.belly_text(1100.0), "D-152 TO EXAMS");
+    assert_eq!(f.belly_text(1105.0), "D-152 TO EXAMS", "it keeps scrolling until it has gone past once");
+    let dur = (14.0 * 4.0 + 8.0) * 0.11 + 0.3;
+    assert_eq!(f.belly_text(1100.0 + dur + 0.1), "10:00");
+    let mut g = Companion::new(Cfg::from(json!({"exam_date": "2026-04-27", "ema_countdown": false})), 1.0, 1000.0);
+    assert_eq!(g.belly_text(1100.0), "10:00");
     zenko_desktop::set_fake_now(None);
 }

@@ -190,6 +190,9 @@ pub enum Op {
     Rect { x: i32, y: i32, w: i32, h: i32, color: u32 },
     /// a picture with see-through pixels (an image label); RGBA rows
     Img { x: i32, y: i32, w: i32, h: i32, px: std::rc::Rc<Vec<[u8; 4]>> },
+    /// create_rectangle(x1, y1, x2, y2, fill, outline, width): Tk's DisplayRectOval (XFillRectangle, then
+    /// XDrawRectangle = GDI Rectangle with the outline pen and no brush)
+    RectO { x1: i32, y1: i32, x2: i32, y2: i32, fill: u32, outline: Option<(u32, i32)> },
     /// clip the following ops to this rectangle (None = no clip)
     Clip(Option<(i32, i32, i32, i32)>),
 }
@@ -228,6 +231,22 @@ pub unsafe fn draw(dc: HDC, ops: &[Op]) {
                         let mut q = p.clone();
                         q.push(p[0]);
                         Polyline(dc, q.as_ptr(), q.len() as i32);
+                        SelectObject(dc, opn);
+                        DeleteObject(pn as _);
+                    }
+                }
+                Op::RectO { x1, y1, x2, y2, fill, outline } => {
+                    let (x2, y2) = ((*x2).max(*x1 + 1), (*y2).max(*y1 + 1));
+                    let br = CreateSolidBrush(*fill);
+                    let r = RECT { left: *x1, top: *y1, right: x2, bottom: y2 };
+                    FillRect(dc, &r, br);
+                    DeleteObject(br as _);
+                    if let Some((c, w)) = outline {
+                        let pn = pen(*c, *w);
+                        let opn = SelectObject(dc, pn as _);
+                        let ob = SelectObject(dc, GetStockObject(NULL_BRUSH));
+                        Rectangle(dc, *x1, *y1, x2, y2);
+                        SelectObject(dc, ob);
                         SelectObject(dc, opn);
                         DeleteObject(pn as _);
                     }

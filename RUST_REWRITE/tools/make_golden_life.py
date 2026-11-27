@@ -60,7 +60,29 @@ w.root = types.SimpleNamespace(after=lambda *a: None)
 w.weather_poll = None
 Z.geocode = lambda c: dict(geo_res["results"][1])
 Z.FoxBuddy.weather_poll(w)
-out = {"tablet": tab, "hits": hits, "clocks": clocks, "geo": geo, "forecast_url": urls[0], "code": w.wx["code"],
+class Rec:
+    def __init__(self):
+        self.ops = []
+
+    def create_rectangle(self, *a, **k):
+        self.ops.append(["rect", list(a), k.get("fill"), k.get("outline"), k.get("width", 1)])
+
+    def create_polygon(self, pts, **k):
+        self.ops.append(["poly", list(pts), k.get("fill"), k.get("outline"), k.get("width", 1)])
+
+    def delete(self, *a):
+        pass
+
+
+Z.apply_theme("snow")
+batt = []
+for st, dx, dy, curled, zz in [((80, False), 0, 0, False, 4), ((15, True), 4, -8, True, 4), ((35, False), 0, 0, False, 3),
+                                ((3, True), 2, 0, False, 1)]:
+    b = types.SimpleNamespace(battery=st, cfg={}, Z=zz, COLW=37, fox_y=21, pal={"K": "#262b4a"}, _batt_key=None)
+    b.canvas = Rec()
+    Z.FoxBuddy.draw_battery(b, dx, dy, curled)
+    batt.append({"st": list(st), "dx": dx, "dy": dy, "curled": curled, "z": zz, "ops": b.canvas.ops})
+out = {"tablet": tab, "battery": batt, "hits": hits, "clocks": clocks, "geo": geo, "forecast_url": urls[0], "code": w.wx["code"],
        "quote": [Z._q(s) for s in ["São Paulo", "New York", "a/b&c=d", "東京", "x-y_z.~"]]}
 with open(os.path.join(os.path.dirname(__file__), "..", "golden", "life.json"), "w", encoding="utf-8") as f:
     json.dump(out, f, ensure_ascii=False, indent=0)

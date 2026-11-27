@@ -21,6 +21,7 @@ pub mod rewards;
 pub mod tt;
 pub mod music;
 pub mod slow;
+pub mod battery;
 pub mod icon;
 pub mod sound;
 pub mod theme;
@@ -416,6 +417,13 @@ pub struct Companion {
     pub pomo: Option<tt::Pomo>,
     pub pomo_id: u64,
     pub music: music::Music,
+    pub ema_t0: f64,
+    pub belly_t0: f64,
+    /// battery_status(): (percent, charging), None on a desktop PC
+    pub battery: Option<(i64, bool)>,
+    pub batt_warned: Vec<i64>,
+    /// where draw_battery puts it this frame: (dx, dy, curled)
+    pub batt_at: (i32, i32, bool),
     pub slow: slow::Slow,
 }
 
@@ -469,6 +477,11 @@ impl Companion {
             pomo: None,
             pomo_id: 0,
             music: Default::default(),
+            ema_t0: 0.0,
+            belly_t0: 0.0,
+            battery: None,
+            batt_warned: vec![],
+            batt_at: (0, 0, false),
             slow: Default::default(),
         };
         c.compute_dims();
@@ -749,7 +762,57 @@ impl Companion {
         (lx, ly, sx, sy)
     }
 
-    pub fn belly_text(&self, now: f64) -> String {
+    /// zenko14 belly_text: every minute or so, between the clock, the plaque scrolls 'D-152 TO EXAMS'
+    pub fn belly_text(&mut self, now: f64) -> String {
+        if self.session.is_some() || self.brk.is_some() || !self.cfg.b("ema_countdown", true) {
+            self.ema_t0 = 0.0;
+            return self.belly_text_base(now);
+        }
+        let d = self.exam_days();
+        if !(0..=400).contains(&d) {
+            return self.belly_text_base(now);
+        }
+        let txt = if d == 0 { "TODAY: EXAMS! GANBATTE".to_string() } else { format!("D-{d} TO EXAMS") };
+        let dur = (txt.chars().count() as f64 * 4.0 + 8.0) * 0.11 + 0.3;
+        if self.ema_t0 != 0.0 && now - self.ema_t0 < dur {
+            self.belly_t0 = self.ema_t0;
+            return txt;
+        }
+        if now - self.ema_t0 > 55.0 + dur && (unix_now() as i64) % 60 < 2 {
+            self.ema_t0 = now;
+            self.belly_t0 = now;
+            return txt;
+        }
+        self.belly_text_base(now)
+    }
+
+    /// exam_days(): days until cfg exam_date (default 2027-04-23)
+    pub fn exam_days(&self) -> i64 {
+        let parse = |s: &str| -> Option<i64> {
+            let p: Vec<&str> = s.split('-').collect();
+            if p.len() != 3 || p[0].len() != 4 || p[1].len() != 2 || p[2].len() != 2 {
+                return None;
+            }
+            let (y, m, d): (i64, i64, i64) = (p[0].parse().ok()?, p[1].parse().ok()?, p[2].parse().ok()?);
+            let mdays = [31, if (y % 4 == 0 && y % 100 != 0) || y % 400 == 0 { 29 } else { 28 }, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if !(1..=12).contains(&m) || d < 1 || d > mdays[(m - 1) as usize] {
+                return None;
+            }
+            Some(rewards::days_from_civil(y, m, d))
+        };
+        let raw = match self.cfg.raw.get("exam_date") {
+            Some(Value::String(s)) if !s.is_empty() => s.clone(),
+            Some(Value::Null) | None => String::new(),
+            Some(Value::String(_)) => String::new(),
+            Some(v) => v.to_string(),
+        };
+        let raw = if raw.is_empty() { "2027-04-23".to_string() } else { raw };
+        let ex = parse(&raw).or_else(|| parse("2027-04-23")).unwrap();
+        let (y, m, d, _, _, _) = local_now();
+        ex - rewards::days_from_civil(y as i64, m as i64, d as i64)
+    }
+
+    pub fn belly_text_base(&self, now: f64) -> String {
         if let Some(b) = &self.brk {
             let left = (b.planned - b.elapsed).max(0.0) as i64;
             return format!("{:02}:{:02}", left / 60, left % 60);
@@ -892,6 +955,7 @@ impl Companion {
         let acck = accs.join(",");
         let walking = state.starts_with("qwalk") || state.starts_with("rig");
         let curl_pic = state == "curl";
+        self.batt_at = (dx, dy, walking || curl_pic);
         if !curl_pic && !walking {
             let im = self
                 .img(
@@ -965,7 +1029,7 @@ impl Companion {
         out
     }
 
-    fn draw_belly(&self, out: &mut Frame, now: f64, dx: i32, dy: i32) {
+    fn draw_belly(&mut self, out: &mut Frame, now: f64, dx: i32, dy: i32) {
         let text = self.belly_text(now);
         let mut cols: Vec<[bool; 5]> = vec![];
         for ch in text.chars() {
@@ -989,7 +1053,7 @@ impl Companion {
         } else {
             let mut lp = cols.clone();
             lp.extend(std::iter::repeat([false; 5]).take(8));
-            let off = (now / 0.11) as usize % lp.len();
+            let off = ((now - self.belly_t0) / 0.11) as usize % lp.len();
             (0..w).map(|i| Some(lp[(off + i) % lp.len()])).collect()
         };
         let ink = self
