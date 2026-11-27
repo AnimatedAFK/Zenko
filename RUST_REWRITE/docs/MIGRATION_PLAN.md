@@ -111,9 +111,12 @@ order is kept where it changes the result (tail outlines, eye cells).
    dialog and timer panel, distraction checks, nags, pep talks, breaks, roaming and poses, lock-in with the pounce.
    Stage 2c done: session and lock-in rewards (rewards.rs).
    Stage 2d done: pomodoro, timetable alerts/marking, background music, music tablet, weather, visiting fox, life tick.
-   Next: battery on the tail, vertical slide, focus glow, ema countdown, daily check-in card, then the hub.
-3. A Tk-compatible drawing layer and the fonts, checked by screenshot comparison with Tk.
-4. Hub pages one at a time (Home, Timetable/Upcoming, Chat, Settings/Customize first, then the rest), each compared with Python.
+   Stage 3a done: battery on the tail, ema countdown, daily check-in card. Vertical slide and focus glow belong to
+   the hub window, so they move to step 4.
+3. **Started (stage 3a):** a Tk-compatible drawing layer (ui.rs + uiwin.rs): Windows Tk widget sizes, pack, place,
+   cards, pixel buttons, entries, checked against real Tk geometry and canvas items. Still to add as pages need them:
+   grid in the tree, Text widgets with tags, scrollbars (ZkScrollbar), images, aa_photo, smooth lines.
+4. **Next:** the hub shell (sidebar sky, nav, title bar, tip bar, slide, focus glow), then hub pages one at a time (Home, Timetable/Upcoming, Chat, Settings/Customize first, then the rest), each compared with Python.
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.
 6. Speed (Phase 5): image cache and native code are already in; measure and tune at the end.
 

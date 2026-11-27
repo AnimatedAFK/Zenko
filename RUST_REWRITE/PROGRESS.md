@@ -1,7 +1,7 @@
 # Rust rewrite progress
 
 Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.md. Rules: RULES.md.
-356 of 1,798 zenko.py items ported (`python3 tools/audit_inventory.py`).
+368 of 1,798 zenko.py items ported (`python3 tools/audit_inventory.py`).
 
 ## Done
 - **Stage 1:** crates/zenko-art is an exact port of the sprite engine.
@@ -26,6 +26,13 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
   background loops, byte-identical float32 maths, CPython 3.12 Neumaier sum), bgm.rs (MCI player, spotify_window,
   media keys), music.rs (music_apply, player_poll, the tablet picture and buttons), slow.rs (30 s life tick, haiku,
   found gifts, facts, visiting fox, seasons/weather particles, weather URLs), net.rs (WinHTTP + weather_poll).
+- **Stage 3a (latest):** battery meter on her tail (battery.rs), ema exam countdown on the belly plaque, and the
+  Tk-like widget layer every window from here on is built with: ui.rs (lib: widget tree, Windows Tk 8.6 sizes for
+  labels/entries/frames/canvases/PixelButton, tkPack.c pack, tkPlace.c place, round_frame cards, canvas items, a
+  display list, pointer/keys/entry editing; fonts through the `Fonts` trait) and uiwin.rs (bin: GDI fonts, display
+  list to gdi::Op, borderless topmost popups with the KEY colour see-through). First user: the daily check-in card
+  (checkin.rs: open_checkin, checkin_save, chat_line, should_speak; opened by the 30 s tick, the menu and later chat).
+  Fixed: the session dialog's entries were 2 px too small (tkEntry.c inset = highlight + border + XPAD).
 
 ## Architecture decisions (settled)
 - **Logic lives in the library.** zenko-desktop lib = platform-free logic, tested on Linux. src/main.rs and the Windows-only modules (gdi, bubble, menu, panel, dialog, tkw, eat) handle the Win32 side.
@@ -34,7 +41,7 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
 - **Data files are written exactly like Python's.** Same files in %APPDATA%\FoxBuddy and the same JSON format, using read-modify-write of only our own keys.
 - **Quirks are copied too.** One example: zenko.py's window-edge nap never fires, so the port leaves it out.
 
-## Tests (all passing on 2026-11-26)
+## Tests (all passing on 2026-11-27)
 Run with `cargo test --release`. The golden files are made by the tools/ scripts.
 
 | Area | Checked against |
@@ -49,6 +56,8 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 | Timetable alerts, read-aloud, ticking, ema offer (6 more cases in the same golden) | zenko.py, timetable.json byte-for-byte |
 | Background music (3 loops + volume copy) | zenko.py's .wav bytes (sha256), `tools/make_golden_music.py` |
 | Music tablet picture/buttons, parse_clock, weather URLs, geocode pick | zenko.py, `tools/make_golden_life.py` |
+| Check-in card: 13 widgets' sizes/places + 20 canvas items in 3 themes, journal file | Real Tk running zenko.py's open_checkin / checkin_save, `xvfb-run -a /usr/bin/python3.12 tools/make_golden_checkin.py` |
+| Battery meter, ema countdown | zenko.py draw_battery (golden/life.json), rule test |
 | Pomodoro, life tick, visitor, weather particles | Rule tests (tests/pomo.rs, tests/life_bits.rs) |
 | Behaviour, roaming, lock-in | Rule tests |
 
@@ -56,14 +65,16 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 - Nothing has run on real Windows yet (Wine is broken here). The bubble, menu, panel, dialog and pounce still need screenshots from the user.
 - Chips like "Show me" / "See the map" send `hub:garden` / `hub:map`, which do nothing until the hub exists.
 - Not ported yet: the Spotify account (tablet buttons use media keys, like zenko.py without an account), her VOICEVOX
-  read-aloud (she does her "kon kon~" clip instead, as zenko.py does when VOICEVOX is off), piper voices, the daily
-  check-in card, plan_maybe (ema auto-planning), chat (so `pomo_start` has no caller yet), z18_init's one-time move
+  read-aloud (she does her "kon kon~" clip instead, as zenko.py does when VOICEVOX is off), piper voices, plan_maybe (ema auto-planning), chat (so `pomo_start` has no caller yet), z18_init's one-time move
   of old chat reminders onto the ema rack.
 - The rewards test doesn't replay the 5 s follow-up badge check (in these cases it awards nothing in Python either).
 
 ## Next recommended task
-The rest of the desktop fox: battery on the tail, vertical slide, focus glow, exam countdown on the ema, the daily
-check-in card. Then a Tk-like drawing layer for the hub pages (Garden, Map, Daily, Timetable), which the chips open.
+The hub window shell on top of ui.rs: FoxBuddy.open_hub + the Zenko/Zenko19/Zenko20/Zenko21/Zenko22 overrides
+(borderless title bar, resize edges, fade-in, the night-sky sidebar with stars/moon/hills/torii, z19 sky by time of
+day and season, pixel nav icons, gliding pill, tip bar, living logo, z22 badge pins and scenes, vertical slide
+40372, focus glow 37653). Needs ports of aa_photo, sprite_photo, Tk smooth lines and random.Random.uniform. Then
+the Chat page with the chat command router (pomo_start at ~7898), then the study pages one by one.
 
 ## Gotchas
 - The repo root has a tracked `__pycache__/`. Never delete it, and run Python with bytecode writing turned off.
