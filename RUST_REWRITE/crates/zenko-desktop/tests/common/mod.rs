@@ -94,7 +94,12 @@ pub fn check_items(at: &str, cv: &Canvas, want: &[Value], images: &Value, fonts:
                 assert_eq!((p.w, p.h), (rows[0].as_array().unwrap().len(), rows.len()), "{at} size");
                 for (yy, row) in rows.iter().enumerate() {
                     for (xx, v) in row.as_array().unwrap().iter().enumerate() {
-                        let q = p.px[yy * p.w + xx];
+                        let mut q = p.px[yy * p.w + xx];
+                        // (Tk 8.6's photo get / transparency get only tell see-through from not: a soft glow's
+                        // partial alpha is recorded as opaque)
+                        if q[3] > 0 && v.as_str().unwrap().ends_with("ff") {
+                            q[3] = 255;
+                        }
                         assert_eq!(format!("#{:02x}{:02x}{:02x}{:02x}", q[0], q[1], q[2], q[3]), v.as_str().unwrap(),
                                    "{at} pixel {xx},{yy}");
                     }
@@ -105,13 +110,27 @@ pub fn check_items(at: &str, cv: &Canvas, want: &[Value], images: &Value, fonts:
                 assert_eq!(it.fill, s("fill"), "{at} fill");
                 assert_eq!(it.anchor, s("anchor"), "{at} anchor");
                 let f = it.font.as_ref().unwrap();
-                assert_eq!((f.family.clone(), f.size, f.bold), font_of(&s("font")), "{at} font");
+                let fs = s("font");
+                if !fs.contains(' ') && !fs.starts_with('{') {
+                    // a named font (tkfont.Font): what Tk says it is, under the family the app asked for
+                    let a = &images["__fonts"][&fs]["actual"];
+                    if a.is_object() {
+                        assert_eq!((f.size, f.bold), (a["size"].as_i64().unwrap() as i32, a["weight"] == "bold"), "{at} font");
+                    }
+                } else {
+                    assert_eq!((f.family.clone(), f.size, f.bold), font_of(&fs), "{at} font");
+                }
+                assert_eq!(it.underline, fs.contains("underline"), "{at} underline");
+                if io.get("justify").is_some() {
+                    assert_eq!(it.justify, s("justify"), "{at} justify");
+                }
                 assert_eq!(it.wrap, s("width").parse::<f64>().unwrap_or(0.0), "{at} wrap");
                 if !bb.is_empty() {
                     assert_eq!(zenko_desktop::canvasdraw::text_bbox(it, fonts).to_vec(), bb, "{at} bbox");
                 }
             }
             _ => {
+                assert_eq!(it.stipple, s("stipple"), "{at} stipple");
                 assert_eq!(it.fill, s("fill"), "{at} fill");
                 assert_eq!(it.outline, s("outline"), "{at} outline");
                 assert_eq!(it.width, s("width").parse::<f64>().unwrap(), "{at} width");

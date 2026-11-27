@@ -182,6 +182,8 @@ pub struct EntryText {
     pub sel: Option<(usize, usize)>,
     pub left: usize,
     pub blink_t0: f64,
+    /// a placeholder shown in GREY while the box is empty and not focused (zenko.py's ph_show / ph_hide)
+    pub ph: Option<String>,
 }
 
 #[derive(Clone, Debug)]
@@ -1203,8 +1205,12 @@ impl Ui {
                     let (sx, ex) = (tx + xo(a), tx + xo(b));
                     out.push(Draw::Rect { x: sx, y: ty, w: ex - sx, h: ls, color: t.acc.clone() });
                 }
-                out.push(Draw::Text { x: tx, y: ty, text: String::from_utf16_lossy(&e.text), font: font.clone(),
-                                      color: t.ink.clone() });
+                match &e.ph {
+                    Some(ph) if e.text.is_empty() && !focus => out.push(Draw::Text { x: x + ib, y: ty, text: ph.clone(),
+                                                                                    font: font.clone(), color: t.grey.clone() }),
+                    _ => out.push(Draw::Text { x: tx, y: ty, text: String::from_utf16_lossy(&e.text), font: font.clone(),
+                                               color: t.ink.clone() }),
+                }
                 if let Some((a, b)) = e.sel {
                     out.push(Draw::Text { x: tx + xo(a), y: ty, text: String::from_utf16_lossy(&e.text[a..b]),
                                           font: font.clone(), color: t.onacc.clone() });

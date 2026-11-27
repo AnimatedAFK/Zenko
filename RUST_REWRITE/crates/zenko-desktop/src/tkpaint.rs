@@ -135,6 +135,16 @@ pub unsafe fn paint(dc: HDC, ops: &[TkOp], fonts: &GdiFonts) {
                     FillRect(dc, &RECT { left: *x, top: *y, right: x + w, bottom: y + h }, br);
                     DeleteObject(br as _);
                 }
+                TkOp::FillStipple { x, y, w, h, color } => {
+                    let c = rgb(color);
+                    for yy in *y..y + h {
+                        let mut xx = *x + (x + yy).rem_euclid(2);
+                        while xx < x + w {
+                            SetPixelV(dc, xx, yy, c);
+                            xx += 2;
+                        }
+                    }
+                }
                 TkOp::DrawRect { x, y, w, h, pen } => {
                     let pn = make_pen(pen);
                     let op_ = SelectObject(dc, pn as _);

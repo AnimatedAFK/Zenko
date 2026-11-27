@@ -33,6 +33,7 @@ pub mod youpage;
 pub mod dailypage;
 pub mod ttpage;
 pub mod uppage;
+pub mod rempage;
 pub mod ui;
 pub mod checkin;
 pub mod tkcanvas;
@@ -634,10 +635,16 @@ impl Companion {
 
     /// small_fox(1): the fox with her tails as a little picture for headers and dialogs (see-through background).
     pub fn small_fox(&mut self, now: f64) -> Image {
+        self.small_fox_z(now, 1)
+    }
+
+    /// small_fox(zoom) (HD smoothing from zoom 2 while hd_art is on)
+    pub fn small_fox_z(&mut self, now: f64, zoom: usize) -> Image {
         let n = self.tail_count(now);
         let tails = core::build_tails(n, 0, 8, false);
         let body = sit::build_frame("happy", 0, None, &[], 0, 0, &self.look);
-        sprite_photo(&[&tails, &body], &self.pal, 1, false)
+        let hd = self.cfg.b("hd_art", true);
+        sprite_photo(&[&tails, &body], &self.pal, zoom, hd)
     }
 
     /// A zenko grows tails with wisdom: 3 to start, one more for every 20 focused minutes today (up to 9).

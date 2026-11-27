@@ -485,6 +485,57 @@ if len(sys.argv) > 1 and sys.argv[1] == "deadlines":
     SETUP["data"], SETUP["after"] = _data, _after
 
 
+if len(sys.argv) > 1 and sys.argv[1] == "reminders":
+    # golden/hub_reminders.json: the Reminders page (write an ema, the night shrine canvas: sky, lanterns for today's
+    # timetable, the rack with plaques that are soon / daily / rang / later / anytime, Zenko and her bubble, the
+    # fulfilled row, foxfire) wide, in a small midnight window, with a plaque selected (its pills) and one hovered,
+    # and empty
+    OUT = "hub_reminders.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 1.5 * 3600 + 754.25   # Thursday 11 Dec 2025, 09:42:34.25 UTC
+    CASES = [("rem_wide", T0, {"theme": "snow"}, None, "reminders"),
+             ("rem_midnight_small", T0, {"theme": "midnight"}, (1120, 720), "reminders"),
+             ("rem_sel", T0, {"theme": "snow"}, None, "reminders"),
+             ("rem_empty", T0, {"theme": "snow"}, None, "reminders")]
+
+    def _data(app, name):
+        app.life["ema"] = []
+        day = lambda n: (_dt.date(2025, 12, 11) + _dt.timedelta(days=n)).isoformat()
+        if name == "rem_empty":
+            app.tt[:] = []
+            Z.save_tt(app.tt)
+            app.life_save()
+            return
+        at = lambda d, hh, mm: _dt.datetime(2025, 12, 11 + d, hh, mm).timestamp()
+        app.ema_add("Call mum about the weekend", T0 + 40 * 60)
+        app.ema_add("Take vitamins", at(0, 20, 0), "daily")
+        app.ema_add("Return the library book", at(1, 16, 0))
+        app.ema_add("Buy a new notebook for chemistry and the long revision cards for the mock exams")
+        E = app.ema_add("Drink water", T0 - 10 * 60)
+        E["rang"] = True
+        app.ema_add("Email Ms Lee about the IA draft", at(5, 9, 30))
+        D = app.ema_add("Finish the bio worksheet")
+        D["done"] = True
+        D2 = app.ema_add("Print the TOK essay")
+        D2["done"] = True
+        app.ema_save()
+        tt = [{"start": "08:00", "mins": 50, "task": "Bio reading", "daily": True, "done": [day(0)]},
+              {"start": "10:00", "mins": 45, "task": "Maths AA SL practice set with the calculator", "daily": True, "done": []},
+              {"start": "13:00", "mins": 30, "task": "Lunch", "daily": True, "done": []},
+              {"start": "16:30", "mins": 60, "task": "French vocab", "daily": False, "date": day(0), "done": []}]
+        app.tt[:] = tt
+        Z.save_tt(app.tt)
+        app.life_save()
+
+    def _after(app, name):
+        if name == "rem_sel":
+            act = app.ema_active()
+            app._ema_sel = act[0]["id"]
+            app.ema_ui["hover"] = act[1]["id"]
+            app.ema_render()
+    SETUP["data"], SETUP["after"] = _data, _after
+
+
 out = []
 for name, t, cfg, size, page in CASES:
     NOW[0] = t
@@ -553,6 +604,9 @@ for name, t, cfg, size, page in CASES:
                                                      "fox_name")},
                 "life": json.loads(json.dumps({k: app.life.get(k) for k in ("journal", "cards", "badges", "btier", "badge_pins",
                                                                            "facts", "notes", "found", "stats", "fishing")}, default=str)),
+                "life_all": json.loads(json.dumps(app.life, default=str)),
+                "ema_sel": getattr(app, "_ema_sel", None),
+                "serif": Z._font_pick(app.root, ["Yu Mincho", "MS Mincho", "Georgia", "Times New Roman"], Z.FONT_UI),
                 "well": dict(getattr(app, "well", {}) or {}), "jp": Z._jp_font(app.root),
                 "mood_word": app.mood_word() if hasattr(app, "mood_word") else "", "hunger": app.hunger() if hasattr(app, "hunger") else 0,
                 "spirit": app.spirit() if hasattr(app, "spirit") else 0, "streak": app.streak() if hasattr(app, "streak") else 0,

@@ -61,6 +61,10 @@ pub struct CItem {
     pub start: f64,
     pub extent: f64,
     pub style: &'static str,
+    /// a text item's -justify (left / center / right), an item's -stipple ("" or gray50 ...), a text font's underline
+    pub justify: &'static str,
+    pub stipple: &'static str,
+    pub underline: bool,
 }
 
 impl CItem {
@@ -96,12 +100,25 @@ impl CItem {
         self.font = Some(f);
         self
     }
+    /// -width: a screen distance, which Tk keeps as whole pixels (Tk_GetPixels rounds)
     pub fn wrap(&mut self, w: f64) -> &mut CItem {
-        self.wrap = w;
+        self.wrap = (w + if w < 0.0 { -0.5 } else { 0.5 }).trunc();
         self
     }
     pub fn hide(&mut self, h: bool) -> &mut CItem {
         self.hidden = h;
+        self
+    }
+    pub fn justify(&mut self, j: &'static str) -> &mut CItem {
+        self.justify = j;
+        self
+    }
+    pub fn stipple(&mut self, st: &'static str) -> &mut CItem {
+        self.stipple = st;
+        self
+    }
+    pub fn underline(&mut self) -> &mut CItem {
+        self.underline = true;
         self
     }
     pub fn tags(&mut self, t: &[&str]) -> &mut CItem {
@@ -134,7 +151,8 @@ impl Canvas {
         self.items.push(CItem { id: self.next, kind, coords, tags: vec![], fill: fill.into(), outline: outline.into(),
                                 width: 1.0, smooth: false, capstyle: "butt", joinstyle: join, hidden: false,
                                 anchor: "center", text: String::new(), font: None, wrap: 0.0, image: None,
-                                start: 0.0, extent: 90.0, style: "pieslice" });
+                                start: 0.0, extent: 90.0, style: "pieslice", justify: "left", stipple: "",
+                                underline: false });
         self.items.last_mut().unwrap()
     }
     pub fn rect(&mut self, x1: f64, y1: f64, x2: f64, y2: f64) -> &mut CItem {
@@ -187,6 +205,24 @@ impl Canvas {
         let (moved, rest): (Vec<CItem>, Vec<CItem>) = self.items.drain(..).partition(|i| i.has(tag));
         self.items = rest;
         self.items.extend(moved);
+    }
+    /// tag_raise(tag, above): the tagged items, in their order, go just above the topmost `above` item
+    pub fn tag_raise_above(&mut self, tag: &str, above: &str) {
+        let (moved, rest): (Vec<CItem>, Vec<CItem>) = self.items.drain(..).partition(|i| i.has(tag) && !i.has(above));
+        let at = rest.iter().rposition(|i| i.has(above)).map(|p| p + 1).unwrap_or(rest.len());
+        let mut v = rest;
+        let tail = v.split_off(at);
+        v.extend(moved);
+        v.extend(tail);
+        self.items = v;
+    }
+    /// move(tag, dx, dy)
+    pub fn move_items(&mut self, tag: &str, dx: f64, dy: f64) {
+        for it in self.items.iter_mut().filter(|i| i.has(tag)) {
+            for (k, c) in it.coords.iter_mut().enumerate() {
+                *c += if k % 2 == 0 { dx } else { dy };
+            }
+        }
     }
     /// lower: the tagged items, in their order, go below everything, or just below the lowest `below` item
     pub fn tag_lower(&mut self, tag: &str, below: Option<&str>) {

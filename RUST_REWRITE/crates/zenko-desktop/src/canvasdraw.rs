@@ -21,6 +21,8 @@ pub struct TkPen {
 #[derive(Clone, Debug, PartialEq)]
 pub enum TkOp {
     FillRect { x: i32, y: i32, w: i32, h: i32, color: String },
+    /// XFillRectangle with a gray50 stipple: only the pixels where (x + y) is even (in the canvas's own pixels)
+    FillStipple { x: i32, y: i32, w: i32, h: i32, color: String },
     DrawRect { x: i32, y: i32, w: i32, h: i32, pen: TkPen },
     /// XFillArc of a whole ellipse; the fill GC's pen is 1 pixel of the fill colour (line width 0)
     FillArc { x: i32, y: i32, w: i32, h: i32, color: String },
@@ -206,7 +208,9 @@ pub fn item_ops(it: &CItem, fonts: &dyn Fonts, out: &mut Vec<TkOp>) {
             let (x1, y1, x2, y2) = rect_box(&it.coords);
             let (w, h) = (x2 - x1, y2 - y1);
             if !it.fill.is_empty() {
-                out.push(if it.kind == CKind::Rect {
+                out.push(if it.kind == CKind::Rect && it.stipple == "gray50" {
+                    TkOp::FillStipple { x: x1, y: y1, w, h, color: it.fill.clone() }
+                } else if it.kind == CKind::Rect {
                     TkOp::FillRect { x: x1, y: y1, w, h, color: it.fill.clone() }
                 } else {
                     TkOp::FillArc { x: x1, y: y1, w, h, color: it.fill.clone() }
@@ -269,9 +273,34 @@ pub fn item_ops(it: &CItem, fonts: &dyn Fonts, out: &mut Vec<TkOp>) {
             let (x, y) = (tk_coord(it.coords[0] + dx), tk_coord(it.coords[1] + dy));
             let (asc, _) = fonts.metrics(&f);
             let ls = fonts.linespace(&f);
-            let runs = lines.into_iter().enumerate().filter(|(_, l)| !l.is_empty())
-                .map(|(i, l)| (x, y + asc + i as i32 * ls, l)).collect();
+            // -justify: each line's place in the layout's width (Tk_ComputeTextLayout's justification)
+            let (_, lw, _, _, _) = text_geom(it, fonts);
+            let lx = |l: &str| match it.justify {
+                "center" => (lw - fonts.width(&f, l)) / 2,
+                "right" => lw - fonts.width(&f, l),
+                _ => 0,
+            };
+            let runs: Vec<(i32, i32, String)> = lines.into_iter().enumerate().filter(|(_, l)| !l.is_empty())
+                .map(|(i, l)| (x + lx(&l), y + asc + i as i32 * ls, l)).collect();
+            let unders: Vec<TkOp> = if it.underline {
+                // Tk_UnderlineChars: desc / 2 under the baseline, a tenth of the size high (at least 1)
+                let desc = fonts.metrics(&f).1;
+                let mut pos = desc / 2;
+                let mut uh = ((fonts.pixels(&f) / 10.0 + 0.5) as i32).max(1);
+                if pos + uh > desc {
+                    uh = desc - pos;
+                    if uh == 0 {
+                        pos -= 1;
+                        uh = 1;
+                    }
+                }
+                runs.iter().map(|(rx, by, l)| TkOp::FillRect { x: *rx, y: by + pos, w: fonts.width(&f, l), h: uh,
+                                                              color: it.fill.clone() }).collect()
+            } else {
+                vec![]
+            };
             out.push(TkOp::Text { runs, font: f, color: it.fill.clone() });
+            out.extend(unders);
         }
         CKind::Arc => {
             // tkCanvArc.c DisplayArc (style arc: the outline only; pieslice / chord fills aren't used by zenko.py)
