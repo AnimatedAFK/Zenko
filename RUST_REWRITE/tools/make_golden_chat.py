@@ -54,9 +54,23 @@ CONVO = ["help", "?", "commands", "hlep", "Help me", "teach me hi => hello there
          "break", "stop break", "blorp me", "motivate me", "blorp me", "what's my shorthand",
          "teach goodnight => sleep well, kon~", "good night", "goodnight!", "wear a yukata", "wear nothing",
          "put on your kimono", "breathe", "i'm so stressed", "forget my favourite color", "stretch",
-         "Hi Zenko, please stretch", "sniff around", "start 300", "time left", "stop", "HELP", "what do you know about me"]
+         "Hi Zenko, please stretch", "sniff around", "start 300", "time left", "stop", "HELP", "what do you know about me",
+         # the ema rack (zenko18) and the timetable
+         "remind me to call mum at 6pm", "remind me to drink water every day at 10", "remind me in 20 min to stretch",
+         "remind me tomorrow 7am take vitamins", "don't let me forget to buy milk", "remind me", "my reminders",
+         "move call mum to 7pm", "move milk to tomorrow", "rename milk to Buy oat milk", "mark call mum as done",
+         "snooze stretch for 15 min", "remind me on friday to submit the essay", "remind me at 9 to read",
+         "remind me after lunch to walk", "Remind me in half an hour to check the oven", "delete reminder 2",
+         "clear fulfilled reminders", "plan study bio at 5pm for 1 hour", "i will revise chem at 7",
+         "add 4pm study renal 45", "add 8:30 history 20 daily", "add tomorrow 6pm piano", "add math", "add 5pm",
+         "timetable", "what's next", "next", "any reminders", "the oven reminder is done", "clear all reminders",
+         "what are my reminders", "remind me in 5 min to stand up", "remind me to drink tea every day at 8am",
+         "remind me to water plants"]
 out = []
+_ema_tick = Z.Zenko.ema_tick
+Z.Zenko.ema_tick = lambda self: None          # the 5 s timer: replayed by hand at the end instead
 app = Z.Zenko23()
+app.cfg["ema_plan"] = False                   # (ema auto-planning has its own golden)
 app.root.update()
 caught = []
 app.chat_line = lambda who, text: (caught.append(["line", who, text]), app.chat_log.append((who, text)))
@@ -78,9 +92,20 @@ for i, q in enumerate(CONVO):
     s = app.session
     out.append({"q": q, "now": NOW[0], "pre": pre, "out": list(caught),
                 "session": None if not s else {"task": s["task"], "planned": s["planned"], "paused": s["paused"]},
-                "brk": None if not app.brk else {"planned": app.brk["planned"]}})
+                "brk": None if not app.brk else {"planned": app.brk["planned"]},
+                "ema": [[e.get("text"), e.get("at"), e.get("repeat"), e.get("done"), e.get("rang")] for e in app.ema_list()],
+                "tt": [[i["start"], i["mins"], i["task"], i["daily"], i["date"]] for i in app.tt]})
+# ema_tick a day later: what rings, what rolls on to tomorrow
+tick = []
+for k in range(3):
+    NOW[0] += 3600 * 9
+    del caught[:]
+    _ema_tick(app)
+    tick.append({"now": NOW[0], "out": list(caught),
+                 "ema": [[e.get("text"), e.get("at"), e.get("repeat"), e.get("done"), e.get("rang")] for e in app.ema_list()]})
+out.append({"tick": tick})
 with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "golden", "chat.json"), "w") as f:
     json.dump(out, f, ensure_ascii=False, indent=0)
 for o in out:
-    print(repr(o["q"]), "->", o["out"])
+    print(repr(o.get("q")), "->", o.get("out", o.get("tick")))
 os._exit(0)

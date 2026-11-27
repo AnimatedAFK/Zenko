@@ -755,6 +755,10 @@ impl Companion {
 
     /// zenko.py tick() -> _tick(), once a second. `title`/`proc` = the window you're using.
     pub fn tick_1s(&mut self, now: f64, dt: f64, idle: f64, title: &str, proc: &str) {
+        if now >= self.brain.ema_next {
+            self.brain.ema_next = now + 5.0;
+            self.ema_tick(now);
+        }
         if let Some((at, bm)) = self.watch.auto_break {
             if now >= at {
                 self.watch.auto_break = None;

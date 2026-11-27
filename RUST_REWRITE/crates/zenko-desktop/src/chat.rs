@@ -26,11 +26,15 @@ macro_rules! rx {
 pub struct Brain {
     pub miss: Option<(String, f64)>,
     pub rng: PyRandom,
+    /// _ema_last: the ema she last touched ("move it to 6pm")
+    pub ema_last: Option<String>,
+    /// ema_tick runs every 5 s
+    pub ema_next: f64,
 }
 
 impl Brain {
     pub fn new(seed: u64) -> Brain {
-        Brain { miss: None, rng: PyRandom::new(seed) }
+        Brain { miss: None, rng: PyRandom::new(seed), ema_last: None, ema_next: 0.0 }
     }
 }
 
@@ -378,7 +382,7 @@ pub fn shorthand_summary() -> String {
 }
 
 /// str.capitalize()
-fn capitalize(s: &str) -> String {
+pub(crate) fn capitalize(s: &str) -> String {
     let mut c = s.chars();
     match c.next() {
         Some(f) => f.to_uppercase().collect::<String>() + &c.as_str().to_lowercase(),
@@ -686,11 +690,19 @@ impl Companion {
         if let Some(r) = self.z19_route(now, text, win) {
             return Some(r);
         }
+        if let Some(r) = self.z18_route(now, text) {
+            return Some(r);
+        }
         if let Some(r) = self.z16_route(now, text) {
             return Some(r);
         }
         if let Some(r) = self.life_route(now, text) {
             return Some(r);
+        }
+        if rx!(r"^(add|schedule)\b").is_match(&low) {
+            if let Some(r) = self.tt_from_text(&cmd) {
+                return Some(r);
+            }
         }
         let s = self.session.as_ref();
         if rx!(r"time left|how long|how much time|remaining").is_match(&low) {
@@ -700,6 +712,20 @@ impl Companion {
                     format!("{} min {:02} s left on \u{201c}{}\u{201d}.", left / 60, left % 60, s.task)
                 }
                 None => "No session running. Say 'start reading 25' or double-click me.".into(),
+            });
+        }
+        if rx!(r"time ?table|\bagenda\b|my day|today'?s plan|^(show |open |view |see |what'?s )?(my |the |today'?s )?schedule\s*\??$").is_match(&low) {
+            self.later(now, Later::Command("open_hub:timetable".into()));
+            return Some(format!("Today:\n{}", self.tt_text()));
+        }
+        if rx!(r"^(what'?s |whats )?next\b|what now|what should i (do|work)").is_match(&low) {
+            return Some(match self.focus_item() {
+                Some(i) => {
+                    let it = &self.tt[i];
+                    format!("Next: {} at {} ({} min).", it["task"].as_str().unwrap_or(""), it["start"].as_str().unwrap_or(""),
+                            it["mins"].as_i64().unwrap_or(0))
+                }
+                None => "Nothing left on today's timetable. Add something: add 4pm study 45".into(),
             });
         }
         if let Some(m) = rx!(r"^start\b\s*(.*)").captures(cmd.to_lowercase().trim()) {

@@ -16,7 +16,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "?",
@@ -35,7 +37,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "commands",
@@ -54,7 +58,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "hlep",
@@ -73,7 +79,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "Help me",
@@ -91,7 +99,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "teach me hi => hello there",
@@ -110,7 +120,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "hi",
@@ -129,7 +141,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "HI!",
@@ -148,7 +162,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "forget hi",
@@ -167,7 +183,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "forget hi",
@@ -186,7 +204,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "when i say sched i mean timetable",
@@ -205,7 +225,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "my shorthand",
@@ -224,7 +246,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "what shorthand",
@@ -243,7 +267,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "forget my shorthand",
@@ -262,7 +288,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "my shorthand",
@@ -281,7 +309,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "what did you look up",
@@ -300,7 +330,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "what have you learned",
@@ -319,7 +351,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "home city London",
@@ -338,7 +372,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "unit f",
@@ -357,7 +393,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "temperature unit c",
@@ -376,7 +414,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "time left",
@@ -395,7 +435,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "start reading 25",
@@ -418,7 +460,9 @@
 "planned": 1500.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "time left",
@@ -441,12 +485,14 @@
 "planned": 1500.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "how long",
 "now": 1765407768.0,
-"pre": 1.1634714990000248,
+"pre": 1.1688417990000062,
 "out": [
 [
 "line",
@@ -464,12 +510,14 @@
 "planned": 1500.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "pause",
 "now": 1765407775.0,
-"pre": 1.1634714990000248,
+"pre": 1.1688417990000062,
 "out": [
 [
 "line",
@@ -487,12 +535,14 @@
 "planned": 1500.0,
 "paused": true
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "pause",
 "now": 1765407782.0,
-"pre": 1.1634714990000248,
+"pre": 1.1688417990000062,
 "out": [
 [
 "line",
@@ -510,12 +560,14 @@
 "planned": 1500.0,
 "paused": true
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "resume",
 "now": 1765407789.0,
-"pre": 1.1634714990000248,
+"pre": 1.1688417990000062,
 "out": [
 [
 "line",
@@ -533,12 +585,14 @@
 "planned": 1500.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "start maths",
 "now": 1765407796.0,
-"pre": 1.1634714990000248,
+"pre": 1.1688417990000062,
 "out": [
 [
 "line",
@@ -556,12 +610,14 @@
 "planned": 1500.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "stop",
 "now": 1765407803.0,
-"pre": 1.1634714990000248,
+"pre": 1.1688417990000062,
 "out": [
 [
 "line",
@@ -575,7 +631,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "stop",
@@ -594,7 +652,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "stats",
@@ -613,7 +673,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "how am i doing",
@@ -632,7 +694,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "motivate me",
@@ -651,7 +715,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "inspire me",
@@ -670,7 +736,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "tips",
@@ -689,7 +757,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "focus tip",
@@ -708,7 +778,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "tell me a joke",
@@ -727,7 +799,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "funny",
@@ -746,7 +820,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "take a break",
@@ -767,7 +843,9 @@
 "session": null,
 "brk": {
 "planned": 300.0
-}
+},
+"ema": [],
+"tt": []
 },
 {
 "q": "break time",
@@ -788,7 +866,9 @@
 "session": null,
 "brk": {
 "planned": 300.0
-}
+},
+"ema": [],
+"tt": []
 },
 {
 "q": "end break",
@@ -807,7 +887,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "back to work",
@@ -826,7 +908,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "i'm tired",
@@ -845,7 +929,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "rest",
@@ -864,7 +950,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "who are you",
@@ -883,7 +971,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "what can you do",
@@ -902,7 +992,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "tell me about the legend",
@@ -921,7 +1013,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "zenko?",
@@ -940,7 +1034,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "hello",
@@ -959,7 +1055,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "hey",
@@ -978,7 +1076,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "good morning",
@@ -997,7 +1097,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "yo",
@@ -1016,7 +1118,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "thanks",
@@ -1035,7 +1139,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "ty",
@@ -1054,7 +1160,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "thank you so much",
@@ -1073,7 +1181,9 @@
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "check in",
@@ -1096,7 +1206,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "check-in",
@@ -1119,7 +1231,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "daily checkin",
@@ -1142,7 +1256,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "mood journal",
@@ -1165,7 +1281,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "how am i feeling today",
@@ -1188,7 +1306,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "strat studying 30",
@@ -1211,7 +1331,9 @@ true
 "planned": 1800.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "start 10",
@@ -1234,12 +1356,14 @@ true
 "planned": 1800.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "stop",
 "now": 1765408041.0,
-"pre": 0.5309703010000248,
+"pre": 0.5115408149999894,
 "out": [
 [
 "line",
@@ -1253,7 +1377,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "start",
@@ -1276,7 +1402,9 @@ true
 "planned": 1500.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "stop",
@@ -1295,7 +1423,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "Start Biology revision 45 min",
@@ -1318,12 +1448,14 @@ true
 "planned": 2700.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "time left",
 "now": 1765408069.0,
-"pre": 0.25472282199984875,
+"pre": 0.25396907499998633,
 "out": [
 [
 "line",
@@ -1341,12 +1473,14 @@ true
 "planned": 2700.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "end",
 "now": 1765408076.0,
-"pre": 0.25472282199984875,
+"pre": 0.25396907499998633,
 "out": [
 [
 "line",
@@ -1360,7 +1494,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "asdfgh qwerty",
@@ -1378,7 +1514,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "wat is the tim left",
@@ -1397,7 +1535,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "teach you bye = see you later~",
@@ -1416,7 +1556,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "bye",
@@ -1435,7 +1577,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "byee",
@@ -1453,7 +1597,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "forget everything",
@@ -1472,7 +1618,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "bye",
@@ -1490,7 +1638,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "remember gm -> good morning sunshine",
@@ -1509,7 +1659,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "gm",
@@ -1528,7 +1680,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "Gm!!",
@@ -1547,7 +1701,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "start  history essay, 50",
@@ -1570,7 +1726,9 @@ true
 "planned": 3000.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "pause",
@@ -1593,7 +1751,9 @@ true
 "planned": 3000.0,
 "paused": true
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "time left",
@@ -1616,7 +1776,9 @@ true
 "planned": 3000.0,
 "paused": true
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "resume",
@@ -1639,12 +1801,14 @@ true
 "planned": 3000.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "quit session",
 "now": 1765408181.0,
-"pre": 1.047108691000176,
+"pre": 1.0303373620000116,
 "out": [
 [
 "line",
@@ -1658,7 +1822,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "motivate",
@@ -1677,7 +1843,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "i give up",
@@ -1696,7 +1864,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "procrastinating again",
@@ -1715,7 +1885,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "laugh",
@@ -1734,7 +1906,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "need a break",
@@ -1755,7 +1929,9 @@ true
 "session": null,
 "brk": {
 "planned": 300.0
-}
+},
+"ema": [],
+"tt": []
 },
 {
 "q": "break",
@@ -1776,7 +1952,9 @@ true
 "session": null,
 "brk": {
 "planned": 300.0
-}
+},
+"ema": [],
+"tt": []
 },
 {
 "q": "stop break",
@@ -1795,7 +1973,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "blorp me",
@@ -1813,7 +1993,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "motivate me",
@@ -1832,7 +2014,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "blorp me",
@@ -1851,7 +2035,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "what's my shorthand",
@@ -1870,7 +2056,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "teach goodnight => sleep well, kon~",
@@ -1889,7 +2077,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "good night",
@@ -1908,7 +2098,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "goodnight!",
@@ -1927,7 +2119,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "wear a yukata",
@@ -1946,7 +2140,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "wear nothing",
@@ -1965,7 +2161,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "put on your kimono",
@@ -1984,7 +2182,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "breathe",
@@ -2007,7 +2207,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "i'm so stressed",
@@ -2030,7 +2232,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "forget my favourite color",
@@ -2049,7 +2253,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "stretch",
@@ -2068,7 +2274,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "Hi Zenko, please stretch",
@@ -2087,7 +2295,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "sniff around",
@@ -2106,7 +2316,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "start 300",
@@ -2129,7 +2341,9 @@ true
 "planned": 14400.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "time left",
@@ -2152,7 +2366,9 @@ true
 "planned": 14400.0,
 "paused": false
 },
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "stop",
@@ -2171,7 +2387,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "HELP",
@@ -2190,7 +2408,9 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
 },
 {
 "q": "what do you know about me",
@@ -2209,6 +2429,3096 @@ true
 ]
 ],
 "session": null,
-"brk": null
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "remind me to call mum at 6pm",
+"now": 1765408384.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me to call mum at 6pm"
+],
+[
+"line",
+"Fox",
+"Waai~ Hung an ema: “Call mum” · Tomorrow 6:00 PM (in 19 h). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me to drink water every day at 10",
+"now": 1765408391.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me to drink water every day at 10"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Hung an ema: “Drink water” · Tomorrow 10:00 AM (in 11 h), every day. I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me in 20 min to stretch",
+"now": 1765408398.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me in 20 min to stretch"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Hung an ema: “Stretch” · Today 11:33 PM (in 20 min). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me tomorrow 7am take vitamins",
+"now": 1765408405.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me tomorrow 7am take vitamins"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Hung an ema: “Take vitamins” · Tomorrow 7:00 AM (in 7 h 47 min). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "don't let me forget to buy milk",
+"now": 1765408412.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"don't let me forget to buy milk"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Hung an ema: “Buy milk” (no time yet). Want me to say it at a time? Say 'move buy milk to 6pm'~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy milk",
+null,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me",
+"now": 1765408419.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me"
+],
+[
+"line",
+"Fox",
+"Ehehe~ What should I remind you about? e.g. 'remind me to call mum at 6pm'"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy milk",
+null,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "my reminders",
+"now": 1765408426.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"my reminders"
+],
+[
+"line",
+"Fox",
+"Your ema:\n1. Stretch  (Today 11:33 PM)\n2. Take vitamins  (Tomorrow 7:00 AM)\n3. Drink water  (Tomorrow 10:00 AM, every day)\n4. Call mum  (Tomorrow 6:00 PM)\n5. Buy milk  (anytime)"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy milk",
+null,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "move call mum to 7pm",
+"now": 1765408433.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"move call mum to 7pm"
+],
+[
+"line",
+"Fox",
+"Waai~ Moved “Call mum” to Tomorrow 7:00 PM (in 20 h)~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy milk",
+null,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "move milk to tomorrow",
+"now": 1765408440.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"move milk to tomorrow"
+],
+[
+"line",
+"Fox",
+"Sugoi! Moved “Buy milk” to Tomorrow 8:00 AM (in 8 h 46 min)~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy milk",
+1765440000.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "rename milk to Buy oat milk",
+"now": 1765408447.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"rename milk to Buy oat milk"
+],
+[
+"line",
+"Fox",
+"Kon! Rewrote it: “Buy oat milk”~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "mark call mum as done",
+"now": 1765408454.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"mark call mum as done"
+],
+[
+"line",
+"Fox",
+"Yatta! “Call mum” is fulfilled~ ✓"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "snooze stretch for 15 min",
+"now": 1765408461.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"snooze stretch for 15 min"
+],
+[
+"line",
+"Fox",
+"Sugoi! Snoozed “Stretch” for 15m~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me on friday to submit the essay",
+"now": 1765408468.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me on friday to submit the essay"
+],
+[
+"line",
+"Fox",
+"Kon! Hung an ema: “Submit the essay” · Fri 8:00 AM (in 1 day). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me at 9 to read",
+"now": 1765408475.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me at 9 to read"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Hung an ema: “Read” · Tomorrow 9:00 AM (in 9 h 45 min). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me after lunch to walk",
+"now": 1765408482.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me after lunch to walk"
+],
+[
+"line",
+"Fox",
+"Sugoi! Hung an ema: “Walk” · Tomorrow 1:30 PM (in 14 h). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "Remind me in half an hour to check the oven",
+"now": 1765408489.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"Remind me in half an hour to check the oven"
+],
+[
+"line",
+"Fox",
+"Yatta! Hung an ema: “Check the oven” · Today 11:44 PM (in 30 min). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+],
+[
+"Check the oven",
+1765410289.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "delete reminder 2",
+"now": 1765408496.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"delete reminder 2"
+],
+[
+"line",
+"Fox",
+"Yatta! Took down “Check the oven”."
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "clear fulfilled reminders",
+"now": 1765408503.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"clear fulfilled reminders"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Took down 1 fulfilled ema~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "plan study bio at 5pm for 1 hour",
+"now": 1765408510.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"plan study bio at 5pm for 1 hour"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Added 17:00 – Study bio (60 min). It's on your timetable, and I'll say it out loud when it's time~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+]
+]
+},
+{
+"q": "i will revise chem at 7",
+"now": 1765408517.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"i will revise chem at 7"
+],
+[
+"line",
+"Fox",
+"Waai~ Added 19:00 – Revise chem (30 min). It's on your timetable, and I'll say it out loud when it's time~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+]
+]
+},
+{
+"q": "add 4pm study renal 45",
+"now": 1765408524.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"add 4pm study renal 45"
+],
+[
+"line",
+"Fox",
+"Added 16:00 – Study renal (45 min)."
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+]
+]
+},
+{
+"q": "add 8:30 history 20 daily",
+"now": 1765408531.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"add 8:30 history 20 daily"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Added 08:30 – History 20 (30 min), every day~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+]
+]
+},
+{
+"q": "add tomorrow 6pm piano",
+"now": 1765408538.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"add tomorrow 6pm piano"
+],
+[
+"line",
+"Fox",
+"Yatta! Added 18:00 – Piano (30 min) for tomorrow~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "add math",
+"now": 1765408545.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"add math"
+],
+[
+"llm",
+"add math"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "add 5pm",
+"now": 1765408552.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"add 5pm"
+],
+[
+"line",
+"Fox",
+"Kon kon~ What's the task? e.g. add 4pm study renal 45\n(Kon! Noted~ when you say 'math' you mean '5pm'.)"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "timetable",
+"now": 1765408559.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"timetable"
+],
+[
+"line",
+"Fox",
+"Today:\n08:30  History 20 (30 min)\n16:00  Study renal (45 min)\n17:00  Study bio (60 min)\n19:00  Revise chem (30 min)"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "what's next",
+"now": 1765408566.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"what's next"
+],
+[
+"line",
+"Fox",
+"Auu... Nothing left on today's timetable. Add something: add 4pm study 45"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "next",
+"now": 1765408573.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"next"
+],
+[
+"line",
+"Fox",
+"Kon... Nothing left on today's timetable. Add something: add 4pm study 45"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "any reminders",
+"now": 1765408580.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"any reminders"
+],
+[
+"line",
+"Fox",
+"Your ema:\n1. Stretch  (Today 11:29 PM)\n2. Take vitamins  (Tomorrow 7:00 AM)\n3. Buy oat milk  (Tomorrow 8:00 AM)\n4. Read  (Tomorrow 9:00 AM)\n5. Drink water  (Tomorrow 10:00 AM, every day)\n6. Walk  (Tomorrow 1:30 PM)\n7. Submit the essay  (Fri 8:00 AM)"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "the oven reminder is done",
+"now": 1765408587.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"the oven reminder is done"
+],
+[
+"llm",
+"the oven reminder is done"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "clear all reminders",
+"now": 1765408594.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"clear all reminders"
+],
+[
+"line",
+"Fox",
+"Kon! Okay, I moved all 7 reminders to the fulfilled row (tap one there to bring it back)~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "what are my reminders",
+"now": 1765408601.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"what are my reminders"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Your ema rack is empty~ Say 'remind me to call mum at 6pm', or write one on the Reminders page~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "remind me in 5 min to stand up",
+"now": 1765408608.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me in 5 min to stand up"
+],
+[
+"line",
+"Fox",
+"Waai~ Hung an ema: “Stand up” · Today 11:21 PM (in 5 min). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+],
+[
+"Stand up",
+1765408908.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "remind me to drink tea every day at 8am",
+"now": 1765408615.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me to drink tea every day at 8am"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Hung an ema: “Drink tea” · Tomorrow 8:00 AM (in 8 h 43 min), every day. I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+],
+[
+"Stand up",
+1765408908.0,
+null,
+false,
+false
+],
+[
+"Drink tea",
+1765440000.0,
+"daily",
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "remind me to water plants",
+"now": 1765408622.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me to water plants"
+],
+[
+"line",
+"Fox",
+"Yatta! Hung an ema: “Water plants” (no time yet). Want me to say it at a time? Say 'move water plants to 6pm'~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+],
+[
+"Stand up",
+1765408908.0,
+null,
+false,
+false
+],
+[
+"Drink tea",
+1765440000.0,
+"daily",
+false,
+false
+],
+[
+"Water plants",
+null,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"tick": [
+{
+"now": 1765441022.0,
+"out": [
+[
+"line",
+"Fox",
+"Kon kon! Reminder: Drink tea"
+]
+],
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+],
+[
+"Stand up",
+1765408908.0,
+null,
+false,
+true
+],
+[
+"Drink tea",
+1765526400.0,
+"daily",
+false,
+false
+],
+[
+"Water plants",
+null,
+null,
+false,
+false
+]
+]
+},
+{
+"now": 1765473422.0,
+"out": [],
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+],
+[
+"Stand up",
+1765408908.0,
+null,
+false,
+true
+],
+[
+"Drink tea",
+1765526400.0,
+"daily",
+false,
+false
+],
+[
+"Water plants",
+null,
+null,
+false,
+false
+]
+]
+},
+{
+"now": 1765505822.0,
+"out": [],
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+],
+[
+"Stand up",
+1765408908.0,
+null,
+false,
+true
+],
+[
+"Drink tea",
+1765526400.0,
+"daily",
+false,
+false
+],
+[
+"Water plants",
+null,
+null,
+false,
+false
+]
+]
+}
+]
 }
 ]

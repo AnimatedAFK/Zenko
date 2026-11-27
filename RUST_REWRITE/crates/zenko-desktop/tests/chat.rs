@@ -18,7 +18,24 @@ fn chat_matches_zenko_py() {
     zenko_desktop::set_fake_now(Some(g[0]["now"].as_f64().unwrap()));
     let mut fox = Companion::new(Cfg::from(json!({"robe": "none"})), 1.0, 1000.0);
     let mut bad = vec![];
+    let emas = |fox: &Companion| -> Value {
+        Value::Array(fox.ema_list().iter().map(|e| json!([e["text"], e["at"], e["repeat"], e["done"], e["rang"]])).collect())
+    };
     for (i, e) in g.iter().enumerate() {
+        if let Some(tick) = e.get("tick") {
+            // ema_tick later on: what rings, what rolls on to tomorrow
+            for (k, st) in tick.as_array().unwrap().iter().enumerate() {
+                let now = st["now"].as_f64().unwrap();
+                zenko_desktop::set_fake_now(Some(now));
+                fox.chat_log.clear();
+                fox.ema_tick(now);
+                let got: Vec<Value> = fox.chat_log.iter().map(|(w, t)| json!(["line", w, t])).collect();
+                if Value::Array(got.clone()) != st["out"] || emas(&fox) != st["ema"] {
+                    bad.push(format!("tick {k}\n  want {} {}\n  got  {} {}", st["out"], st["ema"], Value::Array(got), emas(&fox)));
+                }
+            }
+            continue;
+        }
         let q = e["q"].as_str().unwrap();
         let now = e["now"].as_f64().unwrap();
         zenko_desktop::set_fake_now(Some(now));
@@ -51,11 +68,13 @@ fn chat_matches_zenko_py() {
         let want_out = e["out"].clone();
         let ok = Value::Array(got.clone()) == want_out
             && sess.unwrap_or(Value::Null) == e["session"]
-            && brk.unwrap_or(Value::Null) == e["brk"];
+            && brk.unwrap_or(Value::Null) == e["brk"]
+            && e.get("ema").is_none_or(|w| *w == emas(&fox))
+            && e.get("tt").is_none_or(|w| *w == Value::Array(fox.tt.iter().map(|i| json!([i["start"], i["mins"], i["task"], i["daily"], i["date"]])).collect()));
         if !ok {
-            bad.push(format!("#{i} {q:?}\n  want {want_out} {} {}\n  got  {} {:?} {:?}", e["session"], e["brk"],
+            bad.push(format!("#{i} {q:?}\n  want {want_out} {} {} {}\n  got  {} {:?} {:?} {}", e["session"], e["brk"], e["ema"],
                              Value::Array(got), fox.session.as_ref().map(|s| (&s.task, s.planned, s.paused)),
-                             fox.brk.as_ref().map(|b| b.planned)));
+                             fox.brk.as_ref().map(|b| b.planned), emas(&fox)));
         }
     }
     zenko_desktop::set_fake_now(None);

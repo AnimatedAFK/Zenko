@@ -34,6 +34,7 @@ pub mod tips;
 pub mod tktext;
 pub mod chatpage;
 pub mod chat;
+pub mod ema;
 pub mod chat_data;
 pub mod pydifflib;
 pub mod mdtext;
