@@ -400,6 +400,91 @@ if os.environ.get("ZK_TRACE"):                                   # debugging: wh
         setattr(Z.Zenko23, _m, _wrap(getattr(Z.Zenko23, _m)))
     if os.environ.get("ZK_ONLY"):
         CASES = [c for c in CASES if c[0] == os.environ["ZK_ONLY"]]
+if len(sys.argv) > 1 and sys.argv[1] == "timetable":
+    # golden/hub_timetable.json: the Timetable page (header with 急 Delay / Prev / Today / Next, progress bar, the
+    # day's cards in every state: done, NOW, missed, in N min, later, repeating; the add form) today, tomorrow, empty
+    OUT = "hub_timetable.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 1.5 * 3600          # Thursday 11 Dec 2025, 09:30 UTC
+    CASES = [("tt_today", T0, {"theme": "snow"}, None, "timetable"),
+             ("tt_midnight_small", T0, {"theme": "midnight"}, (1120, 720), "timetable"),
+             ("tt_tomorrow", T0, {"theme": "snow"}, None, "timetable"),
+             ("tt_empty", T0, {"theme": "snow"}, None, "timetable")]
+
+    def _data(app, name):
+        if name == "tt_empty":
+            return
+        day = lambda n: (_dt.date(2025, 12, 11) + _dt.timedelta(days=n)).isoformat()
+        tt = [{"start": "07:00", "mins": 30, "task": "Morning run", "daily": True, "done": []},
+              {"start": "08:00", "mins": 50, "task": "Bio reading", "daily": True, "done": [day(0)]},
+              {"start": "09:00", "mins": 60, "task": "Chemistry past paper 2 with the long mark scheme", "daily": False,
+               "date": day(0), "done": []},
+              {"start": "10:00", "mins": 45, "task": "Maths AA SL", "daily": True, "done": []},
+              {"start": "13:00", "mins": 30, "task": "Lunch", "daily": True, "done": []},
+              {"start": "15:00", "mins": 90, "task": "French vocab and the listening practice", "daily": False,
+               "date": day(0), "done": []},
+              {"start": "17:00", "mins": 25, "task": "Psych notes", "daily": True, "done": []},
+              {"start": "19:00", "mins": 60, "task": "English essay", "daily": False, "date": day(1), "done": []},
+              {"start": "21:00", "mins": 20, "task": "Read", "daily": True, "done": []}]
+        app.tt[:] = tt
+        Z.save_tt(app.tt)
+
+    def _after(app, name):
+        if name == "tt_tomorrow":
+            app.tt_nav(1)
+    SETUP["data"], SETUP["after"] = _data, _after
+
+
+if len(sys.argv) > 1 and sys.argv[1] == "deadlines":
+    # golden/hub_deadlines.json: the Upcoming page (add box, exam countdown plaques, the Japanese clock with its
+    # half-hour ring, timetable band, hands and quick add, the study plan, the month calendar, Coming up, and the
+    # IA/EE/TOK tracker) wide, narrow (two rows), on another day/PM with a picked date, and empty
+    OUT = "hub_deadlines.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 1.5 * 3600 + 754.25   # Thursday 11 Dec 2025, 09:42:34.25 UTC
+    CASES = [("up_wide", T0, {"theme": "snow"}, None, "deadlines"),
+             ("up_midnight_small", T0, {"theme": "midnight"}, (1120, 720), "deadlines"),
+             ("up_pm_day", T0, {"theme": "snow"}, None, "deadlines"),
+             ("up_empty", T0, {"theme": "snow"}, None, "deadlines")]
+
+    def _data(app, name):
+        if name == "up_empty":
+            return
+        day = lambda n: (_dt.date(2025, 12, 11) + _dt.timedelta(days=n)).isoformat()
+        Z.save_deadlines([
+            {"id": "d1", "title": "Biology MYA paper one", "kind": "Exam", "date": day(3), "time": "09:00", "done": False},
+            {"id": "d2", "title": "Chemistry quiz on equilibrium and the long buffer questions", "kind": "Quiz",
+             "date": day(1), "time": "", "done": False},
+            {"id": "d3", "title": "English essay draft", "kind": "Assignment", "date": day(-2), "time": "", "done": False},
+            {"id": "d4", "title": "Maths homework", "kind": "Homework", "date": day(9), "time": "", "done": False},
+            {"id": "d5", "title": "Old test", "kind": "Exam", "date": day(-5), "time": "", "done": True}])
+        tt = [{"start": "08:00", "mins": 50, "task": "Bio reading", "daily": True, "done": []},
+              {"start": "13:00", "mins": 30, "task": "Lunch", "daily": True, "done": []},
+              {"start": "20:00", "mins": 60, "task": "Piano", "daily": True, "done": []}]
+        app.tt[:] = tt
+        Z.save_tt(app.tt)
+        L = app.life
+        for k in range(7):
+            L["free"][str(k)] = [16.0, 16.5, 17.0, 17.5, 18.0, 19.0, 19.5] if k < 5 else [10.0, 10.5, 11.0, 14.0, 14.5]
+        L["free_set"] = True
+        L["studied"]["d1"] = 95
+        app.life_save()
+        app.replan()
+        app.ib_add("ee", due=day(20))
+        app.ib_tasks()[-1]["words"] = 1850
+        app.ib_tasks()[-1]["stages"] = ["Topic", "Research"]
+        app.ib_add("ia", "bio", due=day(5))
+        app.ib_add("tok_essay")
+        app.life_save()
+
+    def _after(app, name):
+        if name == "up_pm_day":
+            app.up_day, app.up_pm = 5, True
+            app.dl_day = _dt.date(2025, 12, 14)
+            app.dl_render()
+    SETUP["data"], SETUP["after"] = _data, _after
+
+
 out = []
 for name, t, cfg, size, page in CASES:
     NOW[0] = t
@@ -408,6 +493,7 @@ for name, t, cfg, size, page in CASES:
     windows_defaults(app.root)
     app.cfg.update(cfg)
     Z.apply_theme(app.cfg.get("theme", "snow"))
+    app.pal, app.images = app.make_pal(), {}    # (as set_theme does: her colours follow the theme)
     app.root.update()
     if "data" in SETUP:
         SETUP["data"](app, name)
@@ -424,6 +510,11 @@ for name, t, cfg, size, page in CASES:
     while time.monotonic() < getattr(app, "_count_until", 0) + 0.15:      # Home's count-up has finished
         app.root.update()
         time.sleep(0.02)
+    if "after" in SETUP:
+        SETUP["after"](app, name)
+        for _ in range(6):
+            app.root.update()
+            time.sleep(0.05)
     if page != "chat":
         app.zk_fit()                       # the settled page: widgets rebuilt by a refresh get their fitted fonts too
         for _ in range(3):

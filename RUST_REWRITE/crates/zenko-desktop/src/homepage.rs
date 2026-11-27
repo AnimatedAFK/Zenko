@@ -217,7 +217,7 @@ impl HomePage {
         for (i, (lab, cmd)) in [("Weather", "weather"), ("Headlines", "news"), ("Study tip", "tip"), ("Motivate me", "motivate me")]
             .iter().enumerate() {
             let b = tt_btn(ui, grid, lab, &format!("hub_ask:{cmd}"), Some(&th.start), None, 9, 10, 3, th, f);
-            ui.grid(b, Grid { row: i / 2, col: i % 2, sticky: "ew", padx: (3, 3), pady: (3, 3) });
+            ui.grid(b, Grid { row: i / 2, col: i % 2, sticky: "ew", padx: (3, 3), pady: (3, 3), ..Default::default() });
         }
         // hub_music_card(right)
         let icons = Rc::new(music_icons(th));

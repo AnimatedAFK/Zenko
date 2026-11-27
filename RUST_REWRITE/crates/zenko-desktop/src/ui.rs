@@ -169,6 +169,8 @@ pub struct Card {
     pub r: i32,
     pub shape: &'static str,
     pub rim: String,
+    /// round_frame's notch: half-circle bites in the middle of the left and right sides (a ticket)
+    pub notch: i32,
 }
 
 /// tk.Entry's text, cursor and selection
@@ -186,7 +188,7 @@ pub struct EntryText {
 pub enum Kind {
     Frame,
     Label { text: String, font: Font, fg: String, anchor: Anchor, wrap: i32, image: Option<std::rc::Rc<crate::tkcanvas::Photo>>,
-            left: bool },
+            left: bool, strike: bool },
     /// zenko.py PixelButton (a canvas): its own colour, font (bold), padding, hover / press state and command
     Button { text: String, font: Font, color: String, fg: String, padx: i32, pady: i32, enabled: bool,
              shape: &'static str, hover: bool, down: bool, cmd: String },
@@ -255,6 +257,9 @@ pub struct Grid {
     pub sticky: &'static str,
     pub padx: (i32, i32),
     pub pady: (i32, i32),
+    /// columnspan / rowspan (0 = 1)
+    pub cspan: usize,
+    pub rspan: usize,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -365,7 +370,7 @@ impl Ui {
     /// tk.Label(parent, text, bg, fg, font, anchor, wraplength): borderwidth 2, padx 1, pady 1
     pub fn label(&mut self, parent: usize, text: &str, bg: &str, fg: &str, font: Font) -> usize {
         let id = self.add(Some(parent), Kind::Label { text: text.into(), font, fg: fg.into(), anchor: Anchor::Center,
-                                                      wrap: 0, image: None, left: false }, bg);
+                                                      wrap: 0, image: None, left: false, strike: false }, bg);
         let w = &mut self.ws[id];
         (w.bd, w.padx, w.pady) = (2, 1, 1);
         id
@@ -424,7 +429,7 @@ impl Ui {
         self.ws[f].zk_fill = Some(bg.into());
         let cv = self.canvas(f, &pbg, 0, 0);
         if let Kind::Canvas { card, .. } = &mut self.ws[cv].kind {
-            *card = Some(Card { fill: bg.into(), edge: edge.into(), r, shape, rim: mixhex(bg, ink, 0.10) });
+            *card = Some(Card { fill: bg.into(), edge: edge.into(), r, shape, rim: mixhex(bg, ink, 0.10), notch: 0 });
         }
         self.ws[cv].place = Some(Place { relw: Some(1.0), relh: Some(1.0), ..Default::default() });
         f
@@ -811,8 +816,10 @@ impl Ui {
     fn cells(&self, ks: &[usize]) -> Vec<crate::tkgrid::Cell> {
         ks.iter().map(|&k| {
             let g = self.ws[k].grid.clone().unwrap();
-            crate::tkgrid::Cell::new(g.row, g.col, self.ws[k].rw, self.ws[k].rh).sticky(g.sticky)
-                .padx(g.padx.0, g.padx.1).pady(g.pady.0, g.pady.1)
+            let mut c = crate::tkgrid::Cell::new(g.row, g.col, self.ws[k].rw, self.ws[k].rh).sticky(g.sticky)
+                .padx(g.padx.0, g.padx.1).pady(g.pady.0, g.pady.1).span(g.cspan.max(1));
+            c.rows = g.rspan.max(1);
+            c
         }).collect()
     }
 
@@ -1035,7 +1042,7 @@ impl Ui {
                 let y = (w.h - ih - 2 * ib) / 2 + ib;
                 out.push(Draw::Tk { x: ax, y: ay, ops: vec![crate::canvasdraw::TkOp::Photo { x, y, img: img.clone() }] });
             }
-            Kind::Label { text, font, fg, anchor, wrap, left, .. } => {
+            Kind::Label { text, font, fg, anchor, wrap, left, strike, .. } => {
                 let (lines, tw) = text_layout(fonts, font, text, *wrap);
                 // -width in characters: that many "0"s wide
                 let tw = if w.opt_w > 0 { w.opt_w * fonts.width(font, "0") } else { tw };
@@ -1058,6 +1065,13 @@ impl Ui {
                     let lx = if *left { x } else { x + (tw - lw) / 2 };
                     out.push(Draw::Text { x: ax + lx, y: ay + y + i as i32 * ls, text: l.clone(), font: font.clone(),
                                           color: fg.clone() });
+                    if *strike {
+                        // overstrike: Tk's underline-style bar through the middle of the x height (ascent / 2 up)
+                        let (asc, _) = fonts.metrics(font);
+                        let sy = ay + y + i as i32 * ls + asc - asc / 2;
+                        let th = 1.max(font.size / 10);
+                        out.push(Draw::Rect { x: ax + lx, y: sy, w: lw, h: th, color: fg.clone() });
+                    }
                 }
             }
             Kind::Check { text, font, fg, on, wrap, left, select, radio, anchor, .. } => {
@@ -1203,7 +1217,8 @@ impl Ui {
                 if let Some(c) = card {
                     let (wd, ht) = (w.w, w.h);
                     if wd >= 8 && ht >= 8 {
-                        v.push(Item::Poly { pts: round_pts(0, 0, wd - 1, ht - 1, c.r, 2, c.shape), fill: Some(c.fill.clone()),
+                        v.push(Item::Poly { pts: crate::shapes::round_pts_notch(0, 0, wd - 1, ht - 1, c.r, 2, c.shape, c.notch),
+                                            fill: Some(c.fill.clone()),
                                             outline: Some(c.edge.clone()) });
                         // SHAPES[shape](r)[0][1]: the top-left corner's radius
                         let k = match c.shape {

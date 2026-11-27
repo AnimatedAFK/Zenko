@@ -322,7 +322,7 @@ fn grid_reflow(ui: &mut Ui, row: usize, kids: &[usize], avail: i32) {
     for (i, &k) in kids.iter().enumerate() {
         let (r, c) = (i / per, i % per);
         ui.grid(k, Grid { row: r, col: c, sticky: "nsew", padx: (if c == 0 { 0 } else { 10 }, 0),
-                          pady: (if r == 0 { 0 } else { 10 }, 0) });
+                          pady: (if r == 0 { 0 } else { 10 }, 0), ..Default::default() });
     }
 }
 

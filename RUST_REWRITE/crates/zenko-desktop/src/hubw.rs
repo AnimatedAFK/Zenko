@@ -19,6 +19,7 @@ use zenko_desktop::chatpage::ChatPage;
 use zenko_desktop::homepage::HomePage;
 use zenko_desktop::youpage::YouPage;
 use zenko_desktop::dailypage::{DailyData, DailyPage};
+use zenko_desktop::ttpage::{TtData, TtPage};
 use serde_json::Value;
 use zenko_desktop::pagekit::Faces;
 use zenko_desktop::ui::{Draw, Kind, Place};
@@ -91,6 +92,12 @@ struct HubW {
     /// what the Daily page was last rendered from
     daily_d: DailyData,
     daily_next: f64,
+    tt: Option<TtPage>,
+    /// what the Timetable page was last drawn from, and when (it redraws every 30 s, like its after(30000))
+    tt_d: TtData,
+    tt_next: f64,
+    /// a Yes/No question to ask once the click is handled: (text, title, command on Yes)
+    ask: Option<(String, String, String)>,
 }
 
 /// z21_show's vertical slide: the new page comes in from below (or above), the old one goes out the other way
@@ -412,6 +419,102 @@ fn daily_cmd(x: &mut HubW, cmd: &str) {
     }
 }
 
+/// tt_refresh() with the app's timetable now
+fn tt_refresh(x: &mut HubW) {
+    let d = crate::win::with_fox(|fox, _| fox.tt_data()).unwrap_or_default();
+    let (th, f) = (x.hub.t.clone(), faces(x));
+    if let Some(tp) = x.tt.as_mut() {
+        tp.refresh(&mut x.hub.ui, &th, &f, &d);
+    }
+    x.tt_d = d;
+    x.tt_next = now(x) + 30.0;
+    relayout(x);
+}
+
+/// the Timetable page's buttons and Return keys
+fn tt_cmd(x: &mut HubW, cmd: &str) {
+    let Some(tp) = x.tt.as_ref() else { return };
+    let item = |p: &str| cmd.strip_prefix(p).map(|k| k.trim_end_matches(":yes")).and_then(|k| k.parse::<usize>().ok())
+        .and_then(|k| tp.rows.get(k).copied());
+    let day = zenko_desktop::plan::iso(x.tt_d.today + tp.day);
+    if let Some(d) = cmd.strip_prefix("tt_nav:") {
+        let d: i64 = d.parse().unwrap_or(0);
+        if let Some(tp) = x.tt.as_mut() {
+            tp.day = if d == 0 { 0 } else { tp.day + d };
+        }
+        tt_refresh(x);
+    } else if let Some(i) = item("tt_start:") {
+        crate::win::with_fox(move |fox, t| {
+            if fox.session.is_some() {
+                fox.say("Finish or stop the current session first.", 5.0);
+            } else if i < fox.tt.len() {
+                let it = fox.tt[i].clone();
+                let task = it["task"].as_str().map(String::from).unwrap_or_else(|| it["task"].to_string());
+                fox.start_session_item(t, &task, it["mins"].as_f64().unwrap_or(30.0), Some(i));
+            }
+        });
+        tt_refresh(x);
+    } else if let Some(i) = item("tt_mark:") {
+        let done = x.tt_d.tt.get(i).is_some_and(|it| zenko_desktop::tt::tt_done(it, &day));
+        crate::win::with_fox(move |fox, t| fox.tt_mark_day(t, i, !done, &day));
+        tt_refresh(x);
+    } else if let Some(i) = item("tt_delete:") {
+        let daily = x.tt_d.tt.get(i).and_then(|it| it.get("daily")).is_some_and(|v| v.as_bool().unwrap_or(!v.is_null()));
+        if daily && !cmd.ends_with(":yes") {
+            let k = cmd.strip_prefix("tt_delete:").unwrap_or("").to_string();
+            x.ask = Some(("This item repeats every day.\nDelete it from all days?".into(), "Delete".into(), format!("tt_delete:{k}:yes")));
+            return;
+        }
+        let it = x.tt_d.tt.get(i).cloned();
+        crate::win::with_fox(move |fox, _| {
+            if let Some(it) = it
+                && let Some(p) = fox.tt.iter().position(|v| *v == it) {
+                fox.tt.remove(p);
+            }
+            zenko_desktop::tt::save_tt(&fox.tt);
+        });
+        tt_refresh(x);
+    } else if let Some(v) = cmd.strip_prefix("tt_quick:") {
+        let me = tp.me;
+        if let Kind::Entry { e, .. } = &mut x.hub.ui.ws[me].kind {
+            e.text = v.encode_utf16().collect();
+            (e.pos, e.anchor, e.sel, e.left) = (e.text.len(), e.text.len(), None, 0);
+        }
+    } else if cmd == "tt_add" {
+        let ui = &x.hub.ui;
+        let (t, k, m) = (ui.text_of(tp.te), ui.text_of(tp.ke), ui.text_of(tp.me));
+        let every = matches!(ui.ws[tp.every].kind, Kind::Check { on: true, .. });
+        let st = zenko_desktop::tt::parse_clock(&t);
+        if st.is_none() || k.trim().is_empty() {
+            tp.set_msg(&mut x.hub.ui, "Enter a time like 2pm or 14:30, and what you're doing.");
+            relayout(x);
+            return;
+        }
+        // int(float(m)), 1..480; 30 when it isn't a number
+        let ln = m.trim().parse::<f64>().ok().filter(|v| v.is_finite()).map(|v| (v.trunc() as i64).clamp(1, 480)).unwrap_or(30);
+        let item = serde_json::json!({"start": st.unwrap(), "mins": ln, "task": k.trim(), "daily": every, "date": day, "done": []});
+        crate::win::with_fox(move |fox, _| {
+            fox.tt.push(item);
+            zenko_desktop::tt::save_tt(&fox.tt);
+        });
+        let (te, ke, msg) = (tp.te, tp.ke, tp.msg);
+        for e in [te, ke] {
+            if let Kind::Entry { e, .. } = &mut x.hub.ui.ws[e].kind {
+                e.text.clear();
+                (e.pos, e.anchor, e.sel, e.left) = (0, 0, None, 0);
+            }
+        }
+        let _ = msg;
+        tp.set_msg(&mut x.hub.ui, "");
+        tt_refresh(x);
+        x.hub.ui.focus = Some(te);
+    } else if cmd == "tt_delay" {
+        crate::win::with_fox(|fox, _| fox.events.push(zenko_desktop::Ev::Command("delay_picker".into())));
+    } else if cmd == "tt_export" {
+        crate::win::with_fox(|fox, _| fox.events.push(zenko_desktop::Ev::Command("export_pdf".into())));
+    }
+}
+
 /// the badge shelf under the mouse: the tip line says how to earn the plaque (a hand over earned ones)
 fn daily_hover(x: &mut HubW, mx: i32, my: i32) -> bool {
     let Some(dp) = x.daily.as_ref() else { return false };
@@ -512,6 +615,10 @@ fn after_show(x: &mut HubW, page: &str) {
         x.home_intro = Some(now(x));
         home_refresh(x, true);
     }
+    if page == "timetable" && x.tt.is_some() {
+        // hub_after_show: tt_refresh()
+        tt_refresh(x);
+    }
     if page == "daily" && x.daily.is_some() {
         // (zenko.py renders on show when something changed while it was hidden)
         let d = crate::win::with_fox(|fox, _| fox.daily_data()).unwrap_or_default();
@@ -548,6 +655,19 @@ fn page_frame(x: &mut HubW, page: &str) -> Option<usize> {
             let d = crate::win::with_fox(|fox, _| fox.home_data()).unwrap_or_default();
             let f = faces(x);
             x.home = Some(HomePage::build(&mut x.hub.ui, pg, &th, &f, cm10, &d));
+            pg
+        }
+        "timetable" => {
+            let th = x.hub.t.clone();
+            let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
+            let (d, icon) = crate::win::with_fox(|fox, t| {
+                let im = fox.small_fox(t);
+                (fox.tt_data(), std::rc::Rc::new(zenko_desktop::tkcanvas::Photo { w: im.w, h: im.h, px: im.px }))
+            }).unwrap_or_else(|| (TtData::default(), std::rc::Rc::new(zenko_desktop::tkcanvas::Photo { w: 1, h: 1, px: vec![[0; 4]] })));
+            let f = faces(x);
+            x.tt = Some(TtPage::build(&mut x.hub.ui, pg, &th, &f, icon, &d));
+            x.tt_d = d;
+            x.tt_next = now(x) + 30.0;
             pg
         }
         "daily" => {
@@ -598,6 +718,15 @@ fn relayout(x: &mut HubW) {
         let y = x.hub.ui.ws[sc.cv].yoff;
         sc.set_y(&mut x.hub.ui, y);
         x.hub.ui.layout_at(&x.fonts, w, h);
+        sc.draw_bar(&mut x.hub.ui, false, &th);
+    }
+    if let Some(tp) = x.tt.as_mut() {
+        tp.fit(&mut x.hub.ui, &x.fonts, x.hub.zk_f, w, h);
+        let sc = tp.sc.clone();
+        let y = x.hub.ui.ws[sc.cv].yoff;
+        sc.set_y(&mut x.hub.ui, y);
+        x.hub.ui.layout_at(&x.fonts, w, h);
+        let th = x.hub.t.clone();
         sc.draw_bar(&mut x.hub.ui, false, &th);
     }
     if let Some(dp) = x.daily.as_mut() {
@@ -731,6 +860,7 @@ fn page_wheel(x: &mut HubW, mx: i32, my: i32, delta: i32) -> bool {
         Some("home") => x.home.as_ref().map(|p| p.sc.clone()),
         Some("you") => x.you.as_ref().map(|p| p.sc.clone()),
         Some("daily") => x.daily.as_ref().map(|p| p.sc.clone()),
+        Some("timetable") => x.tt.as_ref().map(|p| p.sc.clone()),
         _ => None,
     };
     let Some(sc) = sc else { return false };
@@ -898,7 +1028,7 @@ pub fn open(page: Option<&str>, init: HubInit) {
             size: (w, h), min, cursor: IDC_ARROW, faded: false,
             anim: zenko_desktop::hubanim::HubAnim::new(0.0, (x0 as u64) << 20 ^ 0x9e37_79b9),
             theme: init.theme.clone(), living: init.living, glow_next: 0.0, burst: None, particles: init.particles, minimized: false,
-            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0,
+            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, ask: None,
             chat_q: Default::default(), typing: None, sb_drag: None,
         }));
         with(|x| {
@@ -1089,6 +1219,13 @@ fn step(x: &mut HubW) -> bool {
         }
     }
     chat_step(x);
+    // the Timetable page: its 30 s redraw, and tt_changed when the timetable changes elsewhere (chat, sessions)
+    if x.hub.side.page.as_deref() == Some("timetable") && x.tt.is_some() && x.slide.is_none() {
+        let changed = n >= x.daily_next && crate::win::with_fox(|fox, _| fox.tt != x.tt_d.tt).unwrap_or(false);
+        if n >= x.tt_next || changed {
+            tt_refresh(x);
+        }
+    }
     // daily_refresh: what changed (a badge, a check-in, a card) shows while the page is open
     if x.hub.side.page.as_deref() == Some("daily") && x.slide.is_none() && n >= x.daily_next {
         x.daily_next = n + 1.0;
@@ -1323,6 +1460,8 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                             you_cmd(x, &cmd);
                         } else if cmd.starts_with("daily_") || cmd == "open_hub:notebook" {
                             daily_cmd(x, &cmd);
+                        } else if cmd.starts_with("tt_") {
+                            tt_cmd(x, &cmd);
                         } else if cmd.starts_with("hub_ask:") || cmd.starts_with("home_") || matches!(cmd.as_str(),
                             "toggle_pause" | "end_session" | "start_break" | "end_break") {
                             home_cmd(x, &cmd);
@@ -1353,6 +1492,15 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     }
                     x.drag_moved = false;
                 });
+                // a question a button asked (messagebox.askyesno), once the click is done with
+                if let Some((text, title, cmd)) = with(|x| x.ask.take()).flatten() {
+                    let w = |s: &str| s.encode_utf16().chain(std::iter::once(0)).collect::<Vec<u16>>();
+                    let (t, c) = (w(&text), w(&title));
+                    if MessageBoxW(hwnd, t.as_ptr(), c.as_ptr(), MB_YESNO | MB_ICONQUESTION) == IDYES {
+                        with(|x| tt_cmd(x, &cmd));
+                    }
+                    redraw();
+                }
                 match act {
                     Some("min") => {
                         ShowWindow(hwnd, SW_MINIMIZE);
@@ -1400,6 +1548,10 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                         home_cmd(x, "home_go");
                     } else if vk == VK_RETURN && you_entry {
                         you_cmd(x, "you_save");
+                    } else if vk == VK_RETURN && x.tt.as_ref().is_some_and(|t| x.hub.ui.focus == Some(t.ke)) {
+                        tt_cmd(x, "tt_add");
+                    } else if vk == VK_RETURN && x.tt.as_ref().is_some_and(|t| x.hub.ui.focus == Some(t.te)) {
+                        x.hub.ui.focus = x.tt.as_ref().map(|t| t.ke);
                     } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.a)) {
                         daily_cmd(x, "daily_card_add");
                     } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.fact)) {
