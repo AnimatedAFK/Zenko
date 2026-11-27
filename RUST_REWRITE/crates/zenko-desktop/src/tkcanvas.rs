@@ -1,0 +1,184 @@
+//! A Tk canvas as zenko.py uses it: items in stacking order with tags and Tk's per-type defaults, created, found,
+//! raised, lowered, re-coloured and deleted the way tkCanvas.c does (raise/lower keep the moved items' order).
+
+use crate::ui::Font;
+use std::rc::Rc;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CKind {
+    Rect,
+    Oval,
+    Line,
+    Poly,
+    Text,
+    Image,
+}
+
+impl CKind {
+    pub fn tk_name(self) -> &'static str {
+        match self {
+            CKind::Rect => "rectangle",
+            CKind::Oval => "oval",
+            CKind::Line => "line",
+            CKind::Poly => "polygon",
+            CKind::Text => "text",
+            CKind::Image => "image",
+        }
+    }
+}
+
+/// a Tk photo image: RGBA pixels (alpha 0 = see-through)
+#[derive(Clone, Debug, PartialEq)]
+pub struct Photo {
+    pub w: usize,
+    pub h: usize,
+    pub px: Vec<[u8; 4]>,
+}
+
+#[derive(Clone, Debug)]
+pub struct CItem {
+    pub id: u32,
+    pub kind: CKind,
+    pub coords: Vec<f64>,
+    pub tags: Vec<String>,
+    pub fill: String,
+    pub outline: String,
+    pub width: f64,
+    pub smooth: bool,
+    pub capstyle: &'static str,
+    pub joinstyle: &'static str,
+    pub hidden: bool,
+    pub anchor: &'static str,
+    pub text: String,
+    pub font: Option<Font>,
+    /// a text item's -width (wrap length)
+    pub wrap: f64,
+    pub image: Option<Rc<Photo>>,
+}
+
+impl CItem {
+    pub fn fill(&mut self, c: &str) -> &mut CItem {
+        self.fill = c.into();
+        self
+    }
+    pub fn outline(&mut self, c: &str) -> &mut CItem {
+        self.outline = c.into();
+        self
+    }
+    pub fn width(&mut self, w: f64) -> &mut CItem {
+        self.width = w;
+        self
+    }
+    pub fn smooth(&mut self) -> &mut CItem {
+        self.smooth = true;
+        self
+    }
+    pub fn cap(&mut self, c: &'static str) -> &mut CItem {
+        self.capstyle = c;
+        self
+    }
+    pub fn join(&mut self, j: &'static str) -> &mut CItem {
+        self.joinstyle = j;
+        self
+    }
+    pub fn anchor(&mut self, a: &'static str) -> &mut CItem {
+        self.anchor = a;
+        self
+    }
+    pub fn font(&mut self, f: Font) -> &mut CItem {
+        self.font = Some(f);
+        self
+    }
+    pub fn wrap(&mut self, w: f64) -> &mut CItem {
+        self.wrap = w;
+        self
+    }
+    pub fn hide(&mut self, h: bool) -> &mut CItem {
+        self.hidden = h;
+        self
+    }
+    pub fn tags(&mut self, t: &[&str]) -> &mut CItem {
+        self.tags = t.iter().map(|s| s.to_string()).collect();
+        self
+    }
+    pub fn has(&self, tag: &str) -> bool {
+        tag == "all" || self.tags.iter().any(|t| t == tag) || tag.parse::<u32>().ok() == Some(self.id)
+    }
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct Canvas {
+    pub items: Vec<CItem>,
+    next: u32,
+}
+
+impl Canvas {
+    fn add(&mut self, kind: CKind, coords: Vec<f64>) -> &mut CItem {
+        self.next += 1;
+        // Tk's defaults for each item type
+        let (fill, outline, join) = match kind {
+            CKind::Rect | CKind::Oval => ("", "black", "round"),
+            CKind::Line => ("black", "", "round"),
+            CKind::Poly => ("black", "", "round"),
+            CKind::Text => ("black", "", "round"),
+            CKind::Image => ("", "", "round"),
+        };
+        self.items.push(CItem { id: self.next, kind, coords, tags: vec![], fill: fill.into(), outline: outline.into(),
+                                width: 1.0, smooth: false, capstyle: "butt", joinstyle: join, hidden: false,
+                                anchor: "center", text: String::new(), font: None, wrap: 0.0, image: None });
+        self.items.last_mut().unwrap()
+    }
+    pub fn rect(&mut self, x1: f64, y1: f64, x2: f64, y2: f64) -> &mut CItem {
+        self.add(CKind::Rect, vec![x1, y1, x2, y2])
+    }
+    pub fn oval(&mut self, x1: f64, y1: f64, x2: f64, y2: f64) -> &mut CItem {
+        self.add(CKind::Oval, vec![x1, y1, x2, y2])
+    }
+    pub fn line(&mut self, pts: Vec<f64>) -> &mut CItem {
+        self.add(CKind::Line, pts)
+    }
+    pub fn poly(&mut self, pts: Vec<f64>) -> &mut CItem {
+        self.add(CKind::Poly, pts)
+    }
+    pub fn text(&mut self, x: f64, y: f64, text: &str) -> &mut CItem {
+        let it = self.add(CKind::Text, vec![x, y]);
+        it.text = text.into();
+        it
+    }
+    pub fn image(&mut self, x: f64, y: f64, img: Rc<Photo>) -> &mut CItem {
+        let it = self.add(CKind::Image, vec![x, y]);
+        it.image = Some(img);
+        it
+    }
+    pub fn last_id(&self) -> u32 {
+        self.next
+    }
+    pub fn find_withtag(&self, tag: &str) -> Vec<u32> {
+        self.items.iter().filter(|i| i.has(tag)).map(|i| i.id).collect()
+    }
+    pub fn get(&mut self, id: u32) -> Option<&mut CItem> {
+        self.items.iter_mut().find(|i| i.id == id)
+    }
+    pub fn delete(&mut self, tag: &str) {
+        self.items.retain(|i| !i.has(tag));
+    }
+    /// raise: the tagged items, in their order, go above everything (or just above the top `above` item)
+    pub fn tag_raise(&mut self, tag: &str) {
+        let (moved, rest): (Vec<CItem>, Vec<CItem>) = self.items.drain(..).partition(|i| i.has(tag));
+        self.items = rest;
+        self.items.extend(moved);
+    }
+    /// lower: the tagged items, in their order, go below everything, or just below the lowest `below` item
+    pub fn tag_lower(&mut self, tag: &str, below: Option<&str>) {
+        let (moved, rest): (Vec<CItem>, Vec<CItem>) = self.items.drain(..).partition(|i| i.has(tag));
+        let at = match below {
+            Some(b) => rest.iter().position(|i| i.has(b)).unwrap_or(rest.len()),
+            None => 0,
+        };
+        let mut v = rest;
+        let tail = v.split_off(at);
+        v.extend(moved);
+        v.extend(tail);
+        self.items = v;
+    }
+}
