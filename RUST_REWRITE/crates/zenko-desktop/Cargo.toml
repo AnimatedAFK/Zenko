@@ -15,6 +15,7 @@ serde = "1"
 regex = "1"
 unicode-normalization = "0.1"
 zenko-sound = { path = "../zenko-sound" }
+fancy-regex = "0.14"
 
 [target.'cfg(windows)'.dependencies]
 windows-sys = { version = "0.59", features = [

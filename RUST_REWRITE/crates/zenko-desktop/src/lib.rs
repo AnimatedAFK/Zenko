@@ -32,6 +32,8 @@ pub mod hubwin;
 pub mod hubanim;
 pub mod tips;
 pub mod tktext;
+pub mod mdtext;
+pub mod mdtex_data;
 pub mod icon;
 pub mod sound;
 pub mod theme;
