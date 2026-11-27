@@ -25,6 +25,8 @@ pub enum TkOp {
     /// XFillArc of a whole ellipse; the fill GC's pen is 1 pixel of the fill colour (line width 0)
     FillArc { x: i32, y: i32, w: i32, h: i32, color: String },
     DrawArc { x: i32, y: i32, w: i32, h: i32, pen: TkPen },
+    /// XDrawArc of part of an ellipse: `start` / `extent` in 64ths of a degree, counter-clockwise from 3 o'clock
+    DrawArcPart { x: i32, y: i32, w: i32, h: i32, start: i32, extent: i32, pen: TkPen },
     FillPoly { pts: Vec<(i32, i32)>, color: String },
     DrawLines { pts: Vec<(i32, i32)>, pen: TkPen },
     /// one run of text per line: (x, baseline y, text)
@@ -270,6 +272,22 @@ pub fn item_ops(it: &CItem, fonts: &dyn Fonts, out: &mut Vec<TkOp>) {
             let runs = lines.into_iter().enumerate().filter(|(_, l)| !l.is_empty())
                 .map(|(i, l)| (x, y + asc + i as i32 * ls, l)).collect();
             out.push(TkOp::Text { runs, font: f, color: it.fill.clone() });
+        }
+        CKind::Arc => {
+            // tkCanvArc.c DisplayArc (style arc: the outline only; pieslice / chord fills aren't used by zenko.py)
+            let (x1, y1) = (tk_coord(it.coords[0].min(it.coords[2])), tk_coord(it.coords[1].min(it.coords[3])));
+            let (mut x2, mut y2) = (tk_coord(it.coords[0].max(it.coords[2])), tk_coord(it.coords[1].max(it.coords[3])));
+            if x2 <= x1 {
+                x2 = x1 + 1;
+            }
+            if y2 <= y1 {
+                y2 = y1 + 1;
+            }
+            let start = (64.0 * it.start + 0.5) as i32;
+            let extent = (64.0 * it.extent + 0.5) as i32;
+            if !it.outline.is_empty() && extent != 0 {
+                out.push(TkOp::DrawArcPart { x: x1, y: y1, w: x2 - x1, h: y2 - y1, start, extent, pen: pen(it, &it.outline) });
+            }
         }
         CKind::Image => {
             if let Some(img) = &it.image {

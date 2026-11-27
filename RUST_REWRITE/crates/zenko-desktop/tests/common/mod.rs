@@ -121,6 +121,11 @@ pub fn check_items(at: &str, cv: &Canvas, want: &[Value], images: &Value, fonts:
                 if it.kind == CKind::Line {
                     assert_eq!(it.capstyle, s("capstyle"), "{at} capstyle");
                 }
+                if it.kind == CKind::Arc {
+                    assert!((it.start - s("start").parse::<f64>().unwrap()).abs() < 1e-6, "{at} start {}", it.start);
+                    assert!((it.extent - s("extent").parse::<f64>().unwrap()).abs() < 1e-6, "{at} extent {}", it.extent);
+                    assert_eq!(it.style, s("style"), "{at} style");
+                }
             }
         }
     }

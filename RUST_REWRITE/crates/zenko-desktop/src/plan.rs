@@ -97,6 +97,8 @@ pub struct Target {
     pub title: String,
     pub due: f64,
     pub need: i64,
+    /// the hours planned in all (plan_hours or the kind's default)
+    pub hours: f64,
 }
 
 #[derive(Clone, Debug)]
@@ -451,7 +453,7 @@ impl Companion {
             let hrs = life["plan_hours"].get(&id).map(|v| num(v, 3.0)).unwrap_or(plan_hours_default(&kind));
             let studied = num(life["studied"].get(&id).unwrap_or(&Value::Null), 0.0);
             out.push(Target { id, title: d["title"].as_str().unwrap_or("").into(), due,
-                              need: 0.max((hrs * 60.0 - studied) as i64) });
+                              need: 0.max((hrs * 60.0 - studied) as i64), hours: hrs });
         }
         if changed {
             save_deadlines(&mut items);
@@ -552,7 +554,7 @@ impl Companion {
                             Value::String(s) if !s.is_empty() => s.clone(),
                             _ => "Ema".into(),
                         };
-                        targets.push(Target { id: pid, title, due: when, need });
+                        targets.push(Target { id: pid, title, due: when, need, hours: need as f64 / 60.0 });
                     }
                 }
             }

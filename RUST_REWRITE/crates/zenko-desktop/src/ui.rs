@@ -199,6 +199,9 @@ pub enum Kind {
             cmd: String, radio: bool },
     /// a tk.Text (tktext.rs); `ring` is its highlightbackground
     Text { t: Box<crate::tktext::Text>, ring: String },
+    /// a tk.OptionMenu's Menubutton (borderwidth 2, indicatoron, -width in characters in opt_w): `ind` is the
+    /// indicator's (width, height) from the screen's millimetres, `cmd` what a click asks for (the menu)
+    Menu { text: String, font: Font, fg: String, ind: (i32, i32), cmd: String },
 }
 
 #[derive(Clone, Debug)]
@@ -211,6 +214,8 @@ pub struct W {
     pub zk_fill: Option<String>,
     pub bd: i32,
     pub hl: i32,
+    /// highlightbackground: the ring a frame / menubutton with highlightthickness draws ("" = none)
+    pub hlc: String,
     /// -padx / -pady of a frame or label (internal)
     pub padx: i32,
     pub pady: i32,
@@ -281,6 +286,26 @@ pub struct Ui {
     pack_n: u64,
 }
 
+/// tkUnix3d.c TkpGetShadows for a colour display: the (light, dark) bevel colours of a 3-D border on `bg`
+pub fn shadows(bg: &str) -> (String, String) {
+    let c = zenko_art::palette::hex_rgb(bg);
+    let (r, g, b) = (c[0] as i64 * 257, c[1] as i64 * 257, c[2] as i64 * 257);
+    const M: i64 = 65535;
+    let dark = if (r * r) as f64 * 0.5 + (g * g) as f64 + (b * b) as f64 * 0.28 < M as f64 * 0.05 * M as f64 {
+        [(M + 3 * r) / 4, (M + 3 * g) / 4, (M + 3 * b) / 4]
+    } else {
+        [60 * r / 100, 60 * g / 100, 60 * b / 100]
+    };
+    let light = if g as f64 > M as f64 * 0.95 {
+        [90 * r / 100, 90 * g / 100, 90 * b / 100]
+    } else {
+        let f = |v: i64| (14 * v / 10).min(M).max((M + v) / 2);
+        [f(r), f(g), f(b)]
+    };
+    let hx = |a: [i64; 3]| format!("#{:02x}{:02x}{:02x}", a[0] / 257, a[1] / 257, a[2] / 257);
+    (hx(light), hx(dark))
+}
+
 /// Tk_ComputeTextLayout for one paragraph set: (lines, width of the widest line without trailing spaces)
 pub fn text_layout(fonts: &dyn Fonts, font: &Font, text: &str, wrap: i32) -> (Vec<String>, i32) {
     let wd = |s: &[char]| fonts.width(font, &s.iter().collect::<String>());
@@ -296,7 +321,8 @@ pub fn text_layout(fonts: &dyn Fonts, font: &Font, text: &str, wrap: i32) -> (Ve
     for para in text.split('\n') {
         let u: Vec<char> = para.chars().collect();
         if wrap <= 0 || wd(&u) <= wrap {
-            width = width.max(wd(&u[..trim(&u)]));
+            // (a line that isn't wrapped keeps its trailing spaces: Tk only drops the one it breaks a line at)
+            width = width.max(wd(&u));
             lines.push(para.to_string());
             continue;
         }
@@ -348,7 +374,7 @@ impl Ui {
 
     fn add(&mut self, parent: Option<usize>, kind: Kind, bg: &str) -> usize {
         let id = self.ws.len();
-        self.ws.push(W { kind, parent, kids: vec![], bg: bg.into(), zk_fill: None, bd: 0, hl: 0, padx: 0, pady: 0,
+        self.ws.push(W { kind, parent, kids: vec![], bg: bg.into(), zk_fill: None, bd: 0, hl: 0, hlc: String::new(), padx: 0, pady: 0,
                          opt_w: 0, opt_h: 0, pack: None, place: None, propagate: true, name: String::new(), x: 0, y: 0,
                          w: 1, h: 1, rw: 1, rh: 1, mapped: parent.is_none(), low: false, pack_seq: 0, grid: None,
                          gw_cols: vec![], gw_rows: vec![], gu_cols: vec![], cwin: false, yoff: 0, f0: 0, pack_in: None });
@@ -409,6 +435,23 @@ impl Ui {
         let id = self.add(Some(parent), Kind::Entry { font, chars, e }, bg);
         let w = &mut self.ws[id];
         (w.bd, w.hl) = (1, 1);
+        id
+    }
+
+    /// tk.OptionMenu(parent, var, *values) configured as zenko.py does (relief flat, highlightthickness 1 in `ring`,
+    /// width in characters); padx / pady are Tk's 4p / 3p and the indicator 4 mm + 2 x 1.7 mm on a screen of
+    /// `cm10` pixels per 10 cm
+    #[allow(clippy::too_many_arguments)]
+    pub fn menubutton(&mut self, parent: usize, text: &str, cmd: &str, font: Font, bg: &str, fg: &str, ring: &str,
+                      chars: i32, cm10: i32) -> usize {
+        let pt = |p: f64| (p * cm10 as f64 / 100.0 * 25.4 / 72.0 + 0.5) as i32;
+        let ih = 17 * cm10 / 1000;
+        let iw = 40 * cm10 / 1000 + 2 * ih;
+        let id = self.add(Some(parent), Kind::Menu { text: text.into(), font, fg: fg.into(), ind: (iw, ih), cmd: cmd.into() }, bg);
+        let w = &mut self.ws[id];
+        (w.bd, w.hl, w.hlc, w.padx, w.pady, w.opt_w) = (2, 1, ring.into(), pt(4.0), pt(3.0), chars);
+        // its tk.Menu (a child that is never mapped)
+        self.frame(id, bg);
         id
     }
 
@@ -541,6 +584,13 @@ impl Ui {
             }
             Kind::Canvas { .. } => (w.opt_w + 2 * (w.bd + w.hl), w.opt_h + 2 * (w.bd + w.hl)),
             Kind::Text { t, .. } => t.req_size(fonts),
+            Kind::Menu { text, font, ind, .. } => {
+                // tkUnixMenubu.c TkpComputeMenubuttonGeometry: -width "0"s (else the text), one line, the indicator,
+                // the padding, then border and highlight
+                let tw = if w.opt_w > 0 { w.opt_w * fonts.width(font, "0") } else { fonts.width(font, text) };
+                let inset = w.bd + w.hl;
+                (tw + ind.0 + 2 * w.padx + 2 * inset, fonts.linespace(font) + 2 * w.pady + 2 * inset)
+            }
         };
         (r, rr)
     }
@@ -1033,8 +1083,29 @@ impl Ui {
         let me = (x1, y1, x2 - x1, y2 - y1);
         out.push(Draw::Clip(Some(me)));
         out.push(Draw::Rect { x: ax, y: ay, w: w.w, h: w.h, color: w.bg.clone() });
+        if w.hl > 0 && !w.hlc.is_empty() && matches!(w.kind, Kind::Frame | Kind::Menu { .. }) {
+            for (rx, ry, rw, rh) in [(ax, ay, w.w, w.hl), (ax, ay + w.h - w.hl, w.w, w.hl), (ax, ay, w.hl, w.h),
+                                     (ax + w.w - w.hl, ay, w.hl, w.h)] {
+                out.push(Draw::Rect { x: rx, y: ry, w: rw, h: rh, color: w.hlc.clone() });
+            }
+        }
         match &w.kind {
             Kind::Frame => {}
+            Kind::Menu { text, font, fg, ind, .. } => {
+                // TkpDisplayMenubutton: the text centred with the indicator's room, then the raised indicator bar
+                let tw = fonts.width(font, text);
+                let ls = fonts.linespace(font);
+                let x = (w.w - (tw + ind.0)) / 2;
+                let y = (w.h - ls) / 2;
+                out.push(Draw::Text { x: ax + x, y: ay + y, text: text.clone(), font: font.clone(), color: fg.clone() });
+                let inset = w.bd + w.hl;
+                let (bx, by, bw, bh) = (ax + w.w - inset - ind.0 + ind.1, ay + (w.h - ind.1) / 2, ind.0 - 2 * ind.1, ind.1);
+                let b = 1.max((ind.1 + 1) / 3);
+                let (light, dark) = shadows(&w.bg);
+                out.push(Draw::Rect { x: bx, y: by, w: bw, h: bh, color: dark });
+                out.push(Draw::Rect { x: bx, y: by, w: bw - b, h: bh - b, color: light });
+                out.push(Draw::Rect { x: bx + b, y: by + b, w: (bw - 2 * b).max(0), h: (bh - 2 * b).max(0), color: w.bg.clone() });
+            }
             Kind::Label { image: Some(img), .. } => {
                 let ib = w.bd + w.hl;
                 let (iw, ih) = (img.w as i32, img.h as i32);

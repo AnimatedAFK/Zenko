@@ -161,6 +161,25 @@ pub unsafe fn paint(dc: HDC, ops: &[TkOp], fonts: &GdiFonts) {
                     Arc(dc, *x, *y, x + w + 1, y + h + 1, xs, ys, xs, ys);
                     DeleteObject(SelectObject(dc, op_));
                 }
+                TkOp::DrawArcPart { x, y, w, h, start, extent, pen } => {
+                    // tkWinDraw.c DrawOrFillArc: the radial end points, then Arc() (counter-clockwise) a pixel bigger
+                    let k = std::f64::consts::PI / (180.0 * 64.0);
+                    let (mut fs, mut fe) = (*start as f64 * k, *extent as f64 * k);
+                    if fe < 0.0 {
+                        fs += fe;
+                        fe = -fe;
+                    }
+                    let (a0, a1) = (fs, fs + fe);
+                    let (xr, yr) = (*x as f64 + *w as f64 / 2.0, *y as f64 + *h as f64 / 2.0);
+                    let xs = (xr + a0.cos() * *w as f64 / 2.0 + 0.5) as i32;
+                    let ys = (yr + (-a0).sin() * *h as f64 / 2.0 + 0.5) as i32;
+                    let xe = (xr + a1.cos() * *w as f64 / 2.0 + 0.5) as i32;
+                    let ye = (yr + (-a1).sin() * *h as f64 / 2.0 + 0.5) as i32;
+                    let pn = make_pen(pen);
+                    let op_ = SelectObject(dc, pn as _);
+                    Arc(dc, *x, *y, x + w + 1, y + h + 1, xs, ys, xe, ye);
+                    DeleteObject(SelectObject(dc, op_));
+                }
                 TkOp::FillPoly { pts, color } => {
                     let p: Vec<POINT> = pts.iter().map(|&(x, y)| POINT { x, y }).collect();
                     let br = CreateSolidBrush(rgb(color));

@@ -32,6 +32,7 @@ pub mod homepage;
 pub mod youpage;
 pub mod dailypage;
 pub mod ttpage;
+pub mod uppage;
 pub mod ui;
 pub mod checkin;
 pub mod tkcanvas;

@@ -12,6 +12,8 @@ pub enum CKind {
     Poly,
     Text,
     Image,
+    /// create_arc: `start` / `extent` in degrees (normalised as ConfigureArc does), `style` arc / pieslice / chord
+    Arc,
 }
 
 impl CKind {
@@ -23,6 +25,7 @@ impl CKind {
             CKind::Poly => "polygon",
             CKind::Text => "text",
             CKind::Image => "image",
+            CKind::Arc => "arc",
         }
     }
 }
@@ -54,6 +57,10 @@ pub struct CItem {
     /// a text item's -width (wrap length)
     pub wrap: f64,
     pub image: Option<Rc<Photo>>,
+    /// an arc's start, extent and style
+    pub start: f64,
+    pub extent: f64,
+    pub style: &'static str,
 }
 
 impl CItem {
@@ -122,14 +129,27 @@ impl Canvas {
             CKind::Poly => ("black", "", "round"),
             CKind::Text => ("black", "", "round"),
             CKind::Image => ("", "", "round"),
+            CKind::Arc => ("", "black", "round"),
         };
         self.items.push(CItem { id: self.next, kind, coords, tags: vec![], fill: fill.into(), outline: outline.into(),
                                 width: 1.0, smooth: false, capstyle: "butt", joinstyle: join, hidden: false,
-                                anchor: "center", text: String::new(), font: None, wrap: 0.0, image: None });
+                                anchor: "center", text: String::new(), font: None, wrap: 0.0, image: None,
+                                start: 0.0, extent: 90.0, style: "pieslice" });
         self.items.last_mut().unwrap()
     }
     pub fn rect(&mut self, x1: f64, y1: f64, x2: f64, y2: f64) -> &mut CItem {
         self.add(CKind::Rect, vec![x1, y1, x2, y2])
+    }
+    /// create_arc(x1, y1, x2, y2, start, extent, style); ConfigureArc keeps start in [0, 360) and extent in (-360, 360)
+    pub fn arc(&mut self, x1: f64, y1: f64, x2: f64, y2: f64, start: f64, extent: f64, style: &'static str) -> &mut CItem {
+        let mut st = start - (start / 360.0).trunc() * 360.0;
+        if st < 0.0 {
+            st += 360.0;
+        }
+        let ex = extent - (extent / 360.0).trunc() * 360.0;
+        let it = self.add(CKind::Arc, vec![x1, y1, x2, y2]);
+        (it.start, it.extent, it.style) = (st, ex, style);
+        it
     }
     pub fn oval(&mut self, x1: f64, y1: f64, x2: f64, y2: f64) -> &mut CItem {
         self.add(CKind::Oval, vec![x1, y1, x2, y2])

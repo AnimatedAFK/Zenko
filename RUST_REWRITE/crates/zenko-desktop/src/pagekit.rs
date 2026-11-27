@@ -187,7 +187,7 @@ pub fn zk_fonts(ui: &mut Ui, fonts: &dyn Fonts, root: usize, zk_f: f64) {
         }
         let font = match &mut w.kind {
             Kind::Label { font, image: None, .. } | Kind::Entry { font, .. } | Kind::Button { font, .. }
-            | Kind::Check { font, .. } => font,
+            | Kind::Check { font, .. } | Kind::Menu { font, .. } => font,
             _ => continue,
         };
         if font.family == "TkDefaultFont" {
