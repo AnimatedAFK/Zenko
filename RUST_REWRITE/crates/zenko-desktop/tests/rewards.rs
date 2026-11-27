@@ -139,6 +139,9 @@ fn rewards_match_zenko_py() {
                 if let Some(b) = beep {
                     got.push(json!([at - t, "beep", b]));
                 }
+            } else if let Later::SayChat { text, secs } = job {
+                got.push(json!([at - t, "say", text, secs]));
+                got.push(json!([at - t, "beep", "gift"]));
             }
         }
         let want: Vec<Value> = case["later"].as_array().unwrap().iter()

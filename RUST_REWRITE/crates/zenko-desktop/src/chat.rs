@@ -720,6 +720,9 @@ impl Companion {
         if let Some(r) = self.books_route(now, text) {
             return Some(r);
         }
+        if let Some(r) = self.study_route(now, text) {
+            return Some(r);
+        }
         if let Some(r) = self.life_route(now, text) {
             return Some(r);
         }

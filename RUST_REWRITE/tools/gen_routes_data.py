@@ -26,6 +26,12 @@ data = {
     "ENGLISH_TIPS": [list(t) for t in Z.ENGLISH_TIPS],
     "GRADE_KINDS": Z.GRADE_KINDS,
     "VISION_PULL": Z.VISION_PULL,
+    "STUDY_HINTS": Z.STUDY_HINTS,
+    "STUDY_APPS": list(Z.STUDY_APPS),
+    "SUBJ_STOP": sorted(Z._SUBJ_STOP),
+    "FR_IRREG": {k: [v[0], v[1], v[2], v[3], v[4]] for k, v in Z.FR_IRREG.items()},
+    "FR_ETRE_VERBS": sorted(Z.FR_ETRE_VERBS),
+    "FR_PRONOUNS": Z.FR_PRONOUNS,
 }
 out = os.path.join(os.path.dirname(__file__), "..", "crates", "zenko-desktop", "data", "routes.json")
 with open(out, "w", encoding="utf-8") as f:

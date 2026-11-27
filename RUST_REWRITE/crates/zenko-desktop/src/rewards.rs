@@ -23,6 +23,7 @@ pub fn save_life(v: &Value) {
     let tmp = dir.join("zenko_life.json.tmp");
     if std::fs::write(&tmp, crate::py_json_ascii_indent(v, b" ")).is_ok() {
         let _ = std::fs::rename(&tmp, dir.join("zenko_life.json"));
+        crate::study::clear_pending();
     }
 }
 
@@ -271,6 +272,12 @@ pub enum Later {
     FoxReply(String),
     /// the 急 delay's time is up (its job number)
     DelayOver(u64),
+    /// say(msg, 10) and chat_line("Fox", msg) (study_missed's re-plan note)
+    SayLine(String),
+    /// a badge: say(line), beep("gift"), chat_line("Fox", line)
+    SayChat { text: String, secs: f64 },
+    /// study_ask(window key)
+    StudyAsk(String),
 }
 
 #[derive(Clone, Debug, Default)]
@@ -427,6 +434,16 @@ impl Companion {
                 Later::PlanMaybe => self.plan_maybe(),
                 Later::Announce(id) => self.z23_announce(&id),
                 Later::DelayOver(j) => self.delay_over(now, j),
+                Later::SayLine(msg) => {
+                    self.events.push(crate::Ev::Say { text: msg.clone(), secs: 10.0, choices: vec![] });
+                    self.chat_line(now, "Fox", &msg);
+                }
+                Later::StudyAsk(k) => self.study_ask(&k),
+                Later::SayChat { text, secs } => {
+                    self.events.push(Ev::Say { text: text.clone(), secs, choices: vec![] });
+                    self.events.push(Ev::Beep { kind: "gift".into(), variety: false });
+                    self.chat_line(now, "Fox", &text);
+                }
                 Later::FoxReply(msg) => {
                     self.chat_line(now, "Fox", &msg);
                     let first = crate::mdtext::md_plain(&msg).split('\n').next().unwrap_or("").to_string();
@@ -487,7 +504,7 @@ impl Companion {
         }
         let s = |i: usize| b[i].as_str().unwrap_or("").to_string();
         let line = format!("New ema badge! \u{3010}{}\u{3011} {} - {}. Sugoi~!", s(1), s(2), s(3));
-        self.later(now + 2.5, Later::Say { text: line, secs: 10.0, choices: vec![], only_idle: false, beep: Some("gift".into()) });
+        self.later(now + 2.5, Later::SayChat { text: line, secs: 10.0 });
         self.set_mood(now, "happy", 5.0);
         true
     }
@@ -691,8 +708,7 @@ impl Companion {
                     let how = t[5].as_str().unwrap_or("").replace("{n}", &thv.to_string());
                     let line = format!("Your ema \u{3010}{}\u{3011} {} turned {}! {} \u{2713}", t[1].as_str().unwrap_or(""),
                                        t[2].as_str().unwrap_or(""), names[tier as usize].as_str().unwrap_or(""), how);
-                    self.later(now + 2.5, Later::Say { text: line, secs: 9.0, choices: vec![], only_idle: false,
-                                                       beep: Some("gift".into()) });
+                    self.later(now + 2.5, Later::SayChat { text: line, secs: 9.0 });
                 }
             }
         }

@@ -40,6 +40,7 @@ pub mod z22;
 pub mod routes17;
 pub mod gym;
 pub mod books;
+pub mod study;
 pub mod chat_data;
 pub mod pydifflib;
 pub mod mdtext;
@@ -212,7 +213,19 @@ pub fn read_json(name: &str) -> Value {
     std::fs::read_to_string(data_dir().join(name))
         .ok()
         .and_then(|s| serde_json::from_str(&s).ok())
-        .unwrap_or(Value::Null)
+        .map(|mut v: Value| {
+            if name == "zenko_life.json" {
+                study::apply_pending(&mut v);
+            }
+            v
+        })
+        .unwrap_or_else(|| {
+            let mut v = Value::Null;
+            if name == "zenko_life.json" {
+                study::apply_pending(&mut v);
+            }
+            v
+        })
 }
 
 /// The settings the desktop fox reads (zenko.py DEFAULTS for anything missing).
@@ -455,6 +468,8 @@ pub struct Companion {
     pub planner: plan::Planner,
     /// the 急 delay (books.rs)
     pub books: books::BooksState,
+    /// zenko8's study tracker (study.rs: self.st)
+    pub study: study::Study,
     /// how many lines chat_line has ever added (the chat page types the new ones)
     pub chat_n: u64,
     /// the hub page on show while the hub window is open and not minimised (gym_look_on, the sidebar fox)
@@ -520,6 +535,7 @@ impl Companion {
             chat_log: vec![],
             planner: plan::Planner::default(),
             books: books::BooksState::default(),
+            study: study::Study::new(now),
             brain: chat::Brain::new(now.to_bits()),
             chat_n: 0,
             hub_page: None,

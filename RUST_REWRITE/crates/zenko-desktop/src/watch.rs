@@ -768,6 +768,7 @@ impl Companion {
             }
         }
         let site = self.is_distracting(now, title, proc);
+        self.study.fg = Some((title.to_string(), proc.to_string(), idle, site.clone()));
         let away = idle >= self.cfg_num("idle_minutes") * 60.0;
         self.check_timetable(now);
         self.break_tick(now, dt, idle);

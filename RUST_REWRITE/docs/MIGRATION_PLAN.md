@@ -123,7 +123,9 @@ order is kept where it changes the result (tail outlines, eye cells).
    jokes, lore), all checked against zenko.py.
    Stage 3d done: ema reminders, the study planner with emas that plan themselves, and the version routes (z23, z22,
    z18, z17, z16, z15, ib, garden, Exercise, study books), all checked against zenko.py.
-   **Next:** study tracking + study_route, the remaining routes (life, extras, apps, deadlines, notes), focus glow, Ctrl K, then hub pages one at a time (Home, Timetable/Upcoming, Settings/Customize first, then the rest), each compared with Python.
+   Stage 3e done: zenko8's study tracker (window ticks, subject asks, exam credit, recap, weak-subject alert, golden
+   hour, missed-session re-planning) and study_route, checked against zenko.py on 112 steps.
+   **Next:** the remaining routes (life, extras, apps, deadlines, notes), focus glow, Ctrl K, then hub pages one at a time (Home, Timetable/Upcoming, Settings/Customize first, then the rest), each compared with Python.
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.
 6. Speed (Phase 5): image cache and native code are already in; measure and tune at the end.
 

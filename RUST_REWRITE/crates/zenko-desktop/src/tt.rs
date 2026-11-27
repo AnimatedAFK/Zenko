@@ -233,10 +233,15 @@ impl Companion {
 
     /// tt_mark(it, done): tick a timetable item for today, save, and let the life side count it
     pub fn tt_mark(&mut self, now: f64, i: usize, done: bool) {
+        self.tt_mark_day(now, i, done, &today_iso());
+    }
+
+    /// tt_mark(it, done, day)
+    pub fn tt_mark_day(&mut self, now: f64, i: usize, done: bool, day: &str) {
         if i >= self.tt.len() {
             return;
         }
-        let day = today_iso();
+        let day = day.to_string();
         {
             let it = &mut self.tt[i];
             if !it.get("done").is_some_and(|d| d.is_array()) {

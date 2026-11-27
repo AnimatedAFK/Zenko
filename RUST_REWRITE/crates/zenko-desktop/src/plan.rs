@@ -19,9 +19,9 @@ macro_rules! rx {
     }};
 }
 
-const PLAN_KINDS: [&str; 6] = ["Exam", "Quiz", "Assignment", "Project", "Presentation", "Deadline"];
+pub(crate) const PLAN_KINDS: [&str; 6] = ["Exam", "Quiz", "Assignment", "Project", "Presentation", "Deadline"];
 
-fn plan_hours_default(kind: &str) -> f64 {
+pub(crate) fn plan_hours_default(kind: &str) -> f64 {
     match kind {
         "Exam" => 6.0,
         "Quiz" => 2.0,
@@ -37,7 +37,7 @@ pub fn naive(ts: f64) -> f64 {
     ts + crate::local_offset_pub() as f64
 }
 
-fn day_n(nl: f64) -> i64 {
+pub(crate) fn day_n(nl: f64) -> i64 {
     nl.div_euclid(86400.0) as i64
 }
 
@@ -59,7 +59,7 @@ fn hhmm(nl: f64) -> String {
     format!("{:02}:{:02}", s / 3600, s / 60 % 60)
 }
 
-fn truthy(v: &Value) -> bool {
+pub(crate) fn truthy(v: &Value) -> bool {
     match v {
         Value::Null | Value::Bool(false) => false,
         Value::Number(n) => n.as_f64() != Some(0.0),
@@ -70,7 +70,7 @@ fn truthy(v: &Value) -> bool {
     }
 }
 
-fn num(v: &Value, d: f64) -> f64 {
+pub(crate) fn num(v: &Value, d: f64) -> f64 {
     match v {
         Value::Number(n) => n.as_f64().unwrap_or(d),
         Value::Bool(b) => *b as i64 as f64,
@@ -79,14 +79,14 @@ fn num(v: &Value, d: f64) -> f64 {
     }
 }
 
-fn start_min(it: &Value) -> Option<i64> {
+pub(crate) fn start_min(it: &Value) -> Option<i64> {
     let s = it["start"].as_str()?;
     let (h, m) = s.split_once(':')?;
     Some(h.trim().parse::<i64>().ok()? * 60 + m.trim().parse::<i64>().ok()?)
 }
 
 /// the cfg value Python reads as int(cfg.get(k, d) or d)
-fn cfg_int(c: &crate::Cfg, k: &str, d: i64) -> i64 {
+pub(crate) fn cfg_int(c: &crate::Cfg, k: &str, d: i64) -> i64 {
     let v = num(c.raw.get(k).unwrap_or(&Value::Null), d as f64) as i64;
     if v == 0 { d } else { v }
 }
@@ -392,7 +392,7 @@ pub struct Planner {
 }
 
 impl Companion {
-    fn now_naive(&self) -> f64 {
+    pub(crate) fn now_naive(&self) -> f64 {
         naive(unix_now())
     }
 
@@ -421,7 +421,7 @@ impl Companion {
             .collect()
     }
 
-    fn plan_targets(&mut self, life: &Value, now: f64) -> Vec<Target> {
+    pub(crate) fn plan_targets(&mut self, life: &Value, now: f64) -> Vec<Target> {
         let mut items = load_deadlines();
         let mut changed = false;
         let mut out = vec![];

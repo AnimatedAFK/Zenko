@@ -3,11 +3,12 @@
 Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.md. Rules: RULES.md.
 402 of 1,798 zenko.py items ported (`python3 tools/audit_inventory.py`).
 
-## Stages left to completion (14, as of 2026-11-27)
-1. 3e: zenko8 study tracking (study tick, subject override, log_study) + study_route (recap, reports, goals, conjugate)
+## Stages left to completion (13, as of 2026-11-27; 3e done)
+1. ~~3e: zenko8 study tracking + study_route~~ (done)
 2. 3f: the remaining chat routes (life_route rest, extra_route incl. pomodoro/notes/todos/calc, apps, deadlines,
-   battery, quiz)
-3. 3g: desktop leftovers: focus glow, Ctrl K, missed-session replanning, deadline reminders, screen-time recording
+   battery, quiz + flashcard review)
+3. 3g: desktop leftovers: focus glow, Ctrl K, deadline reminders, screen-time recording, books_slow (bedtime guard,
+   6 h burnout line, water nudge)
 4. 4a: hub pages Home, Daily, You
 5. 4b: Timetable, Upcoming (Japanese clock), Reminders, Deadlines pages
 6. 4c: Settings and Customize pages
@@ -88,6 +89,20 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
   The windows those lines open (periodic table, calculator, dictionary, Bible, koi book, fishing, delay picker, study
   books) are sent as commands the window side doesn't handle yet.
 
+- **Stage 3e (latest):** study.rs, zenko8's study smarts. study_tick (1 s, after tick_1s records the window) with
+  study_classify / study_context_subject (override, notebook page, learned windows, classify_subject, sites, planned
+  sessions, study apps/hints), study_commit -> slog/dlog/hourlog/unsorted, study_flush every 60 s (credit_minutes ->
+  planned session auto_s and the 70% tick-off, or studied[exam]) + study_tidy, the "studying Bio?" ask with one-tap
+  subject buttons (study_sort learns the window and its words), exam_for/planned_now/log_study, the reports
+  (subject_minutes, best_hours, best_time_text, distraction_report, week_report, recap_text), study_slow every 30 s
+  (study_missed with the re-plan note, the 21:00 recap, weak-subject alert, golden hour, "25 min X" buttons),
+  conjugate_fr and study_route (I'm studying X / switch to, stop studying, what am I studying, logging hours,
+  goals, recap, reports, notebook, test me, flashcards from notes; eli12 gives her "thinking" line and an
+  `nb_ask:` command for the brains). Per-second commits wait in a queue that read_json("zenko_life.json") applies
+  and the next save writes, like zenko.py's in-memory life saved once a minute.
+  Fixed on the way: badges (and tier-ups) now also go into the chat log 2.5 s later (zenko.py's award does
+  say + gift beep + chat_line; Rust only said it).
+
 ## Architecture decisions (settled)
 - **Logic lives in the library.** zenko-desktop lib = platform-free logic, tested on Linux. src/main.rs and the Windows-only modules (gdi, bubble, menu, panel, dialog, tkw, eat) handle the Win32 side.
 - **The library never calls the OS.** Companion emits `Ev` events (Say, Beep, Ui, Command). The window side feeds it `Env` (work area, idle time, dragging) and reads `win_move`.
@@ -122,6 +137,7 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 | Markdown/LaTeX/chemistry segments (52 cases) | zenko.py's md_segments, `tools/make_golden_md.py` |
 | Offline chat: 147 lines (replies incl. fox voice, brain hand-offs, check-in/breathing, session/break state, emas, timetable) + 3 ema ticks | Zenko23.chat_send with seeded random, `tools/make_golden_chat.py` |
 | Planner + emas that plan themselves: 23 steps (replies, bubbles + buttons, whole timetable, plan_short/ema_short, deadline ids) | zenko.py with deadlines.json + free time, `tools/make_golden_plan.py` |
+| Study tracker + study chat: 112 steps (window ticks, taps, study_slow, chat; lines, bubbles + buttons, commands, slog/dlog/hourlog/unsorted/win_subj/subj_words/goals/studied/said, timetable, self.st, deadline ids) | zenko.py with deadlines, timetable and study history set up, `tools/make_golden_study.py` |
 | Version routes, Exercise, study books: 127 lines (replies, bubbles, what opens, IB tasks, rules, gym, timetable, grades, session, bedtime) | zenko.py with screen time/garden/stats/browser link set up, `tools/make_golden_routes.py` |
 
 ## Open problems
@@ -133,20 +149,21 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 - Not ported yet: the Spotify account (tablet buttons use media keys, like zenko.py without an account), her VOICEVOX
   read-aloud (she does her "kon kon~" clip instead, as zenko.py does when VOICEVOX is off), piper voices, plan_maybe (ema auto-planning), z18_init's one-time move
   of old chat reminders onto the ema rack.
-- Chat routes still to port, in zenko.py's order: quiz, study_route (needs zenko8's study tick: subject override,
-  log_study, recap, reports, goals, conjugate_fr, review), the rest of life_route (homework...), extra_route (pomodoro,
-  notes, todos, calc, fortune...), app_route, deadline_route, battery, screen, music, notes, web. Until then such lines
-  can land on a later core route or the no-brain reply.
-- Not ported: zenko8's study tick (auto subject tracking), screen_tick (screen time recording; the summary reads what
-  zenko.py recorded), study_missed (missed-session replanning), deadline_reminders, the food lookup online (an unknown
+- Chat routes still to port, in zenko.py's order: quiz (quiz_answer first, review_start / "review my mistakes"),
+  the rest of life_route (homework...), extra_route (pomodoro, notes, todos, calc, fortune...), app_route,
+  deadline_route, battery, screen, music, notes, web. Until then such lines can land on a later core route or the
+  no-brain reply. study_maybe_ask doesn't see a running quiz yet (quiz_on() is false).
+- Not ported: screen_tick (screen time recording; the summary reads what zenko.py recorded), deadline_reminders,
+  books_slow (bedtime guard, burnout line, water nudge), the food lookup online (an unknown
   food answers like a failed lookup), the Exercise tab's own early tick that fills today's food list.
   The smart brains (Ollama, online), web lookups, Mic/Talk/Image/Screen buttons and attachments are not ported.
 - The rewards test doesn't replay the 5 s follow-up badge check (in these cases it awards nothing in Python either).
 
 ## Next recommended task
-zenko8's study tick + study_route (12388, 12932), then life_route's rest (10330), extra_route (7876, pomodoro ->
+Stage 3f: life_route's rest (10330), extra_route (7876, pomodoro ->
 `pomo_start`), app_route (25359), deadline_route (25097), battery, notes_route (24723), each appended to
-tools/make_golden_routes.py's CONVO (seeds go by index). Then study_missed, focus glow (37653), Ctrl K, and the hub
+tools/make_golden_routes.py's CONVO (seeds go by index), plus the quiz (quiz_start 7700s, quiz_answer 9488,
+review_start 9537). Then focus glow (37653), Ctrl K, and the hub
 pages one by one (each: a golden dump with tools/make_golden_page.py's walk(), then the Rust tree checked against it).
 
 ## Gotchas
@@ -158,4 +175,7 @@ pages one by one (each: a golden dump with tools/make_golden_page.py's walk(), t
 - make_golden_plan.py / make_golden_routes.py stub the other timers on the class (study_missed, deadline_reminders,
   check_timetable, update_tick, journey_check, z22_badge_check, _life_slow) and point FOX_FOOD_BASE at a dead port.
   Copy Python lists/dicts (json round trip) before recording them: later lines mutate them in place.
+- make_golden_study.py also stubs `tick` (the app's own 1 s tick would overwrite _last_fg with the empty Xvfb
+  window), `books_slow_tick` and `study_slow_tick`, pins time.monotonic, and sleeps 2.7 s per step so badges'
+  after(2500) land on their own step.
 - Cross-compile with `cargo build --release --target x86_64-pc-windows-gnu`.
