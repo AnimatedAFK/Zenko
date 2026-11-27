@@ -1,7 +1,7 @@
 # Rust rewrite progress
 
 Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.md. Rules: RULES.md.
-368 of 1,798 zenko.py items ported (`python3 tools/audit_inventory.py`).
+402 of 1,798 zenko.py items ported (`python3 tools/audit_inventory.py`).
 
 ## Done
 - **Stage 1:** crates/zenko-art is an exact port of the sprite engine.
@@ -57,6 +57,20 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
   Enter/Send, chips, wheel 3 lines a notch, scrollbar drag/page, Mute, hello line on an empty chat).
   Fixed: learned.json's setdefault order (replies, sessions, distractions).
 
+- **Stage 3d (latest):** the chat router's version routes and the planner, each checked line for line against zenko.py.
+  ema.rs (zenko18 ema rack: ema_parse/when/left, add/list/move/rename/done/snooze/remove, ringing every 5 s, daily
+  repeats; timetable add/next/today), plan.rs (plan_targets from deadlines.json, replan, half-hour plan_study_slots,
+  plan_maybe from the 30 s tick, zenko23 emas that plan themselves: z23_ema_task, z23_plan_emas, the 0.9 s announce
+  with its "Don't plan this one" button, noplan, "X takes N", "plan my emas", Town square line), z22.rs (fishing, koi
+  book, passport, badges, square, Zenko Browser link), routes17.rs (z17 periodic table/calculator/dictionary/Bible refs
+  + close/keep rules, z15 screen time read side/map/updates/pause, ib_route IA/EE/TOK words/limits/due dates/exam
+  countdown, garden + delay-picker lines), gym.rs (weight + trend, food table with food_find/food_estimate/food_sane,
+  water, split day, sleep, workout), books.rs (急 delay with undo / I'm back / bubble buttons, grades from text,
+  books, bedtime, vision download line, bio facts, English tips). data/routes.json from tools/gen_routes_data.py.
+  Start-up now runs z21_migrate_free (whole free hours become half hours), like zenko.py.
+  The windows those lines open (periodic table, calculator, dictionary, Bible, koi book, fishing, delay picker, study
+  books) are sent as commands the window side doesn't handle yet.
+
 ## Architecture decisions (settled)
 - **Logic lives in the library.** zenko-desktop lib = platform-free logic, tested on Linux. src/main.rs and the Windows-only modules (gdi, bubble, menu, panel, dialog, tkw, eat) handle the Win32 side.
 - **The library never calls the OS.** Companion emits `Ev` events (Say, Beep, Ui, Command). The window side feeds it `Env` (work area, idle time, dragging) and reads `win_move`.
@@ -89,7 +103,9 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 | Text widget: every display line, dlineinfo/bbox, yview after see/font changes | Real Tk (golden/hub_pages.json "texts", `tools/make_golden_page.py`) |
 | Chat page: whole widget tree in 4 cases, restored + typed replies, 14 wheel/scrollbar steps, thumb items | Real zenko.py's Ask Zenko page, same tool |
 | Markdown/LaTeX/chemistry segments (52 cases) | zenko.py's md_segments, `tools/make_golden_md.py` |
-| Offline chat: 115 lines (replies incl. fox voice, brain hand-offs, check-in/breathing, session/break state) | Zenko23.chat_send with seeded random, `tools/make_golden_chat.py` |
+| Offline chat: 147 lines (replies incl. fox voice, brain hand-offs, check-in/breathing, session/break state, emas, timetable) + 3 ema ticks | Zenko23.chat_send with seeded random, `tools/make_golden_chat.py` |
+| Planner + emas that plan themselves: 23 steps (replies, bubbles + buttons, whole timetable, plan_short/ema_short, deadline ids) | zenko.py with deadlines.json + free time, `tools/make_golden_plan.py` |
+| Version routes, Exercise, study books: 127 lines (replies, bubbles, what opens, IB tasks, rules, gym, timetable, grades, session, bedtime) | zenko.py with screen time/garden/stats/browser link set up, `tools/make_golden_routes.py` |
 
 ## Open problems
 - Nothing has run on real Windows yet (Wine is broken here). The bubble, menu, panel, dialog and pounce still need screenshots from the user.
@@ -100,18 +116,21 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 - Not ported yet: the Spotify account (tablet buttons use media keys, like zenko.py without an account), her VOICEVOX
   read-aloud (she does her "kon kon~" clip instead, as zenko.py does when VOICEVOX is off), piper voices, plan_maybe (ema auto-planning), z18_init's one-time move
   of old chat reminders onto the ema rack.
-- Chat routes still to port, in zenko.py's order: quiz, gym_route's chain (z23 ema plan/square, z22 fishing/passport/
-  badges, z18, z17, z16's rest, z15, ib_route, garden), books, study, the rest of life_route (homework...), extras
-  (pomodoro, reminders, notes...), apps, deadlines, battery, screen, music, notes, web, timetable add/next/agenda. Until
-  then such lines can land on a later core route (e.g. "start a pomodoro" starts a plain session) or the no-brain reply.
+- Chat routes still to port, in zenko.py's order: quiz, study_route (needs zenko8's study tick: subject override,
+  log_study, recap, reports, goals, conjugate_fr, review), the rest of life_route (homework...), extra_route (pomodoro,
+  notes, todos, calc, fortune...), app_route, deadline_route, battery, screen, music, notes, web. Until then such lines
+  can land on a later core route or the no-brain reply.
+- Not ported: zenko8's study tick (auto subject tracking), screen_tick (screen time recording; the summary reads what
+  zenko.py recorded), study_missed (missed-session replanning), deadline_reminders, the food lookup online (an unknown
+  food answers like a failed lookup), the Exercise tab's own early tick that fills today's food list.
   The smart brains (Ollama, online), web lookups, Mic/Talk/Image/Screen buttons and attachments are not ported.
 - The rewards test doesn't replay the 5 s follow-up badge check (in these cases it awards nothing in Python either).
 
 ## Next recommended task
-The rest of the chat router, route by route in zenko.py's order (see Open problems; extra_route at 7876 has
-pomodoro -> `pomo_start`), each added to tools/make_golden_chat.py's CONVO (append only: seeds are per index). Then
-ema auto-planning (plan_maybe), focus glow (37653), Ctrl K, and the study pages one by one (each: a golden dump with
-tools/make_golden_page.py's walk(), then the Rust tree checked against it).
+zenko8's study tick + study_route (12388, 12932), then life_route's rest (10330), extra_route (7876, pomodoro ->
+`pomo_start`), app_route (25359), deadline_route (25097), battery, notes_route (24723), each appended to
+tools/make_golden_routes.py's CONVO (seeds go by index). Then study_missed, focus glow (37653), Ctrl K, and the hub
+pages one by one (each: a golden dump with tools/make_golden_page.py's walk(), then the Rust tree checked against it).
 
 ## Gotchas
 - The repo root has a tracked `__pycache__/`. Never delete it, and run Python with bytecode writing turned off.
@@ -119,4 +138,7 @@ tools/make_golden_page.py's walk(), then the Rust tree checked against it).
 - make_golden_chat.py sleeps 0.25 s per line so after(200) actions land on their own line, and records the session's
   elapsed time before each line ("pre"); the Rust test sets it. Python's chat_log must be kept (the page greets an
   empty log).
+- make_golden_plan.py / make_golden_routes.py stub the other timers on the class (study_missed, deadline_reminders,
+  check_timetable, update_tick, journey_check, z22_badge_check, _life_slow) and point FOX_FOOD_BASE at a dead port.
+  Copy Python lists/dicts (json round trip) before recording them: later lines mutate them in place.
 - Cross-compile with `cargo build --release --target x86_64-pc-windows-gnu`.

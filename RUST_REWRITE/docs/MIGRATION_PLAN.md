@@ -80,8 +80,8 @@ order is kept where it changes the result (tail outlines, eye cells).
 | Session rewards | garden growth, journey minutes, badges, hunger after a session or lock-in, timetable marking, pomodoro, music hooks | **all done** (byte-for-byte vs zenko.py), except the Spotify-account music hooks |
 | Hub shell | sidebar with pixel icons, rearrange, accents, text scaling, themed scrollbars, Ctrl+K search, page transitions, living sidebar fox | **window frame, sidebar sky + menu, living fox, stars/particles, tips, status, drag/resize/buttons, text re-fit done**; page slide, Ctrl+K palette, focus glow, scrollbars to do |
 | Home, Daily, You | streak, mood/hunger, 61 badges, check-ins, journal | |
-| Timetable, Upcoming, Japanese clock, planner, reminders rack | free hours, half-hour slots, plan/replan, countdowns, emas that auto-plan, PDF export | |
-| Chat + brain | commands, shorthand learning, her voice, Ollama local models, online brain (Gemini) with IB-terms recheck, web search + summaries, Markdown/LaTeX, screenshot reading | |
+| Timetable, Upcoming, Japanese clock, planner, reminders rack | free hours, half-hour slots, plan/replan, countdowns, emas that auto-plan, PDF export | **planner, ema rack, emas that auto-plan done** (pages to do) |
+| Chat + brain | commands, shorthand learning, her voice, Ollama local models, online brain (Gemini) with IB-terms recheck, web search + summaries, Markdown/LaTeX, screenshot reading | **offline router about half done** (core, version routes, Exercise, books); brains/web to do |
 | Study | Notebook tutor, Notes scratchpad + folder import, Books + practice, IA/EE/TOK, grades, flashcards/SRS, pop quizzes | |
 | Tool windows | periodic table, French dictionary, Casio CG50 calculator, Bible with Greek/Hebrew lexicon | |
 | Exercise | 3-day split, pixel muscle map, weight, calories, food lookup, gym look | |
@@ -121,7 +121,9 @@ order is kept where it changes the result (tail outlines, eye cells).
    Stage 3c done: page switching with the vertical slide, the Tk text widget, Markdown/LaTeX, the Ask Zenko page and
    the offline chat router's core (help, sessions, breaks, check-in, breathing, teach/forget, shorthand, poses, tips,
    jokes, lore), all checked against zenko.py.
-   **Next:** the rest of the chat routes, ema auto-planning, focus glow, Ctrl K, then hub pages one at a time (Home, Timetable/Upcoming, Settings/Customize first, then the rest), each compared with Python.
+   Stage 3d done: ema reminders, the study planner with emas that plan themselves, and the version routes (z23, z22,
+   z18, z17, z16, z15, ib, garden, Exercise, study books), all checked against zenko.py.
+   **Next:** study tracking + study_route, the remaining routes (life, extras, apps, deadlines, notes), focus glow, Ctrl K, then hub pages one at a time (Home, Timetable/Upcoming, Settings/Customize first, then the rest), each compared with Python.
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.
 6. Speed (Phase 5): image cache and native code are already in; measure and tune at the end.
 
