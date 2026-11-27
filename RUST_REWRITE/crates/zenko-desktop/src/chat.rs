@@ -687,6 +687,9 @@ impl Companion {
             return Some(format!("Temperatures will be shown in \u{b0}{u}."));
         }
         // gym_route (zenko19's poses and outfits come first; the other versions' commands are not ported yet)
+        if let Some(r) = self.z23_route(now, text) {
+            return Some(r);
+        }
         if let Some(r) = self.z19_route(now, text, win) {
             return Some(r);
         }

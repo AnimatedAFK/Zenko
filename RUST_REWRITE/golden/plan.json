@@ -1,0 +1,4691 @@
+[
+{
+"deadlines": [
+{
+"id": "aa01",
+"title": "Chemistry exam",
+"kind": "Exam",
+"date": "2025-12-14",
+"time": "09:00"
+},
+{
+"title": "Bio essay",
+"kind": "Assignment",
+"date": "2025-12-16"
+},
+{
+"id": "d0",
+"title": "Far exam",
+"kind": "Exam",
+"date": "2026-02-09"
+},
+{
+"id": "x1",
+"title": "Done quiz",
+"kind": "Quiz",
+"date": "2025-12-13",
+"done": true
+},
+{
+"id": "q1",
+"title": "Maths quiz",
+"kind": "Quiz",
+"date": "2025-12-12",
+"time": "14:30"
+},
+{
+"id": "c1",
+"title": "Club",
+"kind": "Event",
+"date": "2025-12-13"
+}
+],
+"life": {
+"free_dates": {
+"2025-12-12": [
+15.5,
+16,
+16.5,
+17,
+19
+]
+},
+"plan_hours": {
+"q1": 1.5
+},
+"studied": {
+"aa01": 60
+}
+},
+"now": 1765440000.0
+},
+{
+"q": "plan my emas",
+"now": 1765440600.0,
+"out": [
+[
+"line",
+"You",
+"plan my emas"
+],
+[
+"line",
+"Fox",
+"None of your emas look like homework to plan~ Hang one like 'finish bio IA draft by friday'."
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+}
+],
+"plan_short": {},
+"ema_short": {},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "remind me to finish bio IA by saturday",
+"now": 1765441200.0,
+"out": [
+[
+"line",
+"You",
+"remind me to finish bio IA by saturday"
+],
+[
+"line",
+"Fox",
+"Kon! Hung an ema: “Finish bio ia” · Sat 8:00 AM (in 2 days). I'll say it out loud then~"
+],
+[
+"say",
+"Uu~ I couldn't find free time for “Finish bio ia” before it's due. Mark more free hours on the Upcoming clock?",
+[]
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c7edf800b18": 120
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "remind me to revise chem tomorrow",
+"now": 1765441800.0,
+"out": [
+[
+"line",
+"You",
+"remind me to revise chem tomorrow"
+],
+[
+"line",
+"Fox",
+"Waai~ Hung an ema: “Revise chem” · Tomorrow 8:00 AM (in 24 h). I'll say it out loud then~"
+],
+[
+"say",
+"Uu~ I couldn't find free time for “Revise chem” before it's due. Mark more free hours on the Upcoming clock?",
+[]
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c8807400036": 60,
+"ema:19b0c7edf800b18": 120
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "remind me to call mum at 6pm",
+"now": 1765442400.0,
+"out": [
+[
+"line",
+"You",
+"remind me to call mum at 6pm"
+],
+[
+"line",
+"Fox",
+"Yatta! Hung an ema: “Call mum” · Today 6:00 PM (in 9 h 20 min). I'll say it out loud then~"
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c8807400036": 60,
+"ema:19b0c7edf800b18": 120
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "remind me to study french at 5pm",
+"now": 1765443000.0,
+"out": [
+[
+"line",
+"You",
+"remind me to study french at 5pm"
+],
+[
+"line",
+"Fox",
+"Yatta! Hung an ema: “Study french” · Today 5:00 PM (in 8 h 10 min). I'll say it out loud then~"
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c8807400036": 60,
+"ema:19b0c7edf800b18": 120
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "remind me to do math homework",
+"now": 1765443600.0,
+"out": [
+[
+"line",
+"You",
+"remind me to do math homework"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Hung an ema: “Do math homework” (no time yet). Want me to say it at a time? Say 'move do math to 6pm'~"
+],
+[
+"say",
+"I planned 45m for “Do math homework”: Sat 4:30 PM, Sun 2:00 PM~",
+[
+"Looks good",
+"Don't plan this one"
+]
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Do math homework",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0ca37e80e697",
+"ema": "19b0ca37e80e697"
+},
+{
+"task": "Ema: Do math homework",
+"start": "14:00",
+"mins": 20,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0ca37e80e697",
+"ema": "19b0ca37e80e697"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c8807400036": 60,
+"ema:19b0c7edf800b18": 120
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "remind me to read chapter 4 for 2 hours",
+"now": 1765444200.0,
+"out": [
+[
+"line",
+"You",
+"remind me to read chapter 4 for 2 hours"
+],
+[
+"line",
+"Fox",
+"Kon! Hung an ema: “Read chapter 4 for 2 hours” (no time yet). Want me to say it at a time? Say 'move read chapter to 6pm'~"
+],
+[
+"say",
+"I planned 2h for “Read chapter 4 for 2 hours”: Sat 4:30 PM, Sun 2:00 PM, Sun 4:00 PM~",
+[
+"Looks good",
+"Don't plan this one"
+]
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Do math homework",
+"start": "15:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0ca37e80e697",
+"ema": "19b0ca37e80e697"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c8807400036": 60,
+"ema:19b0c7edf800b18": 120
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "plan my emas",
+"now": 1765444800.0,
+"out": [
+[
+"line",
+"You",
+"plan my emas"
+],
+[
+"line",
+"Fox",
+"Kon! Here's when I fit your emas in:\n• Study french: kept Today 5:00 PM free for it\n• Call mum: kept Today 6:00 PM free for it\n• Revise chem: no free time left before it's due\n• Finish bio ia: no free time left before it's due\n• Do math homework (45m): Sun 3:00 PM\n• Read chapter 4 for 2 hours (2h): Sat 4:30 PM, Sun 2:00 PM, Sun 4:00 PM\n(I used my guess of your free time. Mark the real one on the Upcoming clock.)"
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Do math homework",
+"start": "15:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0ca37e80e697",
+"ema": "19b0ca37e80e697"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c8807400036": 60,
+"ema:19b0c7edf800b18": 120
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "bio IA takes 3 hours",
+"now": 1765445400.0,
+"out": [
+[
+"line",
+"You",
+"bio IA takes 3 hours"
+],
+[
+"line",
+"Fox",
+"Sugoi! Got it, 3h for “Finish bio ia”."
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Do math homework",
+"start": "15:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0ca37e80e697",
+"ema": "19b0ca37e80e697"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c8807400036": 60,
+"ema:19b0c7edf800b18": 180
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "don't plan revise chem",
+"now": 1765446000.0,
+"out": [
+[
+"line",
+"You",
+"don't plan revise chem"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Okay, I won't plan time for “Revise chem”~"
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Do math homework",
+"start": "15:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0ca37e80e697",
+"ema": "19b0ca37e80e697"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c7edf800b18": 180
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "when should i do my homework",
+"now": 1765446600.0,
+"out": [
+[
+"line",
+"You",
+"when should i do my homework"
+],
+[
+"line",
+"Fox",
+"Kon! Here's when I fit your emas in:\n• Study french: kept Today 5:00 PM free for it\n• Call mum: kept Today 6:00 PM free for it\n• Finish bio ia: no free time left before it's due\n• Do math homework (45m): Sun 3:00 PM\n• Read chapter 4 for 2 hours (2h): Sat 4:30 PM, Sun 2:00 PM, Sun 4:00 PM\n(I used my guess of your free time. Mark the real one on the Upcoming clock.)"
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Do math homework",
+"start": "15:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0ca37e80e697",
+"ema": "19b0ca37e80e697"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c7edf800b18": 180
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "math homework takes half an hour",
+"now": 1765447200.0,
+"out": [
+[
+"line",
+"You",
+"math homework takes half an hour"
+],
+[
+"line",
+"Fox",
+"Waai~ Got it, 30m for “Do math homework”. Planned: Sun 4:00 PM"
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "15:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Do math homework",
+"start": "16:00",
+"mins": 30,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0ca37e80e697",
+"ema": "19b0ca37e80e697"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c7edf800b18": 180
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "town square",
+"now": 1765447800.0,
+"out": [
+[
+"line",
+"You",
+"town square"
+],
+[
+"hub",
+"square"
+],
+[
+"line",
+"Fox",
+"Yatta! To the winter lantern festival~ (冬祭り)"
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "15:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Do math homework",
+"start": "16:00",
+"mins": 30,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0ca37e80e697",
+"ema": "19b0ca37e80e697"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c7edf800b18": 180
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "festival",
+"now": 1765448400.0,
+"out": [
+[
+"line",
+"You",
+"festival"
+],
+[
+"hub",
+"square"
+],
+[
+"line",
+"Fox",
+"Kon! To the winter lantern festival~ (冬祭り)"
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "15:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Do math homework",
+"start": "16:00",
+"mins": 30,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0ca37e80e697",
+"ema": "19b0ca37e80e697"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c7edf800b18": 180
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "mark math homework as done",
+"now": 1765449000.0,
+"out": [
+[
+"line",
+"You",
+"mark math homework as done"
+],
+[
+"line",
+"Fox",
+"Yatta! “Do math homework” is fulfilled~ ✓"
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "15:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c7edf800b18": 180
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "chapter 4 takes about 45 min",
+"now": 1765449600.0,
+"out": [
+[
+"line",
+"You",
+"chapter 4 takes about 45 min"
+],
+[
+"line",
+"Fox",
+"Waai~ Got it, 45m for “Read chapter 4 for 2 hours”. Planned: Sat 4:30 PM, Sun 2:00 PM"
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "11:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "14:00",
+"mins": 20,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c7edf800b18": 180
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "@day",
+"now": 1765536000.0,
+"out": [],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "15:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Study french",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0c9a56c002a4",
+"ema": "19b0c9a56c002a4"
+},
+{
+"task": "Ema: Study french",
+"start": "16:00",
+"mins": 35,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0c9a56c002a4",
+"ema": "19b0c9a56c002a4"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+}
+],
+"plan_short": {
+"q1": 90
+},
+"ema_short": {
+"ema:19b0c7edf800b18": 180
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "plan my emas",
+"now": 1765536600.0,
+"out": [
+[
+"line",
+"You",
+"plan my emas"
+],
+[
+"line",
+"Fox",
+"Kon! Here's when I fit your emas in:\n• Study french (1h): tomorrow 4:30 PM, Sun 4:00 PM\n• Finish bio ia: no free time left before it's due\n• Read chapter 4 for 2 hours (45m): Mon 4:00 PM\n(I used my guess of your free time. Mark the real one on the Upcoming clock.)"
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "15:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Study french",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0c9a56c002a4",
+"ema": "19b0c9a56c002a4"
+},
+{
+"task": "Ema: Study french",
+"start": "16:00",
+"mins": 35,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0c9a56c002a4",
+"ema": "19b0c9a56c002a4"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+}
+],
+"plan_short": {
+"q1": 90
+},
+"ema_short": {
+"ema:19b0c7edf800b18": 180
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "please plan my tasks",
+"now": 1765537200.0,
+"out": [
+[
+"line",
+"You",
+"please plan my tasks"
+],
+[
+"line",
+"Fox",
+"Kon! Here's when I fit your emas in:\n• Study french (1h): tomorrow 4:30 PM, Sun 4:00 PM\n• Finish bio ia: no free time left before it's due\n• Read chapter 4 for 2 hours (45m): Mon 4:00 PM\n(I used my guess of your free time. Mark the real one on the Upcoming clock.)"
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "15:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Study french",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0c9a56c002a4",
+"ema": "19b0c9a56c002a4"
+},
+{
+"task": "Ema: Study french",
+"start": "16:00",
+"mins": 35,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0c9a56c002a4",
+"ema": "19b0c9a56c002a4"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+}
+],
+"plan_short": {
+"q1": 90
+},
+"ema_short": {
+"ema:19b0c7edf800b18": 180
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "remind me to write the TOK essay",
+"now": 1765537800.0,
+"out": [
+[
+"line",
+"You",
+"remind me to write the TOK essay"
+],
+[
+"line",
+"Fox",
+"Hung an ema: “Write the tok essay” (no time yet). Want me to say it at a time? Say 'move write tok to 6pm'~"
+],
+[
+"say",
+"I planned 1h 40m for “Write the tok essay”: Mon 4:00 PM, Mon 5:00 PM~",
+[
+"Looks good",
+"Don't plan this one"
+]
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Chemistry exam",
+"start": "16:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "15:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Study french",
+"start": "16:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "ema:19b0c9a56c002a4",
+"ema": "19b0c9a56c002a4"
+},
+{
+"task": "Ema: Study french",
+"start": "16:00",
+"mins": 35,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0c9a56c002a4",
+"ema": "19b0c9a56c002a4"
+},
+{
+"task": "Ema: Write the tok essay",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b1240df404f25",
+"ema": "19b1240df404f25"
+},
+{
+"task": "Ema: Write the tok essay",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b1240df404f25",
+"ema": "19b1240df404f25"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "18:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+}
+],
+"plan_short": {
+"q1": 90
+},
+"ema_short": {
+"ema:19b0c7edf800b18": 180,
+"ema:19b1240df404f25": 20
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "@day",
+"now": 1765624200.0,
+"out": [],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "16:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Finish bio ia",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "ema:19b0c7edf800b18",
+"ema": "19b0c7edf800b18"
+},
+{
+"task": "Ema: Finish bio ia",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b0c7edf800b18",
+"ema": "19b0c7edf800b18"
+},
+{
+"task": "Ema: Finish bio ia",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b0c7edf800b18",
+"ema": "19b0c7edf800b18"
+},
+{
+"task": "Ema: Study french",
+"start": "19:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b0c9a56c002a4",
+"ema": "19b0c9a56c002a4"
+},
+{
+"task": "Ema: Write the tok essay",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-16",
+"done": [],
+"plan": "ema:19b1240df404f25",
+"ema": "19b1240df404f25"
+},
+{
+"task": "Ema: Write the tok essay",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-16",
+"done": [],
+"plan": "ema:19b1240df404f25",
+"ema": "19b1240df404f25"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "18:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-16",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+}
+],
+"plan_short": {
+"aa01": 125
+},
+"ema_short": {
+"ema:19b0c9a56c002a4": 10,
+"ema:19b0c7edf800b18": 30,
+"ema:19b1240df404f25": 20
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "@day",
+"now": 1765710600.0,
+"out": [],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "11:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "17:00",
+"mins": 15,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Finish bio ia",
+"start": "17:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b0c7edf800b18",
+"ema": "19b0c7edf800b18"
+},
+{
+"task": "Ema: Finish bio ia",
+"start": "18:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b0c7edf800b18",
+"ema": "19b0c7edf800b18"
+},
+{
+"task": "Ema: Write the tok essay",
+"start": "19:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b1240df404f25",
+"ema": "19b1240df404f25"
+},
+{
+"task": "Ema: Finish bio ia",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-16",
+"done": [],
+"plan": "ema:19b0c7edf800b18",
+"ema": "19b0c7edf800b18"
+},
+{
+"task": "Ema: Study french",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-16",
+"done": [],
+"plan": "ema:19b0c9a56c002a4",
+"ema": "19b0c9a56c002a4"
+},
+{
+"task": "Ema: Write the tok essay",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-16",
+"done": [],
+"plan": "ema:19b1240df404f25",
+"ema": "19b1240df404f25"
+},
+{
+"task": "Ema: Finish bio ia",
+"start": "19:00",
+"mins": 30,
+"daily": false,
+"date": "2025-12-16",
+"done": [],
+"plan": "ema:19b0c7edf800b18",
+"ema": "19b0c7edf800b18"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-17",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Write the tok essay",
+"start": "17:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-17",
+"done": [],
+"plan": "ema:19b1240df404f25",
+"ema": "19b1240df404f25"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c9a56c002a4": 10
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+},
+{
+"q": "plan my emas",
+"now": 1765711200.0,
+"out": [
+[
+"line",
+"You",
+"plan my emas"
+],
+[
+"line",
+"Fox",
+"Kon! Here's when I fit your emas in:\n• Study french (50m): Tue 5:00 PM\n• Finish bio ia (3h): tomorrow 5:30 PM, tomorrow 6:30 PM, Tue 4:00 PM\n• Read chapter 4 for 2 hours (45m): Wed 4:00 PM\n• Write the tok essay (2h): tomorrow 7:30 PM, Tue 6:00 PM, Wed 5:00 PM\n(I used my guess of your free time. Mark the real one on the Upcoming clock.)"
+]
+],
+"tt": [
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Maths quiz",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Review: Maths quiz",
+"start": "19:00",
+"mins": 40,
+"daily": false,
+"date": "2025-12-11",
+"done": [],
+"plan": "q1"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "19:00",
+"mins": 25,
+"daily": false,
+"date": "2025-12-12",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "11:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Chemistry exam",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-13",
+"done": [],
+"plan": "aa01"
+},
+{
+"task": "Study: Bio essay",
+"start": "10:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "11:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "11:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "14:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "15:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-14",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Study: Bio essay",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Review: Bio essay",
+"start": "17:00",
+"mins": 15,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "c72ce1456"
+},
+{
+"task": "Ema: Finish bio ia",
+"start": "17:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b0c7edf800b18",
+"ema": "19b0c7edf800b18"
+},
+{
+"task": "Ema: Finish bio ia",
+"start": "18:30",
+"mins": 50,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b0c7edf800b18",
+"ema": "19b0c7edf800b18"
+},
+{
+"task": "Ema: Write the tok essay",
+"start": "19:30",
+"mins": 25,
+"daily": false,
+"date": "2025-12-15",
+"done": [],
+"plan": "ema:19b1240df404f25",
+"ema": "19b1240df404f25"
+},
+{
+"task": "Ema: Finish bio ia",
+"start": "16:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-16",
+"done": [],
+"plan": "ema:19b0c7edf800b18",
+"ema": "19b0c7edf800b18"
+},
+{
+"task": "Ema: Study french",
+"start": "17:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-16",
+"done": [],
+"plan": "ema:19b0c9a56c002a4",
+"ema": "19b0c9a56c002a4"
+},
+{
+"task": "Ema: Write the tok essay",
+"start": "18:00",
+"mins": 50,
+"daily": false,
+"date": "2025-12-16",
+"done": [],
+"plan": "ema:19b1240df404f25",
+"ema": "19b1240df404f25"
+},
+{
+"task": "Ema: Finish bio ia",
+"start": "19:00",
+"mins": 30,
+"daily": false,
+"date": "2025-12-16",
+"done": [],
+"plan": "ema:19b0c7edf800b18",
+"ema": "19b0c7edf800b18"
+},
+{
+"task": "Ema: Read chapter 4 for 2 hours",
+"start": "16:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-17",
+"done": [],
+"plan": "ema:19b0caca640c95e",
+"ema": "19b0caca640c95e"
+},
+{
+"task": "Ema: Write the tok essay",
+"start": "17:00",
+"mins": 45,
+"daily": false,
+"date": "2025-12-17",
+"done": [],
+"plan": "ema:19b1240df404f25",
+"ema": "19b1240df404f25"
+}
+],
+"plan_short": {},
+"ema_short": {
+"ema:19b0c9a56c002a4": 10
+},
+"deadline_ids": [
+"q1",
+"x1",
+"c1",
+"aa01",
+"c72ce1456",
+"d0"
+]
+}
+]

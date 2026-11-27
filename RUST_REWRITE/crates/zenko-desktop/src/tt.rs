@@ -324,6 +324,7 @@ impl Companion {
                 }
             }
         });
+        self.z23_after_change();
     }
 
     /// pomo_start(work, brk, rounds): from chat ("pomodoro 25 5 4")

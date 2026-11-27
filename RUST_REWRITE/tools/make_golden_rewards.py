@@ -84,6 +84,7 @@ def make(cfg, extra):
     o.life_init()
     o.study_init()
     o.books_init()
+    o.z21_migrate_free()
     o.z22_migrate()
     return o
 

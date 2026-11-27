@@ -16,7 +16,7 @@ fn chat_matches_zenko_py() {
     std::fs::create_dir_all(&d).unwrap();
     unsafe { std::env::set_var("APPDATA", &d) };
     zenko_desktop::set_fake_now(Some(g[0]["now"].as_f64().unwrap()));
-    let mut fox = Companion::new(Cfg::from(json!({"robe": "none"})), 1.0, 1000.0);
+    let mut fox = Companion::new(Cfg::from(json!({"robe": "none", "ema_plan": false})), 1.0, 1000.0);
     let mut bad = vec![];
     let emas = |fox: &Companion| -> Value {
         Value::Array(fox.ema_list().iter().map(|e| json!([e["text"], e["at"], e["repeat"], e["done"], e["rang"]])).collect())

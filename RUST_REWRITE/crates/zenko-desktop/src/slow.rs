@@ -200,6 +200,7 @@ impl Companion {
         if self.slow.started == 0.0 {
             self.slow_init(now - 6.0);
         }
+        self.plan_maybe();
         self.music_apply();
         if self.env.idle > 120.0 || self.lockin.is_some() || self.brk.is_some() {
             return;

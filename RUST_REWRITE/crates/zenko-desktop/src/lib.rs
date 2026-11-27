@@ -35,6 +35,7 @@ pub mod tktext;
 pub mod chatpage;
 pub mod chat;
 pub mod ema;
+pub mod plan;
 pub mod chat_data;
 pub mod pydifflib;
 pub mod mdtext;
@@ -446,6 +447,8 @@ pub struct Companion {
     pub chat_log: Vec<(String, String)>,
     /// her chat brain's state (chat.rs)
     pub brain: chat::Brain,
+    /// the study planner's state (plan.rs)
+    pub planner: plan::Planner,
     /// how many lines chat_line has ever added (the chat page types the new ones)
     pub chat_n: u64,
     /// the hub page on show while the hub window is open and not minimised (gym_look_on, the sidebar fox)
@@ -509,6 +512,7 @@ impl Companion {
             batt_at: (0, 0, false),
             slow: Default::default(),
             chat_log: vec![],
+            planner: plan::Planner::default(),
             brain: chat::Brain::new(now.to_bits()),
             chat_n: 0,
             hub_page: None,
@@ -1235,4 +1239,9 @@ pub fn fill(out: &mut Frame, x0: i32, y0: i32, w: i32, h: i32, c: [u8; 3]) {
 
 pub fn is_robe_name(a: &str) -> bool {
     is_robe(a)
+}
+
+/// tests: change zenko_life.json the way the app does
+pub fn test_life_do(fox: &mut Companion, f: impl FnOnce(&mut Value)) {
+    fox.life_do(f)
 }

@@ -84,6 +84,15 @@ fn ensure(l: &mut Value, rand: &mut dyn FnMut() -> f64) {
     journey(l);
     // z18_init
     setdef(l, "ema", json!([]));
+    // z21_migrate_free: whole free hours become both their half hours
+    if !l.get("free_half").is_some_and(|v| v.as_bool() == Some(true) || v.as_f64().is_some_and(|x| x != 0.0)) {
+        for k in ["free", "free_dates"] {
+            let src = l.get(k).and_then(|v| v.as_object()).cloned().unwrap_or_default();
+            let m: serde_json::Map<String, Value> = src.into_iter().map(|(d, v)| (d, json!(hours_to_slots(&v)))).collect();
+            l[k] = Value::Object(m);
+        }
+        l["free_half"] = json!(true);
+    }
     // z22_migrate
     let st_ok = l["stats"].get("sessions").is_some() && l["stats"].get("lockins").is_some();
     if !st_ok {
@@ -104,6 +113,23 @@ fn ensure(l: &mut Value, rand: &mut dyn FnMut() -> f64) {
                    ("depth", json!(1)), ("src", json!("mix")), ("subj", json!("any"))] {
         setdef(f, k, d);
     }
+}
+
+/// hours_to_slots: whole hours -> both half-hour slots of each hour
+pub fn hours_to_slots(v: &Value) -> Vec<f64> {
+    let mut out: Vec<f64> = vec![];
+    for h in v.as_array().map(|a| a.as_slice()).unwrap_or(&[]) {
+        let h = h.as_f64().unwrap_or(0.0);
+        if h == h.trunc() {
+            out.extend([h, h + 0.5]);
+        } else {
+            out.push((h * 2.0).round_ties_even() / 2.0);
+        }
+    }
+    out.sort_by(|a, b| a.partial_cmp(b).unwrap());
+    out.dedup();
+    out.retain(|s| (0.0..24.0).contains(s));
+    out
 }
 
 /// journey(): the setdefaults, with lock_min counted once from the garden log
@@ -237,6 +263,10 @@ pub enum Later {
     Command(String),
     /// chat_line's reply sound, 260 ms later
     Ui(String),
+    /// zenko23: plan_maybe a moment after an ema changed
+    PlanMaybe,
+    /// zenko23: z23_announce(ema id)
+    Announce(String),
 }
 
 #[derive(Clone, Debug, Default)]
@@ -365,6 +395,7 @@ impl Companion {
 
     /// Run the jobs that are due (called every frame by the window side).
     pub fn pump(&mut self, now: f64) {
+        self.planner_timers(now);
         let (due, keep): (Vec<_>, Vec<_>) = self.rewards.later.drain(..).partition(|(at, _)| *at <= now);
         self.rewards.later = keep;
         for (_, job) in due {
@@ -389,6 +420,8 @@ impl Companion {
                 Later::ForgetSong => self.music.last_song = None,
                 Later::Command(c) => self.events.push(crate::Ev::Command(c)),
                 Later::Ui(k) => self.events.push(crate::Ev::Ui(k)),
+                Later::PlanMaybe => self.plan_maybe(),
+                Later::Announce(id) => self.z23_announce(&id),
             }
         }
         // z22_badge_tick: 30 s after start, then every 3 minutes

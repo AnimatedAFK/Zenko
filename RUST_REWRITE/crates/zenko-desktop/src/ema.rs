@@ -337,7 +337,8 @@ impl Companion {
             }
             l["ema"].as_array_mut().unwrap().push(e2);
         });
-        self.brain.ema_last = Some(id);
+        self.brain.ema_last = Some(id.clone());
+        self.z23_after_add(&id);
         e
     }
 
@@ -351,6 +352,7 @@ impl Companion {
             }
         });
         self.brain.ema_last = Some(id.into());
+        self.z23_after_change();
     }
 
     pub fn ema_remove(&mut self, id: &str) {
@@ -359,6 +361,7 @@ impl Companion {
                 a.retain(|e| e["id"] != id);
             }
         });
+        self.z23_after_change();
     }
 
     pub fn ema_snooze(&mut self, id: &str, minutes: i64) {
@@ -478,6 +481,10 @@ impl Companion {
                 self.ema_mark(id, true);
                 self.say("Yatta~ I'll hang it with the fulfilled ones.", 5.0);
             }
+            return true;
+        }
+        if let Some(id) = cmd.strip_prefix("ema_noplan:") {
+            self.z23_noplan(id, true);
             return true;
         }
         if let Some(id) = cmd.strip_prefix("ema_snooze:") {
