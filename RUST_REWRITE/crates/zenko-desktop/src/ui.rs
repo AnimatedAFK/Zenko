@@ -210,7 +210,9 @@ pub enum Kind {
     Menu { text: String, font: Font, fg: String, ind: (i32, i32), cmd: String },
     /// a horizontal tk.Scale (showvalue off): from / to / value, -length, -width, -sliderlength, the trough's colour
     /// (the slider is the widget's bg), `cmd` what a change asks for
-    Scale { from: f64, to: f64, val: f64, length: i32, width: i32, slen: i32, trough: String, cmd: String },
+    /// tk.Scale(orient horizontal): with a -label and -showvalue drawn above the trough in `font` / `fg`
+    Scale { from: f64, to: f64, val: f64, length: i32, width: i32, slen: i32, trough: String, cmd: String, label: String,
+            show: bool, font: Font, fg: String },
 }
 
 #[derive(Clone, Debug)]
@@ -517,7 +519,8 @@ impl Ui {
     pub fn scale(&mut self, parent: usize, from: f64, to: f64, val: f64, length: i32, width: i32, slen: i32, bg: &str,
                  trough: &str, cmd: &str) -> usize {
         let id = self.add(Some(parent), Kind::Scale { from, to, val, length, width, slen, trough: trough.into(),
-                                                      cmd: cmd.into() }, bg);
+                                                      cmd: cmd.into(), label: String::new(), show: false,
+                                                      font: Font::new("Segoe UI", 9, false), fg: "#000000".into() }, bg);
         (self.ws[id].bd, self.ws[id].hl) = (1, 0);
         id
     }
@@ -589,13 +592,27 @@ impl Ui {
                 let (ib, _) = self.ib(id);
                 (tw + 2 * w.padx + 2 * ib, th + 2 * w.pady + 2 * ib)
             }
-            Kind::Scale { length, width, .. } => {
-                // tkScale.c ComputeScaleGeometry (horizontal, no label or value): inset = highlight + border
+            Kind::Scale { length, width, label, show, font, .. } => {
+                // tkScale.c ComputeScaleGeometry (horizontal): inset = highlight + border; a label and the value each
+                // take a line and SPACING (2) above the trough, and one more SPACING after them
                 let inset = w.bd + w.hl;
-                (length + 2 * inset, inset + width + 2 * w.bd + inset)
+                let ls = fonts.linespace(font);
+                let mut y = inset;
+                let mut extra = 0;
+                if !label.is_empty() {
+                    y += ls + 2;
+                    extra = 2;
+                }
+                if *show {
+                    y += ls + 2;
+                    extra = 2;
+                }
+                (length + 2 * inset, y + extra + width + 2 * w.bd + inset)
             }
             Kind::Check { text, font, wrap, radio, .. } => {
                 let (lines, tw) = text_layout(fonts, font, text, *wrap);
+                // -width in characters: that many "0"s instead of the text's width
+                let tw = if w.opt_w > 0 { w.opt_w * fonts.width(font, "0") } else { tw };
                 let ls = fonts.linespace(font);
                 let th = if text.is_empty() { 0 } else { lines.len() as i32 * ls };
                 let (ib, _) = self.ib(id);
@@ -1219,10 +1236,33 @@ impl Ui {
                                           color: fg.clone() });
                 }
             }
-            Kind::Scale { from, to, val, slen, trough, .. } => {
-                // tkUnixScale.c DisplayHorizontalScale: the sunken trough, the flat slider at TkScaleValueToPixel
+            Kind::Scale { from, to, val, slen, trough, label, show, font, fg, width, .. } => {
+                // tkUnixScale.c DisplayHorizontalScale: the label and the value over it, the sunken trough, the flat
+                // slider at TkScaleValueToPixel
                 let inset = w.bd + w.hl;
-                let (tx, ty, tw, th) = (ax + inset, ay + inset, w.w - 2 * inset, w.h - 2 * inset);
+                let ls = fonts.linespace(font);
+                let mut top = inset;
+                if !label.is_empty() {
+                    out.push(Draw::Text { x: ax + inset + ls / 2, y: ay + top + 2, text: label.clone(), font: font.clone(),
+                                          color: fg.clone() });
+                    top += ls + 2;
+                }
+                let range0 = to - from;
+                let pr0 = (w.w - slen - 2 * inset - 2 * w.bd) as f64;
+                let cx0 = if range0 == 0.0 { 0.0 } else { (val - from) * pr0 / range0 } + *slen as f64 / 2.0 + inset as f64
+                    + w.bd as f64 + 0.5;
+                if *show {
+                    let v = format!("{}", *val as i64);
+                    let vw = fonts.width(font, &v);
+                    out.push(Draw::Text { x: ax + cx0 as i32 - vw / 2, y: ay + top + 2, text: v, font: font.clone(),
+                                          color: fg.clone() });
+                    top += ls + 2;
+                }
+                if top > inset {
+                    top += 2;
+                }
+                let th0 = width + 2 * w.bd;
+                let (tx, ty, tw, th) = (ax + inset, ay + top, w.w - 2 * inset, th0);
                 let (light, dark) = shadows(&w.bg);
                 out.push(Draw::Rect { x: tx, y: ty, w: tw, h: th, color: light });
                 out.push(Draw::Rect { x: tx, y: ty, w: tw - w.bd, h: th - w.bd, color: dark });
@@ -1554,7 +1594,8 @@ impl Ui {
         }
         let inside = ax <= x && x < ax + ww && ay <= y && y < ay + wh;
         if let Kind::Check { on, radio, cmd, .. } = &mut self.ws[i].kind
-            && inside {
+            && inside && !cmd.is_empty() {
+            // (state="disabled" checkbuttons have no command and don't change)
             // a checkbutton flips; a radiobutton is chosen (its command sets the others)
             *on = if *radio { true } else { !*on };
             return Some(cmd.clone());

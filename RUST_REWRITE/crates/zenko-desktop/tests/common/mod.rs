@@ -92,6 +92,23 @@ pub fn check_items(at: &str, cv: &Canvas, want: &[Value], images: &Value, fonts:
                 let rows = images[s("image")].as_array().unwrap();
                 let p = it.image.as_ref().unwrap();
                 assert_eq!((p.w, p.h), (rows[0].as_array().unwrap().len(), rows.len()), "{at} size");
+                if std::env::var("ZK_PIXDIFF").is_ok() {
+                    // (debugging: where the picture differs, in sprite pixels at the zoom given)
+                    let z: usize = std::env::var("ZK_PIXDIFF").unwrap().parse().unwrap_or(1);
+                    let mut bad = std::collections::BTreeSet::new();
+                    for (yy, row) in rows.iter().enumerate() {
+                        for (xx, v) in row.as_array().unwrap().iter().enumerate() {
+                            let q = p.px[yy * p.w + xx];
+                            let g = format!("#{:02x}{:02x}{:02x}{:02x}", q[0], q[1], q[2], if q[3] > 0 { 255 } else { 0 });
+                            if g != v.as_str().unwrap() && !(q[3] > 0 && !v.as_str().unwrap().ends_with("ff")) {
+                                bad.insert((xx / z, yy / z, g, v.as_str().unwrap().to_string()));
+                            }
+                        }
+                    }
+                    eprintln!("{at}: {} sprite pixels differ: {:?}", bad.len(), bad.iter().take(40).collect::<Vec<_>>());
+                    let xs: Vec<usize> = bad.iter().map(|b| b.0).collect(); let ys: Vec<usize> = bad.iter().map(|b| b.1).collect();
+                    eprintln!("  box x {:?}..{:?} y {:?}..{:?}", xs.iter().min(), xs.iter().max(), ys.iter().min(), ys.iter().max());
+                }
                 for (yy, row) in rows.iter().enumerate() {
                     for (xx, v) in row.as_array().unwrap().iter().enumerate() {
                         let mut q = p.px[yy * p.w + xx];

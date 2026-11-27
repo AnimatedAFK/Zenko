@@ -553,6 +553,25 @@ if len(sys.argv) > 1 and sys.argv[1] == "settings":
              ("set_alt", T0, ALT, None, "settings")]
     SETUP["data"], SETUP["after"] = (lambda app, name: None), (lambda app, name: None)
 
+if len(sys.argv) > 1 and sys.argv[1] == "customize":
+    # golden/hub_customize.json: the Customize page (live preview, name, voice, coat / eyes / foxfire swatches, tails,
+    # ears, size, outfits, idle habits, wardrobe, poses, look and feel, sidebar pages, travel outfits, bubble, decor,
+    # scene) wide, in a small midnight window, and with most of her look changed
+    OUT = "hub_customize.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 1.5 * 3600 + 754.25
+    ALT = {"theme": "snow", "coat": "black", "eye_color": "#a77bff", "foxfire_color": "#ff5fa8", "tails": "9",
+           "ear_style": "floppy", "blush_style": "rosy", "size": 6, "outfit": ["bow", "glasses_always"],
+           "scarf": "#2f8f83", "voice_level": 2, "mode": "savage", "voice_clips": "off", "chirp_pitch": 1.15,
+           "tts_pitch": 4, "idle_sway": False, "idle_yawn": False, "look_at_mouse": False, "idle_lively": "lively",
+           "fox_name": "Kitsu", "catchphrase": "Kon kon, let's go!", "accent": "jade", "motion_level": "smooth",
+           "nav_compact": True, "nav_order": ["chat", "home", "timetable"], "nav_hidden": ["garden", "screen"],
+           "jp_voice": False, "bubble_scale": False, "fox_poses": False, "lockin_headband": False}
+    CASES = [("cust_wide", T0, {"theme": "snow"}, None, "customize"),
+             ("cust_midnight_small", T0, {"theme": "midnight"}, (1120, 720), "customize"),
+             ("cust_alt", T0, ALT, None, "customize")]
+    SETUP["data"], SETUP["after"] = (lambda app, name: None), (lambda app, name: None)
+
 out = []
 for name, t, cfg, size, page in CASES:
     NOW[0] = t
@@ -630,6 +649,12 @@ for name, t, cfg, size, page in CASES:
                 "mood_word": app.mood_word() if hasattr(app, "mood_word") else "", "hunger": app.hunger() if hasattr(app, "hunger") else 0,
                 "spirit": app.spirit() if hasattr(app, "spirit") else 0, "streak": app.streak() if hasattr(app, "streak") else 0,
                 "total_hours": app.total_hours() if hasattr(app, "total_hours") else 0,
+                "pose": json.loads(json.dumps(getattr(app, "_pose", None) or {}, default=str)),
+                "bond": list(app.bond_text()) if hasattr(app, "bond_text") else [],
+                "fox_name": app.fox_name() if hasattr(app, "fox_name") else "",
+                "catch": app.catchphrase() if hasattr(app, "catchphrase") else "",
+                "z19_hours": app.z19_hours() if hasattr(app, "z19_hours") else 0,
+                "journey": json.loads(json.dumps(app.journey_state(), default=str)) if hasattr(app, "journey_state") else [],
                 "tree": tree, "texts": texts, "images": images, "fonts": fonts})
     try:
         app.hub_close()

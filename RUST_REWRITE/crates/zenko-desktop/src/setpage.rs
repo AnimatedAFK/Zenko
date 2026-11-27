@@ -105,7 +105,7 @@ pub struct SetPage {
     zk_f: f64,
 }
 
-fn s_of(v: &Value) -> String {
+pub(crate) fn s_of(v: &Value) -> String {
     match v {
         Value::String(s) => s.clone(),
         Value::Null => String::new(),
@@ -118,11 +118,11 @@ fn s_of(v: &Value) -> String {
 }
 
 /// str(float) as Python writes it (1.0, 1.15)
-fn py_float(f: f64) -> String {
+pub(crate) fn py_float(f: f64) -> String {
     if f.fract() == 0.0 && f.abs() < 1e16 { format!("{f:.1}") } else { format!("{f}") }
 }
 
-fn truthy(v: &Value) -> bool {
+pub(crate) fn truthy(v: &Value) -> bool {
     match v {
         Value::Null => false,
         Value::Bool(b) => *b,
@@ -133,45 +133,45 @@ fn truthy(v: &Value) -> bool {
     }
 }
 
-struct B<'a> {
-    ui: &'a mut Ui,
-    th: &'a Theme,
-    f: &'a Faces,
-    cfg: &'a Value,
-    cm10: i32,
-    bg: String,
+pub(crate) struct B<'a> {
+    pub ui: &'a mut Ui,
+    pub th: &'a Theme,
+    pub f: &'a Faces,
+    pub cfg: &'a Value,
+    pub cm10: i32,
+    pub bg: String,
 }
 
 impl B<'_> {
-    fn flag(&self, key: &str, default: bool) -> bool {
+    pub(crate) fn flag(&self, key: &str, default: bool) -> bool {
         match self.cfg.get(key) {
             None => default,
             Some(v) => truthy(v),
         }
     }
-    fn get(&self, key: &str, default: &str) -> String {
+    pub(crate) fn get(&self, key: &str, default: &str) -> String {
         match self.cfg.get(key) {
             None => default.into(),
             Some(v) => s_of(v),
         }
     }
-    fn font(&self, n: i32, bold: bool) -> Font {
+    pub(crate) fn font(&self, n: i32, bold: bool) -> Font {
         Font::new(&self.f.ui, n, bold)
     }
     /// tk.Checkbutton(parent, text, **kw) (bd 2, highlight 0, FONT_UI 10, anchor w)
-    fn chk(&mut self, parent: usize, text: &str, on: bool, cmd: &str) -> usize {
+    pub(crate) fn chk(&mut self, parent: usize, text: &str, on: bool, cmd: &str) -> usize {
         let bg = self.ui.ws[parent].bg.clone();
         let fnt = self.font(10, false);
         self.ui.check(parent, text, &bg, &self.th.ink, fnt, on, &self.th.field, cmd, 0, 2)
     }
     /// check(parent, text, var, cmd): packed fill x, padx 14
-    fn check(&mut self, parent: usize, text: &str, key: &str, default: bool) -> usize {
+    pub(crate) fn check(&mut self, parent: usize, text: &str, key: &str, default: bool) -> usize {
         let on = self.flag(key, default);
         let c = self.chk(parent, text, on, &format!("set_chk:{key}"));
         self.ui.pack(c, Pack::default().fill(Fill::X).padx(14, 14));
         c
     }
-    fn radio(&mut self, parent: usize, text: &str, on: bool, cmd: &str, size: i32) -> usize {
+    pub(crate) fn radio(&mut self, parent: usize, text: &str, on: bool, cmd: &str, size: i32) -> usize {
         let bg = self.ui.ws[parent].bg.clone();
         let fnt = self.font(size, false);
         let r = self.ui.check(parent, text, &bg, &self.th.ink, fnt, on, &self.th.field, cmd, 0, 2);
@@ -181,7 +181,7 @@ impl B<'_> {
         r
     }
     /// radios(parent, items, var, cmd): a row of radios (padx 0 10) in a frame (fill x, padx 14, pady 0 4)
-    fn radios(&mut self, parent: usize, items: &[(&str, &str)], key: &str, cur: &str, ty: char,
+    pub(crate) fn radios(&mut self, parent: usize, items: &[(&str, &str)], key: &str, cur: &str, ty: char,
               groups: &mut Vec<(String, Vec<(usize, String)>)>) {
         let bg = self.bg.clone();
         let fr = self.ui.frame(parent, &bg);
@@ -195,7 +195,7 @@ impl B<'_> {
         groups.push((key.into(), g));
     }
     /// label(parent, text): GREY, FONT_UI 9, anchor w, fill x, padx 14, pady (6, 0)
-    fn label(&mut self, parent: usize, text: &str) -> usize {
+    pub(crate) fn label(&mut self, parent: usize, text: &str) -> usize {
         let bg = self.bg.clone();
         let fnt = self.font(9, false);
         let l = self.ui.label(parent, text, &bg, &self.th.grey, fnt);
@@ -204,7 +204,7 @@ impl B<'_> {
         l
     }
     /// a label made with anchor w, justify left and a wraplength
-    fn note(&mut self, parent: usize, text: &str, fg: &str, size: i32, bold: bool, wrap: i32) -> usize {
+    pub(crate) fn note(&mut self, parent: usize, text: &str, fg: &str, size: i32, bold: bool, wrap: i32) -> usize {
         let bg = self.ui.ws[parent].bg.clone();
         let fnt = self.font(size, bold);
         let l = self.ui.label(parent, text, &bg, fg, fnt);
@@ -215,20 +215,20 @@ impl B<'_> {
         }
         l
     }
-    fn lbl(&mut self, parent: usize, text: &str, fg: &str, size: i32) -> usize {
+    pub(crate) fn lbl(&mut self, parent: usize, text: &str, fg: &str, size: i32) -> usize {
         let bg = self.ui.ws[parent].bg.clone();
         let fnt = self.font(size, false);
         self.ui.label(parent, text, &bg, fg, fnt)
     }
-    fn btn(&mut self, parent: usize, text: &str, cmd: &str, bg: Option<&str>, fg: Option<&str>, size: i32, padx: i32,
+    pub(crate) fn btn(&mut self, parent: usize, text: &str, cmd: &str, bg: Option<&str>, fg: Option<&str>, size: i32, padx: i32,
            pady: i32) -> usize {
         tt_btn(self.ui, parent, text, cmd, bg, fg, size, padx, pady, self.th, self.f)
     }
-    fn entry(&mut self, parent: usize, text: &str, chars: i32) -> usize {
+    pub(crate) fn entry(&mut self, parent: usize, text: &str, chars: i32) -> usize {
         tt_entry(self.ui, parent, text, chars, self.th, self.f)
     }
     /// tk.OptionMenu configured (bg FIELD, relief flat, highlight 1 in LINE, width in characters)
-    fn menu(&mut self, parent: usize, text: &str, key: &str, size: i32, chars: i32, ring: bool) -> usize {
+    pub(crate) fn menu(&mut self, parent: usize, text: &str, key: &str, size: i32, chars: i32, ring: bool) -> usize {
         let fnt = self.font(size, false);
         let m = self.ui.menubutton(parent, text, &format!("set_menu:{key}"), fnt, &self.th.field, &self.th.ink, &self.th.line,
                                    chars, self.cm10);
@@ -238,13 +238,13 @@ impl B<'_> {
         m
     }
     /// tk.Frame(c, bg=bg, height=8).pack()
-    fn gap(&mut self, parent: usize) {
+    pub(crate) fn gap(&mut self, parent: usize) {
         let bg = self.bg.clone();
         let fr = self.ui.frame(parent, &bg);
         self.ui.ws[fr].opt_h = 8;
         self.ui.pack(fr, Pack::default());
     }
-    fn row(&mut self, parent: usize, padx: i32, pady: (i32, i32)) -> usize {
+    pub(crate) fn row(&mut self, parent: usize, padx: i32, pady: (i32, i32)) -> usize {
         let bg = self.bg.clone();
         let r = self.ui.frame(parent, &bg);
         self.ui.pack(r, Pack::default().fill(Fill::X).padx(padx, padx).pady(pady.0, pady.1));

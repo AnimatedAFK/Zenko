@@ -628,6 +628,17 @@ mod win {
                 crate::hubw::close();
                 open_hub(app, Some("settings"));
             }
+        } else if let Some(page) = c.strip_prefix("reopen:") {
+            // (the accent, the compact sidebar, Start over: the window is made again with them, on the same page)
+            app.fox.apply_look();
+            if crate::hubw::is_open() {
+                crate::hubw::close();
+                open_hub(app, Some(page));
+            }
+        } else if let Some(k) = c.strip_prefix("pose:") {
+            let t = now(app);
+            let win = (app.x, app.y);
+            app.fox.z19_pose_start(t, k, true, win);
         } else if c == "speak_test" {
             // speak_test: the voice says hello with the chosen voice and speed
             let c = &app.fox.cfg;
