@@ -120,6 +120,16 @@ mod win {
         1000.0 + app.t0.elapsed().as_secs_f64()
     }
 
+    /// the fox and the app clock, for the windows that need her (None while the app is busy)
+    pub fn with_fox<R>(f: impl FnOnce(&mut Companion, f64) -> R) -> Option<R> {
+        APP.with(|a| {
+            let Ok(mut g) = a.try_borrow_mut() else { return None };
+            let app = g.as_mut()?;
+            let t = now(app);
+            Some(f(&mut app.fox, t))
+        })
+    }
+
     fn idle_seconds() -> f64 {
         unsafe {
             let mut li = LASTINPUTINFO { cbSize: std::mem::size_of::<LASTINPUTINFO>() as u32, dwTime: 0 };
@@ -705,6 +715,9 @@ mod win {
             icon_px: zenko_desktop::icon::icon_pixels(&c.s("theme", "snow")),
             ui_border: c.b("ui_border", true),
             text_scale: c.f("text_scale", 1.0),
+            theme: c.s("theme", "snow"),
+            living: c.b("sidebar_living", true),
+            particles: c.b("sidebar_particles", true),
         };
         crate::hubw::open(page, init);
     }

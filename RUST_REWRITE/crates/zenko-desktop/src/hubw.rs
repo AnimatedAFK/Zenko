@@ -28,6 +28,9 @@ pub struct HubInit {
     pub icon_px: Vec<[u8; 4]>,
     pub ui_border: bool,
     pub text_scale: f64,
+    pub theme: String,
+    pub living: bool,
+    pub particles: bool,
 }
 
 struct HubW {
@@ -49,6 +52,11 @@ struct HubW {
     min: (i32, i32),
     cursor: PCWSTR,
     faded: bool,
+    anim: zenko_desktop::hubanim::HubAnim,
+    theme: String,
+    living: bool,
+    particles: bool,
+    minimized: bool,
 }
 
 type PCWSTR = *const u16;
@@ -158,6 +166,8 @@ pub fn open(page: Option<&str>, init: HubInit) {
             hwnd, hub, fonts, ctx, t0: std::time::Instant::now(), text_scale: init.text_scale, zen_maru, maxed: false,
             restore: (w, h, x0, y0), drag: None, drag_at: (0, 0), drag_moved: false, rs: None, fit_at: None,
             size: (w, h), min, cursor: IDC_ARROW, faded: false,
+            anim: zenko_desktop::hubanim::HubAnim::new(0.0, (x0 as u64) << 20 ^ 0x9e37_79b9),
+            theme: init.theme.clone(), living: init.living, particles: init.particles, minimized: false,
         }));
         ShowWindow(hwnd, SW_SHOW);
         SetForegroundWindow(hwnd);
@@ -191,6 +201,7 @@ pub fn close() {
     let h = HUB.with(|v| v.borrow_mut().take());
     if let Some(x) = h {
         unsafe { DestroyWindow(x.hwnd) };
+        crate::win::with_fox(|fox, _| fox.hub_page = None);
         out("closed");
     }
 }
@@ -259,7 +270,6 @@ unsafe fn paint(x: &mut HubW, dc: HDC) {
 /// one animation step (hub_anim's frame parts at the "smooth" motion level), the fade-in and a pending zk_fit
 fn step(x: &mut HubW) -> bool {
     let n = now(x);
-    let mut ch = false;
     // hub_fade_in: 0.22 s, easing out
     if !x.faded {
         let a = (n / 0.22).min(1.0);
@@ -279,16 +289,28 @@ fn step(x: &mut HubW) -> bool {
             let c = x.ctx.clone();
             x.hub.side.nav(&c);
             x.hub.side_sync();
-            ch = true;
         }
     }
     let c = x.ctx.clone();
-    if x.hub.glide(&c) {
-        x.hub.side_sync();
-        ch = true;
+    x.hub.glide(&c);
+    // hub_anim: stars, particles and the little fox (she needs the app's fox for her mood and clothes)
+    let page = x.hub.side.page.clone();
+    let shown = if x.minimized { None } else { page.clone() };
+    let living = x.living;
+    let anim = &mut x.anim;
+    if let Some((lf, pal, t)) = crate::win::with_fox(|fox, t| {
+        fox.hub_page = shown;
+        (fox.hub_logo(t, page.as_deref(), anim, living), fox.pal.clone(), t)
+    }) {
+        let th = &x.ctx.t;
+        let (style, col) = zenko_desktop::hubanim::particle_style(&x.theme, x.ctx.seasons, x.ctx.weather.as_deref(),
+                                                                  &x.ctx.season, &th.gold, &th.glow, &th.acc);
+        let (night, ink) = (th.night.clone(), th.ink.clone());
+        x.anim.frame(&mut x.hub.side, t, &night, &ink, &style, &col, x.particles, Some(lf), &pal, x.ctx.hd);
     }
-    ch |= x.hub.tip_update(n);
-    ch
+    x.hub.side_sync();
+    x.hub.tip_update(n);
+    true
 }
 
 fn resized(x: &mut HubW, w: i32, h: i32) {
@@ -367,6 +389,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
             }
             WM_SIZE => {
                 let (w, h) = ((lp & 0xffff) as i32, ((lp >> 16) & 0xffff) as i32);
+                with(|x| x.minimized = wp as u32 == SIZE_MINIMIZED);
                 if wp as u32 != SIZE_MINIMIZED {
                     with(|x| resized(x, w, h));
                     redraw();

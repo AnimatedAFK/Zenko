@@ -29,6 +29,7 @@ pub mod aa;
 pub mod hubside;
 pub mod canvasdraw;
 pub mod hubwin;
+pub mod hubanim;
 pub mod tips;
 pub mod icon;
 pub mod sound;
@@ -435,6 +436,8 @@ pub struct Companion {
     pub slow: slow::Slow,
     /// chat_log: (who, text), the last 200
     pub chat_log: Vec<(String, String)>,
+    /// the hub page on show while the hub window is open and not minimised (gym_look_on, the sidebar fox)
+    pub hub_page: Option<String>,
 }
 
 impl Companion {
@@ -494,6 +497,7 @@ impl Companion {
             batt_at: (0, 0, false),
             slow: Default::default(),
             chat_log: vec![],
+            hub_page: None,
         };
         c.compute_dims();
         c.apply_look();
@@ -605,7 +609,7 @@ impl Companion {
     /// zenko19 / zenko22 z19_robe: the robe she wears today.
     fn robe(&mut self, now: f64) -> Option<String> {
         let mode = self.cfg.s("robe", "auto");
-        if mode.is_empty() || mode == "none" {
+        if mode.is_empty() || mode == "none" || self.gym_look_on() {
             return None;
         }
         if let Some(r) = ROBES.iter().find(|r| r.key == mode) {
@@ -644,6 +648,12 @@ impl Companion {
         Some(want)
     }
 
+    /// ZenkoGym.gym_look_on: hachimaki and towel while the Exercise tab is open, unless music is playing
+    pub fn gym_look_on(&self) -> bool {
+        self.hub_page.as_deref() == Some("exercise") && self.cfg.b("gym_look", true)
+            && !self.music.player.as_ref().is_some_and(|p| p.playing)
+    }
+
     pub fn accessories(&mut self, now: f64) -> Vec<String> {
         let mut acc: Vec<String> = vec![];
         let out = self.cfg.list("outfit");
@@ -662,8 +672,17 @@ impl Companion {
                 acc.push(a.into());
             }
         }
+        if self.music.player.as_ref().is_some_and(|p| p.playing) && self.cfg.b("headphones_with_music", true) {
+            acc.push("headphones".into());
+        }
         if !self.cfg.s("scarf", "").is_empty() {
             acc.push("scarf".into());
+        }
+        if self.gym_look_on() {
+            // the gym look while the Exercise tab is open
+            acc.retain(|a| a != "headband" && a != "towel");
+            acc.push("headband".into());
+            acc.push("towel".into());
         }
         let rb = self.robe(now);
         if rb != self.robe_cur {
