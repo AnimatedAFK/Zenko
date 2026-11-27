@@ -20,6 +20,10 @@ use zenko_desktop::homepage::HomePage;
 use zenko_desktop::youpage::YouPage;
 use zenko_desktop::dailypage::{DailyData, DailyPage};
 use zenko_desktop::ttpage::{TtData, TtPage};
+use zenko_desktop::uppage::{UpData, UpPage};
+
+#[path = "hubup.rs"]
+mod hubup;
 use serde_json::Value;
 use zenko_desktop::pagekit::Faces;
 use zenko_desktop::ui::{Draw, Kind, Place};
@@ -96,6 +100,13 @@ struct HubW {
     /// what the Timetable page was last drawn from, and when (it redraws every 30 s, like its after(30000))
     tt_d: TtData,
     tt_next: f64,
+    /// the Upcoming page, what it was last rendered from, and its hands' next tick / next check for changes
+    up: Option<UpPage>,
+    up_d: UpData,
+    up_next: f64,
+    up_chk: f64,
+    /// a time menu to pop up once the click is handled
+    up_menu: Option<usize>,
     /// a Yes/No question to ask once the click is handled: (text, title, command on Yes)
     ask: Option<(String, String, String)>,
 }
@@ -619,6 +630,9 @@ fn after_show(x: &mut HubW, page: &str) {
         // hub_after_show: tt_refresh()
         tt_refresh(x);
     }
+    if page == "deadlines" && x.up.is_some() {
+        hubup::refresh(x);
+    }
     if page == "daily" && x.daily.is_some() {
         // (zenko.py renders on show when something changed while it was hidden)
         let d = crate::win::with_fox(|fox, _| fox.daily_data()).unwrap_or_default();
@@ -668,6 +682,12 @@ fn page_frame(x: &mut HubW, page: &str) -> Option<usize> {
             x.tt = Some(TtPage::build(&mut x.hub.ui, pg, &th, &f, icon, &d));
             x.tt_d = d;
             x.tt_next = now(x) + 30.0;
+            pg
+        }
+        "deadlines" => {
+            let th = x.hub.t.clone();
+            let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
+            hubup::build(x, pg);
             pg
         }
         "daily" => {
@@ -729,6 +749,7 @@ fn relayout(x: &mut HubW) {
         let th = x.hub.t.clone();
         sc.draw_bar(&mut x.hub.ui, false, &th);
     }
+    hubup::fit(x, w, h);
     if let Some(dp) = x.daily.as_mut() {
         let (th, f) = (x.hub.t.clone(), Faces { ui: x.hub.font_ui.clone(), title: String::new() });
         let d = x.daily_d.clone();
@@ -861,6 +882,7 @@ fn page_wheel(x: &mut HubW, mx: i32, my: i32, delta: i32) -> bool {
         Some("you") => x.you.as_ref().map(|p| p.sc.clone()),
         Some("daily") => x.daily.as_ref().map(|p| p.sc.clone()),
         Some("timetable") => x.tt.as_ref().map(|p| p.sc.clone()),
+        Some("deadlines") => x.up.as_ref().map(|p| p.sc.clone()),
         _ => None,
     };
     let Some(sc) = sc else { return false };
@@ -1028,7 +1050,7 @@ pub fn open(page: Option<&str>, init: HubInit) {
             size: (w, h), min, cursor: IDC_ARROW, faded: false,
             anim: zenko_desktop::hubanim::HubAnim::new(0.0, (x0 as u64) << 20 ^ 0x9e37_79b9),
             theme: init.theme.clone(), living: init.living, glow_next: 0.0, burst: None, particles: init.particles, minimized: false,
-            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, ask: None,
+            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, ask: None,
             chat_q: Default::default(), typing: None, sb_drag: None,
         }));
         with(|x| {
@@ -1226,6 +1248,17 @@ fn step(x: &mut HubW) -> bool {
             tt_refresh(x);
         }
     }
+    // the Upcoming page: the clock's hands every second, and up_refresh when the plan or deadlines change
+    if x.hub.side.page.as_deref() == Some("deadlines") && x.up.is_some() && x.slide.is_none() {
+        if n >= x.up_next {
+            x.up_next = n + 1.0;
+            hubup::tick(x);
+        }
+        if n >= x.up_chk {
+            x.up_chk = n + 2.0;
+            hubup::refresh(x);
+        }
+    }
     // daily_refresh: what changed (a badge, a check-in, a card) shows while the page is open
     if x.hub.side.page.as_deref() == Some("daily") && x.slide.is_none() && n >= x.daily_next {
         x.daily_next = n + 1.0;
@@ -1382,6 +1415,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     x.hub.ui.motion(&x.fonts, mx, my, n);
                     sb_event(x, mx, my, "move");
                     daily_hover(x, mx, my);
+                    hubup::motion(x, mx, my);
                     if x.cursor == IDC_ARROW && x.hub.part_at(mx, my) == "page" {
                         x.cursor = match x.hub.ui.cursor_at(mx, my) {
                             zenko_desktop::ui::Cursor::Hand => IDC_HAND,
@@ -1419,6 +1453,8 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                             let old = x.hub.ui.focus;
                             x.hub.ui.press(&x.fonts, mx, my, n, msg == WM_LBUTTONDBLCLK);
                             you_focus_left(x, old);
+                            hubup::focus_left(x, old);
+                            hubup::press(x, mx, my);
                         }
                         return;
                     }
@@ -1446,6 +1482,11 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                         x.drag_at = (sx, sy);
                     }
                 });
+                if let Some(m) = with(|x| x.up_menu.take()).flatten() {
+                    ReleaseCapture();
+                    hubup::popup(hwnd, m);
+                    redraw();
+                }
                 0
             }
             WM_LBUTTONUP => {
@@ -1454,6 +1495,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                 let mut act: Option<&'static str> = None;
                 with(|x| {
                     sb_event(x, mx, my, "release");
+                    hubup::release(x);
                     if let Some(cmd) = x.hub.ui.release(mx, my) {
                         out("sound:click");
                         if cmd.starts_with("you_") {
@@ -1462,6 +1504,8 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                             daily_cmd(x, &cmd);
                         } else if cmd.starts_with("tt_") {
                             tt_cmd(x, &cmd);
+                        } else if cmd.starts_with("up") || cmd.starts_with("ib_") {
+                            hubup::cmd(x, &cmd);
                         } else if cmd.starts_with("hub_ask:") || cmd.starts_with("home_") || matches!(cmd.as_str(),
                             "toggle_pause" | "end_session" | "start_break" | "end_break") {
                             home_cmd(x, &cmd);
@@ -1552,6 +1596,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                         tt_cmd(x, "tt_add");
                     } else if vk == VK_RETURN && x.tt.as_ref().is_some_and(|t| x.hub.ui.focus == Some(t.te)) {
                         x.hub.ui.focus = x.tt.as_ref().map(|t| t.ke);
+                    } else if vk == VK_RETURN && x.hub.side.page.as_deref() == Some("deadlines") && hubup::key_return(x) {
                     } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.a)) {
                         daily_cmd(x, "daily_card_add");
                     } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.fact)) {

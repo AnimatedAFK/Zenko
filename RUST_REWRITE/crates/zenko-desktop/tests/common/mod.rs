@@ -79,7 +79,8 @@ pub fn check_items(at: &str, cv: &Canvas, want: &[Value], images: &Value, fonts:
         for (a, b) in it.coords.iter().zip(&wc) {
             assert!((a - b).abs() < 1e-6, "{at} coords {:?} vs {:?}", it.coords, wc);
         }
-        let tags: Vec<&str> = wi["tags"].as_array().unwrap().iter().map(|v| v.as_str().unwrap()).collect();
+        // ("current" is Tk's tag for the item under the pointer: where the recording's pointer happened to be)
+        let tags: Vec<&str> = wi["tags"].as_array().unwrap().iter().map(|v| v.as_str().unwrap()).filter(|t| *t != "current").collect();
         assert_eq!(it.tags, tags, "{at} tags");
         let io = &wi["opts"];
         let s = |k: &str| io.get(k).and_then(|v| v.as_str()).unwrap_or("").to_string();

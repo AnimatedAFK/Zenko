@@ -98,7 +98,9 @@ fn up_page_matches_zenko_py() {
         let faces = Faces { ui: "Segoe UI".into(), title: String::new() };
         let mut ui = Ui::new(&th.paper);
         ui.x11 = true;
-        let wide = pw >= 1000;
+        // (the empty case was never re-rendered after the window got its size: zenko.py built it while hub main was
+        // still 1 pixel wide, so it shows the narrow two-row layout; the others were refreshed by the planner)
+        let wide = pw >= 1000 && name != "up_empty";
         let s = if wide { if win_w >= 1180 { 340 } else { 290 } } else { 300 };
         let mut up = UpPage::build(&mut ui, 0, &th, &faces, cm10, &d, wide, s);
         up.set_fox(icon.clone());
@@ -115,6 +117,11 @@ fn up_page_matches_zenko_py() {
             zenko_desktop::pagekit::zk_wrap(&mut ui, &fonts, 0, &mut up.wrap, pw, ph);
         }
         up.fit(&mut ui, &fonts, &th, &faces, c["zk_f"].as_f64().unwrap(), pw, ph);
+        if small {
+            // zk_resized's fit, then the settled page's: the second zk_wrap unwraps what the first wrapped before the
+            // calendar and the list were stacked
+            up.fit(&mut ui, &fonts, &th, &faces, c["zk_f"].as_f64().unwrap(), pw, ph);
+        }
         let mut bad = vec![];
         cmp_tree(&ui, 0, tree, ox, oy, name, &mut bad);
         let mut ps = vec![];

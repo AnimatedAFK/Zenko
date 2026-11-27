@@ -355,7 +355,7 @@ impl Companion {
         best
     }
 
-    fn ib_add(&mut self, kind: &str, subject: &str) -> usize {
+    pub fn ib_add(&mut self, kind: &str, subject: &str) -> usize {
         let kinds = routes_data()["IB_TASK_KINDS"].as_array().unwrap();
         let k = kinds.iter().find(|x| x[0] == kind).unwrap_or(kinds.last().unwrap()).clone();
         let (u, tg) = match routes_data()["IB_IA_DEFAULTS"].get(subject).filter(|_| kind == "ia") {
@@ -384,7 +384,7 @@ impl Companion {
         self.life()["ibtasks"][i].clone()
     }
 
-    fn ib_set_words(&mut self, i: usize, n: i64) -> String {
+    pub fn ib_set_words(&mut self, i: usize, n: i64) -> String {
         let n = n.max(0);
         let day = iso(local_days());
         let old = self.ib_task(i)["words"].as_i64().unwrap_or(0);
