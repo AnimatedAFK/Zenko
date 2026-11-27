@@ -123,7 +123,7 @@ for name, t, cfg, size, page, hover in CASES:
             continue
         ty = cv.type(i)
         o = opts(cv, i)
-        it = {"type": ty, "coords": cv.coords(i), "tags": tags, "opts": o}
+        it = {"type": ty, "coords": cv.coords(i), "tags": tags, "opts": o, "bbox": list(cv.bbox(i) or [])}
         if ty == "image" and o.get("image"):
             nm = o["image"]
             if nm not in images:
@@ -137,6 +137,9 @@ for name, t, cfg, size, page, hover in CASES:
                 ent["w"][line] = f.measure(line)
                 for k in range(len(line) + 1):
                     ent["w"][line[:k]] = f.measure(line[:k])
+                    if float(o.get("width") or 0) > 0:        # wrapped text: every piece a wrapped line can be
+                        for j in range(k):
+                            ent["w"].setdefault(line[j:k], f.measure(line[j:k]))
         items.append(it)
     st = Z.Z19_LOOK
     out.append({"name": name, "now": t, "cfg": app.cfg.get("theme"), "cfg_all": cfg, "page": h.get("page"), "hover": hover,

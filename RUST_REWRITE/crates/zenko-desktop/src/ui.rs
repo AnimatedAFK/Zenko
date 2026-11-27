@@ -116,9 +116,11 @@ impl Pack {
     }
 }
 
-/// place options (bordermode inside, anchor nw)
+/// place options (anchor nw; bordermode inside unless `ignore`)
 #[derive(Clone, Debug, Default)]
 pub struct Place {
+    /// bordermode="ignore": measured from the widget's outer edge, not inside its border
+    pub ignore: bool,
     pub x: i32,
     pub y: i32,
     pub relx: f64,
@@ -149,6 +151,8 @@ pub enum Draw {
     /// one line of text, top-left at (x, y)
     Text { x: i32, y: i32, text: String, font: Font, color: String },
     Clip(Option<(i32, i32, i32, i32)>),
+    /// a Tk canvas's own drawing calls (canvasdraw.rs), its origin at (x, y)
+    Tk { x: i32, y: i32, ops: Vec<crate::canvasdraw::TkOp> },
 }
 
 /// zenko.py round_frame's background canvas: rbox(0, 0, W-1, H-1, r, fill, outline, shape) and the lit rim
@@ -180,7 +184,7 @@ pub enum Kind {
     Button { text: String, font: Font, color: String, fg: String, padx: i32, pady: i32, enabled: bool,
              shape: &'static str, hover: bool, down: bool, cmd: String },
     Entry { font: Font, chars: i32, e: EntryText },
-    Canvas { items: Vec<Item>, card: Option<Card> },
+    Canvas { items: Vec<Item>, card: Option<Card>, tk: Option<Box<crate::tkcanvas::Canvas>> },
 }
 
 #[derive(Clone, Debug)]
@@ -210,6 +214,8 @@ pub struct W {
     pub rw: i32,
     pub rh: i32,
     pub mapped: bool,
+    /// lowered under its siblings (tk.Misc.lower)
+    pub low: bool,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -297,7 +303,7 @@ impl Ui {
         let id = self.ws.len();
         self.ws.push(W { kind, parent, kids: vec![], bg: bg.into(), zk_fill: None, bd: 0, hl: 0, padx: 0, pady: 0,
                          opt_w: 0, opt_h: 0, pack: None, place: None, propagate: true, name: String::new(), x: 0, y: 0,
-                         w: 1, h: 1, rw: 1, rh: 1, mapped: parent.is_none() });
+                         w: 1, h: 1, rw: 1, rh: 1, mapped: parent.is_none(), low: false });
         if let Some(p) = parent {
             self.ws[p].kids.push(id);
         }
@@ -348,7 +354,7 @@ impl Ui {
     }
 
     pub fn canvas(&mut self, parent: usize, bg: &str, w: i32, h: i32) -> usize {
-        let id = self.add(Some(parent), Kind::Canvas { items: vec![], card: None }, bg);
+        let id = self.add(Some(parent), Kind::Canvas { items: vec![], card: None, tk: None }, bg);
         (self.ws[id].opt_w, self.ws[id].opt_h) = (w, h);
         id
     }
@@ -557,7 +563,11 @@ impl Ui {
         // place: bordermode inside
         for k in self.ws[id].kids.clone() {
             let Some(pl) = self.ws[k].place.clone() else { continue };
-            let (mx, my, mw, mh) = (bx as f64, by as f64, (cw0 - 2 * bx) as f64, (ch0 - 2 * by) as f64);
+            let (mx, my, mw, mh) = if pl.ignore {
+                (0.0, 0.0, cw0 as f64, ch0 as f64)
+            } else {
+                (bx as f64, by as f64, (cw0 - 2 * bx) as f64, (ch0 - 2 * by) as f64)
+            };
             let rnd = |v: f64| if v > 0.0 { (v + 0.5) as i32 } else { (v - 0.5) as i32 };
             let x1 = pl.x as f64 + mx + pl.relx * mw;
             let x = rnd(x1);
@@ -648,11 +658,11 @@ impl Ui {
     }
 
     /// stacking order: a canvas made by round_frame is lowered under its siblings
-    fn stack(&self, id: usize) -> Vec<usize> {
+    pub fn stack(&self, id: usize) -> Vec<usize> {
         let mut v: Vec<usize> = self.ws[id].kids.iter().copied()
-            .filter(|&k| matches!(&self.ws[k].kind, Kind::Canvas { card: Some(_), .. })).collect();
+            .filter(|&k| self.ws[k].low || matches!(&self.ws[k].kind, Kind::Canvas { card: Some(_), .. })).collect();
         v.extend(self.ws[id].kids.iter().copied()
-            .filter(|&k| !matches!(&self.ws[k].kind, Kind::Canvas { card: Some(_), .. })));
+            .filter(|&k| !self.ws[k].low && !matches!(&self.ws[k].kind, Kind::Canvas { card: Some(_), .. })));
         v
     }
 
@@ -735,6 +745,9 @@ impl Ui {
                 }
                 out.push(Draw::Clip(Some(me)));
             }
+            Kind::Canvas { tk: Some(cv), .. } => {
+                out.push(Draw::Tk { x: ax, y: ay, ops: crate::canvasdraw::render(cv, fonts) });
+            }
             Kind::Button { .. } | Kind::Canvas { .. } => {
                 for it in self.items_of(id, t) {
                     match it {
@@ -790,7 +803,7 @@ impl Ui {
                 }
                 v.push(Item::Text { x: wd / 2, y: ht / 2 + dy, text: text.clone(), font: font.clone(), color: fgc });
             }
-            Kind::Canvas { items, card } => {
+            Kind::Canvas { items, card, .. } => {
                 if let Some(c) = card {
                     let (wd, ht) = (w.w, w.h);
                     if wd >= 8 && ht >= 8 {

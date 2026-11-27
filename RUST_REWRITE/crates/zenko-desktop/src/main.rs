@@ -31,6 +31,8 @@ mod bgm;
 mod net;
 #[cfg(windows)]
 mod uiwin;
+#[cfg(windows)]
+mod tkpaint;
 
 #[cfg(windows)]
 fn main() {

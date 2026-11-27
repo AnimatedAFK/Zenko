@@ -4,6 +4,25 @@
 use serde_json::Value;
 use zenko_desktop::hubside::{Side, SideCtx, daypart, season_of};
 use zenko_desktop::tkcanvas::CKind;
+use zenko_desktop::ui::{Font, Fonts};
+use std::collections::HashMap;
+
+/// the font numbers Tk measured in the golden run, keyed by (family, size, bold)
+struct Table(HashMap<(String, i32, bool), (i32, i32, HashMap<String, i32>)>);
+
+impl Fonts for Table {
+    fn width(&self, f: &Font, s: &str) -> i32 {
+        if s.is_empty() {
+            return 0;
+        }
+        let e = &self.0[&(f.family.clone(), f.size, f.bold)];
+        *e.2.get(s).unwrap_or_else(|| panic!("no width for {s:?} in {f:?}"))
+    }
+    fn metrics(&self, f: &Font) -> (i32, i32) {
+        let e = &self.0[&(f.family.clone(), f.size, f.bold)];
+        (e.0, e.1)
+    }
+}
 
 fn font_of(s: &str) -> (String, i32, bool) {
     // Tk font description: "{Segoe UI} 12 bold" or "IPAGothic 9"
@@ -124,5 +143,29 @@ fn sidebar_matches_zenko_py() {
             }
         }
         assert_eq!(got.len(), want.len(), "{name}: item count");
+        // where Tk puts each text and picture (its bbox), from the font numbers it measured
+        // ("{Segoe UI} 10" and "{Segoe UI} 10 normal" are one font: their widths are merged)
+        let mut fonts = Table(HashMap::new());
+        for (k, v) in c["fonts"].as_object().unwrap() {
+            let e = fonts.0.entry(font_of(k)).or_insert((v["ascent"].as_i64().unwrap() as i32,
+                                                         v["descent"].as_i64().unwrap() as i32, HashMap::new()));
+            e.2.extend(v["w"].as_object().unwrap().iter().map(|(s, n)| (s.clone(), n.as_i64().unwrap() as i32)));
+        }
+        for (gi, wi) in got.iter().zip(want) {
+            let bb: Vec<i32> = wi["bbox"].as_array().unwrap().iter().map(|v| v.as_i64().unwrap() as i32).collect();
+            if gi.hidden || bb.is_empty() {
+                continue;
+            }
+            match gi.kind {
+                CKind::Text => assert_eq!(zenko_desktop::canvasdraw::text_bbox(gi, &fonts).to_vec(), bb,
+                                          "{name} text {:?} bbox", gi.text),
+                CKind::Image => {
+                    let (x, y) = zenko_desktop::canvasdraw::image_xy(gi);
+                    let p = gi.image.as_ref().unwrap();
+                    assert_eq!(vec![x, y, x + p.w as i32, y + p.h as i32], bb, "{name} picture {:?} bbox", gi.tags);
+                }
+                _ => {}
+            }
+        }
     }
 }
