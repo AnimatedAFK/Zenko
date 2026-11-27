@@ -113,7 +113,7 @@ pub fn mix(c1: &str, c2: &str, t: f64) -> String {
     format!("#{:02x}{:02x}{:02x}", v[0], v[1], v[2])
 }
 
-fn canvas_of(ui: &mut Ui, id: usize) -> &mut Canvas {
+pub(crate) fn canvas_of(ui: &mut Ui, id: usize) -> &mut Canvas {
     let Kind::Canvas { tk, .. } = &mut ui.ws[id].kind else { panic!("not a canvas") };
     tk.get_or_insert_with(Default::default)
 }

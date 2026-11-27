@@ -133,6 +133,8 @@ pub struct Place {
     pub h: Option<i32>,
     pub relw: Option<f64>,
     pub relh: Option<f64>,
+    /// anchor="ne": (x, y) is the widget's top right corner
+    pub ne: bool,
 }
 
 /// One canvas item, in canvas coordinates (already rounded the way Tk rounds them)
@@ -189,6 +191,8 @@ pub enum Kind {
              shape: &'static str, hover: bool, down: bool, cmd: String },
     Entry { font: Font, chars: i32, e: EntryText },
     Canvas { items: Vec<Item>, card: Option<Card>, tk: Option<Box<crate::tkcanvas::Canvas>> },
+    /// a tk.Text (tktext.rs); `ring` is its highlightbackground
+    Text { t: Box<crate::tktext::Text>, ring: String },
 }
 
 #[derive(Clone, Debug)]
@@ -220,6 +224,8 @@ pub struct W {
     pub mapped: bool,
     /// lowered under its siblings (tk.Misc.lower)
     pub low: bool,
+    /// when it was packed: the packer's order is the order of the pack calls
+    pub pack_seq: u64,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -236,6 +242,7 @@ pub struct Ui {
     pub active: bool,
     pressed: Option<usize>,
     dragging: bool,
+    pack_n: u64,
 }
 
 /// Tk_ComputeTextLayout for one paragraph set: (lines, width of the widest line without trailing spaces)
@@ -307,7 +314,7 @@ impl Ui {
         let id = self.ws.len();
         self.ws.push(W { kind, parent, kids: vec![], bg: bg.into(), zk_fill: None, bd: 0, hl: 0, padx: 0, pady: 0,
                          opt_w: 0, opt_h: 0, pack: None, place: None, propagate: true, name: String::new(), x: 0, y: 0,
-                         w: 1, h: 1, rw: 1, rh: 1, mapped: parent.is_none(), low: false });
+                         w: 1, h: 1, rw: 1, rh: 1, mapped: parent.is_none(), low: false, pack_seq: 0 });
         if let Some(p) = parent {
             self.ws[p].kids.push(id);
         }
@@ -382,6 +389,8 @@ impl Ui {
 
     pub fn pack(&mut self, id: usize, p: Pack) -> usize {
         self.ws[id].pack = Some(p);
+        self.pack_n += 1;
+        self.ws[id].pack_seq = self.pack_n;
         id
     }
 
@@ -401,6 +410,8 @@ impl Ui {
             Kind::Frame => (w.bd + w.hl + w.padx, w.bd + w.hl + w.pady),
             Kind::Label { .. } => (w.bd + w.hl, w.bd + w.hl),
             Kind::Entry { .. } => (w.bd + w.hl + 1, w.bd + w.hl + 1),
+            // Tk_SetInternalBorderEx: border + highlight + padding
+            Kind::Text { ref t, .. } => (t.bd + t.hl + t.padx, t.bd + t.hl + t.pady),
             _ => (w.bd + w.hl, w.bd + w.hl),
         }
     }
@@ -434,6 +445,7 @@ impl Ui {
                 (width + 2 * inset, ls + 2 * inset)
             }
             Kind::Canvas { .. } => (w.opt_w + 2 * (w.bd + w.hl), w.opt_h + 2 * (w.bd + w.hl)),
+            Kind::Text { t, .. } => t.req_size(fonts),
         };
         (r, rr)
     }
@@ -444,6 +456,7 @@ impl Ui {
         let (rw, rh) = (self.ws[0].rw, self.ws[0].rh);
         (self.ws[0].w, self.ws[0].h) = (rw, rh);
         self.arrange(0);
+        self.sync_texts(fonts);
     }
 
     /// lay out with the toplevel at a given size
@@ -451,10 +464,56 @@ impl Ui {
         self.req(fonts, 0);
         (self.ws[0].w, self.ws[0].h) = (w, h);
         self.arrange(0);
+        self.sync_texts(fonts);
+    }
+
+    /// a Text widget whose size changed lays itself out again (TkTextRelayoutWindow); unmapped ones are 1x1
+    pub fn sync_texts(&mut self, fonts: &dyn Fonts) {
+        for i in 0..self.ws.len() {
+            let shown = self.shown(i);
+            let w = &mut self.ws[i];
+            let (ww, hh) = if shown { (w.w, w.h) } else { (1, 1) };
+            if let Kind::Text { t, .. } = &mut w.kind
+                && (t.w, t.h) != (ww, hh) {
+                (t.w, t.h) = (ww, hh);
+                t.relayout(fonts);
+            }
+        }
+    }
+
+    /// mapped, and every parent too
+    pub fn shown(&self, mut id: usize) -> bool {
+        loop {
+            if !self.ws[id].mapped {
+                return false;
+            }
+            match self.ws[id].parent {
+                Some(p) => id = p,
+                None => return true,
+            }
+        }
+    }
+
+    /// tk.Text(parent, ...): the widget's own options are set on the returned text
+    pub fn text(&mut self, parent: usize, t: crate::tktext::Text, ring: &str) -> usize {
+        let bg = t.bg.clone();
+        let (bd, hl) = (t.bd, t.hl);
+        let id = self.add(Some(parent), Kind::Text { t: Box::new(t), ring: ring.into() }, &bg);
+        (self.ws[id].bd, self.ws[id].hl) = (bd, hl);
+        id
+    }
+
+    pub fn text_mut(&mut self, id: usize) -> &mut crate::tktext::Text {
+        match &mut self.ws[id].kind {
+            Kind::Text { t, .. } => t,
+            _ => panic!("not a text"),
+        }
     }
 
     fn packed(&self, id: usize) -> Vec<usize> {
-        self.ws[id].kids.iter().copied().filter(|&k| self.ws[k].pack.is_some()).collect()
+        let mut v: Vec<usize> = self.ws[id].kids.iter().copied().filter(|&k| self.ws[k].pack.is_some()).collect();
+        v.sort_by_key(|&k| self.ws[k].pack_seq);
+        v
     }
 
     fn req(&mut self, fonts: &dyn Fonts, id: usize) {
@@ -574,7 +633,7 @@ impl Ui {
             };
             let rnd = |v: f64| if v > 0.0 { (v + 0.5) as i32 } else { (v - 0.5) as i32 };
             let x1 = pl.x as f64 + mx + pl.relx * mw;
-            let x = rnd(x1);
+            let mut x = rnd(x1);
             let y1 = pl.y as f64 + my + pl.rely * mh;
             let y = rnd(y1);
             let width = if pl.w.is_some() || pl.relw.is_some() {
@@ -587,6 +646,9 @@ impl Ui {
             } else {
                 self.ws[k].rh
             };
+            if pl.ne {
+                x -= width;
+            }
             let w = &mut self.ws[k];
             if width <= 0 || height <= 0 {
                 w.mapped = false;
@@ -751,6 +813,9 @@ impl Ui {
             }
             Kind::Canvas { tk: Some(cv), .. } => {
                 out.push(Draw::Tk { x: ax, y: ay, ops: crate::canvasdraw::render(cv, fonts) });
+            }
+            Kind::Text { t, ring } => {
+                out.push(Draw::Tk { x: ax, y: ay, ops: t.ops(fonts, ring) });
             }
             Kind::Button { .. } | Kind::Canvas { .. } => {
                 for it in self.items_of(id, t) {

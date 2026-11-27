@@ -21,7 +21,7 @@ pub fn font_of(s: &str) -> (String, i32, bool) {
 /// font_of plus italic
 pub fn font_key(s: &str) -> (String, i32, bool, bool) {
     let (f, n, b) = font_of(s);
-    let rest = s.rsplit('}').next().unwrap_or(s);
+    let rest = if s.starts_with('{') { s.split_once('}').map(|x| x.1).unwrap_or("") } else { s };
     (f, n, b, rest.contains("italic"))
 }
 

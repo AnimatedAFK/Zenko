@@ -1,0 +1,1710 @@
+[
+{
+"q": "help",
+"now": 1765407607.0,
+"out": [
+[
+"line",
+"You",
+"help"
+],
+[
+"line",
+"Fox",
+"I understand:\n  time left          - how long is left\n  timetable          - open today's timetable\n  next               - what's next on the timetable\n  add 4pm study renal 45  - add to today (add 'daily' to repeat)\n  start reading 30   - start a focus session\n  pause / resume / stop\n  stats              - minutes focused today\n  break              - start a break  (end break to stop it)\n  motivate me / tip / joke / who are you\n  weather [in Paris]  - live weather + forecast (also: home city Paris, temp unit F)\n  time in Tokyo / news [topic] / convert 100 usd to xcd\n  search black holes  - I search the web, read the top pages and summarise them\n  ...or just ask anything (who is ..., how do ..., why ...) - if I don't know, I look it up\n  when I say sched I mean timetable  - teach me your shorthand (I also pick it up myself)\n  what's my shorthand / what did you look up / forget my shorthand / forget everything\n  hold Right Ctrl and talk  - voice instead of typing (Mic button in chat too)\n  look at my screen [question] / hold F8 and ask  - the fox reads your screen and points\n  play lofi / play my study playlist / pause music / skip / volume 40 / what's playing\n  notes / summarise my notes on renal / quiz me on GI / ask notes: what is RPGN?\n  drop a file on me - I'll find the exam dates  ·  what's due / add exam renal 12 Dec 9am\n  open spotify / open word / open my deadlines  ·  play focus (your music presets)\n  battery\n  lock in [45] / unlock  - full focus: I pounce on and eat distracting windows (hold Esc 2 s to escape)\n  pomodoro 25/5 [x4] / focus for 40 min [on essay]\n  remind me in 20 min to stretch / remind me at 5pm to call mum / my reminders\n  how was my week  - weekly focus report\n  quiz me on photosynthesis  - flashcards from the web (hint / skip / stop quiz)\n  review flashcards / add flashcard Q = A / my flashcards  - cards that remember what you got wrong\n  my chemistry exam is in 2 days / maths test on Friday 9am  - I add it and plan study sessions\n  I'm free 4-7pm on weekdays / I'm free today 5-8  ·  study plan / countdown / I need 8 hours for chemistry\n  homework: <question>  - I explain it step by step (the Study books tab has a book + tutor for each subject)\n  eli12: <question>  ·  test me on photosynthesis  ·  flashcards from my notes  ·  review mistakes  ·  conjugate aller\n  I studied bio for 2 hours  ·  I'm studying chem  ·  what am I studying  ·  bio goal 5 hours a week\n  recap  ·  week report  ·  distraction report  ·  best focus time  ·  open notebook\n  delay 20 min / I need to talk to my parents for 30 min / undo delay  - 急 push the rest of today back\n  I got 34/40 on bio paper 1 / got a 6 in chem MYA / my grades  ·  vocab drill  ·  open my bio book  ·  bio fact\n  bedtime 22:30  - the sleep guard (wind-down + late-night nudges)\n  Ctrl+V a screenshot in chat (or the Image button) - I read it and help  ·  get my eyes  - download the free vision model\n  I ate 2 eggs and toast  ·  I weigh 68 kg  ·  what's my workout  - the Exercise tab\n  breathe / check in / my streak / badges / how are you / haiku\n  my favourite subject is biology / my birthday is 14 May / remember I play piano / what do you remember\n  background music on / off  ·  roaming off / seasons off / night mode off / go for a walk\n  calc 15% of 240 / define serendipity / translate good luck to Japanese\n  note: buy aburaage / my notes  ·  todo finish essay / done 1 / my todos\n  fortune (omikuji) / word of the day / sing\n  pet / belly rub / boop / tickle / feed inari sushi / yarn / hide and seek / high five / gift / dance / brush\n  outfit crown / outfits / coat golden / your name is Yuki  (or open the Customize page)\nTypos are fine. With the optional smart brain you can also use free wording."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "?",
+"now": 1765407614.0,
+"out": [
+[
+"line",
+"You",
+"?"
+],
+[
+"line",
+"Fox",
+"I understand:\n  time left          - how long is left\n  timetable          - open today's timetable\n  next               - what's next on the timetable\n  add 4pm study renal 45  - add to today (add 'daily' to repeat)\n  start reading 30   - start a focus session\n  pause / resume / stop\n  stats              - minutes focused today\n  break              - start a break  (end break to stop it)\n  motivate me / tip / joke / who are you\n  weather [in Paris]  - live weather + forecast (also: home city Paris, temp unit F)\n  time in Tokyo / news [topic] / convert 100 usd to xcd\n  search black holes  - I search the web, read the top pages and summarise them\n  ...or just ask anything (who is ..., how do ..., why ...) - if I don't know, I look it up\n  when I say sched I mean timetable  - teach me your shorthand (I also pick it up myself)\n  what's my shorthand / what did you look up / forget my shorthand / forget everything\n  hold Right Ctrl and talk  - voice instead of typing (Mic button in chat too)\n  look at my screen [question] / hold F8 and ask  - the fox reads your screen and points\n  play lofi / play my study playlist / pause music / skip / volume 40 / what's playing\n  notes / summarise my notes on renal / quiz me on GI / ask notes: what is RPGN?\n  drop a file on me - I'll find the exam dates  ·  what's due / add exam renal 12 Dec 9am\n  open spotify / open word / open my deadlines  ·  play focus (your music presets)\n  battery\n  lock in [45] / unlock  - full focus: I pounce on and eat distracting windows (hold Esc 2 s to escape)\n  pomodoro 25/5 [x4] / focus for 40 min [on essay]\n  remind me in 20 min to stretch / remind me at 5pm to call mum / my reminders\n  how was my week  - weekly focus report\n  quiz me on photosynthesis  - flashcards from the web (hint / skip / stop quiz)\n  review flashcards / add flashcard Q = A / my flashcards  - cards that remember what you got wrong\n  my chemistry exam is in 2 days / maths test on Friday 9am  - I add it and plan study sessions\n  I'm free 4-7pm on weekdays / I'm free today 5-8  ·  study plan / countdown / I need 8 hours for chemistry\n  homework: <question>  - I explain it step by step (the Study books tab has a book + tutor for each subject)\n  eli12: <question>  ·  test me on photosynthesis  ·  flashcards from my notes  ·  review mistakes  ·  conjugate aller\n  I studied bio for 2 hours  ·  I'm studying chem  ·  what am I studying  ·  bio goal 5 hours a week\n  recap  ·  week report  ·  distraction report  ·  best focus time  ·  open notebook\n  delay 20 min / I need to talk to my parents for 30 min / undo delay  - 急 push the rest of today back\n  I got 34/40 on bio paper 1 / got a 6 in chem MYA / my grades  ·  vocab drill  ·  open my bio book  ·  bio fact\n  bedtime 22:30  - the sleep guard (wind-down + late-night nudges)\n  Ctrl+V a screenshot in chat (or the Image button) - I read it and help  ·  get my eyes  - download the free vision model\n  I ate 2 eggs and toast  ·  I weigh 68 kg  ·  what's my workout  - the Exercise tab\n  breathe / check in / my streak / badges / how are you / haiku\n  my favourite subject is biology / my birthday is 14 May / remember I play piano / what do you remember\n  background music on / off  ·  roaming off / seasons off / night mode off / go for a walk\n  calc 15% of 240 / define serendipity / translate good luck to Japanese\n  note: buy aburaage / my notes  ·  todo finish essay / done 1 / my todos\n  fortune (omikuji) / word of the day / sing\n  pet / belly rub / boop / tickle / feed inari sushi / yarn / hide and seek / high five / gift / dance / brush\n  outfit crown / outfits / coat golden / your name is Yuki  (or open the Customize page)\nTypos are fine. With the optional smart brain you can also use free wording."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "commands",
+"now": 1765407621.0,
+"out": [
+[
+"line",
+"You",
+"commands"
+],
+[
+"line",
+"Fox",
+"I understand:\n  time left          - how long is left\n  timetable          - open today's timetable\n  next               - what's next on the timetable\n  add 4pm study renal 45  - add to today (add 'daily' to repeat)\n  start reading 30   - start a focus session\n  pause / resume / stop\n  stats              - minutes focused today\n  break              - start a break  (end break to stop it)\n  motivate me / tip / joke / who are you\n  weather [in Paris]  - live weather + forecast (also: home city Paris, temp unit F)\n  time in Tokyo / news [topic] / convert 100 usd to xcd\n  search black holes  - I search the web, read the top pages and summarise them\n  ...or just ask anything (who is ..., how do ..., why ...) - if I don't know, I look it up\n  when I say sched I mean timetable  - teach me your shorthand (I also pick it up myself)\n  what's my shorthand / what did you look up / forget my shorthand / forget everything\n  hold Right Ctrl and talk  - voice instead of typing (Mic button in chat too)\n  look at my screen [question] / hold F8 and ask  - the fox reads your screen and points\n  play lofi / play my study playlist / pause music / skip / volume 40 / what's playing\n  notes / summarise my notes on renal / quiz me on GI / ask notes: what is RPGN?\n  drop a file on me - I'll find the exam dates  ·  what's due / add exam renal 12 Dec 9am\n  open spotify / open word / open my deadlines  ·  play focus (your music presets)\n  battery\n  lock in [45] / unlock  - full focus: I pounce on and eat distracting windows (hold Esc 2 s to escape)\n  pomodoro 25/5 [x4] / focus for 40 min [on essay]\n  remind me in 20 min to stretch / remind me at 5pm to call mum / my reminders\n  how was my week  - weekly focus report\n  quiz me on photosynthesis  - flashcards from the web (hint / skip / stop quiz)\n  review flashcards / add flashcard Q = A / my flashcards  - cards that remember what you got wrong\n  my chemistry exam is in 2 days / maths test on Friday 9am  - I add it and plan study sessions\n  I'm free 4-7pm on weekdays / I'm free today 5-8  ·  study plan / countdown / I need 8 hours for chemistry\n  homework: <question>  - I explain it step by step (the Study books tab has a book + tutor for each subject)\n  eli12: <question>  ·  test me on photosynthesis  ·  flashcards from my notes  ·  review mistakes  ·  conjugate aller\n  I studied bio for 2 hours  ·  I'm studying chem  ·  what am I studying  ·  bio goal 5 hours a week\n  recap  ·  week report  ·  distraction report  ·  best focus time  ·  open notebook\n  delay 20 min / I need to talk to my parents for 30 min / undo delay  - 急 push the rest of today back\n  I got 34/40 on bio paper 1 / got a 6 in chem MYA / my grades  ·  vocab drill  ·  open my bio book  ·  bio fact\n  bedtime 22:30  - the sleep guard (wind-down + late-night nudges)\n  Ctrl+V a screenshot in chat (or the Image button) - I read it and help  ·  get my eyes  - download the free vision model\n  I ate 2 eggs and toast  ·  I weigh 68 kg  ·  what's my workout  - the Exercise tab\n  breathe / check in / my streak / badges / how are you / haiku\n  my favourite subject is biology / my birthday is 14 May / remember I play piano / what do you remember\n  background music on / off  ·  roaming off / seasons off / night mode off / go for a walk\n  calc 15% of 240 / define serendipity / translate good luck to Japanese\n  note: buy aburaage / my notes  ·  todo finish essay / done 1 / my todos\n  fortune (omikuji) / word of the day / sing\n  pet / belly rub / boop / tickle / feed inari sushi / yarn / hide and seek / high five / gift / dance / brush\n  outfit crown / outfits / coat golden / your name is Yuki  (or open the Customize page)\nTypos are fine. With the optional smart brain you can also use free wording."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "hlep",
+"now": 1765407628.0,
+"out": [
+[
+"line",
+"You",
+"hlep"
+],
+[
+"line",
+"Fox",
+"I understand:\n  time left          - how long is left\n  timetable          - open today's timetable\n  next               - what's next on the timetable\n  add 4pm study renal 45  - add to today (add 'daily' to repeat)\n  start reading 30   - start a focus session\n  pause / resume / stop\n  stats              - minutes focused today\n  break              - start a break  (end break to stop it)\n  motivate me / tip / joke / who are you\n  weather [in Paris]  - live weather + forecast (also: home city Paris, temp unit F)\n  time in Tokyo / news [topic] / convert 100 usd to xcd\n  search black holes  - I search the web, read the top pages and summarise them\n  ...or just ask anything (who is ..., how do ..., why ...) - if I don't know, I look it up\n  when I say sched I mean timetable  - teach me your shorthand (I also pick it up myself)\n  what's my shorthand / what did you look up / forget my shorthand / forget everything\n  hold Right Ctrl and talk  - voice instead of typing (Mic button in chat too)\n  look at my screen [question] / hold F8 and ask  - the fox reads your screen and points\n  play lofi / play my study playlist / pause music / skip / volume 40 / what's playing\n  notes / summarise my notes on renal / quiz me on GI / ask notes: what is RPGN?\n  drop a file on me - I'll find the exam dates  ·  what's due / add exam renal 12 Dec 9am\n  open spotify / open word / open my deadlines  ·  play focus (your music presets)\n  battery\n  lock in [45] / unlock  - full focus: I pounce on and eat distracting windows (hold Esc 2 s to escape)\n  pomodoro 25/5 [x4] / focus for 40 min [on essay]\n  remind me in 20 min to stretch / remind me at 5pm to call mum / my reminders\n  how was my week  - weekly focus report\n  quiz me on photosynthesis  - flashcards from the web (hint / skip / stop quiz)\n  review flashcards / add flashcard Q = A / my flashcards  - cards that remember what you got wrong\n  my chemistry exam is in 2 days / maths test on Friday 9am  - I add it and plan study sessions\n  I'm free 4-7pm on weekdays / I'm free today 5-8  ·  study plan / countdown / I need 8 hours for chemistry\n  homework: <question>  - I explain it step by step (the Study books tab has a book + tutor for each subject)\n  eli12: <question>  ·  test me on photosynthesis  ·  flashcards from my notes  ·  review mistakes  ·  conjugate aller\n  I studied bio for 2 hours  ·  I'm studying chem  ·  what am I studying  ·  bio goal 5 hours a week\n  recap  ·  week report  ·  distraction report  ·  best focus time  ·  open notebook\n  delay 20 min / I need to talk to my parents for 30 min / undo delay  - 急 push the rest of today back\n  I got 34/40 on bio paper 1 / got a 6 in chem MYA / my grades  ·  vocab drill  ·  open my bio book  ·  bio fact\n  bedtime 22:30  - the sleep guard (wind-down + late-night nudges)\n  Ctrl+V a screenshot in chat (or the Image button) - I read it and help  ·  get my eyes  - download the free vision model\n  I ate 2 eggs and toast  ·  I weigh 68 kg  ·  what's my workout  - the Exercise tab\n  breathe / check in / my streak / badges / how are you / haiku\n  my favourite subject is biology / my birthday is 14 May / remember I play piano / what do you remember\n  background music on / off  ·  roaming off / seasons off / night mode off / go for a walk\n  calc 15% of 240 / define serendipity / translate good luck to Japanese\n  note: buy aburaage / my notes  ·  todo finish essay / done 1 / my todos\n  fortune (omikuji) / word of the day / sing\n  pet / belly rub / boop / tickle / feed inari sushi / yarn / hide and seek / high five / gift / dance / brush\n  outfit crown / outfits / coat golden / your name is Yuki  (or open the Customize page)\nTypos are fine. With the optional smart brain you can also use free wording."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "Help me",
+"now": 1765407635.0,
+"out": [
+[
+"line",
+"You",
+"Help me"
+],
+[
+"llm",
+"Help me"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "teach me hi => hello there",
+"now": 1765407642.0,
+"out": [
+[
+"line",
+"You",
+"teach me hi => hello there"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Yatta, learned it! When you say 'hi' I'll answer that. (Say 'forget hi' to undo.)"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "hi",
+"now": 1765407649.0,
+"out": [
+[
+"line",
+"You",
+"hi"
+],
+[
+"line",
+"Fox",
+"Kon kon~ hello there"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "HI!",
+"now": 1765407656.0,
+"out": [
+[
+"line",
+"You",
+"HI!"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! hello there"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "forget hi",
+"now": 1765407663.0,
+"out": [
+[
+"line",
+"You",
+"forget hi"
+],
+[
+"line",
+"Fox",
+"Poof~ forgotten!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "forget hi",
+"now": 1765407670.0,
+"out": [
+[
+"line",
+"You",
+"forget hi"
+],
+[
+"line",
+"Fox",
+"Ne~? I hadn't learned 'hi'~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "when i say sched i mean timetable",
+"now": 1765407677.0,
+"out": [
+[
+"line",
+"You",
+"when i say sched i mean timetable"
+],
+[
+"line",
+"Fox",
+"Kon kon~ got it: 'sched' means 'timetable'. I'll understand that from now on~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "my shorthand",
+"now": 1765407684.0,
+"out": [
+[
+"line",
+"You",
+"my shorthand"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Your shorthand I've learned: sched = timetable"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "what shorthand",
+"now": 1765407691.0,
+"out": [
+[
+"line",
+"You",
+"what shorthand"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Your shorthand I've learned: sched = timetable"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "forget my shorthand",
+"now": 1765407698.0,
+"out": [
+[
+"line",
+"You",
+"forget my shorthand"
+],
+[
+"line",
+"Fox",
+"Okay~ I've forgotten your shorthand. Fresh start, kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "my shorthand",
+"now": 1765407705.0,
+"out": [
+[
+"line",
+"You",
+"my shorthand"
+],
+[
+"line",
+"Fox",
+"Ne~ I haven't learned any of your shorthand yet! I already know the usual ones (tmrw, rn, pls, hw...). Teach me more: when I say sched I mean timetable"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "what did you look up",
+"now": 1765407712.0,
+"out": [
+[
+"line",
+"You",
+"what did you look up"
+],
+[
+"line",
+"Fox",
+"Ne~ I haven't looked anything up yet. Ask me anything~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "what have you learned",
+"now": 1765407719.0,
+"out": [
+[
+"line",
+"You",
+"what have you learned"
+],
+[
+"line",
+"Fox",
+"Gomen ne~ Nothing yet. Do a few focus sessions and I'll start noticing your habits. You can also teach me: learn: good morning = Ohayo! Let's get to work."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "home city London",
+"now": 1765407726.0,
+"out": [
+[
+"line",
+"You",
+"home city London"
+],
+[
+"line",
+"Fox",
+"Waai~ Home city set to London. Now 'weather' will use it~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "unit f",
+"now": 1765407733.0,
+"out": [
+[
+"line",
+"You",
+"unit f"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Temperatures will be shown in °F~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "temperature unit c",
+"now": 1765407740.0,
+"out": [
+[
+"line",
+"You",
+"temperature unit c"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Temperatures will be shown in °C~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "time left",
+"now": 1765407747.0,
+"out": [
+[
+"line",
+"You",
+"time left"
+],
+[
+"line",
+"Fox",
+"Gomen ne~ No session running. Say 'start reading 25' or double-click me."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "start reading 25",
+"now": 1765407754.0,
+"out": [
+[
+"line",
+"You",
+"start reading 25"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Started 25 min on “Reading”. Go!"
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "time left",
+"now": 1765407761.0,
+"out": [
+[
+"line",
+"You",
+"time left"
+],
+[
+"line",
+"Fox",
+"Sugoi! 25 min 00 s left on “Reading”~kon!"
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "how long",
+"now": 1765407768.0,
+"out": [
+[
+"line",
+"You",
+"how long"
+],
+[
+"line",
+"Fox",
+"Ehehe~ 25 min 00 s left on “Reading”."
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "pause",
+"now": 1765407775.0,
+"out": [
+[
+"line",
+"You",
+"pause"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Paused."
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": true
+},
+"brk": null
+},
+{
+"q": "pause",
+"now": 1765407782.0,
+"out": [
+[
+"line",
+"You",
+"pause"
+],
+[
+"line",
+"Fox",
+"Kon! Paused~kon!"
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": true
+},
+"brk": null
+},
+{
+"q": "resume",
+"now": 1765407789.0,
+"out": [
+[
+"line",
+"You",
+"resume"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Resumed~kon!"
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "start maths",
+"now": 1765407796.0,
+"out": [
+[
+"line",
+"You",
+"start maths"
+],
+[
+"line",
+"Fox",
+"Kon! A session is already running. Say 'stop' first."
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "stop",
+"now": 1765407803.0,
+"out": [
+[
+"line",
+"You",
+"stop"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Session stopped."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "stop",
+"now": 1765407810.0,
+"out": [
+[
+"line",
+"You",
+"stop"
+],
+[
+"line",
+"Fox",
+"Auu... No session running."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "stats",
+"now": 1765407817.0,
+"out": [
+[
+"line",
+"You",
+"stats"
+],
+[
+"line",
+"Fox",
+"Today you've focused for 0 min~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "how am i doing",
+"now": 1765407824.0,
+"out": [
+[
+"line",
+"You",
+"how am i doing"
+],
+[
+"line",
+"Fox",
+"Sugoi! Today you've focused for 0 min~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "motivate me",
+"now": 1765407831.0,
+"out": [
+[
+"line",
+"You",
+"motivate me"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Sip of water? Then back to it! Kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "inspire me",
+"now": 1765407838.0,
+"out": [
+[
+"line",
+"You",
+"inspire me"
+],
+[
+"line",
+"Fox",
+"Ehehe~ future you will thank you for this."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "tips",
+"now": 1765407845.0,
+"out": [
+[
+"line",
+"You",
+"tips"
+],
+[
+"line",
+"Fox",
+"Kon! Pomodoro: 25 min focus, 5 min break. After four rounds take a longer break~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "focus tip",
+"now": 1765407852.0,
+"out": [
+[
+"line",
+"You",
+"focus tip"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Stuck? Set a 5-minute timer and promise to work only until it rings~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "tell me a joke",
+"now": 1765407859.0,
+"out": [
+[
+"line",
+"You",
+"tell me a joke"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! What do you call a fox that studies? A smarty fur-pants. Ehehe~ kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "funny",
+"now": 1765407866.0,
+"out": [
+[
+"line",
+"You",
+"funny"
+],
+[
+"line",
+"Fox",
+"Waai~ Why did the fox stop procrastinating? It ran out of excuses. Wait, no, it ran out of tabs. Kon kon~~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "take a break",
+"now": 1765407873.0,
+"out": [
+[
+"line",
+"You",
+"take a break"
+],
+[
+"line",
+"Fox",
+"Yatta! Break started: 5 min. I'll wake you when it's over~kon!"
+]
+],
+"session": null,
+"brk": {
+"planned": 300.0
+}
+},
+{
+"q": "break time",
+"now": 1765407880.0,
+"out": [
+[
+"line",
+"You",
+"break time"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Break started: 5 min. I'll wake you when it's over~kon!"
+]
+],
+"session": null,
+"brk": {
+"planned": 300.0
+}
+},
+{
+"q": "end break",
+"now": 1765407887.0,
+"out": [
+[
+"line",
+"You",
+"end break"
+],
+[
+"line",
+"Fox",
+"Sugoi! Break ended."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "back to work",
+"now": 1765407894.0,
+"out": [
+[
+"line",
+"You",
+"back to work"
+],
+[
+"line",
+"Fox",
+"Gomen ne~ No break running~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "i'm tired",
+"now": 1765407901.0,
+"out": [
+[
+"line",
+"You",
+"i'm tired"
+],
+[
+"line",
+"Fox",
+"Kon! Break time: stand up, stretch, look at something far away for 20 seconds, and drink some water."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "rest",
+"now": 1765407908.0,
+"out": [
+[
+"line",
+"You",
+"rest"
+],
+[
+"line",
+"Fox",
+"Ehehe~ *flops down* Ahh, comfy~"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "who are you",
+"now": 1765407915.0,
+"out": [
+[
+"line",
+"You",
+"who are you"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! I'm Zenko, a zenko: one of the good foxes who serve Inari, the kami of rice and good fortune. I watch for distractions, run your timer, keep your timetable and cheer you on. Type 'help' for commands."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "what can you do",
+"now": 1765407922.0,
+"out": [
+[
+"line",
+"You",
+"what can you do"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! I'm Zenko, a zenko: one of the good foxes who serve Inari, the kami of rice and good fortune. I watch for distractions, run your timer, keep your timetable and cheer you on. Type 'help' for commands."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "tell me about the legend",
+"now": 1765407929.0,
+"out": [
+[
+"line",
+"You",
+"tell me about the legend"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Kitsune-bi is foxfire: little floating flames that foxes light. Mine guide you back to your work. Kon! Kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "zenko?",
+"now": 1765407936.0,
+"out": [
+[
+"line",
+"You",
+"zenko?"
+],
+[
+"line",
+"Fox",
+"Yatta! Zenko means 'good fox'. We're the kind foxes who serve Inari, the kami of rice and good fortune. Wild foxes (yako) play tricks; zenko help people."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "hello",
+"now": 1765407943.0,
+"out": [
+[
+"line",
+"You",
+"hello"
+],
+[
+"line",
+"Fox",
+"Waai~! Ready to focus? Type 'start studying 25' or open the timetable, ne~?"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "hey",
+"now": 1765407950.0,
+"out": [
+[
+"line",
+"You",
+"hey"
+],
+[
+"line",
+"Fox",
+"Kon! Ready to focus? Type 'start studying 25' or open the timetable, ne~?"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "good morning",
+"now": 1765407957.0,
+"out": [
+[
+"line",
+"You",
+"good morning"
+],
+[
+"line",
+"Fox",
+"Waai~! Ready to focus? Type 'start studying 25' or open the timetable, ne~?"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "yo",
+"now": 1765407964.0,
+"out": [
+[
+"line",
+"You",
+"yo"
+],
+[
+"line",
+"Fox",
+"Kon kon~! Ready to focus? Type 'start studying 25' or open the timetable, ne~?"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "thanks",
+"now": 1765407971.0,
+"out": [
+[
+"line",
+"You",
+"thanks"
+],
+[
+"line",
+"Fox",
+"Ehehe~ anytime! Now back to work~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "ty",
+"now": 1765407978.0,
+"out": [
+[
+"line",
+"You",
+"ty"
+],
+[
+"line",
+"Fox",
+"Kon kon~ happy to help! Back to it, ne?"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "thank you so much",
+"now": 1765407985.0,
+"out": [
+[
+"line",
+"You",
+"thank you so much"
+],
+[
+"line",
+"Fox",
+"Ehehe~ anytime! Now back to work~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "check in",
+"now": 1765407992.0,
+"out": [
+[
+"line",
+"You",
+"check in"
+],
+[
+"line",
+"Fox",
+"Yatta! How are you feeling today? Pick one~"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "check-in",
+"now": 1765407999.0,
+"out": [
+[
+"line",
+"You",
+"check-in"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! How are you feeling today? Pick one~"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "daily checkin",
+"now": 1765408006.0,
+"out": [
+[
+"line",
+"You",
+"daily checkin"
+],
+[
+"line",
+"Fox",
+"Sugoi! How are you feeling today? Pick one~"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "mood journal",
+"now": 1765408013.0,
+"out": [
+[
+"line",
+"You",
+"mood journal"
+],
+[
+"line",
+"Fox",
+"Kon kon~ How are you feeling today? Pick one~"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "how am i feeling today",
+"now": 1765408020.0,
+"out": [
+[
+"line",
+"You",
+"how am i feeling today"
+],
+[
+"line",
+"Fox",
+"Sugoi! How are you feeling today? Pick one~"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "strat studying 30",
+"now": 1765408027.0,
+"out": [
+[
+"line",
+"You",
+"strat studying 30"
+],
+[
+"line",
+"Fox",
+"Kon! Started 30 min on “Studying”. Go~kon!"
+]
+],
+"session": {
+"task": "Studying",
+"planned": 1800.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "start 10",
+"now": 1765408034.0,
+"out": [
+[
+"line",
+"You",
+"start 10"
+],
+[
+"line",
+"Fox",
+"Yatta! A session is already running. Say 'stop' first~kon!"
+]
+],
+"session": {
+"task": "Studying",
+"planned": 1800.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "stop",
+"now": 1765408041.0,
+"out": [
+[
+"line",
+"You",
+"stop"
+],
+[
+"line",
+"Fox",
+"Yatta! Session stopped."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "start",
+"now": 1765408048.0,
+"out": [
+[
+"line",
+"You",
+"start"
+],
+[
+"line",
+"Fox",
+"Waai~ Started 25 min on “Focus session”. Go!"
+]
+],
+"session": {
+"task": "Focus session",
+"planned": 1500.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "stop",
+"now": 1765408055.0,
+"out": [
+[
+"line",
+"You",
+"stop"
+],
+[
+"line",
+"Fox",
+"Kon! Session stopped~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "Start Biology revision 45 min",
+"now": 1765408062.0,
+"out": [
+[
+"line",
+"You",
+"Start Biology revision 45 min"
+],
+[
+"line",
+"Fox",
+"Kon! Started 45 min on “Biology revision”. Go!"
+],
+[
+"checkin",
+true
+],
+[
+"checkin",
+true
+],
+[
+"checkin",
+true
+],
+[
+"checkin",
+true
+],
+[
+"checkin",
+true
+]
+],
+"session": {
+"task": "Biology revision",
+"planned": 2700.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "time left",
+"now": 1765408069.0,
+"out": [
+[
+"line",
+"You",
+"time left"
+],
+[
+"line",
+"Fox",
+"Sugoi! 44 min 54 s left on “Biology revision”."
+]
+],
+"session": {
+"task": "Biology revision",
+"planned": 2700.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "end",
+"now": 1765408076.0,
+"out": [
+[
+"line",
+"You",
+"end"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Session stopped~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "asdfgh qwerty",
+"now": 1765408083.0,
+"out": [
+[
+"line",
+"You",
+"asdfgh qwerty"
+],
+[
+"llm",
+"asdfgh qwerty"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "wat is the tim left",
+"now": 1765408090.0,
+"out": [
+[
+"line",
+"You",
+"wat is the tim left"
+],
+[
+"line",
+"Fox",
+"No session running. Say 'start reading 25' or double-click me."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "teach you bye = see you later~",
+"now": 1765408097.0,
+"out": [
+[
+"line",
+"You",
+"teach you bye = see you later~"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Yatta, learned it! When you say 'bye' I'll answer that. (Say 'forget bye' to undo.)"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "bye",
+"now": 1765408104.0,
+"out": [
+[
+"line",
+"You",
+"bye"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! see you later~"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "byee",
+"now": 1765408111.0,
+"out": [
+[
+"line",
+"You",
+"byee"
+],
+[
+"llm",
+"byee"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "forget everything",
+"now": 1765408118.0,
+"out": [
+[
+"line",
+"You",
+"forget everything"
+],
+[
+"line",
+"Fox",
+"Poof~ forgotten~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "bye",
+"now": 1765408125.0,
+"out": [
+[
+"line",
+"You",
+"bye"
+],
+[
+"llm",
+"bye"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "remember gm -> good morning sunshine",
+"now": 1765408132.0,
+"out": [
+[
+"line",
+"You",
+"remember gm -> good morning sunshine"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Yatta, learned it! When you say 'gm' I'll answer that. (Say 'forget gm' to undo.)"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "gm",
+"now": 1765408139.0,
+"out": [
+[
+"line",
+"You",
+"gm"
+],
+[
+"line",
+"Fox",
+"Kon! good morning sunshine"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "Gm!!",
+"now": 1765408146.0,
+"out": [
+[
+"line",
+"You",
+"Gm!!"
+],
+[
+"line",
+"Fox",
+"Kon kon~ good morning sunshine"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "start  history essay, 50",
+"now": 1765408153.0,
+"out": [
+[
+"line",
+"You",
+"start  history essay, 50"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Started 50 min on “History essay”. Go~kon!"
+]
+],
+"session": {
+"task": "History essay",
+"planned": 3000.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "pause",
+"now": 1765408160.0,
+"out": [
+[
+"line",
+"You",
+"pause"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Paused~kon!"
+]
+],
+"session": {
+"task": "History essay",
+"planned": 3000.0,
+"paused": true
+},
+"brk": null
+},
+{
+"q": "time left",
+"now": 1765408167.0,
+"out": [
+[
+"line",
+"You",
+"time left"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! 50 min 00 s left on “History essay”."
+]
+],
+"session": {
+"task": "History essay",
+"planned": 3000.0,
+"paused": true
+},
+"brk": null
+},
+{
+"q": "resume",
+"now": 1765408174.0,
+"out": [
+[
+"line",
+"You",
+"resume"
+],
+[
+"line",
+"Fox",
+"Yatta! Resumed."
+]
+],
+"session": {
+"task": "History essay",
+"planned": 3000.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "quit session",
+"now": 1765408181.0,
+"out": [
+[
+"line",
+"You",
+"quit session"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Session stopped."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "motivate",
+"now": 1765408188.0,
+"out": [
+[
+"line",
+"You",
+"motivate"
+],
+[
+"line",
+"Fox",
+"Ehehe~ future you will thank you for this~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "i give up",
+"now": 1765408195.0,
+"out": [
+[
+"line",
+"You",
+"i give up"
+],
+[
+"line",
+"Fox",
+"Kon kon~ you're doing great. Keep going on “your work”!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "procrastinating again",
+"now": 1765408202.0,
+"out": [
+[
+"line",
+"You",
+"procrastinating again"
+],
+[
+"line",
+"Fox",
+"Kon! Two-minute rule: if it takes under two minutes, do it now~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "laugh",
+"now": 1765408209.0,
+"out": [
+[
+"line",
+"You",
+"laugh"
+],
+[
+"line",
+"Fox",
+"Ehehe~ What do you call a fox that studies? A smarty fur-pants. Kon kon~!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "need a break",
+"now": 1765408216.0,
+"out": [
+[
+"line",
+"You",
+"need a break"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Break started: 5 min. I'll wake you when it's over."
+]
+],
+"session": null,
+"brk": {
+"planned": 300.0
+}
+},
+{
+"q": "break",
+"now": 1765408223.0,
+"out": [
+[
+"line",
+"You",
+"break"
+],
+[
+"line",
+"Fox",
+"Sugoi! Break started: 5 min. I'll wake you when it's over."
+]
+],
+"session": null,
+"brk": {
+"planned": 300.0
+}
+},
+{
+"q": "stop break",
+"now": 1765408230.0,
+"out": [
+[
+"line",
+"You",
+"stop break"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Break ended."
+]
+],
+"session": null,
+"brk": null
+}
+]

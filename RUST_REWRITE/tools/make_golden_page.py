@@ -127,6 +127,14 @@ def walk(w, top, skip, images, fonts):
                 for line in io["text"].split("\n"):
                     for k in range(len(line) + 1):
                         ent["w"][line[:k]] = f.measure(line[:k])
+                a = f.actual()                   # the same face at other sizes (pages lay out before zk_fit scales)
+                for n in range(6, 17):
+                    g = tkfont.Font(family=a["family"], size=n, weight=a["weight"], slant=a["slant"])
+                    key = "{%s} %d%s%s" % (a["family"], n, " bold" if a["weight"] == "bold" else "",
+                                           " italic" if a["slant"] == "italic" else "")
+                    e2 = fonts.setdefault(key, {"ascent": g.metrics("ascent"), "descent": g.metrics("descent"), "w": {}})
+                    e2["w"][io["text"]] = g.measure(io["text"])
+                    e2["w"]["0"] = g.measure("0")
             items.append(it)
         rec["items"] = items
     if rec["cls"] == "Label" and o.get("font"):
@@ -134,6 +142,13 @@ def walk(w, top, skip, images, fonts):
         ent = fonts.setdefault(o["font"], {"ascent": f.metrics("ascent"), "descent": f.metrics("descent"), "actual": f.actual(), "w": {}})
         ent["w"][o.get("text", "")] = f.measure(o.get("text", ""))
         ent["w"]["0"] = f.measure("0")
+        a = f.actual()
+        for n in range(6, 17):
+            g = tkfont.Font(family=a["family"], size=n, weight=a["weight"], slant=a["slant"])
+            key = "{%s} %d%s%s" % (a["family"], n, " bold" if a["weight"] == "bold" else "", " italic" if a["slant"] == "italic" else "")
+            e2 = fonts.setdefault(key, {"ascent": g.metrics("ascent"), "descent": g.metrics("descent"), "w": {}})
+            e2["w"][o.get("text", "")] = g.measure(o.get("text", ""))
+            e2["w"]["0"] = g.measure("0")
     if w not in skip:
         for k in w.winfo_children():
             if k.winfo_class() == "Toplevel":
