@@ -41,6 +41,9 @@ impl Fonts for GdiFonts {
         let w: Vec<u16> = s.encode_utf16().collect();
         crate::tkw::text_width(self.h(f), &w)
     }
+    fn pixels(&self, f: &Font) -> f64 {
+        f.size as f64 * self.dpi / 72.0
+    }
     fn metrics(&self, f: &Font) -> (i32, i32) {
         let m = crate::tkw::metrics(self.h(f));
         (m.ascent, m.descent)

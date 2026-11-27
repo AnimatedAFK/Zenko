@@ -208,6 +208,15 @@ pub unsafe fn paint(dc: HDC, ops: &[TkOp], fonts: &GdiFonts) {
                     SetTextAlign(dc, oa);
                     SelectObject(dc, of);
                 }
+                TkOp::Clip(Some([x, y, w, h])) => {
+                    SaveDC(dc);
+                    IntersectClipRect(dc, *x, *y, x + w, y + h);
+                }
+                TkOp::Clip(None) => {
+                    RestoreDC(dc, -1);
+                    SetBkMode(dc, TRANSPARENT as i32);
+                    SetPolyFillMode(dc, ALTERNATE);
+                }
                 TkOp::Photo { x, y, img } => {
                     // read what is under the picture, blend on the CPU as Tk does, put it back
                     let (w, h) = (img.w as i32, img.h as i32);

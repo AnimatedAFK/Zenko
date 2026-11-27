@@ -18,18 +18,30 @@ pub fn font_of(s: &str) -> (String, i32, bool) {
     (fam, size, rest.contains("bold"))
 }
 
-pub struct Table(HashMap<(String, i32, bool), (i32, i32, HashMap<String, i32>)>);
+/// font_of plus italic
+pub fn font_key(s: &str) -> (String, i32, bool, bool) {
+    let (f, n, b) = font_of(s);
+    let rest = s.rsplit('}').next().unwrap_or(s);
+    (f, n, b, rest.contains("italic"))
+}
+
+/// (ascent, descent, widths of whole strings, widths of single characters: a string not in the first map is the sum of
+/// its characters, as Tk measures runs on both X11 and GDI)
+pub struct Table(pub HashMap<(String, i32, bool, bool), (i32, i32, HashMap<String, i32>, HashMap<char, i32>)>);
 
 impl Fonts for Table {
     fn width(&self, f: &Font, s: &str) -> i32 {
         if s.is_empty() {
             return 0;
         }
-        let e = &self.0[&(f.family.clone(), f.size, f.bold)];
-        *e.2.get(s).unwrap_or_else(|| panic!("no width for {s:?} in {f:?}"))
+        let e = self.0.get(&(f.family.clone(), f.size, f.bold, f.italic)).unwrap_or_else(|| panic!("no font {f:?}"));
+        if let Some(w) = e.2.get(s) {
+            return *w;
+        }
+        s.chars().map(|c| *e.3.get(&c).unwrap_or_else(|| panic!("no width for {s:?} ({c:?}) in {f:?}"))).sum()
     }
     fn metrics(&self, f: &Font) -> (i32, i32) {
-        let e = self.0.get(&(f.family.clone(), f.size, f.bold)).unwrap_or_else(|| panic!("no font {f:?}"));
+        let e = self.0.get(&(f.family.clone(), f.size, f.bold, f.italic)).unwrap_or_else(|| panic!("no font {f:?}"));
         (e.0, e.1)
     }
 }
@@ -41,14 +53,16 @@ pub fn table(c: &Value) -> Table {
     let mut fonts = Table(HashMap::new());
     for (k, v) in c["fonts"].as_object().unwrap() {
         let key = match v.get("actual") {
-            Some(a) if !k.contains(' ') && !k.starts_with('{') => {
-                (a["family"].as_str().unwrap().to_string(), a["size"].as_i64().unwrap() as i32, a["weight"] == "bold")
-            }
-            _ => font_of(k),
+            Some(a) if !k.contains(' ') && !k.starts_with('{') => (a["family"].as_str().unwrap().to_string(),
+                a["size"].as_i64().unwrap() as i32, a["weight"] == "bold", a["slant"] == "italic"),
+            _ => font_key(k),
         };
         let e = fonts.0.entry(key).or_insert((v["ascent"].as_i64().unwrap() as i32, v["descent"].as_i64().unwrap() as i32,
-                                              HashMap::new()));
+                                              HashMap::new(), HashMap::new()));
         e.2.extend(v["w"].as_object().unwrap().iter().map(|(s, n)| (s.clone(), n.as_i64().unwrap() as i32)));
+        if let Some(ch) = v.get("ch").and_then(|c| c.as_object()) {
+            e.3.extend(ch.iter().map(|(s, n)| (s.chars().next().unwrap(), n.as_i64().unwrap() as i32)));
+        }
     }
     fonts
 }

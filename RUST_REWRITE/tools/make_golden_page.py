@@ -60,6 +60,26 @@ for _fn in ("aa_photo", "sprite_photo"):
         return img
     setattr(Z, _fn, _wrap)
 
+HIST = {}            # Text widget -> what happened to it: ["see", w, h] / ["font", w, h, new font] (the size at that moment)
+_see0, _tcfg0 = tk.Text.see, tk.Text.configure
+
+
+def _see_rec(self, idx):
+    HIST.setdefault(str(self), []).append(["see", idx, self.winfo_width(), self.winfo_height()])
+    return _see0(self, idx)
+
+
+def _tcfg_rec(self, cnf=None, **kw):
+    if "font" in kw:
+        HIST.setdefault(str(self), []).append(["font", self.winfo_width(), self.winfo_height(), str(tkfont.Font(font=kw["font"]))
+                                               if False else " ".join("{%s}" % v if " " in str(v) else str(v) for v in kw["font"])])
+    return _tcfg0(self, cnf, **kw)
+
+
+tk.Text.see = _see_rec
+tk.Text.configure = tk.Text.config = _tcfg_rec
+
+
 def windows_defaults(root):
     for k, v in (("*Label.borderWidth", 2), ("*Label.padX", 1), ("*Label.padY", 1), ("*Label.highlightThickness", 0),
                  ("*Entry.borderWidth", 1), ("*Frame.borderWidth", 0), ("*Frame.highlightThickness", 0),
@@ -126,30 +146,80 @@ def walk(w, top, skip, images, fonts):
 def text_lines(t):
     t.update_idletasks()
     seen, lines = set(), []
-    for y in range(0, t.winfo_height()):
-        idx = t.index("@0,%d" % y)
+    for y in range(-2, t.winfo_height() + 2):
+        idx = t.index(t.index("@0,%d" % y) + " display linestart")
         if idx in seen:
             continue
         seen.add(idx)
         info = t.dlineinfo(idx)
         if info:
-            lines.append({"index": idx, "box": list(info), "end": t.index("@%d,%d" % (t.winfo_width(), y))})
+            end = t.index(idx + " display lineend")
+            last = t.index(end + " -1c") if end != idx else idx
+            lines.append({"index": idx, "box": list(info), "end": end, "first_bbox": list(t.bbox(idx) or []),
+                          "last_bbox": list(t.bbox(last) or [])})
     return lines
 
+
+TAG_OPTS = ("font", "foreground", "background", "spacing1", "spacing2", "spacing3", "lmargin1", "lmargin2", "rmargin",
+            "offset", "underline", "overstrike", "wrap", "justify", "elide")
+
+
+def text_rec(t, fonts):
+    """a Text widget: display lines, contents with tags, every tag's options (lowest priority first), and the numbers
+    of every font it uses (per-character widths: Tk measures a run as the sum of its characters here)"""
+    body = t.get("1.0", "end")
+    used = {t.cget("font"), "{%s} 11" % Z.FONT_UI}          # (the font it was built and filled with)
+    used |= {e[3] for e in HIST.get(str(t), []) if e[0] == "font"}
+    tags = []
+    for nm in t.tk.splitlist(t.tk.call(t._w, "tag", "names")):
+        o = {k: str(t.tag_cget(nm, k)) for k in TAG_OPTS}
+        tags.append({"name": str(nm), "opts": o})
+        if o["font"]:
+            used.add(o["font"])
+    for fn in used:
+        f = tkfont.Font(font=fn)
+        ent = fonts.setdefault(fn, {"ascent": f.metrics("ascent"), "descent": f.metrics("descent"), "actual": f.actual(), "w": {}})
+        ent.setdefault("ch", {})
+        for ch in set(body + "0") - {"\n"}:
+            ent["ch"][ch] = f.measure(ch)
+        for s_ in ("Hello there", "Zenko:  ", "mitochondria"):
+            assert f.measure(s_) == sum(f.measure(c) for c in s_), (fn, s_)
+    return {"path": str(t), "hist": HIST.get(str(t), []), "lines": text_lines(t), "dump": t.dump("1.0", "end", tag=True, text=True), "tags": tags,
+            "yview": [float(v) for v in t.yview()], "w": t.winfo_width(), "h": t.winfo_height()}
+
+
+LONG_LOG = [
+    ("You", "explain osmosis pls"),
+    ("Fox", "## Osmosis\nOsmosis is the **net movement** of *water molecules* across a **partially permeable membrane** from a "
+            "region of higher water potential to a region of lower water potential. It is a *passive* process, so no ATP is used.\n"
+            "- Water moves down its water potential gradient\n- Solutes cannot cross the membrane\n  - nested point here\n"
+            "1. First numbered step\n2. Second numbered step that is long enough to wrap onto another display line for sure\n"
+            "> A quote about cells that is also rather long so that the second margin shows up when it wraps around\n"
+            "Use `inline code` and a [link](https://example.com) plus H~2~O and x^2^ too.\n"
+            "```\ndef f(x):\n    return x * 2\n```\n"
+            "| a | b |\n|---|---|\n| 1 | 2 |\n"
+            "Pneumonoultramicroscopicsilicovolcanoconiosisisaverylongwordthatcannotfitononelineatallnomatterwhatpneumonoultramicroscopicsilicovolcanoconiosisagainandagainandagain end."),
+    ("You", "thanks!! what is $x^2 + \\frac{1}{2}$ and H2O + O2 -> H2O2"),
+    ("Fox", "The value is $x^2 + \\frac{1}{2}$, and ~~wrong~~ right: ***both*** work.\n### Small heading\n---\nDone~"),
+]
 
 CASES = [
     # (name, unix time, cfg changes, window size, page)
     ("chat_snow", 1765407600.0, {"theme": "snow"}, None, "chat"),
     ("chat_midnight_small", 1760461200.0, {"theme": "midnight"}, (1120, 720), "chat"),
+    ("chat_long", 1765407600.0, {"theme": "snow"}, None, "chat"),
 ]
 out = []
 for name, t, cfg, size, page in CASES:
     NOW[0] = t
+    HIST.clear()
     app = Z.Zenko23()
     windows_defaults(app.root)
     app.cfg.update(cfg)
     Z.apply_theme(app.cfg.get("theme", "snow"))
     app.root.update()
+    if name == "chat_long":
+        app.chat_log = list(LONG_LOG)
     app.open_hub(page)
     h = app.hub
     w = h["win"]
@@ -166,7 +236,7 @@ for name, t, cfg, size, page in CASES:
     def find_texts(wd):
         for k in wd.winfo_children():
             if k.winfo_class() == "Text":
-                texts.append({"path": str(k), "lines": text_lines(k), "dump": k.dump("1.0", "end", tag=True, text=True)})
+                texts.append(text_rec(k, fonts))
             find_texts(k)
     find_texts(pg)
     out.append({"name": name, "now": t, "cfg_all": cfg, "page": page, "geometry": w.geometry(), "zk_f": app.zk_f,

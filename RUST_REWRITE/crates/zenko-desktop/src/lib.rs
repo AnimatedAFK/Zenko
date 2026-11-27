@@ -31,6 +31,7 @@ pub mod canvasdraw;
 pub mod hubwin;
 pub mod hubanim;
 pub mod tips;
+pub mod tktext;
 pub mod icon;
 pub mod sound;
 pub mod theme;

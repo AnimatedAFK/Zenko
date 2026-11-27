@@ -30,6 +30,10 @@ pub trait Fonts {
         let (a, d) = self.metrics(f);
         a + d
     }
+    /// TkFontGetPixels: the font's size in pixels (points * dpi / 72)
+    fn pixels(&self, f: &Font) -> f64 {
+        f.size as f64 * 96.0 / 72.0
+    }
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]

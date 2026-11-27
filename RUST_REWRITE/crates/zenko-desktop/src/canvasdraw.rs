@@ -30,6 +30,8 @@ pub enum TkOp {
     /// one run of text per line: (x, baseline y, text)
     Text { runs: Vec<(i32, i32, String)>, font: crate::ui::Font, color: String },
     Photo { x: i32, y: i32, img: Rc<Photo> },
+    /// Some: draw only inside this box (x, y, w, h) until Clip(None)
+    Clip(Option<[i32; 4]>),
 }
 
 fn steps(c: &[f64; 8], n: usize, out: &mut Vec<(i32, i32)>) {
