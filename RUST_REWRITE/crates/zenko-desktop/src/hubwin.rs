@@ -460,3 +460,81 @@ pub fn status_line(session: Option<(&str, f64, f64)>, on_break: bool, today_min:
         format!("Idle  \u{b7}  {today_min} min focused today")
     }
 }
+
+/// seigaiha_png: blue-ocean waves over a vertical gradient, fading out to the left
+pub fn seigaiha(w: usize, h: usize, top: &str, bottom: &str, line: &str, r: i64, fade: bool) -> Photo {
+    let (t, b, l) = (hex_rgb(top), hex_rgb(bottom), hex_rgb(line));
+    let dy = r / 2;
+    let mut px = Vec::with_capacity(w * h);
+    for y in 0..h {
+        let tt = y as f64 / (1.max(h as i64 - 1)) as f64;
+        let base: [f64; 3] = std::array::from_fn(|k| t[k] as f64 + (b[k] as f64 - t[k] as f64) * tt);
+        for x in 0..w {
+            let mut col = base;
+            let (fx, fy) = (x as f64 + 0.5, y as f64 + 0.5);
+            let mut best: Option<f64> = None;
+            let k0 = (fy / dy as f64).floor() as i64;
+            for row in k0..k0 + r / dy + 2 {
+                let cy = (row * dy) as f64;
+                if cy < fy - 0.5 {
+                    continue;
+                }
+                let off = if row % 2 != 0 { r } else { 0 };
+                let cx = ((fx - off as f64) / (2.0 * r as f64)).round_ties_even() as i64 * 2 * r + off;
+                let d = (fx - cx as f64).hypot(fy - cy);
+                if d <= r as f64 + 0.5 {
+                    best = Some(d);
+                }
+            }
+            if let Some(d) = best {
+                let mut a: f64 = 0.0;
+                for rr in [r as f64 - 1.0, r as f64 - 5.0, r as f64 - 9.0] {
+                    a = a.max(crate::aa::cov(0.75 - (d - rr).abs()));
+                }
+                let k = a * if fade { 1.0f64.min(x as f64 / (w as f64 * 0.55)) } else { 1.0 };
+                col = std::array::from_fn(|i| col[i] + (l[i] as f64 - col[i]) * k);
+            }
+            px.push([col[0] as u8, col[1] as u8, col[2] as u8, 255]);
+        }
+    }
+    Photo { w, h, px }
+}
+
+/// Zenko.hub_title's banner on a page-wide canvas: gradient, seigaiha, a few stars, the title, the subtitle, gold
+/// rule and diamond. Returns the canvas height (it grows with the window's text size and a long subtitle).
+#[allow(clippy::too_many_arguments)]
+pub fn hub_title_draw(cv: &mut Canvas, w: i32, title: &str, sub: &str, t: &Theme, font_ui: &str, font_title: &str,
+                      zk_f: f64, fonts: &dyn Fonts, seig: &mut Option<(String, Rc<Photo>)>) -> i32 {
+    let (ts, ss) = (zk_size(zk_f, 21), zk_size(zk_f, 10));
+    let fsub = Font::new(font_ui, ss, false);
+    let wtxt = fonts.width(&fsub, if sub.is_empty() { " " } else { sub });
+    let lines = 1.max((wtxt as f64 / 100.0f64.max(w as f64 - 60.0)).ceil() as i32);
+    let hh = (20.0 + ts as f64 * 1.9 + 14.0 + (lines * fonts.linespace(&fsub)) as f64 + 12.0) as i32;
+    *cv = Canvas::default();
+    let mut y = 0;
+    while y < hh {
+        cv.rect(0.0, y as f64, w as f64, (y + 2) as f64).fill(&mixhex(&t.night, &t.banner, y as f64 / hh as f64)).outline("");
+        y += 2;
+    }
+    let key = format!("{}|{}|{}|{hh}", t.night, t.banner, t.acc);
+    if seig.as_ref().map(|s| &s.0) != Some(&key) {
+        *seig = Some((key, Rc::new(seigaiha(340, hh as usize, &t.night, &t.banner, &mixhex(&t.banner, &t.acc, 0.30), 14, true))));
+    }
+    cv.image(0.max(w - 340) as f64, 0.0, seig.as_ref().unwrap().1.clone()).anchor("nw");
+    let mut rnd = PyRandom::new(title.chars().count() as u64);
+    for _ in 0..18 {
+        let sx = rnd.uniform(0.0, w as f64 * 0.75);
+        let sy = rnd.uniform(4.0, hh as f64 * 0.6);
+        let f = mixhex(&t.night, &t.ink, rnd.uniform(0.2, 0.6));
+        cv.rect(sx, sy, sx + 2.0, sy + 2.0).fill(&f).outline("");
+    }
+    let tf = if font_title.is_empty() { font_ui } else { font_title };
+    cv.text(28.0, 18.0, title).anchor("nw").fill(&t.ink).font(Font::new(tf, ts, true));
+    cv.text(30.0, (18.0 + ts as f64 * 1.9 + 8.0) as i32 as f64, sub).anchor("nw").wrap((w - 60) as f64).fill(&t.grey)
+        .font(Font::new(font_ui, ss, false)).tags(&["status"]);
+    let hf = hh as f64;
+    cv.line(vec![0.0, hf - 2.0, w as f64, hf - 2.0]).fill(&mixhex(&t.banner, &t.gold, 0.6));
+    cv.line(vec![0.0, hf - 1.0, w as f64, hf - 1.0]).fill(&mixhex(&t.paper, "#000000", 0.2));
+    cv.poly(vec![28.0, hf - 6.0, 32.0, hf - 2.0, 28.0, hf + 2.0, 24.0, hf - 2.0]).fill(&t.gold).outline("");
+    hh
+}
