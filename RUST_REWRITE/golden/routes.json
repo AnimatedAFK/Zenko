@@ -101,6 +101,7 @@
 ],
 "ib": [],
 "rules": [],
+"gym": null,
 "paused": false
 },
 {
@@ -124,6 +125,7 @@
 ],
 "ib": [],
 "rules": [],
+"gym": null,
 "paused": false
 },
 {
@@ -147,6 +149,7 @@
 ],
 "ib": [],
 "rules": [],
+"gym": null,
 "paused": false
 },
 {
@@ -169,6 +172,7 @@
 ],
 "ib": [],
 "rules": [],
+"gym": null,
 "paused": false
 },
 {
@@ -191,6 +195,7 @@
 ],
 "ib": [],
 "rules": [],
+"gym": null,
 "paused": false
 },
 {
@@ -213,6 +218,7 @@
 ],
 "ib": [],
 "rules": [],
+"gym": null,
 "paused": false
 },
 {
@@ -235,6 +241,7 @@
 ],
 "ib": [],
 "rules": [],
+"gym": null,
 "paused": false
 },
 {
@@ -257,6 +264,7 @@
 ],
 "ib": [],
 "rules": [],
+"gym": null,
 "paused": false
 },
 {
@@ -279,6 +287,7 @@
 ],
 "ib": [],
 "rules": [],
+"gym": null,
 "paused": false
 },
 {
@@ -299,6 +308,22 @@
 "cmds": [],
 "ib": [],
 "rules": [],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -319,6 +344,22 @@
 "cmds": [],
 "ib": [],
 "rules": [],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -341,6 +382,22 @@
 ],
 "ib": [],
 "rules": [],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -363,6 +420,22 @@
 ],
 "ib": [],
 "rules": [],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -385,6 +458,22 @@
 ],
 "ib": [],
 "rules": [],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -407,6 +496,22 @@
 ],
 "ib": [],
 "rules": [],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -429,6 +534,22 @@
 ],
 "ib": [],
 "rules": [],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -451,6 +572,22 @@
 ],
 "ib": [],
 "rules": [],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -473,6 +610,22 @@
 ],
 "ib": [],
 "rules": [],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -492,6 +645,22 @@
 "cmds": [],
 "ib": [],
 "rules": [],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -514,6 +683,22 @@
 ],
 "ib": [],
 "rules": [],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -536,6 +721,22 @@
 ],
 "ib": [],
 "rules": [],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -563,6 +764,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -596,6 +813,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -635,6 +868,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -680,6 +929,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -725,6 +990,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -770,6 +1051,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -815,6 +1112,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -862,6 +1175,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -907,6 +1236,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -952,6 +1297,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -997,6 +1358,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -1042,6 +1419,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -1089,6 +1482,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -1136,6 +1545,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -1183,6 +1608,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -1230,6 +1671,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -1277,6 +1734,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -1338,6 +1811,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -1403,6 +1892,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -1483,6 +1988,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -1578,6 +2099,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -1688,6 +2225,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -1798,6 +2351,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -1912,6 +2481,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -2041,6 +2626,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -2174,6 +2775,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -2307,6 +2924,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -2440,6 +3073,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -2573,6 +3222,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -2716,6 +3381,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -2869,6 +3550,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -3021,6 +3718,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -3176,6 +3889,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -3331,6 +4060,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -3484,6 +4229,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -3637,6 +4398,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -3792,6 +4569,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -3947,6 +4740,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -4102,6 +4911,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -4257,6 +5082,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -4410,6 +5251,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -4563,6 +5420,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -4719,6 +5592,22 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 },
 {
@@ -4874,6 +5763,7101 @@
 "on": true
 }
 ],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "what's my workout",
+"now": 1765440462.0,
+"out": [
+[
+"line",
+"You",
+"what's my workout"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Which day is today? Pick it in Exercise, or tell me 'today is back day' (or 'rest day')~"
+]
+],
+"cmds": [
+"open_hub:exercise"
+],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "i weigh 68 kg",
+"now": 1765440469.0,
+"out": [
+[
+"line",
+"You",
+"i weigh 68 kg"
+],
+[
+"line",
+"Fox",
+"Kon! Logged 68.0 kg~ Logged. Weigh in once or twice a week, same time of day, and I'll show your trend~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 68.0
+}
+],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "i am 150 lbs",
+"now": 1765440476.0,
+"out": [
+[
+"line",
+"You",
+"i am 150 lbs"
+],
+[
+"line",
+"Fox",
+"Waai~ Logged 68.0 kg~ Logged. Weigh in once or twice a week, same time of day, and I'll show your trend~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 68.0
+}
+],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "weight is 67.5 kg",
+"now": 1765440483.0,
+"out": [
+[
+"line",
+"You",
+"weight is 67.5 kg"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Logged 67.5 kg~ Logged. Weigh in once or twice a week, same time of day, and I'll show your trend~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": []
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "i ate 2 eggs and toast",
+"now": 1765440490.0,
+"out": [
+[
+"line",
+"You",
+"i ate 2 eggs and toast"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Logged about 230 kcal. Today so far: 230 kcal~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "i ate 150 g rice with dal",
+"now": 1765440497.0,
+"out": [
+[
+"line",
+"You",
+"i ate 150 g rice with dal"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Logged about 422 kcal. Today so far: 652 kcal~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "had a large pizza",
+"now": 1765440504.0,
+"out": [
+[
+"line",
+"You",
+"had a large pizza"
+],
+[
+"line",
+"Fox",
+"Sugoi! Logged about 399 kcal. Today so far: 1,051 kcal~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "log food: protein bar 210 kcal 20 g protein",
+"now": 1765440511.0,
+"out": [
+[
+"line",
+"You",
+"log food: protein bar 210 kcal 20 g protein"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Logged about 210 kcal. Today so far: 1,261 kcal~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "ate 3 bryani",
+"now": 1765440518.0,
+"out": [
+[
+"line",
+"You",
+"ate 3 bryani"
+],
+[
+"line",
+"Fox",
+"Sugoi! Logged about 1,800 kcal. Today so far: 3,061 kcal~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "food: half a chicken biryani, 2 rotis and a small banana",
+"now": 1765440525.0,
+"out": [
+[
+"line",
+"You",
+"food: half a chicken biryani, 2 rotis and a small banana"
+],
+[
+"line",
+"Fox",
+"Kon! Logged about 604 kcal. Today so far: 3,665 kcal~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "i ate glorp and 2 eggs",
+"now": 1765440532.0,
+"out": [
+[
+"line",
+"You",
+"i ate glorp and 2 eggs"
+],
+[
+"line",
+"Fox",
+"Itadakimasu! Estimating that for you..."
+],
+[
+"line",
+"Fox",
+"I couldn't find glorp. Try a simpler name with a weight, like '150 g rice', or tell me the calories: 'protein bar 210 kcal 20 g protein'."
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "i just ate two slices of bread with butter for breakfast",
+"now": 1765440539.0,
+"out": [
+[
+"line",
+"You",
+"i just ate two slices of bread with butter for breakfast"
+],
+[
+"line",
+"Fox",
+"Sugoi! Logged about 196 kcal. Today so far: 4,011 kcal~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "i drank 2 glasses of water",
+"now": 1765440546.0,
+"out": [
+[
+"line",
+"You",
+"i drank 2 glasses of water"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Gulp gulp~ 2 of 8 glasses today~kon!"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 2
+},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "water",
+"now": 1765440553.0,
+"out": [
+[
+"line",
+"You",
+"water"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Gulp gulp~ 3 of 8 glasses today."
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 3
+},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "+1 water",
+"now": 1765440560.0,
+"out": [
+[
+"line",
+"You",
+"+1 water"
+],
+[
+"line",
+"Fox",
+"Yatta! Gulp gulp~ 4 of 8 glasses today~kon!"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 4
+},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "drank a bottle of water",
+"now": 1765440567.0,
+"out": [
+[
+"line",
+"You",
+"drank a bottle of water"
+],
+[
+"line",
+"Fox",
+"Kon! Gulp gulp~ 5 of 8 glasses today~kon!"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": null,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "today is back day",
+"now": 1765440574.0,
+"out": [
+[
+"line",
+"You",
+"today is back day"
+],
+[
+"line",
+"Fox",
+"Waai~ Got it~ Today is 二の日 (day 2): full back, abs, obliques, triceps. Ganbatte~kon!"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 1,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "what's my workout",
+"now": 1765440581.0,
+"out": [
+[
+"line",
+"You",
+"what's my workout"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Today is 二の日 (day 2): full back, abs, obliques, triceps. Ganbatte~"
+]
+],
+"cmds": [
+"open_hub:exercise"
+],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 1,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "today is day 3",
+"now": 1765440588.0,
+"out": [
+[
+"line",
+"You",
+"today is day 3"
+],
+[
+"line",
+"Fox",
+"Sugoi! Got it~ Today is 三の日 (day 3): full legs. Ganbatte!"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 2,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "i'm resting today",
+"now": 1765440595.0,
+"out": [
+[
+"line",
+"You",
+"i'm resting today"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Got it~ Today is your rest day. Stretch, walk, eat your protein and sleep early~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 3,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "gym today",
+"now": 1765440602.0,
+"out": [
+[
+"line",
+"You",
+"gym today"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Today is your rest day~ Muscles grow while you rest. Tomorrow: chest, shoulders, biceps, forearms~kon!"
+]
+],
+"cmds": [
+"open_hub:exercise"
+],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 3,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "chest day today",
+"now": 1765440609.0,
+"out": [
+[
+"line",
+"You",
+"chest day today"
+],
+[
+"line",
+"Fox",
+"Kon! Got it~ Today is 一の日 (day 1): chest, shoulders, biceps, forearms. Ganbatte~kon!"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 0,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "it's my pull day",
+"now": 1765440616.0,
+"out": [
+[
+"line",
+"You",
+"it's my pull day"
+],
+[
+"line",
+"Fox",
+"Got it~ Today is 二の日 (day 2): full back, abs, obliques, triceps. Ganbatte~kon!"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 1,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "slept badly",
+"now": 1765440623.0,
+"out": [
+[
+"line",
+"You",
+"slept badly"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Noted: sleep 1/5. Go gentle today~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 1,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {
+"2025-12-11": 1
+},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "i slept 4/5",
+"now": 1765440630.0,
+"out": [
+[
+"line",
+"You",
+"i slept 4/5"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Noted: sleep 4/5. Nice, a rested fox is a strong fox~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 1,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {
+"2025-12-11": 4
+},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "slept really well",
+"now": 1765440637.0,
+"out": [
+[
+"line",
+"You",
+"slept really well"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Noted: sleep 4/5. Nice, a rested fox is a strong fox~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 1,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {
+"2025-12-11": 4
+},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "open the gym",
+"now": 1765440644.0,
+"out": [
+[
+"line",
+"You",
+"open the gym"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Today is 二の日 (day 2): full back, abs, obliques, triceps. Ganbatte~"
+]
+],
+"cmds": [
+"open_hub:exercise"
+],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 1,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {
+"2025-12-11": 4
+},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "i weigh 20 kg",
+"now": 1765440651.0,
+"out": [
+[
+"line",
+"You",
+"i weigh 20 kg"
+],
+[
+"llm",
+"i weigh 20 kg"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 1,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {
+"2025-12-11": 4
+},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "ate 1/2 apple",
+"now": 1765440658.0,
+"out": [
+[
+"line",
+"You",
+"ate 1/2 apple"
+],
+[
+"line",
+"Fox",
+"Waai~ Logged about 95 kcal. Today so far: 4,106 kcal~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 1,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+},
+{
+"t": "1/2 apple (1 × 1 apple)",
+"kcal": 95,
+"p": 0.5,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {
+"2025-12-11": 4
+},
+"day_v2": 1,
+"food_v2": 1
+},
+"paused": false
+},
+{
+"q": "ate 250ml milk and 2 bananas each",
+"now": 1765440665.0,
+"out": [
+[
+"line",
+"You",
+"ate 250ml milk and 2 bananas each"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Logged about 360 kcal. Today so far: 4,466 kcal~"
+]
+],
+"cmds": [],
+"ib": [
+[
+"ia",
+"bio",
+"words",
+3000,
+3400,
+"Biology HL IA",
+"",
+[
+[
+"2025-12-11",
+1200
+],
+[
+"2025-12-11",
+3400
+]
+]
+],
+[
+"ee",
+"",
+"words",
+4000,
+4100,
+"Extended Essay",
+"2026-01-20",
+[
+[
+"2025-12-11",
+2500
+],
+[
+"2025-12-11",
+4100
+]
+]
+],
+[
+"tok_essay",
+"",
+"words",
+1600,
+900,
+"TOK essay",
+"2026-12-05",
+[
+[
+"2025-12-11",
+900
+]
+]
+],
+[
+"tok_exh",
+"",
+"words",
+950,
+400,
+"TOK exhibition",
+"",
+[
+[
+"2025-12-11",
+400
+]
+]
+],
+[
+"ia",
+"math",
+"pages",
+20,
+1,
+"Math AA SL IA",
+"2026-03-12",
+[
+[
+"2025-12-11",
+12
+],
+[
+"2025-12-11",
+1
+]
+]
+],
+[
+"ia",
+"chem",
+"words",
+3000,
+0,
+"Chemistry HL IA",
+"2026-03-03",
+[]
+],
+[
+"ia",
+"psych",
+"words",
+0,
+0,
+"Psychology SL IA",
+"2026-02-03",
+[]
+]
+],
+"rules": [
+{
+"site": "YouTube",
+"words": "biology, chem",
+"do": "keep",
+"on": true
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close",
+"on": true
+},
+{
+"site": "TikTok",
+"words": "dance",
+"do": "close",
+"on": true
+},
+{
+"site": "Notion",
+"words": "",
+"do": "keep",
+"on": true
+}
+],
+"gym": {
+"next": 1,
+"log": [],
+"weights": [
+{
+"date": "2025-12-11",
+"kg": 67.5
+}
+],
+"food": {
+"2025-12-11": [
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Toast (1 × 1 slice)",
+"kcal": 80,
+"p": 2.7,
+"src": "table"
+},
+{
+"t": "150 g rice (150g)",
+"kcal": 192,
+"p": 3.9,
+"src": "table"
+},
+{
+"t": "Dal (1 × 1 bowl)",
+"kcal": 230,
+"p": 12.0,
+"src": "table"
+},
+{
+"t": "A large pizza (1.4 × 1 slice)",
+"kcal": 399,
+"p": 16.8,
+"src": "table"
+},
+{
+"t": "Protein bar 210 kcal 20 g protein",
+"kcal": 210,
+"p": 20.0,
+"src": "table"
+},
+{
+"t": "3 bryani (3 × 1 plate)",
+"kcal": 1800,
+"p": 75.0,
+"src": "table"
+},
+{
+"t": "Half a chicken biryani (0.5 × 1 plate)",
+"kcal": 290,
+"p": 14.0,
+"src": "table"
+},
+{
+"t": "2 rotis (2 × 1 roti)",
+"kcal": 240,
+"p": 6.0,
+"src": "table"
+},
+{
+"t": "A small banana (0.7 × 1 banana)",
+"kcal": 74,
+"p": 0.9,
+"src": "table"
+},
+{
+"t": "2 eggs (2 × 1 egg)",
+"kcal": 150,
+"p": 12.6,
+"src": "table"
+},
+{
+"t": "Two slices of bread (2 × 1 slice)",
+"kcal": 160,
+"p": 5.4,
+"src": "table"
+},
+{
+"t": "Butter (1 × 1 tsp)",
+"kcal": 36,
+"p": 0.0,
+"src": "table"
+},
+{
+"t": "1/2 apple (1 × 1 apple)",
+"kcal": 95,
+"p": 0.5,
+"src": "table"
+},
+{
+"t": "250ml milk (250g)",
+"kcal": 150,
+"p": 8.0,
+"src": "table"
+},
+{
+"t": "2 bananas each (2 × 1 banana)",
+"kcal": 210,
+"p": 2.6,
+"src": "table"
+}
+]
+},
+"checks": {},
+"profile": {
+"age": 17
+},
+"water": {
+"2025-12-11": 5
+},
+"sleep": {
+"2025-12-11": 4
+},
+"day_v2": 1,
+"food_v2": 1
+},
 "paused": false
 }
 ]

@@ -28,6 +28,8 @@ fn routes_match_zenko_py() {
         l["fishing"]["book"] = life0["fishing_book"].clone();
     });
     let mut bad = vec![];
+    // zenko.py makes the gym dict on some early tick; it's compared once the Exercise lines start
+    let gym_from = g.iter().position(|e| e["q"] == "i ate 2 eggs and toast").unwrap(); // (and fills today's food list)
     for (i, e) in g.iter().enumerate().skip(1) {
         let q = e["q"].as_str().unwrap();
         let now = e["now"].as_f64().unwrap();
@@ -58,7 +60,8 @@ fn routes_match_zenko_py() {
             .map(|t| json!([t["kind"], t["subject"], t["unit"], t["target"], t["words"], t["title"], t["due"], t["hist"]])).collect();
         let rules = fox.cfg.raw.get("zk_rules").cloned().unwrap_or(json!([]));
         let paused = life["screen"]["paused_until"].as_f64().unwrap_or(0.0) > 0.0;
-        let checks = [("out", Value::Array(got), e["out"].clone()), ("cmds", Value::Array(cmds), e["cmds"].clone()),
+        let gym = if i >= gym_from { life.get("gym").cloned().unwrap_or(Value::Null) } else { e["gym"].clone() };
+        let checks = [("gym", gym, e["gym"].clone()), ("out", Value::Array(got), e["out"].clone()), ("cmds", Value::Array(cmds), e["cmds"].clone()),
                       ("ib", Value::Array(ib), e["ib"].clone()), ("rules", rules, e["rules"].clone()),
                       ("paused", json!(paused), e["paused"].clone())];
         for (k, a, b) in checks {

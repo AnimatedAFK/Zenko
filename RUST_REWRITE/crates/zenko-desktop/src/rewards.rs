@@ -267,6 +267,8 @@ pub enum Later {
     PlanMaybe,
     /// zenko23: z23_announce(ema id)
     Announce(String),
+    /// fox_reply(msg): a chat line and its first line in her bubble
+    FoxReply(String),
 }
 
 #[derive(Clone, Debug, Default)]
@@ -422,6 +424,11 @@ impl Companion {
                 Later::Ui(k) => self.events.push(crate::Ev::Ui(k)),
                 Later::PlanMaybe => self.plan_maybe(),
                 Later::Announce(id) => self.z23_announce(&id),
+                Later::FoxReply(msg) => {
+                    self.chat_line(now, "Fox", &msg);
+                    let first = crate::mdtext::md_plain(&msg).split('\n').next().unwrap_or("").to_string();
+                    self.events.push(crate::Ev::Say { text: first, secs: 12.0, choices: vec![] });
+                }
             }
         }
         // z22_badge_tick: 30 s after start, then every 3 minutes

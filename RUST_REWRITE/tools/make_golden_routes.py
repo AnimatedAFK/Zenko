@@ -11,6 +11,7 @@ import time  # noqa: E402
 time.tzset()
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ["APPDATA"] = tempfile.mkdtemp()
+os.environ["FOX_FOOD_BASE"] = "http://127.0.0.1:9"     # online food lookups fail at once (the port has none yet)
 sys.path.insert(0, ROOT)
 import zenko as Z  # noqa: E402
 import datetime as _dt  # noqa: E402
@@ -81,7 +82,15 @@ CONVO = ["go fishing", "cast a line", "catch a koi", "my koi book", "fish dex", 
          "ee is due by 2026-01-20", "tok essay due 5 dec", "chem ia due march 3 2026", "psych ia due 3/2/2026",
          "tok exhibition due tomorrow", "ia tracker", "ib tasks", "exam countdown", "how many days until my exams",
          "garden", "how's my tree", "pick what to delay", "delay some things", "pause screen time", "screen time",
-         "Zenko, please go fishing", "hey zenko can you open the square"]
+         "Zenko, please go fishing", "hey zenko can you open the square",
+         # ZenkoGym: the Exercise tab by chat
+         "what's my workout", "i weigh 68 kg", "i am 150 lbs", "weight is 67.5 kg", "i ate 2 eggs and toast",
+         "i ate 150 g rice with dal", "had a large pizza", "log food: protein bar 210 kcal 20 g protein",
+         "ate 3 bryani", "food: half a chicken biryani, 2 rotis and a small banana", "i ate glorp and 2 eggs",
+         "i just ate two slices of bread with butter for breakfast", "i drank 2 glasses of water", "water",
+         "+1 water", "drank a bottle of water", "today is back day", "what's my workout", "today is day 3",
+         "i'm resting today", "gym today", "chest day today", "it's my pull day", "slept badly", "i slept 4/5",
+         "slept really well", "open the gym", "i weigh 20 kg", "ate 1/2 apple", "ate 250ml milk and 2 bananas each"]
 out = [{"now": NOW[0], "life": LIFE, "browser": BROWSER, "stats": {"2025-12-01": 30000, "2025-12-05": 9000.5}}]
 caught, cmds = [], []
 app.chat_line = lambda who, text: (caught.append(["line", who, text]), app.chat_log.append((who, text)))
@@ -107,7 +116,7 @@ for i, q in enumerate(CONVO):
     out.append({"q": q, "now": NOW[0], "out": got, "cmds": list(cmds),
                 "ib": [[t["kind"], t["subject"], t["unit"], t["target"], t["words"], t["title"], t["due"], [list(h) for h in t["hist"]]]
                        for t in app.life.get("ibtasks", [])],
-                "rules": app.cfg.get("zk_rules") or [], "paused": app.life["screen"].get("paused_until", 0) > 0})
+                "rules": app.cfg.get("zk_rules") or [], "gym": json.loads(json.dumps(app.life.get("gym"))), "paused": app.life["screen"].get("paused_until", 0) > 0})
 with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "golden", "routes.json"), "w") as f:
     json.dump(out, f, ensure_ascii=False, indent=0)
 for o in out[1:]:
