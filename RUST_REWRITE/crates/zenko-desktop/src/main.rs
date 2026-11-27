@@ -486,7 +486,18 @@ mod win {
                 let (title, proc_) = app.fg.clone();
                 app.fox.tick_1s(t, dt, idle_seconds(), &title, &proc_);
                 app.fox.study_tick(t);
+                let (hwnd, own) = unsafe {
+                    use windows_sys::Win32::System::Threading::GetCurrentProcessId;
+                    let h = GetForegroundWindow();
+                    let mut pid = 0u32;
+                    if !h.is_null() {
+                        GetWindowThreadProcessId(h, &mut pid);
+                    }
+                    (h as isize, pid == GetCurrentProcessId())
+                };
+                app.fox.screen_tick(t, hwnd, own);
                 app.fox.study_timer(t);
+                app.fox.guard_timers(t);
             }
             for o in crate::dialog::OUT.with(|q| std::mem::take(&mut *q.borrow_mut())) {
                 match o {
@@ -532,6 +543,7 @@ mod win {
                 screen_w: unsafe { GetSystemMetrics(SM_CXSCREEN) },
                 idle: idle_seconds(),
                 dragging: app.drag.is_some(),
+                bubble: app.bubble.as_ref().is_some_and(|b| b.shown),
             };
             if t >= app.next_lock && app.fox.lockin.is_some() {
                 app.next_lock = t + 0.2; // lockin_poll
@@ -646,19 +658,22 @@ mod win {
                 let task = it["task"].as_str().map(String::from).unwrap_or_else(|| it["task"].to_string());
                 fox.start_session_item(t, &task, it["mins"].as_f64().unwrap_or(30.0), Some(i));
             }
-        } else if fox.ema_ring_button(c) || fox.books_button(t, c) || fox.study_button(t, c) {
+        } else if fox.ema_ring_button(c) || fox.books_button(t, c) || fox.study_button(t, c) || fox.guard_button(t, c) {
         } else if let Some(id) = c.strip_prefix("ema_done:") {
             fox.ema_set_done(id);
         } else if c == "music_apply" {
             fox.music_apply();
-        } else if c == "open_hub" || c.starts_with("open_hub:") {
-            open_hub(app, c.strip_prefix("open_hub:").filter(|p| *p != "None"));
+        } else if c == "open_hub" || c.starts_with("open_hub:") || c.starts_with("hub:") {
+            let page = c.strip_prefix("open_hub:").or_else(|| c.strip_prefix("hub:"));
+            open_hub(app, page.filter(|p| *p != "None"));
             return;
         } else if c == "open_checkin" || c == "open_checkin_force" {
             open_checkin(app, t, c == "open_checkin_force");
             return;
         } else if c == "lockin" {
             fox.lockin_start(t, None, false);
+        } else if let Some(m) = c.strip_prefix("lockin:") {
+            fox.lockin_start(t, m.parse().ok(), false);
         } else if c == "lockin_resume" {
             if fox.lockin.is_none() {
                 fox.lockin_start(t, None, true);

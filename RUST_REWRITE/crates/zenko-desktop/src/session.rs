@@ -76,6 +76,9 @@ impl Companion {
 
     pub fn end_session(&mut self, now: f64, completed: bool) {
         let Some(s) = self.session.take() else { return };
+        if completed && self.cfg.b("focus_glow", true) && self.hub_page.is_some() {
+            self.glow_burst = Some(now); // z19 end_session: petals along the window frame
+        }
         self.music_apply_soon(now);
         let focused = (s.elapsed - s.dist - s.away).max(0.0);
         add_stats(focused);

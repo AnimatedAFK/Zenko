@@ -1,0 +1,6427 @@
+[
+{
+"deadlines": [
+{
+"id": "bm1",
+"title": "Bio MYA",
+"kind": "Exam",
+"date": "2025-12-13"
+},
+{
+"id": "ch1",
+"title": "Chemistry test",
+"kind": "Quiz",
+"date": "2025-12-14",
+"time": "10:00"
+},
+{
+"id": "fr1",
+"title": "French oral",
+"kind": "Presentation",
+"date": "2025-12-21"
+},
+{
+"id": "en1",
+"title": "English essay",
+"kind": "Assignment",
+"date": "2025-12-12",
+"done": true
+}
+],
+"life": {
+"slog": {
+"2025-12-10": {
+"bio": 7360
+},
+"2025-12-09": {
+"bio": 7420
+},
+"2025-12-08": {
+"bio": 7480
+},
+"2025-12-07": {
+"bio": 7540
+},
+"2025-12-06": {
+"bio": 7600
+},
+"2025-12-05": {
+"bio": 7660
+},
+"2025-12-04": {
+"bio": 7720
+}
+},
+"hourlog": {
+"2025-12-10": {
+"23": [
+2400,
+0
+]
+},
+"2025-12-09": {
+"23": [
+1900,
+0
+]
+},
+"2025-12-08": {
+"22": [
+2500,
+0
+],
+"23": [
+2000,
+0
+]
+},
+"2025-12-07": {
+"1": [
+3000,
+0
+]
+},
+"2025-12-06": {
+"23": [
+1000,
+0
+]
+}
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 0,
+"wrong": 0,
+"right": 0,
+"due": "2025-12-11"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"ibtasks": [
+{
+"id": "ia1",
+"kind": "ia",
+"subject": "bio",
+"unit": "words",
+"target": 2200,
+"words": 800,
+"title": "Bio IA",
+"due": "2025-12-13",
+"stages": [
+"Topic"
+],
+"updated": "2025-12-10",
+"hist": []
+},
+{
+"id": "ee1",
+"kind": "ee",
+"subject": "",
+"unit": "words",
+"target": 4000,
+"words": 0,
+"title": "Extended Essay",
+"due": "2025-12-21",
+"stages": [
+"Topic",
+"Research"
+],
+"updated": "2025-12-05",
+"hist": []
+}
+]
+},
+"now": 1765440000.0,
+"garden_active": [
+"2025-12-07"
+]
+},
+{
+"q": "@dl",
+"now": 1765440010.0,
+"says": [
+[
+"say",
+"Heads up: Bio MYA is in 2 days (+1 more this week).",
+[]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {}
+},
+"said": {},
+"quiz_offers": null,
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 0,
+"wrong": 0,
+"right": 0,
+"due": "2025-12-11"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@dl",
+"now": 1765440020.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {}
+},
+"said": {},
+"quiz_offers": null,
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 0,
+"wrong": 0,
+"right": 0,
+"due": "2025-12-11"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@water",
+"now": 1765440030.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {}
+},
+"said": {},
+"quiz_offers": null,
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 0,
+"wrong": 0,
+"right": 0,
+"due": "2025-12-11"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@at 13:00",
+"now": 1765458000.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {}
+},
+"said": {},
+"quiz_offers": null,
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 0,
+"wrong": 0,
+"right": 0,
+"due": "2025-12-11"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@water",
+"now": 1765458010.0,
+"says": [
+[
+"say",
+"Kon~ time for some water? (0 of 8 glasses so far) Tap a cup in Exercise, or tell me 'drank water'.",
+[]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {}
+},
+"said": {},
+"quiz_offers": null,
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 0,
+"wrong": 0,
+"right": 0,
+"due": "2025-12-11"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@water",
+"now": 1765458020.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {}
+},
+"said": {},
+"quiz_offers": null,
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 0,
+"wrong": 0,
+"right": 0,
+"due": "2025-12-11"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@zk",
+"now": 1765458080.0,
+"says": [
+[
+"say",
+"Pop quiz~\nAvogadro's number?",
+[
+"Show answer",
+"Later"
+]
+],
+[
+"say",
+"Your garden tree is drooping a little... One lock-in today will perk it right up~",
+[
+"Lock in 30 min",
+"Show me"
+]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 0,
+"wrong": 0,
+"right": 0,
+"due": "2025-12-11"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@tap 0 0",
+"now": 1765458080.0,
+"says": [
+[
+"say",
+"Answer: 6.022e23\nDid you remember it?",
+[
+"I knew it!",
+"Forgot"
+]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 0,
+"wrong": 0,
+"right": 0,
+"due": "2025-12-11"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@tap 0 0",
+"now": 1765458080.0,
+"says": [
+[
+"say",
+"Sugoi~ that one's sticking!",
+[]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg Lofi beats to study to - YouTube - Google Chrome|chrome.exe|0|3700",
+"now": 1765461780.0,
+"says": [
+[
+"say",
+"You've been on YouTube for 1 hour today. Maybe a little break from it?",
+[
+"Screen time",
+"Lock in"
+]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3699.0
+},
+"sites": {
+"YouTube": 3699.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+181.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg Cell respiration explained - biology - YouTube - Google Chrome|chrome.exe|0|6",
+"now": 1765461786.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3705.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+187.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg Instagram - Google Chrome|chrome.exe|0|30",
+"now": 1765461816.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3735.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+217.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg New Incognito Tab - Google Chrome|chrome.exe|0|10",
+"now": 1765461826.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3735.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+217.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg HDFC NetBanking - Google Chrome|chrome.exe|0|10",
+"now": 1765461836.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3735.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+217.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg main.rs - zenko - Visual Studio Code|code.exe|0|3605",
+"now": 1765465441.0,
+"says": [
+[
+"say",
+"1 hour on VS Code today. Remember to rest your eyes~",
+[
+"Screen time",
+"Lock in"
+]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3735.0,
+"VS Code": 3605.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+242.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg main.rs - zenko - Visual Studio Code|code.exe|200|10",
+"now": 1765465451.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3735.0,
+"VS Code": 3605.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+242.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg Zenko|python.exe|0|3601",
+"now": 1765469052.0,
+"says": [
+[
+"say",
+"We've spent 1 hour together in the Zenko window today~ I'm flattered! Is the studying happening too?",
+[
+"Screen time",
+"Lock in"
+]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3735.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+253.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg Reddit - Dive into anything - Google Chrome|chrome.exe|0|20",
+"now": 1765469072.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+273.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg Some doc - Personal - Microsoft Edge|msedge.exe|0|5",
+"now": 1765469077.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+278.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg Wikipedia, the free encyclopedia - Mozilla Firefox|firefox.exe|0|5",
+"now": 1765469082.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+283.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg |notepad.exe|0|3",
+"now": 1765469085.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+286.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg |my_tool-v2.exe|0|3",
+"now": 1765469088.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+289.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@fg Untitled|unknown|0|3",
+"now": 1765469091.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@zk",
+"now": 1765469151.0,
+"says": [
+[
+"say",
+"Pop quiz~ (Biology HL)\nWhat is ATP?",
+[
+"Show answer",
+"Later"
+]
+],
+[
+"say",
+"Kon! Your Bio IA is due in 2 days. Next step: research. Want a lock-in for it? (1,400 words to go)",
+[
+"Lock in 30 min",
+"Later"
+]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@tap 0 1",
+"now": 1765469151.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@zk",
+"now": 1765469211.0,
+"says": [
+[
+"say",
+"Your Extended Essay hasn't moved in 6 days (due 21 Dec). Even 20 minutes on the outline helps~",
+[
+"Lock in 30 min",
+"Later"
+]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@zk",
+"now": 1765469271.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 0",
+"now": 1765469281.0,
+"says": [
+[
+"say",
+"Kon~ time for some water? (0 of 8 glasses so far) Tap a cup in Exercise, or tell me 'drank water'.",
+[]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 60",
+"now": 1765469291.0,
+"says": [
+[
+"say",
+"You've studied 2h+ every day for a week. Sugoi, but plan one lighter day soon so it doesn't burn you out~",
+[]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 60",
+"now": 1765469301.0,
+"says": [
+[
+"say",
+"That's 3 late nights in the last 5. Try starting earlier today so you can stop by 23:00~",
+[]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 60",
+"now": 1765469311.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@slog 24000",
+"now": 1765469311.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 60",
+"now": 1765469321.0,
+"says": [
+[
+"say",
+"You've studied 6h 40m today, past your 6h max. Your brain needs rest to keep it: take a real break~",
+[
+"Take a break",
+"I'm okay"
+]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@tap 0 0",
+"now": 1765469321.0,
+"says": [
+[
+"say",
+"Break time! 15 min. Stretch, drink water, look away from the screen.",
+[]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": true,
+"paused": false
+},
+{
+"q": "@books 60",
+"now": 1765469331.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": true,
+"paused": false
+},
+{
+"q": "@endbreak",
+"now": 1765469331.0,
+"says": [
+[
+"say",
+"Break ended. Back to it!",
+[]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@at 22:05",
+"now": 1765490700.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 0",
+"now": 1765490710.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 30",
+"now": 1765490720.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@at 22:35",
+"now": 1765492500.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 30",
+"now": 1765492510.0,
+"says": [
+[
+"say",
+"Wind-down time~ bedtime is at 23:00. Finish this bit and save the rest for tomorrow.",
+[]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 30",
+"now": 1765492520.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@at 23:10",
+"now": 1765494600.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 100",
+"now": 1765494610.0,
+"says": [
+[
+"say",
+"It's past your bedtime (23:00)... sleep is when your brain stores today's revision. Wrap up?",
+[
+"10 more min",
+"Goodnight~"
+]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@tap 0 0",
+"now": 1765494610.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 30",
+"now": 1765494620.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@at 23:22",
+"now": 1765495320.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 30",
+"now": 1765495330.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@at 23:35",
+"now": 1765496100.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 30",
+"now": 1765496110.0,
+"says": [
+[
+"say",
+"It's past your bedtime (23:00)... sleep is when your brain stores today's revision. Wrap up?",
+[
+"10 more min",
+"Goodnight~"
+]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@tap 0 1",
+"now": 1765496110.0,
+"says": [
+[
+"say",
+"Oyasumi~ おやすみ. I'll see you at 06:00.",
+[]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@next 00:30",
+"now": 1765499400.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@books 30",
+"now": 1765499410.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@next 08:00",
+"now": 1765612800.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-11",
+"brk": false,
+"paused": false
+},
+{
+"q": "@dl",
+"now": 1765612810.0,
+"says": [
+[
+"say",
+"Heads up: Bio MYA is today (+1 more this week).",
+[]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-11": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-13",
+"brk": false,
+"paused": false
+},
+{
+"q": "@zk",
+"now": 1765612870.0,
+"says": [
+[
+"say",
+"Pop quiz~ (Biology HL)\nWhat is ATP?",
+[
+"Show answer",
+"Later"
+]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-13": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-13",
+"brk": false,
+"paused": false
+},
+{
+"q": "@at 11:00",
+"now": 1765623600.0,
+"says": [],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-11",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-13": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-13",
+"brk": false,
+"paused": false
+},
+{
+"q": "@zk",
+"now": 1765623660.0,
+"says": [
+[
+"say",
+"Pop quiz~ (Biology HL)\nWhat is ATP?",
+[
+"Show answer",
+"Later"
+]
+],
+[
+"say",
+"Your garden tree is very wilted... One lock-in today will perk it right up~",
+[
+"Lock in 30 min",
+"Show me"
+]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-13",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-13": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-13",
+"brk": false,
+"paused": false
+},
+{
+"q": "@tap 0 0",
+"now": 1765623660.0,
+"says": [
+[
+"say",
+"Answer: The cell's energy currency\nDid you remember it?",
+[
+"I knew it!",
+"Forgot"
+]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-13",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-13": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 1,
+"wrong": 2,
+"right": 1,
+"due": "2025-12-10",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 1
+}
+},
+"water": {},
+"note": "2025-12-13",
+"brk": false,
+"paused": false
+},
+{
+"q": "@tap 0 1",
+"now": 1765623660.0,
+"says": [
+[
+"say",
+"I'll bring it back soon, ne~",
+[]
+]
+],
+"cmds": [],
+"life": {
+"screen": {
+"days": {
+"2025-12-11": {
+"apps": {
+"Google Chrome": 3755.0,
+"VS Code": 3605.0,
+"Zenko": 3601.0,
+"Microsoft Edge": 5.0,
+"Firefox": 5.0,
+"Notepad": 3.0,
+"My Tool V2": 3.0,
+"Unknown": 3.0
+},
+"sites": {
+"YouTube": 3699.0,
+"YouTube (study)": 6.0,
+"Instagram": 30.0,
+"Reddit": 20.0,
+"Other websites": 5.0,
+"Wikipedia": 5.0
+},
+"hours": [
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+0,
+3518.0,
+3580.0,
+3590.0,
+292.0,
+0,
+0,
+0,
+0,
+0,
+0,
+0
+],
+"told": {
+"YouTube": 1,
+"VS Code": 1,
+"Zenko": 1
+}
+}
+}
+},
+"said": {
+"garden_thirsty": "2025-12-13",
+"ibnudge_ia1": "2025-12-11",
+"ibnudge_ee1": "2025-12-11",
+"restday": "2025-12-08",
+"latenights": "2025-12-11",
+"burnout": "2025-12-11",
+"winddown": "2025-12-11"
+},
+"quiz_offers": {
+"2025-12-13": 1
+},
+"cards": [
+{
+"id": "c1",
+"q": "What is ATP?",
+"a": "The cell's energy currency",
+"box": 0,
+"wrong": 3,
+"right": 1,
+"due": "2025-12-14",
+"subject": "bio"
+},
+{
+"id": "c2",
+"q": "Avogadro's number?",
+"a": "6.022e23",
+"box": 1,
+"wrong": 0,
+"right": 1,
+"due": "2025-12-12"
+},
+{
+"id": "c3",
+"q": "Not due yet",
+"a": "later",
+"box": 3,
+"wrong": 0,
+"right": 3,
+"due": "2025-12-16"
+}
+],
+"stats": {
+"sessions": 0,
+"lockins": 0,
+"reviews": 2
+}
+},
+"water": {},
+"note": "2025-12-13",
+"brk": false,
+"paused": false
+}
+]

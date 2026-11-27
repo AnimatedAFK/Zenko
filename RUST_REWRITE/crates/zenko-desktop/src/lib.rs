@@ -26,6 +26,7 @@ pub mod calc;
 pub mod extra;
 pub mod lifechat;
 pub mod miscroutes;
+pub mod guard;
 pub mod ui;
 pub mod checkin;
 pub mod tkcanvas;
@@ -220,6 +221,7 @@ pub fn read_json(name: &str) -> Value {
         .map(|mut v: Value| {
             if name == "zenko_life.json" {
                 study::apply_pending(&mut v);
+                guard::apply_screen(&mut v);
             }
             v
         })
@@ -439,6 +441,8 @@ pub struct Companion {
     pub trace: Vec<String>,
     /// tests: the omikuji's random.Random() seed (None = from the OS)
     pub omikuji_seed: Option<u64>,
+    /// stage 3g: sleep guard, water, screen time, pop quiz, the minute checks
+    pub guard: guard::Guard,
     /// self.quiz: the flashcard quiz running in chat
     pub quiz: Option<lifechat::Quiz>,
     /// the host's open_app(name, as typed) (Windows: Start-menu apps, sites); None = not on Windows
@@ -488,6 +492,8 @@ pub struct Companion {
     pub chat_n: u64,
     /// the hub page on show while the hub window is open and not minimised (gym_look_on, the sidebar fox)
     pub hub_page: Option<String>,
+    /// z19: a session was completed with the hub open: the petal burst starts at this time
+    pub glow_burst: Option<f64>,
 }
 
 impl Companion {
@@ -523,6 +529,7 @@ impl Companion {
             sulk_until: 0.0,
             trace: vec![],
             omikuji_seed: None,
+            guard: guard::Guard::new(now),
             quiz: None,
             open_app_hook: None,
             last_file: None,
@@ -558,6 +565,7 @@ impl Companion {
             brain: chat::Brain::new(now.to_bits()),
             chat_n: 0,
             hub_page: None,
+            glow_burst: None,
         };
         c.compute_dims();
         c.apply_look();

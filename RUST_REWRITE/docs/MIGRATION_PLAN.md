@@ -127,7 +127,9 @@ order is kept where it changes the result (tail outlines, eye cells).
    hour, missed-session re-planning) and study_route, checked against zenko.py on 112 steps.
    Stage 3f done: the rest of the offline chat (calculator, extras, life chat, flashcards/quiz, screen, Spotify,
    apps, deadlines, battery, notes), checked against zenko.py on 229 lines plus 200+ calculator cases.
-   **Next:** focus glow, Ctrl K, deadline reminders, screen-time recording, books_slow, then hub pages one at a time (Home, Timetable/Upcoming, Settings/Customize first, then the rest), each compared with Python.
+   Stage 3g done: deadline reminders, the sleep/burnout/water guard, screen-time recording, the minute checks (pop
+   quiz, IB and garden nudges) and the focus glow, checked against zenko.py.
+   **Next:** hub pages one at a time (Home, Timetable/Upcoming, Settings/Customize first, then the rest), each compared with Python.
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.
 6. Speed (Phase 5): image cache and native code are already in; measure and tune at the end.
 

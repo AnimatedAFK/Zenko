@@ -16,6 +16,8 @@ pub struct Env {
     pub screen_w: i32,
     pub idle: f64,
     pub dragging: bool,
+    /// her speech bubble is showing (zenko.py's bubble_job)
+    pub bubble: bool,
 }
 
 #[derive(Clone, Debug)]

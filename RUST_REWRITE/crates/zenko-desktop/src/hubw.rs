@@ -59,6 +59,9 @@ struct HubW {
     anim: zenko_desktop::hubanim::HubAnim,
     theme: String,
     living: bool,
+    /// z19_glow: next redraw (every 120 ms) and the petal burst
+    glow_next: f64,
+    burst: Option<zenko_desktop::hubwin::GlowBurst>,
     particles: bool,
     minimized: bool,
     slide_s: Option<f64>,
@@ -462,7 +465,7 @@ pub fn open(page: Option<&str>, init: HubInit) {
             restore: (w, h, x0, y0), drag: None, drag_at: (0, 0), drag_moved: false, rs: None, fit_at: None,
             size: (w, h), min, cursor: IDC_ARROW, faded: false,
             anim: zenko_desktop::hubanim::HubAnim::new(0.0, (x0 as u64) << 20 ^ 0x9e37_79b9),
-            theme: init.theme.clone(), living: init.living, particles: init.particles, minimized: false,
+            theme: init.theme.clone(), living: init.living, glow_next: 0.0, burst: None, particles: init.particles, minimized: false,
             slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None,
             chat_q: Default::default(), typing: None, sb_drag: None,
         }));
@@ -615,6 +618,27 @@ fn step(x: &mut HubW) -> bool {
         x.anim.frame(&mut x.hub.side, t, &night, &ink, &style, &col, x.particles, Some(lf), &pal, x.ctx.hd);
     }
     x.hub.side_sync();
+    if n >= x.glow_next {
+        // z19_hub_loop's z19_glow, every 120 ms
+        x.glow_next = n + 0.12;
+        let gold = x.ctx.t.gold.clone();
+        if let Some((sess, b0, t)) = crate::win::with_fox(|fox, t| {
+            let sess = fox.session.as_ref().filter(|_| fox.cfg.b("focus_glow", true)).map(|s| (s.elapsed, s.planned, s.paused));
+            let b0 = fox.glow_burst.take().map(|t0| {
+                let mut r: Vec<f64> = (0..46 * 4).map(|_| fox.rand()).collect();
+                zenko_desktop::hubwin::GlowBurst::new(t0, &gold, &mut || r.pop().unwrap_or(0.5))
+            });
+            (sess, b0, t)
+        }) {
+            if b0.is_some() {
+                x.burst = b0;
+            }
+            let (w, h) = x.size;
+            if !x.hub.glow_draw(w, h, t, sess, x.burst.as_ref()) {
+                x.burst = None;
+            }
+        }
+    }
     x.hub.tip_update(n);
     // z21_show's slide: ease out over SLIDE_MS
     if let Some(sl) = &x.slide {

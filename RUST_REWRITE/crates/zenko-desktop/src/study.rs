@@ -582,9 +582,9 @@ impl Companion {
         self.study_ask(key);
     }
 
-    /// a quiz is running (the quiz comes with the remaining chat routes)
+    /// a quiz is running
     fn quiz_on(&self) -> bool {
-        false
+        self.quiz.is_some()
     }
 
     pub fn study_ask(&mut self, key: &str) {

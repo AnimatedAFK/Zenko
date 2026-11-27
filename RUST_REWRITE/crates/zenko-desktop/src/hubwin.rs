@@ -538,3 +538,101 @@ pub fn hub_title_draw(cv: &mut Canvas, w: i32, title: &str, sub: &str, t: &Theme
     cv.poly(vec![28.0, hf - 6.0, 32.0, hf - 2.0, 28.0, hf + 2.0, 24.0, hf - 2.0]).fill(&t.gold).outline("");
     hh
 }
+
+/// end_session(completed)'s petal burst along the frame: (t0, [(position as a share of the way round, speed px/s,
+/// colour, size)]); zenko.py picks them with an unseeded random.Random()
+#[derive(Clone, Debug)]
+pub struct GlowBurst {
+    pub t0: f64,
+    pub petals: Vec<(f64, f64, String, f64)>,
+}
+
+impl GlowBurst {
+    pub fn new(t0: f64, gold: &str, rnd: &mut dyn FnMut() -> f64) -> GlowBurst {
+        let cols = ["#ffb7d5", "#ff8fbf", "#fff0f6", gold];
+        let petals = (0..46).map(|_| {
+            let pos = rnd();
+            let sp = -160.0 + 320.0 * rnd();
+            let col = cols[((rnd() * 4.0) as usize).min(3)].to_string();
+            let sz = [1.5, 2.0, 2.5][((rnd() * 3.0) as usize).min(2)];
+            (pos, sp, col, sz)
+        }).collect();
+        GlowBurst { t0, petals }
+    }
+}
+
+impl Hub {
+    /// z19_glow: the focus glow lives only in the window's frame (the 11 px border), so it never covers anything.
+    /// `sess` = (elapsed, planned, paused) while a session runs and focus_glow is on. Returns false once the burst
+    /// is over (the caller drops it).
+    pub fn glow_draw(&mut self, w: i32, h: i32, now: f64, sess: Option<(f64, f64, bool)>, burst: Option<&GlowBurst>) -> bool {
+        let Some(id) = self.ids.border else { return true };
+        let t = self.t.clone();
+        let cv = canvas_of(&mut self.ui, id);
+        if sess.is_none() && burst.is_none() {
+            cv.delete("z19glow");
+            return true;
+        }
+        let (wf, hf) = (w as f64, h as f64);
+        let m = BORDER as f64 / 2.0;
+        let l = [(wf / 2.0, m), (wf - m, m), (wf - m, hf - m), (m, hf - m), (m, m), (wf / 2.0, m)];
+        let per = 2.0 * (wf - 2.0 * m) + 2.0 * (hf - 2.0 * m);
+        cv.delete("z19glow");
+        let base = mixhex(SHU, &t.night, 0.35);
+        if let Some((elapsed, planned, paused)) = sess {
+            let p = (elapsed / planned.max(1.0)).clamp(0.0, 1.0);
+            let pulse = 0.5 + 0.5 * (now * 1.6).sin();
+            let col = if !paused { mixhex(&base, &t.glow, 0.30 + 0.06 * pulse) } else { mixhex(&base, &t.grey, 0.25) };
+            let head = mixhex(&base, &t.glow, 0.52 + 0.10 * pulse);
+            let want = per * p;
+            let (mut pts, mut run) = (vec![l[0]], 0.0);
+            for k in 0..5 {
+                let (a, b) = (l[k], l[k + 1]);
+                let seg = (b.0 - a.0).hypot(b.1 - a.1);
+                if run + seg >= want {
+                    let f = (want - run) / seg.max(1e-6);
+                    pts.push((a.0 + (b.0 - a.0) * f, a.1 + (b.1 - a.1) * f));
+                    break;
+                }
+                pts.push(b);
+                run += seg;
+            }
+            if pts.len() >= 2 && want > 1.0 {
+                let flat: Vec<f64> = pts.iter().flat_map(|&(x, y)| [x, y]).collect();
+                cv.line(flat).fill(&col).width(3.0).cap("round").join("round").tags(&["z19glow"]);
+                let (hx, hy) = *pts.last().unwrap();
+                cv.oval(hx - 2.5, hy - 2.5, hx + 2.5, hy + 2.5).fill(&head).outline("").tags(&["z19glow"]);
+            }
+        }
+        let mut alive = true;
+        if let Some(b) = burst {
+            let tt = now - b.t0;
+            if tt > 2.6 {
+                alive = false;
+            } else {
+                let per2 = 2.0 * (wf + hf); // end_session spreads them over 2 * (W + H)
+                for (pos, sp, pc, sz) in b.petals.iter().map(|(a, s, c, z)| (*a, *s, c.as_str(), *z)) {
+                    let pos = pos * per2;
+                    let d = (pos + sp * tt).rem_euclid(per);
+                    let mut run = 0.0;
+                    let (mut x, mut y) = l[0];
+                    for k in 0..5 {
+                        let (a, bb) = (l[k], l[k + 1]);
+                        let seg = (bb.0 - a.0).hypot(bb.1 - a.1);
+                        if run + seg >= d {
+                            let f = (d - run) / seg.max(1e-6);
+                            (x, y) = (a.0 + (bb.0 - a.0) * f, a.1 + (bb.1 - a.1) * f);
+                            break;
+                        }
+                        run += seg;
+                    }
+                    let fade = (1.0 - tt / 2.6).max(0.0);
+                    let c = mixhex(&base, pc, 0.85 * fade);
+                    let j = 1.5 * (tt * 9.0 + pos).sin();
+                    cv.rect(x - sz + j, y - sz / 2.0, x + sz + j, y + sz / 2.0).fill(&c).outline("").tags(&["z19glow"]);
+                }
+            }
+        }
+        alive
+    }
+}

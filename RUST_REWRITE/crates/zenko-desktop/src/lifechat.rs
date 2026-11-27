@@ -635,7 +635,7 @@ impl Companion {
     }
 
     /// srs_update(card, ok, from_deck)
-    fn srs_update(&mut self, now: f64, card: &Value, ok: bool, topic: &str) {
+    pub(crate) fn srs_update(&mut self, now: f64, card: &Value, ok: bool, topic: &str) {
         let today = self.today();
         let mut cards = self.cards();
         let pos = cards.iter().position(|c| (truthy(&card["id"]) && c["id"] == card["id"]) || (c["q"] == card["q"] && c["a"] == card["a"]));

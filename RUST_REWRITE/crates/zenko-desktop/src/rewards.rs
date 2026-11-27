@@ -24,6 +24,7 @@ pub fn save_life(v: &Value) {
     if std::fs::write(&tmp, crate::py_json_ascii_indent(v, b" ")).is_ok() {
         let _ = std::fs::rename(&tmp, dir.join("zenko_life.json"));
         crate::study::clear_pending();
+        crate::guard::clear_screen();
     }
 }
 
@@ -278,6 +279,8 @@ pub enum Later {
     SayChat { text: String, secs: f64 },
     /// study_ask(window key)
     StudyAsk(String),
+    /// screen_tell(key, total, own, media)
+    ScreenTell { key: String, tot: f64, own: bool, media: bool },
 }
 
 #[derive(Clone, Debug, Default)]
@@ -439,6 +442,7 @@ impl Companion {
                     self.chat_line(now, "Fox", &msg);
                 }
                 Later::StudyAsk(k) => self.study_ask(&k),
+                Later::ScreenTell { key, tot, own, media } => self.screen_tell(&key, tot, own, media),
                 Later::SayChat { text, secs } => {
                     self.events.push(Ev::Say { text: text.clone(), secs, choices: vec![] });
                     self.events.push(Ev::Beep { kind: "gift".into(), variety: false });

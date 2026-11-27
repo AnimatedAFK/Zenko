@@ -3,14 +3,13 @@
 Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.md. Rules: RULES.md.
 402 of 1,798 zenko.py items ported (`python3 tools/audit_inventory.py`).
 
-## Stages left to completion (12, as of 2026-11-27; 3f done)
+## Stages left to completion (11, as of 2026-11-27; 3g done)
 1. ~~3e: zenko8 study tracking + study_route~~ (done)
 2. ~~3f: the remaining chat routes~~ (done)
-3. 3g: desktop leftovers: focus glow, Ctrl K, deadline reminders, screen-time recording, books_slow (bedtime guard,
-   6 h burnout line, water nudge)
+3. ~~3g: desktop leftovers~~ (done; Ctrl K moved to 4c, since it searches the Settings/Customize cards)
 4. 4a: hub pages Home, Daily, You
 5. 4b: Timetable, Upcoming (Japanese clock), Reminders, Deadlines pages
-6. 4c: Settings and Customize pages
+6. 4c: Settings and Customize pages, plus the Ctrl K search palette (ZkPalette, z20_items)
 7. 4d: Study pages: Notebook, study Books, Notes
 8. 4e: Exercise, Garden (zen garden, fishing, koi book), Screen time pages
 9. 4f: World map and Town square
@@ -88,7 +87,17 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
   The windows those lines open (periodic table, calculator, dictionary, Bible, koi book, fishing, delay picker, study
   books) are sent as commands the window side doesn't handle yet.
 
-- **Stage 3f (latest):** the rest of the offline chat. calc.rs: Python's safe calculator (same regex prep, a
+- **Stage 3g (latest):** guard.rs: deadline_reminders (15 s after start, then every 30 min), books_slow every 30 s
+  (wind-down, bedtime nag with "10 more min" / "Goodnight~", burnout cap with a 15-min break, the rest-day and
+  late-night lines; bedtime/wake default to DEFAULT_CONFIG's 23:00/06:00) + gym_water_nudge, screen_tick after
+  study_tick (screen_classify/screen_site/screen_excluded, private windows remembered by handle, YouTube study
+  videos, idle limits, the 1-hour screen_tell; counts wait in a cache that read_json applies, like zenko.py's
+  in-memory life) and zk_slow_tick every minute (idle_quiz_check's pop quiz + Show answer / I knew it / Forgot /
+  Later, ib_nudge_check, garden_check, screen_save_maybe, journey_check). Env.bubble = the speech bubble is up.
+  hubwin.rs: z19_glow (the progress line and its head in the frame, every 120 ms) and the petal burst after a
+  completed session. main.rs: "hub:<page>" chips now open pages, "lockin:N" works, quiz_on() sees a running quiz.
+  zenko.py quirk copied: quiz_offers is cleared before its count is read back, so it is always 1.
+- **Stage 3f:** the rest of the offline chat. calc.rs: Python's safe calculator (same regex prep, a
   Python-grammar parser, exact big ints, CPython float/complex pow, math errors, repr with "," grouping).
   extra.rs: extra_route (lock-in, pomodoro, focus N, reminders -> emas, weekly report, quiz, calc, define/translate
   web jobs, notes search with difflib ratio, todos, omikuji with weighted picks, JP word of the day, sing, outfits,
@@ -150,12 +159,14 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 | Study tracker + study chat: 112 steps (window ticks, taps, study_slow, chat; lines, bubbles + buttons, commands, slog/dlog/hourlog/unsorted/win_subj/subj_words/goals/studied/said, timetable, self.st, deadline ids) | zenko.py with deadlines, timetable and study history set up, `tools/make_golden_study.py` |
 | Calculator: 200+ expressions (ints, floats, complex, errors, grouping) | zenko.py's calc_eval, `tools/make_golden_calc.py` |
 | Extra/life/misc chat: 229 lines (replies, bubbles, commands, extras, cfg, life, badges, emas, timetable, deadlines, session, pomodoro, lock-in, quiz, sulk) | Zenko23.chat_send with seeded random, `tools/make_golden_extra.py` |
+| Sleep/burnout/water guard, deadline note, screen time (16 window kinds), pop quiz + taps, IB and garden nudges: 64 steps | zenko.py's own methods, `tools/make_golden_guard.py` |
+| Focus glow + petal burst: every frame item in 10 cases | zenko.py's z19_glow on a recording canvas, `tools/make_golden_glow.py` |
 | Version routes, Exercise, study books: 127 lines (replies, bubbles, what opens, IB tasks, rules, gym, timetable, grades, session, bedtime) | zenko.py with screen time/garden/stats/browser link set up, `tools/make_golden_routes.py` |
 
 ## Open problems
 - Nothing has run on real Windows yet (Wine is broken here). The bubble, menu, panel, dialog and pounce still need screenshots from the user.
-- Chips like "Show me" / "See the map" send `hub:garden` / `hub:map`, which do nothing until those pages exist.
-- Only the Ask Zenko page exists; the other pages are empty. Ctrl K does nothing, there is no focus glow yet, and the sidebar's
+- Chips like "Show me" / "See the map" now open `hub:garden` / `hub:map`, but those pages are empty until 4e/4f.
+- Only the Ask Zenko page exists; the other pages are empty. Ctrl K does nothing yet (4c), and the sidebar's
   "Browser" link dot and side scenes are off (zb_linked and z22_unlocked aren't ported). Only the smooth motion
   level (45 ms) is used. The tkpaint StrokeInPieces path follows Tk core-8-6-branch; older 8.6 builds may differ.
 - Not ported yet: the Spotify account (tablet buttons use media keys, like zenko.py without an account), her VOICEVOX
@@ -166,15 +177,13 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
   nb_start_test (4d/5b/5c). open_app_hook is None (5a). last_file is never set (attachments, 5b). Homework passes
   only subject_in (nb_sid isn't tracked until the Notebook page, 4d). plan_short {} comes from the Upcoming page's
   up_plan (4b); the extra test normalises it.
-- Not ported: screen_tick (screen time recording; the summary reads what zenko.py recorded), deadline_reminders,
-  books_slow (bedtime guard, burnout line, water nudge), the food lookup online (an unknown
+- Not ported: update_tick (5d), the food lookup online (an unknown
   food answers like a failed lookup), the Exercise tab's own early tick that fills today's food list.
   The smart brains (Ollama, online), web lookups, Mic/Talk/Image/Screen buttons and attachments are not ported.
 - The rewards test doesn't replay the 5 s follow-up badge check (in these cases it awards nothing in Python either).
 
 ## Next recommended task
-Stage 3g: focus glow (37653), Ctrl K, deadline_reminders, screen_tick (screen time recording), books_slow (bedtime
-guard, 6 h burnout line, water nudge). Then the hub pages one by one (each: a golden dump with tools/make_golden_page.py's walk(), then the Rust tree checked against it).
+Stage 4a: hub pages Home, Daily, You. Then the rest of the hub pages one by one (each: a golden dump with tools/make_golden_page.py's walk(), then the Rust tree checked against it).
 
 ## Gotchas
 - The repo root has a tracked `__pycache__/`. Never delete it, and run Python with bytecode writing turned off.
@@ -190,4 +199,6 @@ guard, 6 h burnout line, water nudge). Then the hub pages one by one (each: a go
   after(2500) land on their own step.
 - make_golden_extra.py moves the fake clock 2.7 s and sleeps 2.7 s per line, so Tk's real after() timers and the
   fake clock stay in step; the Rust test pumps at now+2.7. Python's idle pose lines (IDLE_LINES) are filtered out.
+- make_golden_guard.py cancels the start-up greeting's bubble_job (or the pop quiz never shows) and reseeds random
+  inside screen_tell (other after() jobs can use random first); the Rust test reseeds before pump the same way.
 - Cross-compile with `cargo build --release --target x86_64-pc-windows-gnu`.
