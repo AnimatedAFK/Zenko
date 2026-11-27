@@ -245,3 +245,23 @@ pub fn palette_cards(label: &str) -> Vec<String> {
         .filter(|v| (v["kind"] == "Setting" || v["kind"] == "Section") && v["sub"] == label)
         .map(|v| v["words"].as_str().unwrap().to_string()).collect()
 }
+
+/// px_photo recorded small ({"z": zoom, "rows": ["rrggbbaa..."]}) as the picture Tk shows: rows of "#rrggbbaa"
+pub fn expand_images(images: &mut Value) {
+    let Some(o) = images.as_object_mut() else { return };
+    for v in o.values_mut() {
+        if let Some(z) = v.get("z").and_then(|z| z.as_u64()) {
+            let z = z as usize;
+            let mut rows = vec![];
+            for r in v["rows"].as_array().unwrap() {
+                let s = r.as_str().unwrap();
+                let px: Vec<String> = (0..s.len() / 8).map(|i| format!("#{}", &s[i * 8..i * 8 + 8])).collect();
+                let wide: Vec<Value> = px.iter().flat_map(|p| std::iter::repeat_n(Value::from(p.as_str()), z)).collect();
+                for _ in 0..z {
+                    rows.push(Value::from(wide.clone()));
+                }
+            }
+            *v = Value::from(rows);
+        }
+    }
+}

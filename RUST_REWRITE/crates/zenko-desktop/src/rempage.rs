@@ -95,25 +95,25 @@ fn at_of(e: &Value) -> Option<f64> {
 }
 
 /// Python's int() of a float (towards zero), kept as a float for coordinates
-fn ti(v: f64) -> f64 {
+pub(crate) fn ti(v: f64) -> f64 {
     v.trunc()
 }
 
-fn hex_rgb(c: &str) -> (i64, i64, i64) {
+pub(crate) fn hex_rgb(c: &str) -> (i64, i64, i64) {
     let h = c.trim_start_matches('#');
     let p = |i: usize| i64::from_str_radix(h.get(i..i + 2).unwrap_or("00"), 16).unwrap_or(0);
     (p(0), p(2), p(4))
 }
 
 /// _rgb_mix(a, b, t)
-fn rgb_mix(a: (f64, f64, f64), b: (f64, f64, f64), t: f64) -> (f64, f64, f64) {
+pub(crate) fn rgb_mix(a: (f64, f64, f64), b: (f64, f64, f64), t: f64) -> (f64, f64, f64) {
     let t = t.clamp(0.0, 1.0);
     (ti(a.0 + (b.0 - a.0) * t), ti(a.1 + (b.1 - a.1) * t), ti(a.2 + (b.2 - a.2) * t))
 }
 
-type Art = Box<dyn Fn(i32, i32) -> Option<[u8; 4]>>;
+pub type Art = Box<dyn Fn(i32, i32) -> Option<[u8; 4]>>;
 
-fn px(c: (f64, f64, f64)) -> Option<[u8; 4]> {
+pub(crate) fn px(c: (f64, f64, f64)) -> Option<[u8; 4]> {
     Some([c.0 as u8, c.1 as u8, c.2 as u8, 255])
 }
 

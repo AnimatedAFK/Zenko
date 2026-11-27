@@ -761,7 +761,7 @@ impl Companion {
     // ---- numbers for reports -------------------------------------------------------------------------------------------
 
     /// subject_minutes(days, start): {subject: minutes}
-    fn subject_minutes(&self, days: i64, start: Option<i64>) -> Vec<(String, f64)> {
+    pub(crate) fn subject_minutes(&self, days: i64, start: Option<i64>) -> Vec<(String, f64)> {
         let today = day_n(self.nl());
         let first = start.unwrap_or(today - (days - 1));
         let mut out: Vec<(String, f64)> = vec![];
@@ -783,7 +783,7 @@ impl Companion {
         out
     }
 
-    fn week_start(&self) -> i64 {
+    pub(crate) fn week_start(&self) -> i64 {
         let t = day_n(self.nl());
         t - weekday(t)
     }

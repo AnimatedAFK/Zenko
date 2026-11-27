@@ -60,6 +60,22 @@ for _fn in ("aa_photo", "sprite_photo"):
         return img
     setattr(Z, _fn, _wrap)
 
+_pxp0 = Z.px_photo
+
+
+def _px_rec(w, h, fn, zoom=1):
+    """px_photo, recorded small: the picture before a plain whole-step zoom, and that zoom"""
+    LAST[0] = None
+    img = _pxp0(w, h, fn, zoom)
+    if LAST[0] is not None:
+        rows = LAST[0]
+        z = int(zoom) if (len(rows) == h and int(zoom) > 1) else 1
+        REG[str(img)] = {"z": z, "rows": ["".join("%02x%02x%02x%02x" % tuple(p) for p in row) for row in rows]}
+    return img
+
+
+Z.px_photo = _px_rec
+
 HIST = {}            # Text widget -> what happened to it: ["see", w, h] / ["font", w, h, new font] (the size at that moment)
 _see0, _tcfg0 = tk.Text.see, tk.Text.configure
 
@@ -611,6 +627,41 @@ if len(sys.argv) > 1 and sys.argv[1] == "palette":
                     "hub_xy": [app.hub["win"].winfo_rootx(), app.hub["win"].winfo_rooty()]}
         return walk(P.win, P.win, set(), images, fonts)
     SETUP["data"], SETUP["tree"] = (lambda app, name: None), _tree
+
+if len(sys.argv) > 1 and sys.argv[1] == "shelf":
+    # golden/hub_shelf.json: the Study books shelf (the night, the cabinet, the nine books with their labels and
+    # this week's hours, the hanging scroll), wide in snow, a book hovered (lifted, glowing, the scroll describing it),
+    # and in a small midnight window
+    OUT = "hub_shelf.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 1.5 * 3600 + 754.25
+    CASES = [("shelf_wide", T0, {"theme": "snow"}, None, "notebook"),
+             ("shelf_hover", T0, {"theme": "snow"}, None, "notebook"),
+             ("shelf_midnight_small", T0, {"theme": "midnight"}, (1120, 720), "notebook")]
+
+    def _data(app, name):
+        app.nb_sid = "shelf"
+        app.life["slog"] = {"2025-12-09": {"bio": 5400, "chem": 600}, "2025-12-11": {"math": 1500, "bio": 300},
+                            "2025-12-01": {"french": 3000}}
+        app.life["grades"] = [{"sid": "bio", "score": 6, "of": 7, "what": "Mock"}] * (3 if name == "shelf_hover" else 1)
+        app.life_save()
+
+    def _after(app, name):
+        if name == "shelf_hover":
+            app.shelf_hover("bio")
+            for _ in range(40):
+                app.root.update()
+                time.sleep(0.03)
+
+    def _tree(app, images, fonts):
+        EXTRA[0] = {"mincho": Z._mincho_font(app.root), "serif_font": Z._serif_font(app.root),
+                    "lift": dict(app.nb["fx"]["lift"]), "hover": app.nb.get("hover"),
+                    "petals": [p[:4] for p in app.nb["fx"]["petals"]],
+                    "books": [[b[0], b[1], b[2], b[3], app.book_meta(b[0])["col"]] for b in Z.BOOKS],
+                    "practice": Z.BOOK_PRACTICE}
+        h = app.hub
+        return walk(h["pages"]["notebook"], h["win"], set(), images, fonts)
+    SETUP["data"], SETUP["after"], SETUP["tree"] = _data, _after, _tree
 
 EXTRA = [{}]
 NAME = [""]
