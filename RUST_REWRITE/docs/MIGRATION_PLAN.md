@@ -78,7 +78,7 @@ order is kept where it changes the result (tail outlines, eye cells).
 | Lock-in | timer, hachimaki, Esc-hold exit, pounce-and-eat of distractions (tab close / minimise / close), the zenko21 overlay animation, eaten counts, resume after restart | **done, not yet seen on Windows** |
 | Desktop fox, rest | music tablet, battery, weather particles, the visiting fox, slide, focus glow, exam countdown on the ema | **music tablet, weather particles + real weather, visiting fox, 30 s life tick done**; battery, slide, glow, ema countdown to do |
 | Session rewards | garden growth, journey minutes, badges, hunger after a session or lock-in, timetable marking, pomodoro, music hooks | **all done** (byte-for-byte vs zenko.py), except the Spotify-account music hooks |
-| Hub shell | sidebar with pixel icons, rearrange, accents, text scaling, themed scrollbars, Ctrl+K search, page transitions, living sidebar fox | |
+| Hub shell | sidebar with pixel icons, rearrange, accents, text scaling, themed scrollbars, Ctrl+K search, page transitions, living sidebar fox | **window frame, sidebar sky + menu, living fox, stars/particles, tips, status, drag/resize/buttons, text re-fit done**; page slide, Ctrl+K palette, focus glow, scrollbars to do |
 | Home, Daily, You | streak, mood/hunger, 61 badges, check-ins, journal | |
 | Timetable, Upcoming, Japanese clock, planner, reminders rack | free hours, half-hour slots, plan/replan, countdowns, emas that auto-plan, PDF export | |
 | Chat + brain | commands, shorthand learning, her voice, Ollama local models, online brain (Gemini) with IB-terms recheck, web search + summaries, Markdown/LaTeX, screenshot reading | |
@@ -116,7 +116,9 @@ order is kept where it changes the result (tail outlines, eye cells).
 3. **Started (stage 3a):** a Tk-compatible drawing layer (ui.rs + uiwin.rs): Windows Tk widget sizes, pack, place,
    cards, pixel buttons, entries, checked against real Tk geometry and canvas items. Still to add as pages need them:
    grid in the tree, Text widgets with tags, scrollbars (ZkScrollbar), images, aa_photo, smooth lines.
-4. **Next:** the hub shell (sidebar sky, nav, title bar, tip bar, slide, focus glow), then hub pages one at a time (Home, Timetable/Upcoming, Chat, Settings/Customize first, then the rest), each compared with Python.
+4. **Started (stage 3b):** the hub shell: canvas painting with Tk's Windows rules (canvasdraw.rs + tkpaint.rs), the
+   window frame (hubwin.rs), the sidebar (hubside.rs) and its life (hubanim.rs), the Windows window (hubw.rs).
+   **Next:** page switching with the vertical slide and focus glow, then hub pages one at a time (Home, Timetable/Upcoming, Chat, Settings/Customize first, then the rest), each compared with Python.
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.
 6. Speed (Phase 5): image cache and native code are already in; measure and tune at the end.
 

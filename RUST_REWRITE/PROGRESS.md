@@ -34,6 +34,17 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
   (checkin.rs: open_checkin, checkin_save, chat_line, should_speak; opened by the 30 s tick, the menu and later chat).
   Fixed: the session dialog's entries were 2 px too small (tkEntry.c inset = highlight + border + XPAD).
 
+- **Stage 3b (latest):** the hub window. canvasdraw.rs (lib: a Tk canvas painted the way Tk 8.6 on Windows does:
+  DisplayRectOval / polygon / line / text / image procs, TkMakeBezierCurve smoothing, ComputeTextBbox and image anchors,
+  BlendComplexAlpha), tkpaint.rs (bin: tkWinDraw.c's pens, paths, StrokeInPieces, arcs, baseline text, photo blends),
+  ui.rs canvases holding a tk canvas (`Draw::Tk`), place bordermode ignore, lowered widgets. hubwin.rs (the frame:
+  zk_border wood tiles + fittings + crest, hub_titlebar with the Ctrl K pill and window buttons, tip bar with the
+  fading TIPS, stage, zk_factor/zk_size label fonts, hub_zone, nav_list, badge pins, status line), hubanim.rs (stars
+  twinkle, seasonal particles, the living logo with blink/head sway/curl and PAGE_POSE poses), hubw.rs (bin: the
+  borderless window, DWM round corners, fade-in, drag, resize edges, min/max/close, sidebar hover + clicks, 170 ms
+  re-fit). Menu "Open Zenko window" and open_hub_on_start open it; pages inside it are still empty.
+  Fixed on the way: accessories() lacked headphones-with-music and the gym look.
+
 ## Architecture decisions (settled)
 - **Logic lives in the library.** zenko-desktop lib = platform-free logic, tested on Linux. src/main.rs and the Windows-only modules (gdi, bubble, menu, panel, dialog, tkw, eat) handle the Win32 side.
 - **The library never calls the OS.** Companion emits `Ev` events (Say, Beep, Ui, Command). The window side feeds it `Env` (work area, idle time, dragging) and reads `win_move`.
@@ -57,24 +68,30 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 | Background music (3 loops + volume copy) | zenko.py's .wav bytes (sha256), `tools/make_golden_music.py` |
 | Music tablet picture/buttons, parse_clock, weather URLs, geocode pick | zenko.py, `tools/make_golden_life.py` |
 | Check-in card: 13 widgets' sizes/places + 20 canvas items in 3 themes, journal file | Real Tk running zenko.py's open_checkin / checkin_save, `xvfb-run -a /usr/bin/python3.12 tools/make_golden_checkin.py` |
+| Hub sidebar: ~2,200 canvas items, moon/sun pixels, icons, text + picture boxes (4 cases) | Real zenko.py under Xvfb, `tools/make_golden_hub.py` |
+| Hub frame: every widget's place/size/colours/fonts, border/title/pill items, wood tile pixels (2 cases) | Real zenko.py under Xvfb, `tools/make_golden_hubwin.py` |
+| Living logo: mood, clothes, tails + body pixels on 14 pages x 4 times | Real zenko.py's hub_anim, `tools/make_golden_logo.py` |
 | Battery meter, ema countdown | zenko.py draw_battery (golden/life.json), rule test |
 | Pomodoro, life tick, visitor, weather particles | Rule tests (tests/pomo.rs, tests/life_bits.rs) |
 | Behaviour, roaming, lock-in | Rule tests |
 
 ## Open problems
 - Nothing has run on real Windows yet (Wine is broken here). The bubble, menu, panel, dialog and pounce still need screenshots from the user.
-- Chips like "Show me" / "See the map" send `hub:garden` / `hub:map`, which do nothing until the hub exists.
+- Chips like "Show me" / "See the map" send `hub:garden` / `hub:map`, which do nothing until those pages exist.
+- The hub's pages are empty, Ctrl K does nothing, there is no page slide or focus glow yet, and the sidebar's
+  "Browser" link dot and side scenes are off (zb_linked and z22_unlocked aren't ported). Only the smooth motion
+  level (45 ms) is used. The tkpaint StrokeInPieces path follows Tk core-8-6-branch; older 8.6 builds may differ.
 - Not ported yet: the Spotify account (tablet buttons use media keys, like zenko.py without an account), her VOICEVOX
   read-aloud (she does her "kon kon~" clip instead, as zenko.py does when VOICEVOX is off), piper voices, plan_maybe (ema auto-planning), chat (so `pomo_start` has no caller yet), z18_init's one-time move
   of old chat reminders onto the ema rack.
 - The rewards test doesn't replay the 5 s follow-up badge check (in these cases it awards nothing in Python either).
 
 ## Next recommended task
-The hub window shell on top of ui.rs: FoxBuddy.open_hub + the Zenko/Zenko19/Zenko20/Zenko21/Zenko22 overrides
-(borderless title bar, resize edges, fade-in, the night-sky sidebar with stars/moon/hills/torii, z19 sky by time of
-day and season, pixel nav icons, gliding pill, tip bar, living logo, z22 badge pins and scenes, vertical slide
-40372, focus glow 37653). Needs ports of aa_photo, sprite_photo, Tk smooth lines and random.Random.uniform. Then
-the Chat page with the chat command router (pomo_start at ~7898), then the study pages one by one.
+Hub page switching (hub_show of FoxBuddy/Zenko19/Zenko20/Zenko21: vertical slide 40372, hub_title 23620/32678, focus
+glow 37653), then the Chat page (open_chat + chat_send + chat_line rendering, the command router, pomo_start at
+~7898, "check-in" opening open_checkin(force)), then ema auto-planning (plan_maybe), then the study pages one by one.
+Each page: a golden dump of the real page with tools/make_golden_hubwin.py's walk(), then the Rust tree checked
+against it.
 
 ## Gotchas
 - The repo root has a tracked `__pycache__/`. Never delete it, and run Python with bytecode writing turned off.
