@@ -199,7 +199,7 @@ pub fn classify_subject(text: &str, learned: &Value) -> (Option<String>, i64, i6
     (Some(scores[0].0.clone()), scores[0].1, scores.get(1).map(|e| e.1).unwrap_or(0))
 }
 
-fn rule_words(s: &str) -> Vec<String> {
+pub fn rule_words(s: &str) -> Vec<String> {
     s.split([',', ';', '\n']).map(|w| w.trim().to_lowercase()).filter(|w| !w.is_empty()).collect()
 }
 

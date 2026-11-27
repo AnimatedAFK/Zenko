@@ -26,6 +26,8 @@ use zenko_desktop::uppage::{UpData, UpPage};
 mod hubup;
 #[path = "hubrem.rs"]
 mod hubrem;
+#[path = "hubset.rs"]
+mod hubset;
 use serde_json::Value;
 use zenko_desktop::pagekit::Faces;
 use zenko_desktop::ui::{Draw, Kind, Place};
@@ -33,6 +35,8 @@ use zenko_desktop::ui::{Draw, Kind, Place};
 /// what the app hands the window when it opens
 pub struct HubInit {
     pub t: Theme,
+    /// seconds since the app started
+    pub opened_s: f64,
     pub font_ui: String,
     pub navkeys: Vec<(String, String)>,
     pub ctx: SideCtx,
@@ -110,6 +114,13 @@ struct HubW {
     /// a time menu to pop up once the click is handled
     up_menu: Option<usize>,
     rem: Option<zenko_desktop::rempage::RemPage>,
+    /// the Settings page, its try-a-title text, the box that had the keyboard, the new rule's Keep / Close
+    set: Option<zenko_desktop::setpage::SetPage>,
+    set_try: String,
+    set_focus: Option<usize>,
+    set_rule_do: String,
+    /// seconds from the app's start to this window opening
+    opened_s: f64,
     rem_d: zenko_desktop::rempage::RemData,
     rem_anim: f64,
     rem_chk: f64,
@@ -705,6 +716,12 @@ fn page_frame(x: &mut HubW, page: &str) -> Option<usize> {
             hubrem::build(x, pg);
             pg
         }
+        "settings" => {
+            let th = x.hub.t.clone();
+            let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
+            hubset::build(x, pg);
+            pg
+        }
         "daily" => {
             let th = x.hub.t.clone();
             let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
@@ -766,6 +783,7 @@ fn relayout(x: &mut HubW) {
     }
     hubup::fit(x, w, h);
     hubrem::fit(x, w, h);
+    hubset::fit(x, w, h);
     if let Some(dp) = x.daily.as_mut() {
         let (th, f) = (x.hub.t.clone(), Faces { ui: x.hub.font_ui.clone(), title: String::new() });
         let d = x.daily_d.clone();
@@ -900,6 +918,7 @@ fn page_wheel(x: &mut HubW, mx: i32, my: i32, delta: i32) -> bool {
         Some("timetable") => x.tt.as_ref().map(|p| p.sc.clone()),
         Some("deadlines") => x.up.as_ref().map(|p| p.sc.clone()),
         Some("reminders") => x.rem.as_ref().map(|p| p.sc.clone()),
+        Some("settings") => x.set.as_ref().map(|p| p.sc.clone()),
         _ => None,
     };
     let Some(sc) = sc else { return false };
@@ -1067,7 +1086,7 @@ pub fn open(page: Option<&str>, init: HubInit) {
             size: (w, h), min, cursor: IDC_ARROW, faded: false,
             anim: zenko_desktop::hubanim::HubAnim::new(0.0, (x0 as u64) << 20 ^ 0x9e37_79b9),
             theme: init.theme.clone(), living: init.living, glow_next: 0.0, burst: None, particles: init.particles, minimized: false,
-            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, ask: None,
+            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, set: None, set_try: String::new(), set_focus: None, set_rule_do: String::new(), opened_s: init.opened_s, ask: None,
             chat_q: Default::default(), typing: None, sb_drag: None,
         }));
         with(|x| {
@@ -1279,6 +1298,7 @@ fn step(x: &mut HubW) -> bool {
     // the Reminders page: the foxfire drifts, ema_render when the emas or today's plan change
     if x.slide.is_none() {
         hubrem::step(x, n);
+        hubset::step(x);
     }
     // daily_refresh: what changed (a badge, a check-in, a card) shows while the page is open
     if x.hub.side.page.as_deref() == Some("daily") && x.slide.is_none() && n >= x.daily_next {
@@ -1509,6 +1529,19 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     hubup::popup(hwnd, m);
                     redraw();
                 }
+                if let Some(m) = with(|x| {
+                    // a Settings menu button under the pointer pops its choices (the OptionMenu)
+                    if x.hub.side.page.as_deref() != Some("settings") {
+                        return None;
+                    }
+                    let (mx, my) = pt();
+                    let hit = x.hub.ui.hit(mx, my)?;
+                    matches!(&x.hub.ui.ws[hit].kind, Kind::Menu { cmd, .. } if cmd.starts_with("set_menu:")).then_some(hit)
+                }).flatten() {
+                    ReleaseCapture();
+                    hubset::popup(hwnd, m);
+                    redraw();
+                }
                 0
             }
             WM_LBUTTONUP => {
@@ -1530,6 +1563,8 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                             hubup::cmd(x, &cmd);
                         } else if cmd.starts_with("rem_") {
                             hubrem::cmd(x, &cmd);
+                        } else if cmd.starts_with("set_") && !cmd.starts_with("set_menu:") {
+                            hubset::cmd(x, &cmd);
                         } else if cmd.starts_with("hub_ask:") || cmd.starts_with("home_") || matches!(cmd.as_str(),
                             "toggle_pause" | "end_session" | "start_break" | "end_break") {
                             home_cmd(x, &cmd);
@@ -1537,6 +1572,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                             chat_cmd(x, &cmd);
                         }
                     } else if hubrem::click(x, mx, my) {
+                    } else if hubset::click(x, mx, my) {
                     } else if x.hub.side.page.as_deref() == Some("home") {
                         home_music_click(x, mx, my);
                     } else if x.hub.side.page.as_deref() == Some("daily") {
@@ -1623,6 +1659,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                         x.hub.ui.focus = x.tt.as_ref().map(|t| t.ke);
                     } else if vk == VK_RETURN && x.hub.side.page.as_deref() == Some("deadlines") && hubup::key_return(x) {
                     } else if vk == VK_RETURN && x.hub.side.page.as_deref() == Some("reminders") && hubrem::key_return(x) {
+                    } else if vk == VK_RETURN && x.hub.side.page.as_deref() == Some("settings") && hubset::key_return(x) {
                     } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.a)) {
                         daily_cmd(x, "daily_card_add");
                     } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.fact)) {

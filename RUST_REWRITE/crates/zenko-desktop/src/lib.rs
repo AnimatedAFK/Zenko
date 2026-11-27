@@ -34,6 +34,7 @@ pub mod dailypage;
 pub mod ttpage;
 pub mod uppage;
 pub mod rempage;
+pub mod setpage;
 pub mod ui;
 pub mod checkin;
 pub mod tkcanvas;

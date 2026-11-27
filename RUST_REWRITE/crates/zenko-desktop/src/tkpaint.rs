@@ -190,6 +190,31 @@ pub unsafe fn paint(dc: HDC, ops: &[TkOp], fonts: &GdiFonts) {
                     Arc(dc, *x, *y, x + w + 1, y + h + 1, xs, ys, xe, ye);
                     DeleteObject(SelectObject(dc, op_));
                 }
+                TkOp::FillArcPart { x, y, w, h, start, extent, chord, color } => {
+                    // DrawOrFillArc(fill): Chord() / Pie() between the radial end points, no pen
+                    let k = std::f64::consts::PI / (180.0 * 64.0);
+                    let (mut fs, mut fe) = (*start as f64 * k, *extent as f64 * k);
+                    if fe < 0.0 {
+                        fs += fe;
+                        fe = -fe;
+                    }
+                    let (a0, a1) = (fs, fs + fe);
+                    let (xr, yr) = (*x as f64 + *w as f64 / 2.0, *y as f64 + *h as f64 / 2.0);
+                    let xs = (xr + a0.cos() * *w as f64 / 2.0 + 0.5) as i32;
+                    let ys = (yr + (-a0).sin() * *h as f64 / 2.0 + 0.5) as i32;
+                    let xe = (xr + a1.cos() * *w as f64 / 2.0 + 0.5) as i32;
+                    let ye = (yr + (-a1).sin() * *h as f64 / 2.0 + 0.5) as i32;
+                    let br = CreateSolidBrush(rgb(color));
+                    let op_ = SelectObject(dc, GetStockObject(NULL_PEN));
+                    let ob = SelectObject(dc, br as _);
+                    if *chord {
+                        Chord(dc, *x, *y, x + w + 1, y + h + 1, xs, ys, xe, ye);
+                    } else {
+                        Pie(dc, *x, *y, x + w + 1, y + h + 1, xs, ys, xe, ye);
+                    }
+                    SelectObject(dc, op_);
+                    DeleteObject(SelectObject(dc, ob));
+                }
                 TkOp::FillPoly { pts, color } => {
                     let p: Vec<POINT> = pts.iter().map(|&(x, y)| POINT { x, y }).collect();
                     let br = CreateSolidBrush(rgb(color));

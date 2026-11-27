@@ -135,6 +135,8 @@ pub struct Place {
     pub relh: Option<f64>,
     /// anchor="ne": (x, y) is the widget's top right corner
     pub ne: bool,
+    /// anchor="n": (x, y) is the widget's top middle (tkPlace.c: x -= width / 2)
+    pub n: bool,
 }
 
 /// One canvas item, in canvas coordinates (already rounded the way Tk rounds them)
@@ -184,13 +186,15 @@ pub struct EntryText {
     pub blink_t0: f64,
     /// a placeholder shown in GREY while the box is empty and not focused (zenko.py's ph_show / ph_hide)
     pub ph: Option<String>,
+    /// -show: every character drawn as this one (a password box)
+    pub show: Option<char>,
 }
 
 #[derive(Clone, Debug)]
 pub enum Kind {
     Frame,
     Label { text: String, font: Font, fg: String, anchor: Anchor, wrap: i32, image: Option<std::rc::Rc<crate::tkcanvas::Photo>>,
-            left: bool, strike: bool },
+            left: bool, strike: bool, under: bool },
     /// zenko.py PixelButton (a canvas): its own colour, font (bold), padding, hover / press state and command
     Button { text: String, font: Font, color: String, fg: String, padx: i32, pady: i32, enabled: bool,
              shape: &'static str, hover: bool, down: bool, cmd: String },
@@ -198,12 +202,15 @@ pub enum Kind {
     Canvas { items: Vec<Item>, card: Option<Card>, tk: Option<Box<crate::tkcanvas::Canvas>> },
     /// a tk.Checkbutton / tk.Radiobutton with its indicator: `select` is selectcolor, `cmd` what a click does
     Check { text: String, font: Font, fg: String, on: bool, anchor: Anchor, wrap: i32, left: bool, select: String,
-            cmd: String, radio: bool },
+            cmd: String, radio: bool, noind: bool },
     /// a tk.Text (tktext.rs); `ring` is its highlightbackground
     Text { t: Box<crate::tktext::Text>, ring: String },
     /// a tk.OptionMenu's Menubutton (borderwidth 2, indicatoron, -width in characters in opt_w): `ind` is the
     /// indicator's (width, height) from the screen's millimetres, `cmd` what a click asks for (the menu)
     Menu { text: String, font: Font, fg: String, ind: (i32, i32), cmd: String },
+    /// a horizontal tk.Scale (showvalue off): from / to / value, -length, -width, -sliderlength, the trough's colour
+    /// (the slider is the widget's bg), `cmd` what a change asks for
+    Scale { from: f64, to: f64, val: f64, length: i32, width: i32, slen: i32, trough: String, cmd: String },
 }
 
 #[derive(Clone, Debug)]
@@ -398,7 +405,8 @@ impl Ui {
     /// tk.Label(parent, text, bg, fg, font, anchor, wraplength): borderwidth 2, padx 1, pady 1
     pub fn label(&mut self, parent: usize, text: &str, bg: &str, fg: &str, font: Font) -> usize {
         let id = self.add(Some(parent), Kind::Label { text: text.into(), font, fg: fg.into(), anchor: Anchor::Center,
-                                                      wrap: 0, image: None, left: false, strike: false }, bg);
+                                                      wrap: 0, image: None, left: false, strike: false,
+                                                      under: false }, bg);
         let w = &mut self.ws[id];
         (w.bd, w.padx, w.pady) = (2, 1, 1);
         id
@@ -409,7 +417,8 @@ impl Ui {
     pub fn check(&mut self, parent: usize, text: &str, bg: &str, fg: &str, font: Font, on: bool, select: &str, cmd: &str,
                  hl: i32, bd: i32) -> usize {
         let id = self.add(Some(parent), Kind::Check { text: text.into(), font, fg: fg.into(), on, anchor: Anchor::W, wrap: 0,
-                                                      left: false, select: select.into(), cmd: cmd.into(), radio: false }, bg);
+                                                      left: false, select: select.into(), cmd: cmd.into(), radio: false,
+                                                      noind: false }, bg);
         let w = &mut self.ws[id];
         (w.bd, w.hl, w.padx, w.pady) = (bd, hl, 1, 1);
         id
@@ -489,6 +498,30 @@ impl Ui {
     }
 
     /// pack(in_=master): `master` is a frame beside the widget (the same parent)
+    /// pack(before=sib): packed in the sibling's place in the packing order
+    pub fn pack_before(&mut self, id: usize, sib: usize, p: Pack) {
+        self.pack(id, p);
+        let seq = self.ws[sib].pack_seq;
+        for w in self.ws.iter_mut() {
+            if w.pack.is_some() && w.pack_seq >= seq {
+                w.pack_seq += 1;
+            }
+        }
+        self.ws[id].pack_seq = seq;
+        self.ws[id].pack_in = self.ws[sib].pack_in;
+    }
+
+    /// tk.Scale(parent, from_, to, orient="horizontal", length, width, sliderlength, showvalue=0, bd=1,
+    /// highlightthickness=0, bg, troughcolor, command)
+    #[allow(clippy::too_many_arguments)]
+    pub fn scale(&mut self, parent: usize, from: f64, to: f64, val: f64, length: i32, width: i32, slen: i32, bg: &str,
+                 trough: &str, cmd: &str) -> usize {
+        let id = self.add(Some(parent), Kind::Scale { from, to, val, length, width, slen, trough: trough.into(),
+                                                      cmd: cmd.into() }, bg);
+        (self.ws[id].bd, self.ws[id].hl) = (1, 0);
+        id
+    }
+
     pub fn pack_into(&mut self, id: usize, master: usize, p: Pack) {
         self.pack(id, p);
         self.ws[id].pack_in = Some(master);
@@ -548,6 +581,18 @@ impl Ui {
                 let th = if text.is_empty() { fonts.linespace(font) } else { lines.len() as i32 * fonts.linespace(font) };
                 let inset = w.bd + w.hl;
                 (tw + 2 * w.padx + 2 * inset, th + 2 * w.pady + 2 * inset)
+            }
+            Kind::Check { text, font, wrap, noind: true, .. } => {
+                // indicatoron 0: a button of its text and padding
+                let (lines, tw) = text_layout(fonts, font, text, *wrap);
+                let th = lines.len() as i32 * fonts.linespace(font);
+                let (ib, _) = self.ib(id);
+                (tw + 2 * w.padx + 2 * ib, th + 2 * w.pady + 2 * ib)
+            }
+            Kind::Scale { length, width, .. } => {
+                // tkScale.c ComputeScaleGeometry (horizontal, no label or value): inset = highlight + border
+                let inset = w.bd + w.hl;
+                (length + 2 * inset, inset + width + 2 * w.bd + inset)
             }
             Kind::Check { text, font, wrap, radio, .. } => {
                 let (lines, tw) = text_layout(fonts, font, text, *wrap);
@@ -817,6 +862,8 @@ impl Ui {
             };
             if pl.ne {
                 x -= width;
+            } else if pl.n {
+                x -= width / 2;
             }
             let w = &mut self.ws[k];
             if width <= 0 || height <= 0 {
@@ -1115,7 +1162,7 @@ impl Ui {
                 let y = (w.h - ih - 2 * ib) / 2 + ib;
                 out.push(Draw::Tk { x: ax, y: ay, ops: vec![crate::canvasdraw::TkOp::Photo { x, y, img: img.clone() }] });
             }
-            Kind::Label { text, font, fg, anchor, wrap, left, strike, .. } => {
+            Kind::Label { text, font, fg, anchor, wrap, left, strike, under, .. } => {
                 let (lines, tw) = text_layout(fonts, font, text, *wrap);
                 // -width in characters: that many "0"s wide
                 let tw = if w.opt_w > 0 { w.opt_w * fonts.width(font, "0") } else { tw };
@@ -1145,7 +1192,47 @@ impl Ui {
                         let th = 1.max(font.size / 10);
                         out.push(Draw::Rect { x: ax + lx, y: sy, w: lw, h: th, color: fg.clone() });
                     }
+                    if *under {
+                        // Tk_UnderlineChars: desc / 2 under the baseline, a tenth of the size high (at least 1)
+                        let (asc, desc) = fonts.metrics(font);
+                        let mut pos = desc / 2;
+                        let mut uh = ((fonts.pixels(font) / 10.0 + 0.5) as i32).max(1);
+                        if pos + uh > desc {
+                            uh = (desc - pos).max(1);
+                            pos = pos.min(desc - 1);
+                        }
+                        out.push(Draw::Rect { x: ax + lx, y: ay + y + i as i32 * ls + asc + pos, w: lw, h: uh, color: fg.clone() });
+                    }
                 }
+            }
+            Kind::Check { text, font, fg, on, wrap, select, noind: true, .. } => {
+                // a button-style radiobutton: selectcolor while chosen, the text centred
+                if *on {
+                    out.push(Draw::Rect { x: ax, y: ay, w: w.w, h: w.h, color: select.clone() });
+                }
+                let (lines, _) = text_layout(fonts, font, text, *wrap);
+                let ls = fonts.linespace(font);
+                let y = (w.h - lines.len() as i32 * ls) / 2;
+                for (i, l) in lines.iter().enumerate() {
+                    let lw = fonts.width(font, l.trim_end_matches(' '));
+                    out.push(Draw::Text { x: ax + (w.w - lw) / 2, y: ay + y + i as i32 * ls, text: l.clone(), font: font.clone(),
+                                          color: fg.clone() });
+                }
+            }
+            Kind::Scale { from, to, val, slen, trough, .. } => {
+                // tkUnixScale.c DisplayHorizontalScale: the sunken trough, the flat slider at TkScaleValueToPixel
+                let inset = w.bd + w.hl;
+                let (tx, ty, tw, th) = (ax + inset, ay + inset, w.w - 2 * inset, w.h - 2 * inset);
+                let (light, dark) = shadows(&w.bg);
+                out.push(Draw::Rect { x: tx, y: ty, w: tw, h: th, color: light });
+                out.push(Draw::Rect { x: tx, y: ty, w: tw - w.bd, h: th - w.bd, color: dark });
+                out.push(Draw::Rect { x: tx + w.bd, y: ty + w.bd, w: tw - 2 * w.bd, h: th - 2 * w.bd, color: trough.clone() });
+                let range = to - from;
+                let pr = (w.w - slen - 2 * inset - 2 * w.bd) as f64;
+                let cx = if range == 0.0 { 0.0 } else { (val - from) * pr / range }
+                    + *slen as f64 / 2.0 + inset as f64 + w.bd as f64 + 0.5;
+                let sx = ax + cx as i32 - slen / 2;
+                out.push(Draw::Rect { x: sx, y: ty + w.bd, w: *slen, h: th - 2 * w.bd, color: w.bg.clone() });
             }
             Kind::Check { text, font, fg, on, wrap, left, select, radio, anchor, .. } => {
                 let (lines, tw) = text_layout(fonts, font, text, *wrap);
@@ -1196,7 +1283,8 @@ impl Ui {
                 let (asc, desc) = fonts.metrics(font);
                 let ls = asc + desc;
                 let ty = y + (ht + asc - desc) / 2 - asc;
-                let xo = |i: usize| fonts.width(font, &String::from_utf16_lossy(&e.text[..i.min(e.text.len())]));
+                let shown: Vec<u16> = match e.show { Some(c) => vec![c as u16; e.text.len()], None => e.text.clone() };
+                let xo = |i: usize| fonts.width(font, &String::from_utf16_lossy(&shown[..i.min(shown.len())]));
                 let tx = x + ib - xo(e.left);
                 let inner = (x1.max(x + 2), y1.max(y + 2), (x2.min(x + wd - 2) - x1.max(x + 2)).max(0),
                              (y2.min(y + ht - 2) - y1.max(y + 2)).max(0));
@@ -1208,11 +1296,11 @@ impl Ui {
                 match &e.ph {
                     Some(ph) if e.text.is_empty() && !focus => out.push(Draw::Text { x: x + ib, y: ty, text: ph.clone(),
                                                                                     font: font.clone(), color: t.grey.clone() }),
-                    _ => out.push(Draw::Text { x: tx, y: ty, text: String::from_utf16_lossy(&e.text), font: font.clone(),
+                    _ => out.push(Draw::Text { x: tx, y: ty, text: String::from_utf16_lossy(&shown), font: font.clone(),
                                                color: t.ink.clone() }),
                 }
                 if let Some((a, b)) = e.sel {
-                    out.push(Draw::Text { x: tx + xo(a), y: ty, text: String::from_utf16_lossy(&e.text[a..b]),
+                    out.push(Draw::Text { x: tx + xo(a), y: ty, text: String::from_utf16_lossy(&shown[a..b]),
                                           font: font.clone(), color: t.onacc.clone() });
                 }
                 // the insertion cursor: 2 pixels wide, blinking 600 ms on / 300 ms off while focused
@@ -1395,7 +1483,8 @@ impl Ui {
         let (ax, _) = self.abs(id);
         let w = &self.ws[id];
         let Kind::Entry { font, e, .. } = &w.kind else { return 0 };
-        let xo = |i: usize| fonts.width(font, &String::from_utf16_lossy(&e.text[..i]));
+        let shown: Vec<u16> = match e.show { Some(c) => vec![c as u16; e.text.len()], None => e.text.clone() };
+        let xo = |i: usize| fonts.width(font, &String::from_utf16_lossy(&shown[..i]));
         let base = ax + w.bd + w.hl + 1 - xo(e.left);
         let mut best = 0;
         for i in 0..=e.text.len() {

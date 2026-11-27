@@ -29,6 +29,8 @@ pub enum TkOp {
     DrawArc { x: i32, y: i32, w: i32, h: i32, pen: TkPen },
     /// XDrawArc of part of an ellipse: `start` / `extent` in 64ths of a degree, counter-clockwise from 3 o'clock
     DrawArcPart { x: i32, y: i32, w: i32, h: i32, start: i32, extent: i32, pen: TkPen },
+    /// XFillArc of part of an ellipse with the GC's arc mode (chord: cut by the straight line; else a pie slice)
+    FillArcPart { x: i32, y: i32, w: i32, h: i32, start: i32, extent: i32, chord: bool, color: String },
     FillPoly { pts: Vec<(i32, i32)>, color: String },
     DrawLines { pts: Vec<(i32, i32)>, pen: TkPen },
     /// one run of text per line: (x, baseline y, text)
@@ -314,7 +316,11 @@ pub fn item_ops(it: &CItem, fonts: &dyn Fonts, out: &mut Vec<TkOp>) {
             }
             let start = (64.0 * it.start + 0.5) as i32;
             let extent = (64.0 * it.extent + 0.5) as i32;
-            if !it.outline.is_empty() && extent != 0 {
+            if !it.fill.is_empty() && it.style != "arc" && extent != 0 {
+                out.push(TkOp::FillArcPart { x: x1, y: y1, w: x2 - x1, h: y2 - y1, start, extent, chord: it.style == "chord",
+                                             color: it.fill.clone() });
+            }
+            if !it.outline.is_empty() && extent != 0 && it.style == "arc" {
                 out.push(TkOp::DrawArcPart { x: x1, y: y1, w: x2 - x1, h: y2 - y1, start, extent, pen: pen(it, &it.outline) });
             }
         }

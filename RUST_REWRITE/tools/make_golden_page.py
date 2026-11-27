@@ -536,6 +536,23 @@ if len(sys.argv) > 1 and sys.argv[1] == "reminders":
     SETUP["data"], SETUP["after"] = _data, _after
 
 
+
+if len(sys.argv) > 1 and sys.argv[1] == "settings":
+    # golden/hub_settings.json: the Settings page (the section chips, every card down the two columns) wide, in a
+    # small midnight window, and with other choices made (theme, tails, bib, size, units, volume, toggles off)
+    OUT = "hub_settings.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 1.5 * 3600 + 754.25
+    ALT = {"theme": "snow", "tails": "9", "scarf": "#3b6ea8", "size": 6, "temp_unit": "F", "sound_volume": 3,
+           "glasses_in_session": False, "foxfire": False, "web_enabled": False, "home_city": "Mumbai",
+           "break_after_minutes": 45, "break_minutes": 10, "speak_mode": "always", "voice_engine": "whisper",
+           "text_scale": 1.15, "study_video_words": ["khan", "crashcourse"], "remind_voice": "off",
+           "tts_speed": 2, "spotify_client_id": "abc123", "bubble_font": "pixel"}
+    CASES = [("set_wide", T0, {"theme": "snow"}, None, "settings"),
+             ("set_midnight_small", T0, {"theme": "midnight"}, (1120, 720), "settings"),
+             ("set_alt", T0, ALT, None, "settings")]
+    SETUP["data"], SETUP["after"] = (lambda app, name: None), (lambda app, name: None)
+
 out = []
 for name, t, cfg, size, page in CASES:
     NOW[0] = t
@@ -605,6 +622,8 @@ for name, t, cfg, size, page in CASES:
                 "life": json.loads(json.dumps({k: app.life.get(k) for k in ("journal", "cards", "badges", "btier", "badge_pins",
                                                                            "facts", "notes", "found", "stats", "fishing")}, default=str)),
                 "life_all": json.loads(json.dumps(app.life, default=str)),
+                "cfg_full": json.loads(json.dumps(app.cfg, default=str)),
+                "font_ui": Z.FONT_UI, "exam_iso": app.exam_date().isoformat() if hasattr(app, "exam_date") else "",
                 "ema_sel": getattr(app, "_ema_sel", None),
                 "serif": Z._font_pick(app.root, ["Yu Mincho", "MS Mincho", "Georgia", "Times New Roman"], Z.FONT_UI),
                 "well": dict(getattr(app, "well", {}) or {}), "jp": Z._jp_font(app.root),

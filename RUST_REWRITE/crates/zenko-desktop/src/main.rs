@@ -524,6 +524,8 @@ mod win {
             for o in crate::hubw::OUT.with(|q| std::mem::take(&mut *q.borrow_mut())) {
                 if let Some(k) = o.strip_prefix("sound:") {
                     app.fox.events.push(Ev::Ui(k.into()));
+                } else if let Some(c) = o.strip_prefix("run:") {
+                    hub_run(app, c);
                 }
             }
             if t >= app.next_hub && crate::hubw::is_open() {
@@ -608,6 +610,33 @@ mod win {
                 }
             }
         });
+    }
+
+    /// what the hub's Settings page asks of the app: the fox's size and colours (as the menu does), the font (the hub
+    /// opens again with it), a voice test
+    fn hub_run(app: &mut App, c: &str) {
+        if c.starts_with("size:") {
+            run_command(app, c);
+        } else if c.starts_with("theme:") {
+            run_command(app, c);
+            if crate::hubw::is_open() {
+                crate::hubw::close();
+                open_hub(app, Some("settings"));
+            }
+        } else if c == "app_font" {
+            if crate::hubw::is_open() {
+                crate::hubw::close();
+                open_hub(app, Some("settings"));
+            }
+        } else if c == "speak_test" {
+            // speak_test: the voice says hello with the chosen voice and speed
+            let c = &app.fox.cfg;
+            let name = app.fox.user_short();
+            let text = format!("Kon kon! Hi {}! This is how I sound. Ready to focus?", if name.is_empty() { "there" } else { &name });
+            crate::speak::say(&text, &c.s("tts_voice", ""), c.f("tts_speed", 0.0) as i64, c.f("tts_pitch", 0.0) as i64);
+        } else {
+            app.fox.trace.push(format!("hub:{c}"));
+        }
     }
 
     fn run_command(app: &mut App, c: &str) {
@@ -736,6 +765,7 @@ mod win {
         let t = theme(c);
         let init = crate::hubw::HubInit {
             t,
+            opened_s: app.t0.elapsed().as_secs_f64(),
             font_ui: crate::gdi::ui_font(&c.s("app_font", "")),
             navkeys: zenko_desktop::hubwin::nav_list(c),
             ctx: side_ctx(app),
