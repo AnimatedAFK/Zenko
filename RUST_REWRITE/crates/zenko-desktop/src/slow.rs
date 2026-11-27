@@ -246,7 +246,7 @@ impl Companion {
         if self.cfg.b("daily_checkin", true) && hour >= 6 && now - self.slow.started > 90.0
             && life.get("last_checkin").and_then(|v| v.as_str()) != Some(today.as_str()) && !self.said_today("checkin_ask")
         {
-            // open_checkin: the "how are you feeling?" card isn't ported yet
+            self.later(now + 0.5, crate::rewards::Later::Command("open_checkin".into()));
             return;
         }
         let due = life["cards"].as_array().map(|a| {

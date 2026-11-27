@@ -22,6 +22,8 @@ pub mod tt;
 pub mod music;
 pub mod slow;
 pub mod battery;
+pub mod ui;
+pub mod checkin;
 pub mod icon;
 pub mod sound;
 pub mod theme;
@@ -425,6 +427,8 @@ pub struct Companion {
     /// where draw_battery puts it this frame: (dx, dy, curled)
     pub batt_at: (i32, i32, bool),
     pub slow: slow::Slow,
+    /// chat_log: (who, text), the last 200
+    pub chat_log: Vec<(String, String)>,
 }
 
 impl Companion {
@@ -483,6 +487,7 @@ impl Companion {
             batt_warned: vec![],
             batt_at: (0, 0, false),
             slow: Default::default(),
+            chat_log: vec![],
         };
         c.compute_dims();
         c.apply_look();

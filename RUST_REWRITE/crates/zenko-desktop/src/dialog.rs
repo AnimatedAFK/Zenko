@@ -267,7 +267,7 @@ fn paint(d: &Dialog, dc: HDC) {
     }
 }
 
-fn clipboard_get() -> Option<Vec<u16>> {
+pub(crate) fn clipboard_get() -> Option<Vec<u16>> {
     unsafe {
         if OpenClipboard(std::ptr::null_mut()) == 0 {
             return None;
@@ -290,7 +290,7 @@ fn clipboard_get() -> Option<Vec<u16>> {
     }
 }
 
-fn clipboard_set(s: &[u16]) {
+pub(crate) fn clipboard_set(s: &[u16]) {
     unsafe {
         if OpenClipboard(std::ptr::null_mut()) == 0 {
             return;

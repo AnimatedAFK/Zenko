@@ -29,6 +29,8 @@ mod speak;
 mod bgm;
 #[cfg(windows)]
 mod net;
+#[cfg(windows)]
+mod uiwin;
 
 #[cfg(windows)]
 fn main() {
@@ -469,6 +471,16 @@ mod win {
                     crate::dialog::Out::Sound(k) => app.fox.events.push(Ev::Ui(k.into())),
                 }
             }
+            for o in crate::uiwin::OUT.with(|q| std::mem::take(&mut *q.borrow_mut())) {
+                app.fox.events.push(Ev::Ui("tap".into())); // PixelButton._release: ui_sound("tap")
+                if o.win == "checkin" {
+                    if let Some(m) = o.cmd.strip_prefix("mood:") {
+                        let note = o.values.iter().find(|v| v.0 == "note").map(|v| v.1.clone()).unwrap_or_default();
+                        app.fox.checkin_save(t, m, &note);
+                    }
+                    crate::uiwin::close("checkin");
+                }
+            }
             if t >= app.next_top {
                 app.next_top = t + 2.5; // keep_on_top
                 unsafe {
@@ -600,6 +612,9 @@ mod win {
             fox.ema_set_done(id);
         } else if c == "music_apply" {
             fox.music_apply();
+        } else if c == "open_checkin" || c == "open_checkin_force" {
+            open_checkin(app, t, c == "open_checkin_force");
+            return;
         } else if c == "lockin" {
             fox.lockin_start(t, None, false);
         } else if c == "lockin_resume" {
@@ -615,6 +630,23 @@ mod win {
         } else if c == "quit" {
             unsafe { DestroyWindow(app.hwnd) };
         }
+    }
+
+    /// open_checkin(force): the daily "how are you feeling?" card beside her
+    fn open_checkin(app: &mut App, t: f64, force: bool) {
+        if crate::uiwin::is_open("checkin") {
+            crate::uiwin::lift("checkin");
+            return;
+        }
+        let fox = &mut app.fox;
+        if !fox.checkin_opening(t, force) {
+            return;
+        }
+        let ui = fox.checkin_ui(&crate::gdi::ui_font(&fox.cfg.s("app_font", "")));
+        let scr = unsafe { (GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) };
+        let root = (app.x, app.y);
+        let fox = &app.fox;
+        crate::uiwin::open_popup("checkin", ui, theme(&fox.cfg), app.dpi, |w, h| fox.checkin_pos(root, w, h, scr));
     }
 
     /// open_dialog (zenko.py double-click / "Start focus session..."): the new focus session window.
@@ -739,7 +771,7 @@ mod win {
         // menu_extras (ZenkoLife)
         let mut lm = vec![
             later("Breathing exercise"),
-            later("Daily check-in"),
+            cmd("Daily check-in", "open_checkin_force"),
             later("Review flashcards"),
             later("My study plan"),
             later("Streak and badges"),

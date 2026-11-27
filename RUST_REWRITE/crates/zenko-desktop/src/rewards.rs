@@ -233,6 +233,10 @@ pub enum Later {
     MusicApply,
     /// tablet_press next/previous: forget the last song so the new one is announced
     ForgetSong,
+    /// root.after(ms, ...) of something the window side does (Ev::Command)
+    Command(String),
+    /// chat_line's reply sound, 260 ms later
+    Ui(String),
 }
 
 #[derive(Clone, Debug, Default)]
@@ -383,6 +387,8 @@ impl Companion {
                 Later::PomoGo(id) => self.pomo_go(now, id),
                 Later::MusicApply => self.music_apply(),
                 Later::ForgetSong => self.music.last_song = None,
+                Later::Command(c) => self.events.push(crate::Ev::Command(c)),
+                Later::Ui(k) => self.events.push(crate::Ev::Ui(k)),
             }
         }
         // z22_badge_tick: 30 s after start, then every 3 minutes

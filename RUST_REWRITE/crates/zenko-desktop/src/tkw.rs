@@ -135,7 +135,8 @@ impl Entry {
     }
     pub fn req(&self) -> (i32, i32) {
         let avg = text_width(self.font, &['0' as u16]).max(1);
-        (self.chars * avg + 4, metrics(self.font).linespace + 4)
+        // tkEntry.c: inset = highlightthickness 1 + borderwidth 1 + XPAD 1 on each side
+        (self.chars * avg + 6, metrics(self.font).linespace + 6)
     }
     pub fn value(&self) -> String {
         String::from_utf16_lossy(&self.text)
@@ -145,7 +146,7 @@ impl Entry {
     }
     /// the character index nearest to window x
     pub fn index_at(&self, x: i32) -> usize {
-        let base = self.rect.0 + 2 - self.x_of(self.left);
+        let base = self.rect.0 + 3 - self.x_of(self.left);
         let mut best = 0;
         for i in 0..=self.text.len() {
             let cx = base + self.x_of(i);
@@ -160,11 +161,11 @@ impl Entry {
         best
     }
     fn see(&mut self) {
-        let inner = self.rect.2 - 4;
+        let inner = self.rect.2 - 6;
         if self.pos < self.left {
             self.left = self.pos;
         }
-        while self.left < self.pos && self.x_of(self.pos) - self.x_of(self.left) > inner - 2 {
+        while self.left < self.pos && self.x_of(self.pos) - self.x_of(self.left) > inner {
             self.left += 1;
         }
     }
@@ -284,8 +285,8 @@ impl Entry {
         ops.push(Op::Rect { x, y: y + h - 1, w, h: 1, color: ring });
         ops.push(Op::Rect { x, y, w: 1, h, color: ring });
         ops.push(Op::Rect { x: x + w - 1, y, w: 1, h, color: ring });
-        let ty = y + (h - m.linespace) / 2;
-        let tx = x + 2 - self.x_of(self.left);
+        let ty = y + (h + m.ascent - m.descent) / 2 - m.ascent;
+        let tx = x + 3 - self.x_of(self.left);
         ops.push(Op::Clip(Some((x + 2, y + 2, w - 4, h - 4))));
         if let Some((a, b)) = self.sel {
             let (sx, ex) = (tx + self.x_of(a), tx + self.x_of(b));
