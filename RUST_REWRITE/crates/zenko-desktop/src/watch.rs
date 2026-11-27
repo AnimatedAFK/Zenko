@@ -261,7 +261,7 @@ pub fn window_key(title: &str) -> String {
     t.chars().take(70).collect()
 }
 
-fn pretty(k: &str) -> Option<String> {
+pub(crate) fn pretty(k: &str) -> Option<String> {
     data().raw["PRETTY"].get(k).and_then(|v| v.as_str()).map(String::from)
 }
 
@@ -283,23 +283,21 @@ fn title_case(s: &str) -> String {
 
 // ---- learned.json (her habit notes) ------------------------------------------------------------------------------
 
-fn load_learned() -> Value {
+pub(crate) fn load_learned() -> Value {
     let mut d = read_json("learned.json");
     if !d.is_object() {
         d = json!({});
     }
-    for k in ["replies", "distractions"] {
+    // setdefault order: replies, sessions, distractions (the order they land in learned.json)
+    for (k, v) in [("replies", json!({})), ("sessions", json!([])), ("distractions", json!({}))] {
         if d.get(k).is_none() {
-            d[k] = json!({});
+            d[k] = v;
         }
-    }
-    if d.get("sessions").is_none() {
-        d["sessions"] = json!([]);
     }
     d
 }
 
-fn save_learned(d: &Value) {
+pub(crate) fn save_learned(d: &Value) {
     let dir = crate::data_dir();
     let _ = std::fs::create_dir_all(&dir);
     let tmp = dir.join("learned.json.tmp");

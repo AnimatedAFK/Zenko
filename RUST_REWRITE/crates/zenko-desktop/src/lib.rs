@@ -33,6 +33,9 @@ pub mod hubanim;
 pub mod tips;
 pub mod tktext;
 pub mod chatpage;
+pub mod chat;
+pub mod chat_data;
+pub mod pydifflib;
 pub mod mdtext;
 pub mod mdtex_data;
 pub mod icon;
@@ -440,6 +443,8 @@ pub struct Companion {
     pub slow: slow::Slow,
     /// chat_log: (who, text), the last 200
     pub chat_log: Vec<(String, String)>,
+    /// her chat brain's state (chat.rs)
+    pub brain: chat::Brain,
     /// the hub page on show while the hub window is open and not minimised (gym_look_on, the sidebar fox)
     pub hub_page: Option<String>,
 }
@@ -501,6 +506,7 @@ impl Companion {
             batt_at: (0, 0, false),
             slow: Default::default(),
             chat_log: vec![],
+            brain: chat::Brain::new(now.to_bits()),
             hub_page: None,
         };
         c.compute_dims();

@@ -2,6 +2,7 @@
 {
 "q": "help",
 "now": 1765407607.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -20,6 +21,7 @@
 {
 "q": "?",
 "now": 1765407614.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -38,6 +40,7 @@
 {
 "q": "commands",
 "now": 1765407621.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -56,6 +59,7 @@
 {
 "q": "hlep",
 "now": 1765407628.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -74,6 +78,7 @@
 {
 "q": "Help me",
 "now": 1765407635.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -91,6 +96,7 @@
 {
 "q": "teach me hi => hello there",
 "now": 1765407642.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -109,6 +115,7 @@
 {
 "q": "hi",
 "now": 1765407649.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -127,6 +134,7 @@
 {
 "q": "HI!",
 "now": 1765407656.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -145,6 +153,7 @@
 {
 "q": "forget hi",
 "now": 1765407663.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -163,6 +172,7 @@
 {
 "q": "forget hi",
 "now": 1765407670.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -181,6 +191,7 @@
 {
 "q": "when i say sched i mean timetable",
 "now": 1765407677.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -199,6 +210,7 @@
 {
 "q": "my shorthand",
 "now": 1765407684.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -217,6 +229,7 @@
 {
 "q": "what shorthand",
 "now": 1765407691.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -235,6 +248,7 @@
 {
 "q": "forget my shorthand",
 "now": 1765407698.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -253,6 +267,7 @@
 {
 "q": "my shorthand",
 "now": 1765407705.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -271,6 +286,7 @@
 {
 "q": "what did you look up",
 "now": 1765407712.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -289,6 +305,7 @@
 {
 "q": "what have you learned",
 "now": 1765407719.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -307,6 +324,7 @@
 {
 "q": "home city London",
 "now": 1765407726.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -325,6 +343,7 @@
 {
 "q": "unit f",
 "now": 1765407733.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -343,6 +362,7 @@
 {
 "q": "temperature unit c",
 "now": 1765407740.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -361,6 +381,7 @@
 {
 "q": "time left",
 "now": 1765407747.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -379,6 +400,7 @@
 {
 "q": "start reading 25",
 "now": 1765407754.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -401,6 +423,7 @@
 {
 "q": "time left",
 "now": 1765407761.0,
+"pre": 0.0,
 "out": [
 [
 "line",
@@ -423,6 +446,7 @@
 {
 "q": "how long",
 "now": 1765407768.0,
+"pre": 1.1634714990000248,
 "out": [
 [
 "line",
@@ -432,7 +456,7 @@
 [
 "line",
 "Fox",
-"Ehehe~ 25 min 00 s left on “Reading”."
+"Ehehe~ 24 min 58 s left on “Reading”."
 ]
 ],
 "session": {
@@ -445,6 +469,7 @@
 {
 "q": "pause",
 "now": 1765407775.0,
+"pre": 1.1634714990000248,
 "out": [
 [
 "line",
@@ -467,6 +492,7 @@
 {
 "q": "pause",
 "now": 1765407782.0,
+"pre": 1.1634714990000248,
 "out": [
 [
 "line",
@@ -489,6 +515,7 @@
 {
 "q": "resume",
 "now": 1765407789.0,
+"pre": 1.1634714990000248,
 "out": [
 [
 "line",
@@ -511,6 +538,7 @@
 {
 "q": "start maths",
 "now": 1765407796.0,
+"pre": 1.1634714990000248,
 "out": [
 [
 "line",
@@ -533,6 +561,7 @@
 {
 "q": "stop",
 "now": 1765407803.0,
+"pre": 1.1634714990000248,
 "out": [
 [
 "line",
@@ -551,6 +580,7 @@
 {
 "q": "stop",
 "now": 1765407810.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -569,6 +599,7 @@
 {
 "q": "stats",
 "now": 1765407817.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -587,6 +618,7 @@
 {
 "q": "how am i doing",
 "now": 1765407824.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -605,6 +637,7 @@
 {
 "q": "motivate me",
 "now": 1765407831.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -623,6 +656,7 @@
 {
 "q": "inspire me",
 "now": 1765407838.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -641,6 +675,7 @@
 {
 "q": "tips",
 "now": 1765407845.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -659,6 +694,7 @@
 {
 "q": "focus tip",
 "now": 1765407852.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -677,6 +713,7 @@
 {
 "q": "tell me a joke",
 "now": 1765407859.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -695,6 +732,7 @@
 {
 "q": "funny",
 "now": 1765407866.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -713,6 +751,7 @@
 {
 "q": "take a break",
 "now": 1765407873.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -733,6 +772,7 @@
 {
 "q": "break time",
 "now": 1765407880.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -753,6 +793,7 @@
 {
 "q": "end break",
 "now": 1765407887.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -771,6 +812,7 @@
 {
 "q": "back to work",
 "now": 1765407894.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -789,6 +831,7 @@
 {
 "q": "i'm tired",
 "now": 1765407901.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -807,6 +850,7 @@
 {
 "q": "rest",
 "now": 1765407908.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -825,6 +869,7 @@
 {
 "q": "who are you",
 "now": 1765407915.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -843,6 +888,7 @@
 {
 "q": "what can you do",
 "now": 1765407922.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -861,6 +907,7 @@
 {
 "q": "tell me about the legend",
 "now": 1765407929.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -879,6 +926,7 @@
 {
 "q": "zenko?",
 "now": 1765407936.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -897,6 +945,7 @@
 {
 "q": "hello",
 "now": 1765407943.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -915,6 +964,7 @@
 {
 "q": "hey",
 "now": 1765407950.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -933,6 +983,7 @@
 {
 "q": "good morning",
 "now": 1765407957.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -951,6 +1002,7 @@
 {
 "q": "yo",
 "now": 1765407964.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -969,6 +1021,7 @@
 {
 "q": "thanks",
 "now": 1765407971.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -987,6 +1040,7 @@
 {
 "q": "ty",
 "now": 1765407978.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1005,6 +1059,7 @@
 {
 "q": "thank you so much",
 "now": 1765407985.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1023,6 +1078,7 @@
 {
 "q": "check in",
 "now": 1765407992.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1033,6 +1089,10 @@
 "line",
 "Fox",
 "Yatta! How are you feeling today? Pick one~"
+],
+[
+"checkin",
+true
 ]
 ],
 "session": null,
@@ -1041,6 +1101,7 @@
 {
 "q": "check-in",
 "now": 1765407999.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1051,6 +1112,10 @@
 "line",
 "Fox",
 "Kon! Kon! How are you feeling today? Pick one~"
+],
+[
+"checkin",
+true
 ]
 ],
 "session": null,
@@ -1059,6 +1124,7 @@
 {
 "q": "daily checkin",
 "now": 1765408006.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1069,6 +1135,10 @@
 "line",
 "Fox",
 "Sugoi! How are you feeling today? Pick one~"
+],
+[
+"checkin",
+true
 ]
 ],
 "session": null,
@@ -1077,6 +1147,7 @@
 {
 "q": "mood journal",
 "now": 1765408013.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1087,6 +1158,10 @@
 "line",
 "Fox",
 "Kon kon~ How are you feeling today? Pick one~"
+],
+[
+"checkin",
+true
 ]
 ],
 "session": null,
@@ -1095,6 +1170,7 @@
 {
 "q": "how am i feeling today",
 "now": 1765408020.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1105,6 +1181,10 @@
 "line",
 "Fox",
 "Sugoi! How are you feeling today? Pick one~"
+],
+[
+"checkin",
+true
 ]
 ],
 "session": null,
@@ -1113,6 +1193,7 @@
 {
 "q": "strat studying 30",
 "now": 1765408027.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1135,6 +1216,7 @@
 {
 "q": "start 10",
 "now": 1765408034.0,
+"pre": 0.0,
 "out": [
 [
 "line",
@@ -1157,6 +1239,7 @@
 {
 "q": "stop",
 "now": 1765408041.0,
+"pre": 0.5309703010000248,
 "out": [
 [
 "line",
@@ -1175,6 +1258,7 @@
 {
 "q": "start",
 "now": 1765408048.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1197,6 +1281,7 @@
 {
 "q": "stop",
 "now": 1765408055.0,
+"pre": 0.0,
 "out": [
 [
 "line",
@@ -1215,6 +1300,7 @@
 {
 "q": "Start Biology revision 45 min",
 "now": 1765408062.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1225,26 +1311,6 @@
 "line",
 "Fox",
 "Kon! Started 45 min on “Biology revision”. Go!"
-],
-[
-"checkin",
-true
-],
-[
-"checkin",
-true
-],
-[
-"checkin",
-true
-],
-[
-"checkin",
-true
-],
-[
-"checkin",
-true
 ]
 ],
 "session": {
@@ -1257,6 +1323,7 @@ true
 {
 "q": "time left",
 "now": 1765408069.0,
+"pre": 0.25472282199984875,
 "out": [
 [
 "line",
@@ -1266,7 +1333,7 @@ true
 [
 "line",
 "Fox",
-"Sugoi! 44 min 54 s left on “Biology revision”."
+"Sugoi! 44 min 59 s left on “Biology revision”."
 ]
 ],
 "session": {
@@ -1279,6 +1346,7 @@ true
 {
 "q": "end",
 "now": 1765408076.0,
+"pre": 0.25472282199984875,
 "out": [
 [
 "line",
@@ -1297,6 +1365,7 @@ true
 {
 "q": "asdfgh qwerty",
 "now": 1765408083.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1314,6 +1383,7 @@ true
 {
 "q": "wat is the tim left",
 "now": 1765408090.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1332,6 +1402,7 @@ true
 {
 "q": "teach you bye = see you later~",
 "now": 1765408097.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1350,6 +1421,7 @@ true
 {
 "q": "bye",
 "now": 1765408104.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1368,6 +1440,7 @@ true
 {
 "q": "byee",
 "now": 1765408111.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1385,6 +1458,7 @@ true
 {
 "q": "forget everything",
 "now": 1765408118.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1403,6 +1477,7 @@ true
 {
 "q": "bye",
 "now": 1765408125.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1420,6 +1495,7 @@ true
 {
 "q": "remember gm -> good morning sunshine",
 "now": 1765408132.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1438,6 +1514,7 @@ true
 {
 "q": "gm",
 "now": 1765408139.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1456,6 +1533,7 @@ true
 {
 "q": "Gm!!",
 "now": 1765408146.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1474,6 +1552,7 @@ true
 {
 "q": "start  history essay, 50",
 "now": 1765408153.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1496,6 +1575,7 @@ true
 {
 "q": "pause",
 "now": 1765408160.0,
+"pre": 0.0,
 "out": [
 [
 "line",
@@ -1518,6 +1598,7 @@ true
 {
 "q": "time left",
 "now": 1765408167.0,
+"pre": 0.0,
 "out": [
 [
 "line",
@@ -1540,6 +1621,7 @@ true
 {
 "q": "resume",
 "now": 1765408174.0,
+"pre": 0.0,
 "out": [
 [
 "line",
@@ -1562,6 +1644,7 @@ true
 {
 "q": "quit session",
 "now": 1765408181.0,
+"pre": 1.047108691000176,
 "out": [
 [
 "line",
@@ -1580,6 +1663,7 @@ true
 {
 "q": "motivate",
 "now": 1765408188.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1598,6 +1682,7 @@ true
 {
 "q": "i give up",
 "now": 1765408195.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1616,6 +1701,7 @@ true
 {
 "q": "procrastinating again",
 "now": 1765408202.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1634,6 +1720,7 @@ true
 {
 "q": "laugh",
 "now": 1765408209.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1652,6 +1739,7 @@ true
 {
 "q": "need a break",
 "now": 1765408216.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1672,6 +1760,7 @@ true
 {
 "q": "break",
 "now": 1765408223.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1692,6 +1781,7 @@ true
 {
 "q": "stop break",
 "now": 1765408230.0,
+"pre": null,
 "out": [
 [
 "line",
@@ -1702,6 +1792,420 @@ true
 "line",
 "Fox",
 "Ehehe~ Break ended."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "blorp me",
+"now": 1765408237.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"blorp me"
+],
+[
+"llm",
+"blorp me"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "motivate me",
+"now": 1765408244.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"motivate me"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Progress beats perfect, ne~?\n(Kon! Noted~ when you say 'blorp' you mean 'motivate'.)"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "blorp me",
+"now": 1765408251.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"blorp me"
+],
+[
+"line",
+"Fox",
+"Done is better than perfect! Yatta~"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "what's my shorthand",
+"now": 1765408258.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"what's my shorthand"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Your shorthand I've learned: blorp = motivate"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "teach goodnight => sleep well, kon~",
+"now": 1765408265.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"teach goodnight => sleep well, kon~"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Yatta, learned it! When you say 'goodnight' I'll answer that. (Say 'forget goodnight' to undo.)"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "good night",
+"now": 1765408272.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"good night"
+],
+[
+"line",
+"Fox",
+"Kon kon~ sleep well, kon~"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "goodnight!",
+"now": 1765408279.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"goodnight!"
+],
+[
+"line",
+"Fox",
+"Kon! sleep well, kon~"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "wear a yukata",
+"now": 1765408286.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"wear a yukata"
+],
+[
+"line",
+"Fox",
+"Ehehe~ that one unlocks after 10 hours of study together. We're at 0.0!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "wear nothing",
+"now": 1765408293.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"wear nothing"
+],
+[
+"line",
+"Fox",
+"Sugoi! Just my fluffy fur, then~"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "put on your kimono",
+"now": 1765408300.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"put on your kimono"
+],
+[
+"line",
+"Fox",
+"Ehehe~ that one unlocks after 3 hours of study together. We're at 0.0~kon!"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "breathe",
+"now": 1765408307.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"breathe"
+],
+[
+"line",
+"Fox",
+"Kon kon~ It's okay. Breathe with me, I'm right here~"
+],
+[
+"breath",
+"478"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "i'm so stressed",
+"now": 1765408314.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"i'm so stressed"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Deep breath, ne~ Follow the circle with me~kon!"
+],
+[
+"breath",
+"478"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "forget my favourite color",
+"now": 1765408321.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"forget my favourite color"
+],
+[
+"line",
+"Fox",
+"Ne~? I hadn't learned 'my favourite color'."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "stretch",
+"now": 1765408328.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"stretch"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Nnnnh~ *stretches*"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "Hi Zenko, please stretch",
+"now": 1765408335.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"Hi Zenko, please stretch"
+],
+[
+"line",
+"Fox",
+"Yatta! Nnnnh~ *stretches*"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "sniff around",
+"now": 1765408342.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"sniff around"
+],
+[
+"line",
+"Fox",
+"Kon! *sniff sniff*"
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "start 300",
+"now": 1765408349.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"start 300"
+],
+[
+"line",
+"Fox",
+"Yatta! Started 300 min on “Focus session”. Go~kon!"
+]
+],
+"session": {
+"task": "Focus session",
+"planned": 14400.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "time left",
+"now": 1765408356.0,
+"pre": 0.0,
+"out": [
+[
+"line",
+"You",
+"time left"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! 240 min 00 s left on “Focus session”~kon!"
+]
+],
+"session": {
+"task": "Focus session",
+"planned": 14400.0,
+"paused": false
+},
+"brk": null
+},
+{
+"q": "stop",
+"now": 1765408363.0,
+"pre": 0.0,
+"out": [
+[
+"line",
+"You",
+"stop"
+],
+[
+"line",
+"Fox",
+"Waai~ Session stopped."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "HELP",
+"now": 1765408370.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"HELP"
+],
+[
+"line",
+"Fox",
+"I understand:\n  time left          - how long is left\n  timetable          - open today's timetable\n  next               - what's next on the timetable\n  add 4pm study renal 45  - add to today (add 'daily' to repeat)\n  start reading 30   - start a focus session\n  pause / resume / stop\n  stats              - minutes focused today\n  break              - start a break  (end break to stop it)\n  motivate me / tip / joke / who are you\n  weather [in Paris]  - live weather + forecast (also: home city Paris, temp unit F)\n  time in Tokyo / news [topic] / convert 100 usd to xcd\n  search black holes  - I search the web, read the top pages and summarise them\n  ...or just ask anything (who is ..., how do ..., why ...) - if I don't know, I look it up\n  when I say sched I mean timetable  - teach me your shorthand (I also pick it up myself)\n  what's my shorthand / what did you look up / forget my shorthand / forget everything\n  hold Right Ctrl and talk  - voice instead of typing (Mic button in chat too)\n  look at my screen [question] / hold F8 and ask  - the fox reads your screen and points\n  play lofi / play my study playlist / pause music / skip / volume 40 / what's playing\n  notes / summarise my notes on renal / quiz me on GI / ask notes: what is RPGN?\n  drop a file on me - I'll find the exam dates  ·  what's due / add exam renal 12 Dec 9am\n  open spotify / open word / open my deadlines  ·  play focus (your music presets)\n  battery\n  lock in [45] / unlock  - full focus: I pounce on and eat distracting windows (hold Esc 2 s to escape)\n  pomodoro 25/5 [x4] / focus for 40 min [on essay]\n  remind me in 20 min to stretch / remind me at 5pm to call mum / my reminders\n  how was my week  - weekly focus report\n  quiz me on photosynthesis  - flashcards from the web (hint / skip / stop quiz)\n  review flashcards / add flashcard Q = A / my flashcards  - cards that remember what you got wrong\n  my chemistry exam is in 2 days / maths test on Friday 9am  - I add it and plan study sessions\n  I'm free 4-7pm on weekdays / I'm free today 5-8  ·  study plan / countdown / I need 8 hours for chemistry\n  homework: <question>  - I explain it step by step (the Study books tab has a book + tutor for each subject)\n  eli12: <question>  ·  test me on photosynthesis  ·  flashcards from my notes  ·  review mistakes  ·  conjugate aller\n  I studied bio for 2 hours  ·  I'm studying chem  ·  what am I studying  ·  bio goal 5 hours a week\n  recap  ·  week report  ·  distraction report  ·  best focus time  ·  open notebook\n  delay 20 min / I need to talk to my parents for 30 min / undo delay  - 急 push the rest of today back\n  I got 34/40 on bio paper 1 / got a 6 in chem MYA / my grades  ·  vocab drill  ·  open my bio book  ·  bio fact\n  bedtime 22:30  - the sleep guard (wind-down + late-night nudges)\n  Ctrl+V a screenshot in chat (or the Image button) - I read it and help  ·  get my eyes  - download the free vision model\n  I ate 2 eggs and toast  ·  I weigh 68 kg  ·  what's my workout  - the Exercise tab\n  breathe / check in / my streak / badges / how are you / haiku\n  my favourite subject is biology / my birthday is 14 May / remember I play piano / what do you remember\n  background music on / off  ·  roaming off / seasons off / night mode off / go for a walk\n  calc 15% of 240 / define serendipity / translate good luck to Japanese\n  note: buy aburaage / my notes  ·  todo finish essay / done 1 / my todos\n  fortune (omikuji) / word of the day / sing\n  pet / belly rub / boop / tickle / feed inari sushi / yarn / hide and seek / high five / gift / dance / brush\n  outfit crown / outfits / coat golden / your name is Yuki  (or open the Customize page)\nTypos are fine. With the optional smart brain you can also use free wording."
+]
+],
+"session": null,
+"brk": null
+},
+{
+"q": "what do you know about me",
+"now": 1765408377.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"what do you know about me"
+],
+[
+"line",
+"Fox",
+"Things you taught me: 'gm'; 'goodnight'\nYour shorthand: blorp = motivate"
 ]
 ],
 "session": null,
