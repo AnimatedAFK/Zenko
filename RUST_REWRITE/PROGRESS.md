@@ -3,6 +3,23 @@
 Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.md. Rules: RULES.md.
 402 of 1,798 zenko.py items ported (`python3 tools/audit_inventory.py`).
 
+## Stages left to completion (14, as of 2026-11-27)
+1. 3e: zenko8 study tracking (study tick, subject override, log_study) + study_route (recap, reports, goals, conjugate)
+2. 3f: the remaining chat routes (life_route rest, extra_route incl. pomodoro/notes/todos/calc, apps, deadlines,
+   battery, quiz)
+3. 3g: desktop leftovers: focus glow, Ctrl K, missed-session replanning, deadline reminders, screen-time recording
+4. 4a: hub pages Home, Daily, You
+5. 4b: Timetable, Upcoming (Japanese clock), Reminders, Deadlines pages
+6. 4c: Settings and Customize pages
+7. 4d: Study pages: Notebook, study Books, Notes
+8. 4e: Exercise, Garden (zen garden, fishing, koi book), Screen time pages
+9. 4f: World map and Town square
+10. 5a: tool windows: periodic table, French dictionary, CG50 calculator, Bible
+11. 5b: brains and web: Ollama, online brain, web search + summaries, food lookup, screenshot reading
+12. 5c: voice (VOICEVOX, voice chat, Piper) and the Spotify account
+13. 5d: installer, updater, crash logs, Zenko Browser link
+14. 6: testing on real Windows, speed, final side-by-side check
+
 ## Done
 - **Stage 1:** crates/zenko-art is an exact port of the sprite engine.
 - **Stage 2a:** crates/zenko-sound, play reactions, speech bubble, right-click menu, basic sessions.
