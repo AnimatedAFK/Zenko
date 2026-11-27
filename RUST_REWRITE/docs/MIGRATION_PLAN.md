@@ -115,10 +115,13 @@ order is kept where it changes the result (tail outlines, eye cells).
    the hub window, so they move to step 4.
 3. **Started (stage 3a):** a Tk-compatible drawing layer (ui.rs + uiwin.rs): Windows Tk widget sizes, pack, place,
    cards, pixel buttons, entries, checked against real Tk geometry and canvas items. Still to add as pages need them:
-   grid in the tree, Text widgets with tags, scrollbars (ZkScrollbar), images, aa_photo, smooth lines.
+   grid in the tree, images, aa_photo, smooth lines (Text widgets with tags and ZkScrollbar are in).
 4. **Started (stage 3b):** the hub shell: canvas painting with Tk's Windows rules (canvasdraw.rs + tkpaint.rs), the
    window frame (hubwin.rs), the sidebar (hubside.rs) and its life (hubanim.rs), the Windows window (hubw.rs).
-   **Next:** page switching with the vertical slide and focus glow, then hub pages one at a time (Home, Timetable/Upcoming, Chat, Settings/Customize first, then the rest), each compared with Python.
+   Stage 3c done: page switching with the vertical slide, the Tk text widget, Markdown/LaTeX, the Ask Zenko page and
+   the offline chat router's core (help, sessions, breaks, check-in, breathing, teach/forget, shorthand, poses, tips,
+   jokes, lore), all checked against zenko.py.
+   **Next:** the rest of the chat routes, ema auto-planning, focus glow, Ctrl K, then hub pages one at a time (Home, Timetable/Upcoming, Settings/Customize first, then the rest), each compared with Python.
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.
 6. Speed (Phase 5): image cache and native code are already in; measure and tune at the end.
 

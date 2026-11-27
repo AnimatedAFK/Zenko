@@ -47,8 +47,12 @@ fn chat_page_matches_zenko_py() {
         let mut ui = Ui::new(&th.paper);
         let cm10 = tree["kids"][0]["rw"].as_i64().unwrap() as i32;
         let mut cp = ChatPage::build(&mut ui, 0, &th, "Segoe UI", false, cm10);
-        for e in c["chat_log"].as_array().unwrap().iter().filter(|_| name != "chat_midnight_small") {
+        let log = c["chat_log"].as_array().unwrap();
+        for (k, e) in log.iter().enumerate().filter(|_| name != "chat_midnight_small") {
             let (who, text) = (e[0].as_str().unwrap(), e[1].as_str().unwrap());
+            if name == "chat_typed" && k + 1 == log.len() {
+                continue; // (typed below, once the page is up)
+            }
             cp.insert(&mut ui, &fonts, &th, "Segoe UI", "Liberation Serif", "Courier", "Zenko", who == "You", text);
         }
         let zk = c["zk_f"].as_f64().unwrap();
@@ -57,6 +61,14 @@ fn chat_page_matches_zenko_py() {
         ui.layout_at(&fonts, pw, ph);
         if cp.draw_title(&mut ui, &fonts, &th, "Segoe UI", "", zk) {
             ui.layout_at(&fonts, pw, ph);
+        }
+        if name == "chat_typed" {
+            // her reply to a page that's open: _chat_pump types it out chunk by chunk, `see end` after each
+            let text = log.last().unwrap()[1].as_str().unwrap();
+            for (s, tg) in cp.begin_typed(&mut ui, &th, "Segoe UI", "Liberation Serif", "Courier", "Zenko", text) {
+                cp.type_chunk(&mut ui, &fonts, &s, &tg);
+            }
+            cp.type_chunk(&mut ui, &fonts, "\n\n", &["fox".to_string()]);
         }
         cp.sync_scroll(&mut ui, &fonts, &th);
         let mut bad = vec![];
@@ -84,6 +96,34 @@ fn chat_page_matches_zenko_py() {
                 let last = k + 1 == lines.len();
                 assert_eq!((got[0], got[2], got[4]), (bx[0], bx[2], bx[4]), "{name} line {i:?}");
                 assert!(got[3] == bx[3] || last && (got[3] - bx[3]).abs() <= 1, "{name} line {i:?}: {got:?} vs {bx:?}");
+            }
+            // the wheel and the scrollbar, from zenko.py's own starting view
+            if let Some(sc) = tx.get("scrolls").and_then(|v| v.as_array()) {
+                let l0 = &lines[0];
+                let (a, b) = l0["index"].as_str().unwrap().split_once('.').unwrap();
+                let y0 = l0["box"][1].as_i64().unwrap() as i32;
+                let mut t2 = t.clone();
+                t2.top = (a.parse().unwrap(), b.parse().unwrap());
+                t2.top_offset = (14 - y0).max(0);
+                t2.update(&fonts);
+                assert!((t2.yview(&fonts).0 - tx["yview"][0].as_f64().unwrap()).abs() < 1e-9, "{name}: start view");
+                for st in sc {
+                    let (how, v) = (st["op"][0].as_str().unwrap(), st["op"][1].as_f64().unwrap());
+                    match how {
+                        "units" => t2.scroll_units(&fonts, v as i32),
+                        "pages" => t2.scroll_pages(&fonts, v as i32),
+                        _ => t2.moveto(&fonts, v),
+                    }
+                    let yv = t2.yview(&fonts);
+                    let (a, b) = st["top"].as_str().unwrap().split_once('.').unwrap();
+                    let top: (usize, usize) = (a.parse().unwrap(), b.parse().unwrap());
+                    let want_box: Vec<i32> = st["top_box"].as_array().unwrap().iter().map(|v| v.as_i64().unwrap() as i32).collect();
+                    let got_box = t2.dlineinfo(&fonts, top).map(|b| b.to_vec()).unwrap_or_default();
+                    let wy = (st["yview"][0].as_f64().unwrap(), st["yview"][1].as_f64().unwrap());
+                    assert!((yv.0 - wy.0).abs() < 1e-9 && (yv.1 - wy.1).abs() < 1e-9 && got_box == want_box,
+                            "{name} {how} {v}: yview {yv:?} top {:?}+{} box {got_box:?}, want {wy:?} {top:?} {want_box:?}",
+                            t2.top, t2.top_offset);
+                }
             }
             // the thumb for zenko.py's own yview (see above for why ours may be a pixel apart)
             let yv = &tx["yview"];

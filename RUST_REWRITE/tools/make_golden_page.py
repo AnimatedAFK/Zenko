@@ -223,7 +223,25 @@ CASES = [
     ("chat_snow", 1765407600.0, {"theme": "snow"}, None, "chat"),
     ("chat_midnight_small", 1760461200.0, {"theme": "midnight"}, (1120, 720), "chat"),
     ("chat_long", 1765407600.0, {"theme": "snow"}, None, "chat"),
+    ("chat_typed", 1765407600.0, {"theme": "snow"}, None, "chat"),
 ]
+SCROLLS = [("units", -3), ("units", -3), ("pages", -1), ("moveto", 0.3), ("units", 3), ("units", 1), ("pages", 1),
+           ("moveto", 0.0), ("units", -3), ("units", 3), ("pages", 1), ("moveto", 0.55), ("units", -1), ("moveto", 1.0)]
+
+
+def scroll_rec(t):
+    """the wheel and the scrollbar: yview after each 'yview scroll' / 'yview moveto', and the top line then"""
+    rec = []
+    for how, v in SCROLLS:
+        if how == "moveto":
+            t.yview_moveto(v)
+        else:
+            t.yview_scroll(v, how)
+        t.update_idletasks()
+        top = t.index("@0,0")
+        rec.append({"op": [how, v], "yview": [float(x) for x in t.yview()], "top": t.index(top + " display linestart"),
+                    "top_box": list(t.dlineinfo(top) or [])})
+    return rec
 out = []
 for name, t, cfg, size, page in CASES:
     NOW[0] = t
@@ -233,8 +251,8 @@ for name, t, cfg, size, page in CASES:
     app.cfg.update(cfg)
     Z.apply_theme(app.cfg.get("theme", "snow"))
     app.root.update()
-    if name == "chat_long":
-        app.chat_log = list(LONG_LOG)
+    if name in ("chat_long", "chat_typed"):
+        app.chat_log = list(LONG_LOG[:3] if name == "chat_typed" else LONG_LOG)
     app.open_hub(page)
     h = app.hub
     w = h["win"]
@@ -243,6 +261,17 @@ for name, t, cfg, size, page in CASES:
     for _ in range(12):
         app.root.update()
         time.sleep(0.05)
+    if name == "chat_typed":
+        # her reply typed out by _chat_pump, a few letters every 14 ms
+        app.chat_line("Fox", LONG_LOG[3][1])
+        for _ in range(400):
+            app.root.update()
+            time.sleep(0.01)
+            if not app._chat_typing:
+                break
+        for _ in range(5):
+            app.root.update()
+            time.sleep(0.02)
     images, fonts = {}, {}
     pg = h["pages"][page]
     tree = walk(pg, w, set(), images, fonts)
@@ -254,6 +283,8 @@ for name, t, cfg, size, page in CASES:
                 texts.append(text_rec(k, fonts))
             find_texts(k)
     find_texts(pg)
+    if name == "chat_long":
+        texts[0]["scrolls"] = scroll_rec(pg.nametowidget(texts[0]["path"]))
     out.append({"name": name, "now": t, "cfg_all": cfg, "page": page, "geometry": w.geometry(), "zk_f": app.zk_f,
                 "chat_log": list(app.chat_log), "tree": tree, "texts": texts, "images": images, "fonts": fonts})
     try:

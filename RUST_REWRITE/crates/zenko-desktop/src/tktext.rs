@@ -715,6 +715,86 @@ impl Text {
         '\n'
     }
 
+    /// every display line of the text: (start index, height)
+    fn all_dlines(&self, f: &dyn Fonts) -> Vec<((usize, usize), i32)> {
+        let mut v = vec![];
+        for line in 1..=self.num_lines() {
+            for d in self.line_dlines(f, line) {
+                v.push(((d.line, d.ch), d.height));
+            }
+        }
+        v
+    }
+
+    /// which display line holds the top index
+    fn top_i(all: &[((usize, usize), i32)], top: (usize, usize)) -> usize {
+        all.iter().rposition(|(s, _)| *s <= top).unwrap_or(0)
+    }
+
+    /// `yview scroll n units` (YScrollByLines): the top moves n display lines down (up when negative) and keeps its
+    /// pixel offset, except that running off the beginning shows the very top
+    pub fn scroll_units(&mut self, f: &dyn Fonts, n: i32) {
+        let all = self.all_dlines(f);
+        if all.is_empty() {
+            return;
+        }
+        let to = Self::top_i(&all, self.top) as i32 + n;
+        if to < 0 {
+            (self.top, self.top_offset) = (all[0].0, 0);
+        } else {
+            let mut k = (to as usize).min(all.len() - 1);
+            // an offset taller than the new top line carries on into the lines below it
+            while self.top_offset >= all[k].1 && k + 1 < all.len() {
+                self.top_offset -= all[k].1;
+                k += 1;
+            }
+            self.top = all[k].0;
+        }
+        self.update(f);
+    }
+
+    /// `yview scroll n pages`: the display height less two lines (half of it, or one line, when lines are tall)
+    pub fn scroll_pages(&mut self, f: &dyn Fonts, n: i32) {
+        let (_, dy, _, max_y) = self.dinfo(f);
+        let height = max_y - dy;
+        let ch = f.linespace(&self.font);
+        let px = if ch * 4 >= height { if ch * 2 >= height { height / 2 } else { ch } } else { height - 2 * ch };
+        self.scroll_pixels(f, n * px);
+    }
+
+    /// YScrollByPixels
+    pub fn scroll_pixels(&mut self, f: &dyn Fonts, px: i32) {
+        let all = self.all_dlines(f);
+        if all.is_empty() {
+            return;
+        }
+        let i = Self::top_i(&all, self.top);
+        let before: i32 = all[..i].iter().map(|d| d.1).sum();
+        self.top_at_pixel(&all, before + self.top_offset + px);
+        self.update(f);
+    }
+
+    /// `yview moveto fraction`
+    pub fn moveto(&mut self, f: &dyn Fonts, frac: f64) {
+        let all = self.all_dlines(f);
+        let total: i32 = all.iter().map(|d| d.1).sum();
+        self.top_at_pixel(&all, (0.5 + frac.clamp(0.0, 1.0) * total as f64) as i32);
+        self.update(f);
+    }
+
+    fn top_at_pixel(&mut self, all: &[((usize, usize), i32)], px: i32) {
+        let mut acc = 0;
+        let px = px.max(0);
+        for (k, (s, h)) in all.iter().enumerate() {
+            if px < acc + h || k + 1 == all.len() {
+                self.top = *s;
+                self.top_offset = (px - acc).clamp(0, (*h - 1).max(0));
+                return;
+            }
+            acc += h;
+        }
+    }
+
     /// yview: (first, last) fractions of all the text's pixels (GetYView)
     pub fn yview(&self, f: &dyn Fonts) -> (f64, f64) {
         let (_, _, _, max_y) = self.dinfo(f);

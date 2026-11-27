@@ -114,6 +114,7 @@ impl Companion {
     /// chat_line(who, text): into the chat log; her lines get the reply sound and, with speak_mode "always", her voice
     pub fn chat_line(&mut self, now: f64, who: &str, text: &str) {
         self.chat_log.push((who.into(), text.into()));
+        self.chat_n += 1;
         let k = self.chat_log.len().saturating_sub(200);
         self.chat_log.drain(..k);
         if who == "You" {

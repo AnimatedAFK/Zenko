@@ -130,6 +130,17 @@ mod win {
         })
     }
 
+    /// with_fox, and where her window is (for her poses)
+    pub fn with_fox_at<R>(f: impl FnOnce(&mut Companion, f64, (i32, i32)) -> R) -> Option<R> {
+        APP.with(|a| {
+            let Ok(mut g) = a.try_borrow_mut() else { return None };
+            let app = g.as_mut()?;
+            let t = now(app);
+            let (x, y) = (app.x, app.y);
+            Some(f(&mut app.fox, t, (x, y)))
+        })
+    }
+
     fn idle_seconds() -> f64 {
         unsafe {
             let mut li = LASTINPUTINFO { cbSize: std::mem::size_of::<LASTINPUTINFO>() as u32, dwTime: 0 };
@@ -718,6 +729,17 @@ mod win {
             theme: c.s("theme", "snow"),
             living: c.b("sidebar_living", true),
             particles: c.b("sidebar_particles", true),
+            slide_s: {
+                // z20_motion: Auto follows the battery
+                let mut lvl = c.s("motion_level", "auto");
+                if lvl == "auto" {
+                    lvl = match app.fox.battery {
+                        Some((p, false)) => if p <= 20 { "saver" } else { "balanced" }.into(),
+                        _ => "smooth".into(),
+                    };
+                }
+                (c.b("page_fx", true) && lvl != "saver").then_some(if lvl == "smooth" { 0.230 } else { 0.230 * 0.75 })
+            },
         };
         crate::hubw::open(page, init);
     }

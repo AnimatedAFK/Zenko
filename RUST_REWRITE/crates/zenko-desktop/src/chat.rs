@@ -444,6 +444,28 @@ impl Companion {
         Sent::Answered
     }
 
+    /// ask_llm without a smart brain (Ollama not running, or turned off): she says she doesn't know. (Web lookups and
+    /// the brains come in a later stage.)
+    pub fn brain_fallback(&mut self, now: f64) {
+        const FALLBACK: [&str; 3] = ["Uu~ I only know focus things. Type 'help' to see what I can do~kon!",
+                                     "Auu... I'm a small fox with a small brain. Try 'help'!",
+                                     "Hmm hmm~ not sure about that one. Try 'help', or 'tip' for a focus tip, ne~?"];
+        const NO_BRAIN: &str = "\n(Install the free offline smart brain and I'll understand anything: right-click me > Smart brain setup.)";
+        let on = self.cfg.b("llm_enabled", true);
+        if on {
+            self.chat_line(now, "Fox", "(thinking...)");
+            self.set_mood(now, "happy", 1.5);
+        }
+        let msg = format!("{}{NO_BRAIN}", self.brain.rng.choice(&FALLBACK));
+        self.chat_line(now, "Fox", &msg);
+        if on {
+            let first = crate::mdtext::md_plain(&msg).split('\n').next().unwrap_or("").to_string();
+            self.say(&first, 12.0);
+            self.set_mood(now, "happy", 2.0);
+            self.events.push(crate::Ev::Beep { kind: "hello".into(), variety: false });
+        }
+    }
+
     /// zenko19 z19_route: poses and outfits by chat
     fn z19_route(&mut self, now: f64, text: &str, win: (i32, i32)) -> Option<String> {
         let lw = text.to_lowercase();

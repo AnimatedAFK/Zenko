@@ -15,7 +15,8 @@ use windows_sys::Win32::UI::WindowsAndMessaging::*;
 use zenko_desktop::hubside::SideCtx;
 use zenko_desktop::hubwin::{Hub, zk_factor};
 use zenko_desktop::theme::Theme;
-use zenko_desktop::ui::Draw;
+use zenko_desktop::chatpage::ChatPage;
+use zenko_desktop::ui::{Draw, Kind, Place};
 
 /// what the app hands the window when it opens
 pub struct HubInit {
@@ -31,6 +32,9 @@ pub struct HubInit {
     pub theme: String,
     pub living: bool,
     pub particles: bool,
+    /// how long a page slide takes (SLIDE_MS, x0.75 at the "balanced" motion level); None: no slide (page_fx off, or
+    /// the "saver" level)
+    pub slide_s: Option<f64>,
 }
 
 struct HubW {
@@ -57,7 +61,29 @@ struct HubW {
     living: bool,
     particles: bool,
     minimized: bool,
+    slide_s: Option<f64>,
+    dpi: f64,
+    /// the pages built so far (hub_build_<name>) and the slide between two of them
+    pages: Vec<(String, usize)>,
+    slide: Option<Slide>,
+    /// the Ask Zenko page: its widgets, how many of her chat lines it shows, the queue and the reply being typed
+    chat: Option<ChatPage>,
+    chat_seen: Option<u64>,
+    chat_q: std::collections::VecDeque<(String, String)>,
+    typing: Option<(Vec<(String, Vec<String>)>, usize, f64)>,
+    sb_drag: Option<(f64, f64)>,
 }
+
+/// z21_show's vertical slide: the new page comes in from below (or above), the old one goes out the other way
+struct Slide {
+    pg: usize,
+    op: usize,
+    d: i32,
+    t0: f64,
+}
+
+const SERIF: &str = "Georgia";
+const MONO: &str = "Consolas";
 
 type PCWSTR = *const u16;
 
@@ -86,12 +112,281 @@ fn with<R>(f: impl FnOnce(&mut HubW) -> R) -> Option<R> {
 /// hub_show for the frame: the menu pill moves to the page (the pages themselves come with their own stages)
 fn show(x: &mut HubW, page: &str) {
     if x.hub.side.page.as_deref() == Some(page) {
+        after_show(x, page);
         return;
     }
+    finish_slide(x);
+    let old = x.hub.side.page.clone();
+    let order: Vec<&str> = x.hub.side.navkeys.iter().map(|(k, _)| k.as_str()).collect();
+    let d = match (order.iter().position(|k| *k == page), old.as_deref().and_then(|o| order.iter().position(|k| *k == o))) {
+        (Some(a), Some(b)) if a < b => -1,
+        _ => 1,
+    };
     x.hub.side.page = Some(page.into());
     let c = x.ctx.clone();
     x.hub.side.nav(&c);
     x.hub.side_sync();
+    let pg = page_frame(x, page);
+    let op = old.as_deref().and_then(|o| x.pages.iter().find(|(k, _)| k == o).map(|p| p.1));
+    let hh = x.hub.ui.ws[x.hub.ids.stage].h;
+    let smooth = x.slide_s.is_some() && hh > 50 && op.is_some() && pg.is_some();
+    if let (true, Some(pg), Some(op)) = (smooth, pg, op) {
+        place(x, pg, Some(d * hh));
+        x.hub.ui.ws[op].low = true;
+        x.hub.ui.ws[pg].low = false;
+        x.slide = Some(Slide { pg, op, d, t0: now(x) });
+    } else {
+        if let Some(op) = op {
+            place(x, op, None);
+        }
+        if let Some(pg) = pg {
+            place(x, pg, Some(0));
+        }
+    }
+    relayout(x);
+    after_show(x, page);
+}
+
+/// pg.place(x=0, y=.., relwidth=1, relheight=1), or place_forget with None
+fn place(x: &mut HubW, id: usize, y: Option<i32>) {
+    let w = &mut x.hub.ui.ws[id];
+    match y {
+        Some(y) => w.place = Some(Place { y, relw: Some(1.0), relh: Some(1.0), ..Default::default() }),
+        None => {
+            w.place = None;
+            w.mapped = false;
+        }
+    }
+}
+
+fn finish_slide(x: &mut HubW) {
+    if let Some(s) = x.slide.take() {
+        place(x, s.op, None);
+        place(x, s.pg, Some(0));
+        x.hub.ui.ws[s.op].low = false;
+        relayout(x);
+    }
+}
+
+/// hub_after_show: the chat's entry takes the keyboard
+fn after_show(x: &mut HubW, page: &str) {
+    if page == "chat" {
+        if let Some(cp) = &x.chat {
+            x.hub.ui.focus = Some(cp.entry);
+        }
+    }
+}
+
+/// the frame of a page, built the first time it's shown (only the pages ported so far)
+fn page_frame(x: &mut HubW, page: &str) -> Option<usize> {
+    if let Some(p) = x.pages.iter().find(|(k, _)| k == page) {
+        return Some(p.1);
+    }
+    let pg = match page {
+        "chat" => {
+            let th = x.hub.t.clone();
+            let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
+            let cm10 = (100.0 * x.dpi / 25.4 + 0.5) as i32;
+            let muted = crate::win::with_fox(|fox, _| fox.cfg.b("voice_muted", false)).unwrap_or(false);
+            x.chat = Some(ChatPage::build(&mut x.hub.ui, pg, &th, &x.hub.font_ui, muted, cm10));
+            x.chat_seen = None;
+            pg
+        }
+        _ => return None,
+    };
+    x.pages.push((page.into(), pg));
+    Some(pg)
+}
+
+/// lay the window out again, with zk_fit's fonts and the chat banner for the new width
+fn relayout(x: &mut HubW) {
+    let (w, h) = x.size;
+    x.hub.layout(&x.fonts, w, h);
+    if let Some(cp) = x.chat.as_mut() {
+        let zk = x.hub.zk_f;
+        cp.fit(&mut x.hub.ui, &x.fonts, zk);
+        x.hub.layout(&x.fonts, w, h);
+        let font_ui = x.hub.font_ui.clone();
+        let th = x.hub.t.clone();
+        if cp.draw_title(&mut x.hub.ui, &x.fonts, &th, &font_ui, "", zk) {
+            x.hub.layout(&x.fonts, w, h);
+        }
+        cp.sync_scroll(&mut x.hub.ui, &x.fonts, &th);
+    }
+}
+
+/// her chat lines into the page: the ones there already when it opens (or her hello), then each new one through
+/// _chat_pump, her replies typed out a few letters every 14 ms. True when something changed.
+fn chat_step(x: &mut HubW) -> bool {
+    let t = now(x);
+    let Some(cp) = x.chat.as_mut() else { return false };
+    let Some((log, n, name)) = crate::win::with_fox(|fox, t| {
+        if x.chat_seen.is_none() && fox.chat_log.is_empty() {
+            fox.chat_line(t, "Fox", "Hi! Type 'help' to see what I can do.");
+            return (vec![], fox.chat_n - 1, fox.fox_name());
+        }
+        (fox.chat_log.clone(), fox.chat_n, fox.fox_name())
+    }) else { return false };
+    let th = x.hub.t.clone();
+    let font_ui = x.hub.font_ui.clone();
+    let mut changed = false;
+    match x.chat_seen {
+        None => {
+            for (who, t) in &log {
+                cp.insert(&mut x.hub.ui, &x.fonts, &th, &font_ui, SERIF, MONO, &name, who == "You", t);
+            }
+            x.chat_seen = Some(n);
+            changed = true;
+        }
+        Some(seen) if n > seen => {
+            let k = ((n - seen) as usize).min(log.len());
+            x.chat_q.extend(log[log.len() - k..].iter().cloned());
+            x.chat_seen = Some(n);
+        }
+        _ => {}
+    }
+    loop {
+        if let Some((chunks, i, at)) = x.typing.as_mut() {
+            while *i < chunks.len() && t >= *at {
+                let (s, tg) = &chunks[*i];
+                cp.type_chunk(&mut x.hub.ui, &x.fonts, s, tg);
+                *i += 1;
+                *at += 0.014;
+                changed = true;
+            }
+            if *i < chunks.len() {
+                break;
+            }
+            cp.type_chunk(&mut x.hub.ui, &x.fonts, "\n\n", &["fox".to_string()]);
+            x.typing = None;
+            changed = true;
+        }
+        let Some((who, text)) = x.chat_q.pop_front() else { break };
+        changed = true;
+        if who == "You" || text.chars().count() < 3 {
+            cp.insert(&mut x.hub.ui, &x.fonts, &th, &font_ui, SERIF, MONO, &name, who == "You", &text);
+            continue;
+        }
+        let chunks = cp.begin_typed(&mut x.hub.ui, &th, &font_ui, SERIF, MONO, &name, &text);
+        x.typing = Some((chunks, 0, t));
+    }
+    if changed {
+        cp.sync_scroll(&mut x.hub.ui, &x.fonts, &th);
+    }
+    changed
+}
+
+/// what the chat page's buttons do
+fn chat_cmd(x: &mut HubW, cmd: &str) {
+    let Some(cp) = x.chat.as_ref() else { return };
+    let (entry, status, mute) = (cp.entry, cp.status, cp.mute);
+    let send = |q: &str| {
+        let q = q.to_string();
+        crate::win::with_fox_at(move |fox, t, win| {
+            if let zenko_desktop::chat::Sent::Brain(_) = fox.chat_send(t, &q, win) {
+                fox.brain_fallback(t);
+            }
+        });
+    };
+    if let Some(q) = cmd.strip_prefix("chat:") {
+        send(q);
+    } else if cmd == "chat_send" {
+        let q = x.hub.ui.text_of(entry).trim().to_string();
+        if !q.is_empty() {
+            if let Kind::Entry { e, .. } = &mut x.hub.ui.ws[entry].kind {
+                (e.text, e.pos, e.anchor, e.sel, e.left) = (vec![], 0, 0, None, 0);
+            }
+            send(&q);
+        }
+    } else if cmd == "chat_mute" {
+        // voice_mute(): her voice off / on, and the button says which
+        let on = crate::win::with_fox(|fox, _| {
+            let on = !fox.cfg.b("voice_muted", false);
+            zenko_desktop::update_config(&mut fox.cfg, |v| v["voice_muted"] = on.into());
+            on
+        }).unwrap_or(false);
+        let th = x.hub.t.clone();
+        if let Kind::Button { text, color, fg, .. } = &mut x.hub.ui.ws[mute].kind {
+            *text = if on { "Unmute" } else { "Mute" }.into();
+            *color = if on { th.acc.clone() } else { th.start.clone() };
+            *fg = if on { th.onacc.clone() } else { th.ink.clone() };
+        }
+        relayout(x);
+    } else if let Kind::Label { text, .. } = &mut x.hub.ui.ws[status].kind {
+        // Mic, Talk, Image and Screen need her voice and eyes, which come in a later stage of the port
+        *text = "That button isn't in the Rust preview yet.".into();
+    }
+}
+
+/// z17_wheel over the chat text (3 lines a notch, only while there's somewhere to go)
+fn chat_wheel(x: &mut HubW, mx: i32, my: i32, delta: i32) -> bool {
+    let Some(cp) = x.chat.as_mut() else { return false };
+    let tid = cp.text;
+    let mut over = x.hub.ui.hit(mx, my);
+    while let Some(i) = over {
+        if i == tid {
+            break;
+        }
+        over = x.hub.ui.ws[i].parent;
+    }
+    if over.is_none() || !x.hub.ui.shown(tid) {
+        return false;
+    }
+    let (a, b) = match &x.hub.ui.ws[tid].kind {
+        Kind::Text { t, .. } => t.yview(&x.fonts),
+        _ => return false,
+    };
+    let d = if delta > 0 { -1 } else { 1 };
+    let n = 1.max(delta.abs() / 120);
+    if (a > 0.0005 || b < 0.9995) && !((d < 0 && a <= 0.0005) || (d > 0 && b >= 0.9995)) {
+        cp.scroll(&mut x.hub.ui, &x.fonts, "units", (d * n * 3) as f64);
+        let th = x.hub.t.clone();
+        cp.sync_scroll(&mut x.hub.ui, &x.fonts, &th);
+        return true;
+    }
+    false
+}
+
+/// ZkScrollbar's press (a drag on the thumb, a page on the trough), drag and hover
+fn sb_event(x: &mut HubW, mx: i32, my: i32, what: &str) -> bool {
+    let Some(cp) = x.chat.as_mut() else { return false };
+    let sb = cp.sb;
+    let (ax, ay) = x.hub.ui.abs(sb);
+    let (w, h) = (x.hub.ui.ws[sb].w, x.hub.ui.ws[sb].h);
+    let inside = x.hub.ui.shown(sb) && mx >= ax && mx < ax + w && my >= ay && my < ay + h;
+    let pos = (my - ay) as f64 / h.max(1) as f64;
+    let (lo, hi) = match &x.hub.ui.ws[cp.text].kind {
+        Kind::Text { t, .. } => t.yview(&x.fonts),
+        _ => (0.0, 1.0),
+    };
+    let th = x.hub.t.clone();
+    match what {
+        "press" if inside => {
+            if lo <= pos && pos <= hi {
+                x.sb_drag = Some((pos, lo));
+            } else {
+                cp.scroll(&mut x.hub.ui, &x.fonts, "pages", if pos < lo { -1.0 } else { 1.0 });
+            }
+        }
+        "move" => {
+            if let Some((p0, lo0)) = x.sb_drag {
+                cp.scroll(&mut x.hub.ui, &x.fonts, "moveto", (lo0 + pos - p0).clamp(0.0, 1.0));
+            } else if inside != cp.sb_hover {
+                cp.sb_hover = inside;
+            } else {
+                return false;
+            }
+        }
+        "release" => {
+            if x.sb_drag.take().is_none() {
+                return false;
+            }
+        }
+        _ => return false,
+    }
+    cp.sb_hover = inside || x.sb_drag.is_some();
+    cp.sync_scroll(&mut x.hub.ui, &x.fonts, &th);
+    true
 }
 
 /// open_hub(page): the window comes up (or to the front, on the page asked for)
@@ -168,7 +463,17 @@ pub fn open(page: Option<&str>, init: HubInit) {
             size: (w, h), min, cursor: IDC_ARROW, faded: false,
             anim: zenko_desktop::hubanim::HubAnim::new(0.0, (x0 as u64) << 20 ^ 0x9e37_79b9),
             theme: init.theme.clone(), living: init.living, particles: init.particles, minimized: false,
+            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None,
+            chat_q: Default::default(), typing: None, sb_drag: None,
         }));
+        with(|x| {
+            let p = x.hub.side.page.clone().unwrap_or_default();
+            if let Some(pg) = page_frame(x, &p) {
+                place(x, pg, Some(0));
+                relayout(x);
+            }
+            after_show(x, &p);
+        });
         ShowWindow(hwnd, SW_SHOW);
         SetForegroundWindow(hwnd);
         SetTimer(hwnd, 1, 45, None);
@@ -285,7 +590,8 @@ fn step(x: &mut HubW) -> bool {
         if (f - x.hub.zk_f).abs() > 1e-12 {
             x.hub.fit_fonts(f);
             x.ctx.zk_f = f;
-            x.hub.layout(&x.fonts, w, h);
+            let _ = (w, h);
+            relayout(x);
             let c = x.ctx.clone();
             x.hub.side.nav(&c);
             x.hub.side_sync();
@@ -310,6 +616,23 @@ fn step(x: &mut HubW) -> bool {
     }
     x.hub.side_sync();
     x.hub.tip_update(n);
+    // z21_show's slide: ease out over SLIDE_MS
+    if let Some(sl) = &x.slide {
+        let t = ((n - sl.t0) / x.slide_s.unwrap_or(0.23)).min(1.0);
+        let e = 1.0 - (1.0 - t).powi(3);
+        let hh = x.hub.ui.ws[x.hub.ids.stage].h;
+        let y = (sl.d as f64 * hh as f64 * (1.0 - e)).round() as i32;
+        let (pg, op, d) = (sl.pg, sl.op, sl.d);
+        if t >= 1.0 {
+            finish_slide(x);
+        } else {
+            place(x, pg, Some(y));
+            place(x, op, Some(y - d * hh));
+            let (w, h) = x.size;
+            x.hub.layout(&x.fonts, w, h);
+        }
+    }
+    chat_step(x);
     true
 }
 
@@ -318,7 +641,7 @@ fn resized(x: &mut HubW, w: i32, h: i32) {
         return;
     }
     x.size = (w, h);
-    x.hub.layout(&x.fonts, w, h);
+    relayout(x);
     let c = x.ctx.clone();
     x.hub.side.draw(&c);
     x.hub.side_sync();
@@ -449,6 +772,16 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                         return;
                     }
                     hover(x, mx, my);
+                    let n = now(x);
+                    x.hub.ui.motion(&x.fonts, mx, my, n);
+                    sb_event(x, mx, my, "move");
+                    if x.cursor == IDC_ARROW && x.hub.part_at(mx, my) == "page" {
+                        x.cursor = match x.hub.ui.cursor_at(mx, my) {
+                            zenko_desktop::ui::Cursor::Hand => IDC_HAND,
+                            zenko_desktop::ui::Cursor::IBeam => IDC_IBEAM,
+                            zenko_desktop::ui::Cursor::Arrow => IDC_ARROW,
+                        };
+                    }
                     SetCursor(LoadCursorW(std::ptr::null_mut(), x.cursor));
                 });
                 redraw();
@@ -459,6 +792,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                 with(|x| {
                     if x.rs.is_none() && x.drag.is_none() {
                         hover(x, -100, -100);
+                        x.hub.ui.leave();
                     }
                 });
                 redraw();
@@ -468,9 +802,17 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                 let (mx, my) = pt();
                 let (sx, sy) = screen_pt();
                 SetCapture(hwnd);
+                SetFocus(hwnd);
                 with(|x| {
                     let zone = x.hub.zone(mx, my, x.maxed);
                     let part = x.hub.part_at(mx, my);
+                    if zone.is_empty() && part == "page" {
+                        if !sb_event(x, mx, my, "press") {
+                            let n = now(x);
+                            x.hub.ui.press(&x.fonts, mx, my, n, msg == WM_LBUTTONDBLCLK);
+                        }
+                        return;
+                    }
                     if msg == WM_LBUTTONDBLCLK && part == "bar" {
                         toggle_max(x);
                         return;
@@ -502,6 +844,11 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                 let (mx, my) = pt();
                 let mut act: Option<&'static str> = None;
                 with(|x| {
+                    sb_event(x, mx, my, "release");
+                    if let Some(cmd) = x.hub.ui.release(mx, my) {
+                        out("sound:click");
+                        chat_cmd(x, &cmd);
+                    }
                     let moved = x.drag.is_some() && x.drag_moved;
                     x.rs = None;
                     x.drag = None;
@@ -536,6 +883,62 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
             }
             WM_CLOSE => {
                 close();
+                0
+            }
+            WM_ACTIVATE => {
+                let on = (wp & 0xffff) != 0;
+                with(|x| x.hub.ui.active = on);
+                redraw();
+                0
+            }
+            WM_MOUSEWHEEL => {
+                let delta = ((wp >> 16) & 0xffff) as i16 as i32;
+                let mut p = POINT { x: (lp & 0xffff) as i16 as i32, y: ((lp >> 16) & 0xffff) as i16 as i32 };
+                ScreenToClient(hwnd, &mut p);
+                if with(|x| chat_wheel(x, p.x, p.y, delta)) == Some(true) {
+                    redraw();
+                }
+                0
+            }
+            WM_KEYDOWN => {
+                let vk = wp as u16;
+                let shift = GetKeyState(VK_SHIFT as i32) < 0;
+                let ctrl = GetKeyState(VK_CONTROL as i32) < 0;
+                with(|x| {
+                    let n = now(x);
+                    let entry = x.chat.as_ref().map(|c| c.entry);
+                    if vk == VK_RETURN && entry.is_some() && x.hub.ui.focus == entry {
+                        chat_cmd(x, "chat_send");
+                    } else if ctrl && vk == b'A' as u16 {
+                        x.hub.ui.select_all(&x.fonts);
+                    } else if ctrl && (vk == b'C' as u16 || vk == b'X' as u16) {
+                        if let Some(s) = x.hub.ui.selected() {
+                            crate::dialog::clipboard_set(&s);
+                            if vk == b'X' as u16 {
+                                x.hub.ui.insert(&x.fonts, &[], n);
+                            }
+                        }
+                    } else if ctrl && vk == b'V' as u16 {
+                        if let Some(s) = crate::dialog::clipboard_get() {
+                            let s: Vec<u16> = s.into_iter().filter(|&c| c != 13 && c != 10).collect();
+                            x.hub.ui.insert(&x.fonts, &s, n);
+                        }
+                    } else {
+                        x.hub.ui.key(&x.fonts, vk, shift, ctrl, n);
+                    }
+                });
+                redraw();
+                0
+            }
+            WM_CHAR => {
+                let c = wp as u16;
+                if c >= 0x20 && c != 0x7f && GetKeyState(VK_CONTROL as i32) >= 0 {
+                    with(|x| {
+                        let n = now(x);
+                        x.hub.ui.insert(&x.fonts, &[c], n);
+                    });
+                    redraw();
+                }
                 0
             }
             _ => DefWindowProcW(hwnd, msg, wp, lp),

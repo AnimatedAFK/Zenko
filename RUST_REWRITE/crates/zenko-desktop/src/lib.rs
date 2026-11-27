@@ -445,6 +445,8 @@ pub struct Companion {
     pub chat_log: Vec<(String, String)>,
     /// her chat brain's state (chat.rs)
     pub brain: chat::Brain,
+    /// how many lines chat_line has ever added (the chat page types the new ones)
+    pub chat_n: u64,
     /// the hub page on show while the hub window is open and not minimised (gym_look_on, the sidebar fox)
     pub hub_page: Option<String>,
 }
@@ -507,6 +509,7 @@ impl Companion {
             slow: Default::default(),
             chat_log: vec![],
             brain: chat::Brain::new(now.to_bits()),
+            chat_n: 0,
             hub_page: None,
         };
         c.compute_dims();

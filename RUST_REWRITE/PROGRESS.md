@@ -34,7 +34,7 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
   (checkin.rs: open_checkin, checkin_save, chat_line, should_speak; opened by the 30 s tick, the menu and later chat).
   Fixed: the session dialog's entries were 2 px too small (tkEntry.c inset = highlight + border + XPAD).
 
-- **Stage 3b (latest):** the hub window. canvasdraw.rs (lib: a Tk canvas painted the way Tk 8.6 on Windows does:
+- **Stage 3b:** the hub window. canvasdraw.rs (lib: a Tk canvas painted the way Tk 8.6 on Windows does:
   DisplayRectOval / polygon / line / text / image procs, TkMakeBezierCurve smoothing, ComputeTextBbox and image anchors,
   BlendComplexAlpha), tkpaint.rs (bin: tkWinDraw.c's pens, paths, StrokeInPieces, arcs, baseline text, photo blends),
   ui.rs canvases holding a tk canvas (`Draw::Tk`), place bordermode ignore, lowered widgets. hubwin.rs (the frame:
@@ -44,6 +44,18 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
   borderless window, DWM round corners, fade-in, drag, resize edges, min/max/close, sidebar hover + clicks, 170 ms
   re-fit). Menu "Open Zenko window" and open_hub_on_start open it; pages inside it are still empty.
   Fixed on the way: accessories() lacked headphones-with-music and the gym look.
+
+- **Stage 3c (latest):** the Ask Zenko page and her offline chat. tktext.rs (Tk 8.6 text widget: word/char wrap, tags
+  with priorities, spacing, margins, offsets, see/PICKPLACE, yview, dlineinfo/bbox, drawing; `yview scroll units/pages`
+  and `moveto` incl. Tk keeping the pixel offset on line scrolls), mdtext.rs + mdtex_data.rs (md_segments, LaTeX and
+  chemistry formatting, md_plain), chatpage.rs (open_chat(parent=pg): banner, chips, text, status, entry row, Mute,
+  ZkScrollbar; _chat_insert and _chat_pump's typed replies), chat.rs + chat_data.rs + pydifflib.rs (chat_send,
+  answer_local's own routes, fix_word/fix_typos/fix_first, expand_shorthand, learn_aliases_from, fox_voice,
+  learn/forget/learned_reply with difflib's exact matching, learned_summary, life_forget, z19 poses + outfits, z16
+  breathing/grounding/voice, life_route check-in + breathing, ask_llm's no-brain fallback), hubw.rs (pages built on
+  first show and placed in the stage, z21_show's vertical slide with the motion level, typed replies every 14 ms,
+  Enter/Send, chips, wheel 3 lines a notch, scrollbar drag/page, Mute, hello line on an empty chat).
+  Fixed: learned.json's setdefault order (replies, sessions, distractions).
 
 ## Architecture decisions (settled)
 - **Logic lives in the library.** zenko-desktop lib = platform-free logic, tested on Linux. src/main.rs and the Windows-only modules (gdi, bubble, menu, panel, dialog, tkw, eat) handle the Win32 side.
@@ -74,26 +86,37 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 | Battery meter, ema countdown | zenko.py draw_battery (golden/life.json), rule test |
 | Pomodoro, life tick, visitor, weather particles | Rule tests (tests/pomo.rs, tests/life_bits.rs) |
 | Behaviour, roaming, lock-in | Rule tests |
+| Text widget: every display line, dlineinfo/bbox, yview after see/font changes | Real Tk (golden/hub_pages.json "texts", `tools/make_golden_page.py`) |
+| Chat page: whole widget tree in 4 cases, restored + typed replies, 14 wheel/scrollbar steps, thumb items | Real zenko.py's Ask Zenko page, same tool |
+| Markdown/LaTeX/chemistry segments (52 cases) | zenko.py's md_segments, `tools/make_golden_md.py` |
+| Offline chat: 115 lines (replies incl. fox voice, brain hand-offs, check-in/breathing, session/break state) | Zenko23.chat_send with seeded random, `tools/make_golden_chat.py` |
 
 ## Open problems
 - Nothing has run on real Windows yet (Wine is broken here). The bubble, menu, panel, dialog and pounce still need screenshots from the user.
 - Chips like "Show me" / "See the map" send `hub:garden` / `hub:map`, which do nothing until those pages exist.
-- The hub's pages are empty, Ctrl K does nothing, there is no page slide or focus glow yet, and the sidebar's
+- Only the Ask Zenko page exists; the other pages are empty. Ctrl K does nothing, there is no focus glow yet, and the sidebar's
   "Browser" link dot and side scenes are off (zb_linked and z22_unlocked aren't ported). Only the smooth motion
   level (45 ms) is used. The tkpaint StrokeInPieces path follows Tk core-8-6-branch; older 8.6 builds may differ.
 - Not ported yet: the Spotify account (tablet buttons use media keys, like zenko.py without an account), her VOICEVOX
-  read-aloud (she does her "kon kon~" clip instead, as zenko.py does when VOICEVOX is off), piper voices, plan_maybe (ema auto-planning), chat (so `pomo_start` has no caller yet), z18_init's one-time move
+  read-aloud (she does her "kon kon~" clip instead, as zenko.py does when VOICEVOX is off), piper voices, plan_maybe (ema auto-planning), z18_init's one-time move
   of old chat reminders onto the ema rack.
+- Chat routes still to port, in zenko.py's order: quiz, gym_route's chain (z23 ema plan/square, z22 fishing/passport/
+  badges, z18, z17, z16's rest, z15, ib_route, garden), books, study, the rest of life_route (homework...), extras
+  (pomodoro, reminders, notes...), apps, deadlines, battery, screen, music, notes, web, timetable add/next/agenda. Until
+  then such lines can land on a later core route (e.g. "start a pomodoro" starts a plain session) or the no-brain reply.
+  The smart brains (Ollama, online), web lookups, Mic/Talk/Image/Screen buttons and attachments are not ported.
 - The rewards test doesn't replay the 5 s follow-up badge check (in these cases it awards nothing in Python either).
 
 ## Next recommended task
-Hub page switching (hub_show of FoxBuddy/Zenko19/Zenko20/Zenko21: vertical slide 40372, hub_title 23620/32678, focus
-glow 37653), then the Chat page (open_chat + chat_send + chat_line rendering, the command router, pomo_start at
-~7898, "check-in" opening open_checkin(force)), then ema auto-planning (plan_maybe), then the study pages one by one.
-Each page: a golden dump of the real page with tools/make_golden_hubwin.py's walk(), then the Rust tree checked
-against it.
+The rest of the chat router, route by route in zenko.py's order (see Open problems; extra_route at 7876 has
+pomodoro -> `pomo_start`), each added to tools/make_golden_chat.py's CONVO (append only: seeds are per index). Then
+ema auto-planning (plan_maybe), focus glow (37653), Ctrl K, and the study pages one by one (each: a golden dump with
+tools/make_golden_page.py's walk(), then the Rust tree checked against it).
 
 ## Gotchas
 - The repo root has a tracked `__pycache__/`. Never delete it, and run Python with bytecode writing turned off.
 - Rewards golden: `python3 tools/make_golden_rewards.py` pins the clock (UTC) and stubs only screen parts.
+- make_golden_chat.py sleeps 0.25 s per line so after(200) actions land on their own line, and records the session's
+  elapsed time before each line ("pre"); the Rust test sets it. Python's chat_log must be kept (the page greets an
+  empty log).
 - Cross-compile with `cargo build --release --target x86_64-pc-windows-gnu`.

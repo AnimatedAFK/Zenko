@@ -219,4 +219,46 @@ impl ChatPage {
         let e = t.end_index();
         t.see(fonts, e);
     }
+
+    /// _chat_pump's typed reply: her name goes in now, the message comes back as the chunks to type, `step`
+    /// characters of a segment at a time (one every 14 ms)
+    #[allow(clippy::too_many_arguments)]
+    pub fn begin_typed(&mut self, ui: &mut Ui, th: &Theme, font_ui: &str, serif: &str, mono: &str, fox_name: &str,
+                       text: &str) -> Vec<(String, Vec<String>)> {
+        let ready = self.md_ready;
+        let t = ui.text_mut(self.text);
+        t.insert_end(&format!("{fox_name}:  "), &["foxname"]);
+        if !ready {
+            md_tags(t, 10, &th.ink, th, font_ui, serif, mono);
+        }
+        self.md_ready = true;
+        let step = 2.max(text.chars().count() / 45);
+        let mut out = vec![];
+        for (sg, tg) in crate::mdtext::md_segments(text, &["fox"]) {
+            let c: Vec<char> = sg.chars().collect();
+            for k in (0..c.len()).step_by(step) {
+                out.push((c[k..(k + step).min(c.len())].iter().collect(), tg.clone()));
+            }
+        }
+        out
+    }
+
+    /// one typed chunk (or, with `done`, the closing blank line), then `see end`
+    pub fn type_chunk(&mut self, ui: &mut Ui, fonts: &dyn Fonts, s: &str, tags: &[String]) {
+        let t = ui.text_mut(self.text);
+        let tg: Vec<&str> = tags.iter().map(|x| x.as_str()).collect();
+        t.insert_end(s, &tg);
+        let e = t.end_index();
+        t.see(fonts, e);
+    }
+
+    /// the wheel / the scrollbar: "units" (3 a notch), "pages" or "moveto"
+    pub fn scroll(&mut self, ui: &mut Ui, fonts: &dyn Fonts, how: &str, v: f64) {
+        let t = ui.text_mut(self.text);
+        match how {
+            "units" => t.scroll_units(fonts, v as i32),
+            "pages" => t.scroll_pages(fonts, v as i32),
+            _ => t.moveto(fonts, v),
+        }
+    }
 }

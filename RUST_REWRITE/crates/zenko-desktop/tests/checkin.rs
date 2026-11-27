@@ -47,6 +47,7 @@ fn cls(k: &Kind, id: usize) -> &'static str {
         Kind::Label { .. } => "Label",
         Kind::Entry { .. } => "Entry",
         Kind::Button { .. } | Kind::Canvas { .. } => "Canvas",
+        Kind::Text { .. } => "Text",
     }
 }
 
