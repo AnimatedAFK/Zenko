@@ -18,6 +18,33 @@ impl PyRandom {
             key.push(s as u32);
             s >>= 32;
         }
+        PyRandom::from_key(key)
+    }
+
+    /// `random.Random(text)` for a str seed (CPython version 2 seeding: the text's UTF-8 bytes then their SHA-512,
+    /// read as one big-endian int)
+    pub fn new_str(text: &str) -> PyRandom {
+        use sha2::{Digest, Sha512};
+        let mut b = text.as_bytes().to_vec();
+        b.extend_from_slice(&Sha512::digest(text.as_bytes()));
+        let mut key = Vec::new();
+        let mut end = b.len();
+        while end > 0 {
+            let st = end.saturating_sub(4);
+            let mut w = 0u32;
+            for &x in &b[st..end] {
+                w = (w << 8) | x as u32;
+            }
+            key.push(w);
+            end = st;
+        }
+        while key.len() > 1 && *key.last().unwrap() == 0 {
+            key.pop();
+        }
+        PyRandom::from_key(key)
+    }
+
+    fn from_key(mut key: Vec<u32>) -> PyRandom {
         if key.is_empty() {
             key.push(0);
         }

@@ -34,6 +34,7 @@ pub mod screenpage;
 pub mod bodyart;
 pub mod gympage;
 pub mod gardenart;
+pub mod fishart;
 pub mod dailypage;
 pub mod ttpage;
 pub mod uppage;
