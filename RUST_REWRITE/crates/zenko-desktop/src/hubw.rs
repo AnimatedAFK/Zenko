@@ -30,6 +30,8 @@ mod hubrem;
 mod hubset;
 #[path = "hubcust.rs"]
 mod hubcust;
+#[path = "hubbook.rs"]
+mod hubbook;
 #[path = "paletwin.rs"]
 mod paletwin;
 use serde_json::Value;
@@ -127,6 +129,8 @@ struct HubW {
     cust: Option<zenko_desktop::custpage::CustPage>,
     cust_focus: Option<usize>,
     cust_anim: f64,
+    /// the Study books page: the shelf or the open book
+    nb: Option<hubbook::Nb>,
     /// seconds from the app's start to this window opening
     opened_s: f64,
     /// Ctrl+K: a card to glide to (page, title, when), its glow (card, its own items, start) and the next prebuild
@@ -740,6 +744,12 @@ fn page_frame(x: &mut HubW, page: &str) -> Option<usize> {
             hubcust::build(x, pg);
             pg
         }
+        "notebook" => {
+            let th = x.hub.t.clone();
+            let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
+            hubbook::build(x, pg);
+            pg
+        }
         "daily" => {
             let th = x.hub.t.clone();
             let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
@@ -803,6 +813,7 @@ fn relayout(x: &mut HubW) {
     hubrem::fit(x, w, h);
     hubset::fit(x, w, h);
     hubcust::fit(x, w, h);
+    hubbook::fit(x, w, h);
     if let Some(dp) = x.daily.as_mut() {
         let (th, f) = (x.hub.t.clone(), Faces { ui: x.hub.font_ui.clone(), title: String::new() });
         let d = x.daily_d.clone();
@@ -945,7 +956,14 @@ fn page_sc(x: &HubW, page: Option<&str>) -> Option<zenko_desktop::pagekit::Scrol
 }
 
 fn page_wheel(x: &mut HubW, mx: i32, my: i32, delta: i32) -> bool {
+    if x.hub.side.page.as_deref() == Some("notebook") {
+        return hubbook::scrollers(x).into_iter().any(|sc| sc_wheel(x, sc, mx, my, delta));
+    }
     let Some(sc) = page_sc(x, x.hub.side.page.as_deref()) else { return false };
+    sc_wheel(x, sc, mx, my, delta)
+}
+
+fn sc_wheel(x: &mut HubW, sc: zenko_desktop::pagekit::Scroller, mx: i32, my: i32, delta: i32) -> bool {
     let mut over = x.hub.ui.hit(mx, my);
     while let Some(i) = over {
         if i == sc.boxf {
@@ -1110,7 +1128,7 @@ pub fn open(page: Option<&str>, init: HubInit) {
             size: (w, h), min, cursor: IDC_ARROW, faded: false,
             anim: zenko_desktop::hubanim::HubAnim::new(0.0, (x0 as u64) << 20 ^ 0x9e37_79b9),
             theme: init.theme.clone(), living: init.living, glow_next: 0.0, burst: None, particles: init.particles, minimized: false,
-            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, set: None, set_try: String::new(), set_focus: None, set_rule_do: String::new(), cust: None, cust_focus: None, cust_anim: 0.0, opened_s: init.opened_s, reveal: None, flash: None, prebuild_at: 2.5, ask: None,
+            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, set: None, set_try: String::new(), set_focus: None, set_rule_do: String::new(), cust: None, cust_focus: None, cust_anim: 0.0, nb: None, opened_s: init.opened_s, reveal: None, flash: None, prebuild_at: 2.5, ask: None,
             chat_q: Default::default(), typing: None, sb_drag: None,
         }));
         with(|x| {
@@ -1328,6 +1346,7 @@ fn step(x: &mut HubW) -> bool {
         hubrem::step(x, n);
         hubset::step(x);
         hubcust::step(x, n);
+        hubbook::step(x, n);
     }
     // daily_refresh: what changed (a badge, a check-in, a card) shows while the page is open
     if x.hub.side.page.as_deref() == Some("daily") && x.slide.is_none() && n >= x.daily_next {
@@ -1487,6 +1506,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     daily_hover(x, mx, my);
                     hubup::motion(x, mx, my);
                     hubrem::motion(x, mx, my);
+                    hubbook::motion(x, mx, my);
                     if x.cursor == IDC_ARROW && x.hub.part_at(mx, my) == "page" {
                         x.cursor = match x.hub.ui.cursor_at(mx, my) {
                             zenko_desktop::ui::Cursor::Hand => IDC_HAND,
@@ -1571,6 +1591,12 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     hubset::popup(hwnd, m);
                     redraw();
                 }
+                let (mx, my) = pt();
+                if let Some(m) = with(|x| hubbook::menu_at(x, mx, my)).flatten() {
+                    ReleaseCapture();
+                    hubbook::popup(hwnd, m);
+                    redraw();
+                }
                 0
             }
             WM_LBUTTONUP => {
@@ -1594,6 +1620,8 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                             hubrem::cmd(x, &cmd);
                         } else if cmd.starts_with("cz_") {
                             hubcust::cmd(x, &cmd);
+                        } else if cmd.starts_with("bk:") {
+                            hubbook::cmd(x, &cmd);
                         } else if cmd.starts_with("set_") && !cmd.starts_with("set_menu:") {
                             hubset::cmd(x, &cmd);
                         } else if cmd.starts_with("hub_ask:") || cmd.starts_with("home_") || matches!(cmd.as_str(),
@@ -1605,6 +1633,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     } else if hubrem::click(x, mx, my) {
                     } else if hubset::click(x, mx, my) {
                     } else if hubcust::click(x, mx, my) {
+                    } else if hubbook::click(x, mx, my) {
                     } else if x.hub.side.page.as_deref() == Some("home") {
                         home_music_click(x, mx, my);
                     } else if x.hub.side.page.as_deref() == Some("daily") {
@@ -1698,6 +1727,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     } else if vk == VK_RETURN && x.hub.side.page.as_deref() == Some("reminders") && hubrem::key_return(x) {
                     } else if vk == VK_RETURN && x.hub.side.page.as_deref() == Some("settings") && hubset::key_return(x) {
                     } else if vk == VK_RETURN && x.hub.side.page.as_deref() == Some("customize") && hubcust::key_return(x) {
+                    } else if vk == VK_RETURN && hubbook::key_return(x) {
                     } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.a)) {
                         daily_cmd(x, "daily_card_add");
                     } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.fact)) {
@@ -1858,7 +1888,7 @@ fn palette_tick(x: &mut HubW, n: f64) -> bool {
 
 /// the pages this build can make
 fn page_built(p: &str) -> bool {
-    matches!(p, "chat" | "home" | "timetable" | "deadlines" | "reminders" | "settings" | "customize" | "daily" | "you")
+    matches!(p, "chat" | "home" | "timetable" | "deadlines" | "reminders" | "settings" | "customize" | "daily" | "you" | "notebook")
 }
 
 /// z20_reveal's find: the card titled so (else the first whose title holds it), scrolled to 12 px from the top,

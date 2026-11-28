@@ -171,6 +171,12 @@ pub struct BookPage {
     pub d: BookData,
 }
 
+/// book_meta(key)["col"]: a subject's own colour, else the book's
+pub fn book_col(d: &BookData) -> String {
+    d.subjects.iter().find(|s| s.0 == d.key).map(|s| s.3.clone())
+        .unwrap_or_else(|| crate::shelfpage::book(&d.key).map(|b| b.4.to_string()).unwrap_or_else(|| "#c9a24a".into()))
+}
+
 pub fn is_subject(key: &str) -> bool {
     crate::shelfpage::SUBJECTS.contains(&key)
 }
@@ -1869,6 +1875,19 @@ impl BookPage {
 // ---- what a book shows, from the app ----------------------------------------------------------------------------------
 
 impl crate::Companion {
+    /// nb_mistake(card, False, sid): a wrong answer goes into the deck (srs_update) and is tagged with the subject
+    pub fn nb_mistake(&mut self, now: f64, sid: &str, q: &str, a: &str) {
+        self.srs_update(now, &json!({"q": q, "a": a}), false, "");
+        let (sid, q, a) = (sid.to_string(), q.to_string(), a.to_string());
+        self.life_do(move |l| {
+            for c in l["cards"].as_array_mut().into_iter().flatten() {
+                if c["q"] == q.as_str() && c["a"] == a.as_str() {
+                    c["subject"] = json!(sid);
+                }
+            }
+        });
+    }
+
     pub fn book_data(&mut self, key: &str) -> BookData {
         let life = self.life_now();
         let ws = self.week_start();
@@ -2090,7 +2109,8 @@ impl BookPage {
                     self.life["goals"] = json!({});
                 }
                 self.life["goals"][&sid] = json!(v.clamp(0.0, 80.0));
-                return vec![Act::Save, Act::Render];
+                // (nb_refresh 50 ms later: the page is made again unless a box still has the keyboard)
+                return vec![Act::Save, Act::Run("refresh".into())];
             }
             if let Ok(v) = val.parse::<i64>() {
                 let v = v.clamp(2, 30);

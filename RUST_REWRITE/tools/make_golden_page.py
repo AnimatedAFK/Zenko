@@ -710,6 +710,141 @@ if len(sys.argv) > 1 and sys.argv[1] == "book":
         return walk(h["pages"]["notebook"], h["win"], set(), images, fonts)
     SETUP["data"], SETUP["after"], SETUP["tree"] = _data, _after, _tree
 
+if len(sys.argv) > 1 and sys.argv[1] == "bookanim":
+    # golden/hub_bookanim.json: a book clicked on the shelf: every frame of book_anim (the book gliding to the middle,
+    # then its cover swinging open), recorded as the canvas's "anim" items just before each next frame is scheduled,
+    # and the book that ends up open.
+    OUT = "hub_bookanim.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 1.5 * 3600 + 754.25
+    CASES = [("anim_chem", T0, {"theme": "snow"}, None, "notebook"),
+             ("anim_math_small", T0, {"theme": "midnight"}, (1120, 720), "notebook"),
+             ("anim_diary", T0, {"theme": "snow"}, None, "notebook")]
+    FRAMES = []
+
+    def _data(app, name):
+        app.nb_sid = "shelf"
+        app.life_save()
+
+    def _after(app, name):
+        key = name.split("_")[1]
+        cv = app.nb["shelf"]
+        real = cv.after
+        FRAMES.clear()
+
+        def rec(ms, fn=None, *a):
+            items = []
+            for i in cv.find_withtag("anim"):
+                io = {k: v[-1] for k, v in cv.itemconfigure(i).items() if k != "tags"}
+                items.append({"type": cv.type(i), "coords": cv.coords(i), "tags": list(cv.gettags(i)), "opts": io})
+            if items:
+                FRAMES.append({"ms": ms, "items": items})
+            return real(ms, fn, *a)
+        cv.after = rec
+        app.book_open(key)
+        for _ in range(60):
+            app.root.update()
+            time.sleep(0.03)
+            if not (app.nb or {}).get("anim") and app.nb_sid == key:
+                break
+
+    def _tree(app, images, fonts):
+        EXTRA[0] = {"frames": list(FRAMES), "book": app.nb_sid, "nb_last": app.life.get("nb_last"),
+                    "jp_font": Z._jp_font(app.root), "font_ui_name": Z.FONT_UI}
+        return {"w": 0, "h": 0, "kids": []}
+    SETUP["data"], SETUP["after"], SETUP["tree"] = _data, _after, _tree
+
+if len(sys.argv) > 1 and sys.argv[1] == "bookact":
+    # golden/hub_bookact.json: an open book used: its practice buttons pressed and answers typed (random seeded before
+    # each step), recording every label's text and what the life file / settings hold after each step.
+    OUT = "hub_bookact.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 1.5 * 3600 + 754.25
+    SCRIPTS = {
+        "chem": [("entry", 0, "12345"), ("btn", "Check"), ("btn", "New problem"), ("btn", "Show working"), ("entry", 0, "x"),
+                 ("btn", "Check")],
+        "math": [("entry", 0, "-7.5"), ("btn", "Check"), ("btn", "Check"), ("entry", 0, "3/4"), ("btn", "Check")],
+        "bio": [("btn", "Next fact"), ("btn", "Quiz me"), ("entry", 0, "mitochondria"), ("btn", "Quiz me"), ("btn", "Next fact")],
+        "french": [("entry", 0, "bonjour"), ("btn", "Check"), ("btn", "Check"), ("btn", "Skip"), ("entry", 0, "le chat"),
+                   ("btn", "Check")],
+        "psych": [("btn", "New prompt"), ("btn", "New prompt")],
+        "grades": [("entry", 1, "31"), ("entry", 2, "40"), ("btn", "\u8a18\u5165 \u00b7 Save result"),
+                   ("entry", 1, "abc"), ("btn", "\u8a18\u5165 \u00b7 Save result")],
+        "diary": [("entry", 0, "2315"), ("ret", 0), ("entry", 1, "7:05"), ("ret", 1), ("entry", 2, "40"), ("ret", 2),
+                  ("entry", 3, "5"), ("ret", 3)],
+    }
+    CASES = [("act_" + k, T0, {"theme": "snow"}, None, "notebook") for k in SCRIPTS]
+    STEPS = []
+
+    def _data(app, name):
+        app.nb_sid = "shelf"
+        app.life["slog"] = {"2025-12-09": {"bio": 5400, "chem": 600}, "2025-12-11": {"math": 1500, "bio": 300}}
+        app.life["grades"], app.life["nb_hist"] = [], {}
+        app.life_save()
+
+    def _labels(w, acc):
+        for k in w.winfo_children():
+            c = k.winfo_class()
+            if c in ("Label", "Checkbutton", "Radiobutton", "Menubutton"):
+                acc.append(k.cget("text"))
+            elif c == "Canvas" and hasattr(k, "_text"):
+                acc.append("[" + k._text + "]")
+            _labels(k, acc)
+        return acc
+
+    def _find(w, pred, acc):
+        for k in w.winfo_children():
+            if pred(k):
+                acc.append(k)
+            _find(k, pred, acc)
+        return acc
+
+    def _after(app, name):
+        key = name.split("_")[1]
+        BEFORE_L = json.loads(json.dumps(app.life, default=str))
+        EXTRA[0] = {"life_before": BEFORE_L, "cfg_before": json.loads(json.dumps(app.cfg, default=str))}
+        random.seed(77)
+        app.book_open(key, anim=False)
+        for _ in range(10):
+            app.root.update()
+            time.sleep(0.03)
+        STEPS.clear()
+        host = app.nb["host"]
+        for i, st in enumerate(SCRIPTS[key]):
+            random.seed(100 + i)
+            ents = _find(host, lambda k: k.winfo_class() == "Entry", [])
+            if st[0] == "entry":
+                e = ents[st[1]]
+                e.delete(0, "end")
+                e.insert(0, st[2])
+                if key != "grades" and key != "diary":
+                    e.focus_force()
+                    app.root.update()
+                    e.event_generate("<Return>")
+            elif st[0] == "ret":
+                e = ents[st[1]]
+                e.focus_force()
+                app.root.update()
+                e.event_generate("<Return>")
+            else:
+                bs = _find(host, lambda k: getattr(k, "_text", None) == st[1] and hasattr(k, "_cmd"), [])
+                bs[0]._cmd()
+            for _ in range(4):
+                app.root.update()
+                time.sleep(0.02)
+            host = app.nb["host"]
+            STEPS.append({"step": list(st), "labels": _labels(host, []),
+                          "entries": [k.get() for k in _find(host, lambda k: k.winfo_class() == "Entry", [])],
+                          "life": json.loads(json.dumps({k: app.life.get(k) for k in ("book_state", "fr_vocab", "grades", "goals",
+                                                                                         "cards")}, default=str)),
+                          "cfg": {k: app.cfg.get(k) for k in ("bedtime", "wake_time", "burnout_hours", "track_idle_minutes")}})
+
+    def _tree(app, images, fonts):
+        EXTRA[0].update({"steps": list(STEPS), "mincho": Z._mincho_font(app.root), "serif_font": Z._serif_font(app.root),
+                         "jp_font": Z._jp_font(app.root)})
+        return {"w": 0, "h": 0, "kids": []}
+    SETUP["data"], SETUP["after"], SETUP["tree"] = _data, _after, _tree
+
 EXTRA = [{}]
 NAME = [""]
 out = []

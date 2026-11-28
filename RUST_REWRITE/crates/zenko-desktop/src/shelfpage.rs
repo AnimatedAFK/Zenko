@@ -694,3 +694,136 @@ impl crate::Companion {
         ShelfData { week, due, grades, jp: String::new(), serif: String::new(), hd: self.cfg.b("hd_art", true) }
     }
 }
+
+/// Python's float floor division a // b
+fn fdiv(a: f64, b: f64) -> f64 {
+    (a / b).floor()
+}
+
+/// book_cover(cv, x, y, w, h, key, tag, pattern): a closed book drawn with canvas shapes (the opening animation's)
+#[allow(clippy::too_many_arguments)]
+pub fn book_cover(cv: &mut Canvas, x: f64, y: f64, w: f64, h: f64, key: &str, col: &str, jp: &str, font_ui: &str, tag: &str,
+                  pattern: bool) {
+    let Some(b) = book(key) else { return };
+    let mix = crate::hubwin::mix;
+    let cover = mix(col, "#000000", 0.28);
+    let lite = mix(col, "#ffffff", 0.18);
+    let tags: Vec<&str> = if tag.is_empty() { vec!["book"] } else { vec!["book", tag] };
+    cv.rect(x + 4.0, y + 5.0, x + w + 4.0, y + h + 5.0).fill("#000000").outline("").stipple("gray50").tags(&tags);
+    cv.rect(x, y, x + w, y + h).fill(&cover).outline(&mix(&cover, "#000000", 0.4)).tags(&tags);
+    let sp = 6.0f64.max(fdiv(w, 11.0));
+    if pattern && w > 50.0 {
+        // seigaiha waves on the lower half of the cover
+        let r = 6.0f64.max(fdiv(w, 9.0));
+        let wave = mix(&cover, &lite, 0.45);
+        let mut yy = y + h - 4.0;
+        let mut row = 0;
+        while yy > y + h * 0.52 {
+            let off = if row % 2 == 1 { r } else { 0.0 };
+            let mut xx = x - off;
+            while xx < x + w + r {
+                for k in [1.0, 0.66, 0.33] {
+                    let rr = r * k;
+                    if xx - rr >= x + sp + 1.0 && xx + rr <= x + w - 1.0 {
+                        cv.arc(xx - rr, yy - rr, xx + rr, yy + rr, 0.0, 180.0, "arc").outline(&wave).tags(&tags);
+                    }
+                }
+                xx += 2.0 * r;
+            }
+            yy -= r * 0.75;
+            row += 1;
+        }
+        cv.rect(x, y + h - 2.0, x + w, y + h).fill(&cover).outline("").tags(&tags);
+    }
+    // stab binding (yotsume toji) along the spine
+    cv.rect(x, y, x + sp, y + h).fill(&mix(&cover, "#000000", 0.3)).outline("").tags(&tags);
+    let sx = x + sp / 2.0 + 1.0;
+    for i in 0..4 {
+        let sy = y + h * (0.12 + 0.253 * i as f64);
+        cv.line(vec![x, sy, sx + 4.0, sy]).fill("#f0e6cc").width(1.0).tags(&tags);
+        cv.oval(sx + 2.0, sy - 2.0, sx + 6.0, sy + 2.0).fill("#f0e6cc").outline("").tags(&tags);
+    }
+    if w > 50.0 {
+        // daisen: the white title slip with vertical kanji
+        let dw = 18.0f64.max(fdiv(w, 4.2));
+        let dx = x + w - dw - 6.0f64.max(fdiv(w, 10.0));
+        let dy = y + 8.0f64.max(fdiv(h, 14.0));
+        let dh = h * 0.5;
+        cv.rect(dx, dy, dx + dw, dy + dh).fill("#f6efdc").outline("#c9b98e").tags(&tags);
+        cv.rect(dx + 2.0, dy + 2.0, dx + dw - 2.0, dy + dh - 2.0).outline("#d9cba3").tags(&tags);
+        let fs = 9.0f64.max(19.0f64.min(dw * 0.62)) as i32;
+        let kan: Vec<String> = b.1.chars().map(|c| c.to_string()).collect();
+        cv.text(dx + dw / 2.0, dy + dh / 2.0, &kan.join("\n")).fill("#2a1717").font(Font::new(jp, fs, true)).justify("center")
+            .tags(&tags);
+        // hanko seal
+        let hs = 10.0f64.max(fdiv(w, 7.0));
+        let (hx, hy) = (dx - hs - 4.0, dy + dh - hs);
+        cv.rect(hx, hy, hx + hs, hy + hs).fill("#c8102e").outline("#8a0b20").tags(&tags);
+        cv.text(hx + hs / 2.0, hy + hs / 2.0 + 1.0, "\u{72d0}").fill("#ffffff").font(Font::new(jp, 6.max((hs * 0.5) as i32), true))
+            .tags(&tags);
+        // the english name on the cover's foot
+        cv.rect(x + sp + 4.0, y + h - 26.0, x + w - 6.0, y + h - 8.0).fill(&mix(&cover, "#000000", 0.35)).outline("").tags(&tags);
+        cv.text(x + sp + (w - sp) / 2.0, y + h - 17.0, &clip(b.3, 20)).fill("#f6efdc")
+            .font(Font::new(font_ui, if w < 110.0 { 7 } else { 8 }, true)).tags(&tags);
+    }
+}
+
+/// book_anim's frames: 9 of the book gliding to the middle and growing, then 12 of its cover swinging open
+pub const ANIM_A: usize = 9;
+pub const ANIM_B: usize = 12;
+
+/// book_anim's frame(i) for the book at `spot` (x, y, w, h) on a W x H canvas: the canvas's "anim" items made again
+#[allow(clippy::too_many_arguments)]
+pub fn anim_frame(cv: &mut Canvas, i: usize, spot: (i32, i32, i32, i32), wd: i32, ht: i32, key: &str, col: &str, jp: &str,
+                  font_ui: &str) {
+    let mix = crate::hubwin::mix;
+    let (x, y, w, h) = (spot.0 as f64, spot.1 as f64, spot.2 as f64, spot.3 as f64);
+    let (wf, hf) = (wd as f64, ht as f64);
+    let w2 = (wf * 0.3).min((hf - 60.0) / 1.4) as i64 as f64;
+    let h2 = (w2 * 1.4) as i64 as f64;
+    let (cx, cy) = (wf / 2.0, (hf - h2) / 2.0);
+    let cover = mix(col, "#000000", 0.28);
+    let inside = mix(col, "#ffffff", 0.55);
+    let paper = "#f6efdc";
+    cv.delete("anim");
+    cv.rect(0.0, 0.0, wf, hf).fill("#000000").outline("").stipple("gray50").tags(&["anim"]);
+    if i < ANIM_A {
+        let t = (i + 1) as f64 / ANIM_A as f64;
+        let t = 1.0 - (1.0 - t).powi(3);
+        let bx = x + (cx - w2 / 2.0 - x) * t;
+        let by = y + (cy - y) * t;
+        let bw = w + (w2 - w) * t;
+        let bh = h + (h2 - h) * t;
+        book_cover(cv, bx, by, bw, bh, key, col, jp, font_ui, "anim", i == ANIM_A - 1);
+    } else {
+        let t = (i - ANIM_A + 1) as f64 / ANIM_B as f64;
+        let spine = cx - w2 / 2.0 + (w2 / 2.0) * (t * 1.4).min(1.0);
+        cv.rect(spine, cy, spine + w2, cy + h2).fill(paper).outline("#c9b98e").tags(&["anim"]);
+        for k in 1..9 {
+            let ly = cy + h2 * k as f64 / 9.0;
+            cv.line(vec![spine + 12.0, ly, spine + w2 - 12.0, ly]).fill("#e3d6b4").tags(&["anim"]);
+        }
+        let ang = PI * t;
+        let cw = w2 * ang.cos();
+        let skew = h2 * 0.06 * ang.sin();
+        if cw >= 0.0 {
+            let pts = vec![spine, cy, spine + cw, cy - skew, spine + cw, cy + h2 + skew, spine, cy + h2];
+            cv.poly(pts).fill(&cover).outline(&mix(&cover, "#000000", 0.4)).tags(&["anim"]);
+        } else {
+            let lw = -cw;
+            cv.rect(spine - w2, cy, spine, cy + h2).fill(paper).outline("#c9b98e").tags(&["anim"]);
+            let pts = vec![spine, cy, spine - lw, cy - skew, spine - lw, cy + h2 + skew, spine, cy + h2];
+            cv.poly(pts).fill(&inside).outline(&mix(&inside, "#000000", 0.3)).tags(&["anim"]);
+        }
+        cv.line(vec![spine, cy, spine, cy + h2]).fill(&mix(&cover, "#000000", 0.3)).width(3.0).tags(&["anim"]);
+    }
+}
+
+/// the delay before frame i + 1 (or, after the last, before the book opens)
+pub fn anim_delay(i: usize) -> f64 {
+    if i + 1 < ANIM_A + ANIM_B {
+        if i < ANIM_A { 0.022 } else { 0.026 }
+    } else {
+        0.09
+    }
+}

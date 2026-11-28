@@ -1617,7 +1617,7 @@ impl Ui {
     pub fn text_of(&self, id: usize) -> String {
         match &self.ws[id].kind {
             Kind::Entry { e, .. } => String::from_utf16_lossy(&e.text),
-            Kind::Label { text, .. } | Kind::Button { text, .. } | Kind::Check { text, .. } => text.clone(),
+            Kind::Label { text, .. } | Kind::Button { text, .. } | Kind::Check { text, .. } | Kind::Menu { text, .. } => text.clone(),
             _ => String::new(),
         }
     }

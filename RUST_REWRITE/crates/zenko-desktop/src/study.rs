@@ -389,7 +389,7 @@ fn word_num(n: &str) -> f64 {
 // ---- the fox's side ----------------------------------------------------------------------------------------------------
 
 impl Companion {
-    pub(crate) fn life_now(&self) -> Value {
+    pub fn life_now(&self) -> Value {
         read_json("zenko_life.json")
     }
 
@@ -1166,7 +1166,7 @@ impl Companion {
     // ---- chat --------------------------------------------------------------------------------------------------------
 
     /// nb_ask's part in chat: she says she's thinking; the answer itself comes from the brains (Ev::Command nb_ask)
-    pub(crate) fn nb_ask_chat(&mut self, now: f64, sid: Option<String>, q: &str, mode: &str) -> String {
+    pub fn nb_ask_chat(&mut self, now: f64, sid: Option<String>, q: &str, mode: &str) -> String {
         let q = q.trim();
         if q.is_empty() {
             return "Ask me something first~".into();
