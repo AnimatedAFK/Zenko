@@ -1,17 +1,17 @@
 # Rust rewrite progress
 
 Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.md. Rules: RULES.md.
-402 of 1,798 zenko.py items ported (`python3 tools/audit_inventory.py`).
+402 of 1,798 zenko.py items ported by `python3 tools/audit_inventory.py` (its list was last updated at 3g; stages 4a-4e aren't in it yet).
 
-## Stages left to completion (11, as of 2026-11-27; 3g done)
+## Stages left to completion (7, as of 2026-11-28; 4e done)
 1. ~~3e: zenko8 study tracking + study_route~~ (done)
 2. ~~3f: the remaining chat routes~~ (done)
 3. ~~3g: desktop leftovers~~ (done; Ctrl K moved to 4c, since it searches the Settings/Customize cards)
 4. ~~4a: hub pages Home, Daily, You~~ (done)
-5. 4b: Timetable, Upcoming (Japanese clock), Reminders, Deadlines pages
-6. 4c: Settings and Customize pages, plus the Ctrl K search palette (ZkPalette, z20_items)
-7. 4d: Study pages: Notebook, study Books, Notes
-8. 4e: Exercise, Garden (zen garden, fishing, koi book), Screen time pages
+5. ~~4b: Timetable, Upcoming (Japanese clock), Reminders, Deadlines pages~~ (done)
+6. ~~4c: Settings and Customize pages, plus the Ctrl K search palette (ZkPalette, z20_items)~~ (done)
+7. ~~4d: Study pages: Notebook, study Books, Notes~~ (done)
+8. ~~4e: Exercise, Garden (zen garden, fishing, koi book), Screen time pages~~ (done)
 9. 4f: World map and Town square
 10. 5a: tool windows: periodic table, French dictionary, CG50 calculator, Bible
 11. 5b: brains and web: Ollama, online brain, web search + summaries, food lookup, screenshot reading
@@ -87,7 +87,7 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
   The windows those lines open (periodic table, calculator, dictionary, Bible, koi book, fishing, delay picker, study
   books) are sent as commands the window side doesn't handle yet.
 
-- **Stage 4a (latest):** the Home, Daily and About you pages, each matching zenko.py's widget tree (place, size, text,
+- **Stage 4a:** the Home, Daily and About you pages, each matching zenko.py's widget tree (place, size, text,
   font) in every golden case, plus their canvases (week chart, mood dots, 61-badge shelf) and pictures.
   homepage.rs, dailypage.rs, youpage.rs (new), pagekit.rs (new: hub_card, tt_btn/tt_entry, hub_scroller + wheel +
   scrollbar, glow_bar, zk_fonts, Zenko21's zk_wrap with z21_unwrap / flow + grid reflow / column stacking /
@@ -135,6 +135,29 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
   Fixed on the way: badges (and tier-ups) now also go into the chat log 2.5 s later (zenko.py's award does
   say + gift beep + chat_line; Rust only said it).
 
+- **Stage 4b (commits 713fbad..fd057f7):** Timetable, Upcoming (clock painting, menus, calendar, IA/EE/TOK tracker) and
+  Reminders (night shrine, plaques, wisps) pages, each matching zenko.py's golden cases and wired into the hub.
+- **Stage 4c (601b1a9..8f8592b):** Settings and Customize pages; the Ctrl+K palette (search, items, reveal + glow),
+  Ctrl+1..9, background page prebuild.
+- **Stage 4d (ba03a4c..feb6422):** Study books shelf, the 8 open book pages (layout and pixels), practice generators and
+  answer checks, the Books page in the hub, the Notes page (scratchpad filing, notebooks, pages).
+- **Stage 4e (aa0cb92..b8c60bf, latest):** Screen time page; Exercise page; the Zen garden:
+  - gardenart.rs: the garden scene (raster, tree, seasons, sky), bit-exact (golden/garden.json, 12 cases).
+  - fishart.rs: all 32 koi (fish_pattern with CPython str seeding, fish_rgba), bit-exact (golden/fish.json, 192 cases).
+    mt.rs gained random.gauss and str seeds. zenko-sound breath_tone: the breathing cue .wavs byte-exact (breath.json).
+  - gardenpage.rs: the page (painting with Zenko by her tree, lanterns, fireflies, petals, pond koi, decor, the
+    breathing guide over a dimmed garden, side panel with Breathe / Koi fishing / Grounding / ema tree / Recent / How
+    it grows), the cast/bobber/ripples/jump frame, and the fishing cards (question, escape, catch with its buttons).
+    Golden: make_golden_page.py garden, 6 cases (frames held still, one frame at a fixed clock and random 0.99).
+  - koibook.rs + koiwin.rs: the koi book as its own titled window (tile grid with silhouettes, scroll, detail panel,
+    pond toggle, hints). Golden: make_golden_page.py koibook, 3 cases. uiwin.rs gained open_window (a framed,
+    resizable window that sends clicks/wheel/keys/resize to the app) and paints Tk canvases in popups too.
+  - hubgarden.rs: the 50 ms garden_anim, foxfire flicker, breath_start/stop/finish (calm log, +0.1 health, done line,
+    "Well done~", the tones via PlaySound), 5-4-3-2-1 grounding, Lock in / Plant a new seed, fishing (bait, free casts,
+    golden bait, fish_question from your cards or the bank, fish_roll, fish_answer with srs_update, saved misses,
+    pond/book/log, all fishing badges, z22_badge_check), the subject menu, keys 1-4 / Esc / Return.
+    main.rs: chat and menu commands breath:k, grounding, fish_cast, koi_book open the garden and run there.
+
 ## Architecture decisions (settled)
 - **Logic lives in the library.** zenko-desktop lib = platform-free logic, tested on Linux. src/main.rs and the Windows-only modules (gdi, bubble, menu, panel, dialog, tkw, eat) handle the Win32 side.
 - **The library never calls the OS.** Companion emits `Ev` events (Say, Beep, Ui, Command). The window side feeds it `Env` (work area, idle time, dragging) and reads `win_move`.
@@ -142,7 +165,7 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
 - **Data files are written exactly like Python's.** Same files in %APPDATA%\FoxBuddy and the same JSON format, using read-modify-write of only our own keys.
 - **Quirks are copied too.** One example: zenko.py's window-edge nap never fires, so the port leaves it out.
 
-## Tests (all passing on 2026-11-27)
+## Tests (all passing on 2026-11-28: 62 tests in 59 groups)
 Run with `cargo test --release`. The golden files are made by the tools/ scripts.
 
 | Area | Checked against |
@@ -174,12 +197,16 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 | Extra/life/misc chat: 229 lines (replies, bubbles, commands, extras, cfg, life, badges, emas, timetable, deadlines, session, pomodoro, lock-in, quiz, sulk) | Zenko23.chat_send with seeded random, `tools/make_golden_extra.py` |
 | Sleep/burnout/water guard, deadline note, screen time (16 window kinds), pop quiz + taps, IB and garden nudges: 64 steps | zenko.py's own methods, `tools/make_golden_guard.py` |
 | Focus glow + petal burst: every frame item in 10 cases | zenko.py's z19_glow on a recording canvas, `tools/make_golden_glow.py` |
+| Zen garden scene (12), koi art (192), breathing tones (12) | zenko.py's pixels / .wav bytes, `tools/make_golden_garden.py`, `make_golden_fish.py`, `make_golden_breath.py` |
+| Zen garden page: 6 cases (whole tree, every canvas item and picture, question + catch cards) and the koi book window: 3 cases | Real zenko.py under Xvfb, `tools/make_golden_page.py garden` / `koibook` |
 | Version routes, Exercise, study books: 127 lines (replies, bubbles, what opens, IB tasks, rules, gym, timetable, grades, session, bedtime) | zenko.py with screen time/garden/stats/browser link set up, `tools/make_golden_routes.py` |
 
 ## Open problems
 - Nothing has run on real Windows yet (Wine is broken here). The bubble, menu, panel, dialog and pounce still need screenshots from the user.
-- Chips like "Show me" / "See the map" now open `hub:garden` / `hub:map`, but those pages are empty until 4e/4f.
-- Only the Ask Zenko, Home, Daily and You pages exist; the other pages are empty. Ctrl K does nothing yet (4c), and the sidebar's
+- "See the map" opens `hub:map`, but the World map and Town square pages are empty until 4f.
+- Garden: fishing and breathing use Rust's random stream (zenko.py's is not reproducible either); breath_start doesn't hush
+  VOICEVOX yet (5c). The garden cards' long labels aren't re-wrapped by zk_wrap (zenko.py's 140 ms after-map pass).
+- The sidebar's
   "Browser" link dot and side scenes are off (zb_linked and z22_unlocked aren't ported). Only the smooth motion
   level (45 ms) is used. The tkpaint StrokeInPieces path follows Tk core-8-6-branch; older 8.6 builds may differ.
 - Not ported yet: the Spotify account (tablet buttons use media keys, like zenko.py without an account), her VOICEVOX
@@ -196,7 +223,7 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 - The rewards test doesn't replay the 5 s follow-up badge check (in these cases it awards nothing in Python either).
 
 ## Next recommended task
-Stage 4b: Timetable, Upcoming (Japanese clock, planner, IA/EE/TOK tracker), Reminders (ema rack). Then the rest of the hub pages one by one (each: a golden dump with tools/make_golden_page.py's walk(), then the Rust tree checked against it).
+Stage 4f: World map (journeys, story cards, quizzes, passport, rewards) and Town square. Same method: a golden dump with tools/make_golden_page.py's walk(), then the Rust tree checked against it.
 
 ## Gotchas
 - The repo root has a tracked `__pycache__/`. Never delete it, and run Python with bytecode writing turned off.
@@ -214,4 +241,6 @@ Stage 4b: Timetable, Upcoming (Japanese clock, planner, IA/EE/TOK tracker), Remi
   fake clock stay in step; the Rust test pumps at now+2.7. Python's idle pose lines (IDLE_LINES) are filtered out.
 - make_golden_guard.py cancels the start-up greeting's bubble_job (or the pop quiz never shows) and reseeds random
   inside screen_tell (other after() jobs can use random first); the Rust test reseeds before pump the same way.
+- make_golden_page.py garden drops after(50) frames, the 230 ms foxfire flicker and breath_start's second panel, pins
+  time.monotonic/random.random only inside `_final`, and ends with zk_fit (a panel rebuilt there misses its Map scaling).
 - Cross-compile with `cargo build --release --target x86_64-pc-windows-gnu`.

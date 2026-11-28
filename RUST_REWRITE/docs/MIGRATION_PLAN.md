@@ -78,16 +78,16 @@ order is kept where it changes the result (tail outlines, eye cells).
 | Lock-in | timer, hachimaki, Esc-hold exit, pounce-and-eat of distractions (tab close / minimise / close), the zenko21 overlay animation, eaten counts, resume after restart | **done, not yet seen on Windows** |
 | Desktop fox, rest | music tablet, battery, weather particles, the visiting fox, slide, focus glow, exam countdown on the ema | **music tablet, weather particles + real weather, visiting fox, 30 s life tick done**; battery, slide, glow, ema countdown to do |
 | Session rewards | garden growth, journey minutes, badges, hunger after a session or lock-in, timetable marking, pomodoro, music hooks | **all done** (byte-for-byte vs zenko.py), except the Spotify-account music hooks |
-| Hub shell | sidebar with pixel icons, rearrange, accents, text scaling, themed scrollbars, Ctrl+K search, page transitions, living sidebar fox | **window frame, sidebar sky + menu, living fox, stars/particles, tips, status, drag/resize/buttons, text re-fit done**; page slide, Ctrl+K palette, focus glow, scrollbars to do |
+| Hub shell | sidebar with pixel icons, rearrange, accents, text scaling, themed scrollbars, Ctrl+K search, page transitions, living sidebar fox | **done** (window frame, sidebar, living fox, page slide, Ctrl+K palette, focus glow, themed scrollbars, text re-fit) |
 | Home, Daily, You | streak, mood/hunger, 61 badges, check-ins, journal | **done (4a)**: pages match zenko.py, golden-tested |
-| Timetable, Upcoming, Japanese clock, planner, reminders rack | free hours, half-hour slots, plan/replan, countdowns, emas that auto-plan, PDF export | **planner, ema rack, emas that auto-plan done** (pages to do) |
+| Timetable, Upcoming, Japanese clock, planner, reminders rack | free hours, half-hour slots, plan/replan, countdowns, emas that auto-plan, PDF export | **done (4b)**: pages match zenko.py, golden-tested |
 | Chat + brain | commands, shorthand learning, her voice, Ollama local models, online brain (Gemini) with IB-terms recheck, web search + summaries, Markdown/LaTeX, screenshot reading | **offline router about half done** (core, version routes, Exercise, books); brains/web to do |
-| Study | Notebook tutor, Notes scratchpad + folder import, Books + practice, IA/EE/TOK, grades, flashcards/SRS, pop quizzes | |
+| Study | Notebook tutor, Notes scratchpad + folder import, Books + practice, IA/EE/TOK, grades, flashcards/SRS, pop quizzes | **pages done (4d)**; the Notebook tutor's brain is 5b |
 | Tool windows | periodic table, French dictionary, Casio CG50 calculator, Bible with Greek/Hebrew lexicon | |
-| Exercise | 3-day split, pixel muscle map, weight, calories, food lookup, gym look | |
-| Garden, zen garden, breathing, koi fishing | seasons, day/night, wilting, 32 fish, collection book | |
+| Exercise | 3-day split, pixel muscle map, weight, calories, food lookup, gym look | **done (4e)** except the online food lookup (5b) |
+| Garden, zen garden, breathing, koi fishing | seasons, day/night, wilting, 32 fish, collection book | **done (4e)**: scene, koi and tones bit-exact; page, cards and koi book match zenko.py |
 | World map, journey, Town square | shrines to the Silk Road, quizzes, rewards, real-date festivals, ntfy chat street | |
-| Screen time | per-app/site time, private windows skipped | |
+| Screen time | per-app/site time, private windows skipped | **done (4e)** |
 | Voice | VOICEVOX auto-start + speech, chirps, offline voice chat, Piper, SAPI | |
 | Sounds and music | synthesised UI sounds, 3 background tracks | **done**: 279 sounds and the 3 loops byte-identical |
 | Installer and updater | self-install, Releases updater, crash logs | |
@@ -129,7 +129,10 @@ order is kept where it changes the result (tail outlines, eye cells).
    apps, deadlines, battery, notes), checked against zenko.py on 229 lines plus 200+ calculator cases.
    Stage 3g done: deadline reminders, the sleep/burnout/water guard, screen-time recording, the minute checks (pop
    quiz, IB and garden nudges) and the focus glow, checked against zenko.py.
-   **Next:** hub pages one at a time (Home, Timetable/Upcoming, Settings/Customize first, then the rest), each compared with Python.
+   Stages 4a-4e done: the hub pages Home, Daily, You, Timetable, Upcoming, Reminders, Settings, Customize (with Ctrl+K),
+   Notebook/study Books, Notes, Screen time, Exercise and the Zen garden (breathing, grounding, koi fishing, the koi
+   book window), each matching zenko.py's widget tree, canvas items and pictures in recorded cases.
+   **Next:** 4f, the World map and Town square pages.
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.
 6. Speed (Phase 5): image cache and native code are already in; measure and tune at the end.
 
