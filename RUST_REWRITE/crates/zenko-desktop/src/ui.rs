@@ -224,6 +224,8 @@ pub enum Kind {
 
 #[derive(Clone, Debug)]
 pub struct W {
+    /// cursor="hand2" on a widget that isn't a button
+    pub hand: bool,
     pub kind: Kind,
     pub parent: Option<usize>,
     pub kids: Vec<usize>,
@@ -403,7 +405,7 @@ impl Ui {
 
     fn add(&mut self, parent: Option<usize>, kind: Kind, bg: &str) -> usize {
         let id = self.ws.len();
-        self.ws.push(W { kind, parent, kids: vec![], bg: bg.into(), zk_fill: None, bd: 0, hl: 0, hlc: String::new(), padx: 0, pady: 0,
+        self.ws.push(W { hand: false, kind, parent, kids: vec![], bg: bg.into(), zk_fill: None, bd: 0, hl: 0, hlc: String::new(), padx: 0, pady: 0,
                          opt_w: 0, opt_h: 0, pack: None, place: None, propagate: true, name: String::new(), x: 0, y: 0,
                          w: 1, h: 1, rw: 1, rh: 1, mapped: parent.is_none(), low: false, pack_seq: 0, grid: None,
                          gw_cols: vec![], gw_rows: vec![], gu_cols: vec![], cwin: false, yoff: 0, f0: 0, pack_in: None });
@@ -1595,6 +1597,7 @@ impl Ui {
         match self.hit(x, y).map(|i| &self.ws[i].kind) {
             Some(Kind::Button { enabled: true, .. }) => Cursor::Hand,
             Some(Kind::Entry { .. }) => Cursor::IBeam,
+            _ if self.hit(x, y).is_some_and(|i| self.ws[i].hand) => Cursor::Hand,
             _ => Cursor::Arrow,
         }
     }

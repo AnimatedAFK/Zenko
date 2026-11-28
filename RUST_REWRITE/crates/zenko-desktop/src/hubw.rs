@@ -36,6 +36,8 @@ mod hubbook;
 mod hubnotes;
 #[path = "hubscreen.rs"]
 mod hubscreen;
+#[path = "hubgym.rs"]
+mod hubgym;
 #[path = "paletwin.rs"]
 mod paletwin;
 use serde_json::Value;
@@ -139,6 +141,7 @@ struct HubW {
     notes: Option<zenko_desktop::notespage::NotesPage>,
     notes_st: hubnotes::NotesState,
     screen: Option<zenko_desktop::screenpage::ScreenPage>,
+    gym: Option<zenko_desktop::gympage::GymPage>,
     /// screen_ui["range"] (kept while the window is open) and the next minute render
     screen_range: i64,
     screen_next: f64,
@@ -769,6 +772,12 @@ fn page_frame(x: &mut HubW, page: &str) -> Option<usize> {
             hubnotes::build(x, pg);
             pg
         }
+        "exercise" => {
+            let th = x.hub.t.clone();
+            let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
+            hubgym::build(x, pg);
+            pg
+        }
         "screen" => {
             let th = x.hub.t.clone();
             let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
@@ -847,6 +856,7 @@ fn relayout(x: &mut HubW) {
     hubbook::fit(x, w, h);
     hubnotes::fit(x, w, h);
     hubscreen::fit(x, w, h);
+    hubgym::fit(x, w, h);
     if let Some(dp) = x.daily.as_mut() {
         let (th, f) = (x.hub.t.clone(), Faces { ui: x.hub.font_ui.clone(), title: String::new() });
         let d = x.daily_d.clone();
@@ -985,6 +995,7 @@ fn page_sc(x: &HubW, page: Option<&str>) -> Option<zenko_desktop::pagekit::Scrol
         Some("settings") => x.set.as_ref().map(|p| p.sc.clone()),
         Some("customize") => x.cust.as_ref().map(|p| p.sc.clone()),
         Some("screen") => x.screen.as_ref().map(|p| p.sc.clone()),
+        Some("exercise") => x.gym.as_ref().map(|p| p.sc.clone()),
         _ => None,
     }
 }
@@ -1165,7 +1176,7 @@ pub fn open(page: Option<&str>, init: HubInit) {
             size: (w, h), min, cursor: IDC_ARROW, faded: false,
             anim: zenko_desktop::hubanim::HubAnim::new(0.0, (x0 as u64) << 20 ^ 0x9e37_79b9),
             theme: init.theme.clone(), living: init.living, glow_next: 0.0, burst: None, particles: init.particles, minimized: false,
-            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, set: None, set_try: String::new(), set_focus: None, set_rule_do: String::new(), cust: None, cust_focus: None, cust_anim: 0.0, nb: None, notes: None, notes_st: Default::default(), screen: None, screen_range: 1, screen_next: 0.0, opened_s: init.opened_s, reveal: None, flash: None, prebuild_at: 2.5, ask: None,
+            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, set: None, set_try: String::new(), set_focus: None, set_rule_do: String::new(), cust: None, cust_focus: None, cust_anim: 0.0, nb: None, notes: None, notes_st: Default::default(), screen: None, gym: None, screen_range: 1, screen_next: 0.0, opened_s: init.opened_s, reveal: None, flash: None, prebuild_at: 2.5, ask: None,
             chat_q: Default::default(), typing: None, sb_drag: None,
         }));
         with(|x| {
@@ -1222,6 +1233,11 @@ pub fn quit() {
     } else {
         hubnotes::quit_flush();
     }
+}
+
+/// food_fix_grams' answer (from its little dialog)
+pub fn gym_fix(i: usize, ans: &str) {
+    with(|x| hubgym::fix_grams(x, i, ans));
 }
 
 /// the Notes page's New folder name (from its little dialog)
@@ -1419,6 +1435,7 @@ fn step(x: &mut HubW) -> bool {
     }
     hubnotes::step(x, n);
     hubscreen::step(x, n);
+    hubgym::step(x, n);
     // daily_refresh: what changed (a badge, a check-in, a card) shows while the page is open
     if x.hub.side.page.as_deref() == Some("daily") && x.slide.is_none() && n >= x.daily_next {
         x.daily_next = n + 1.0;
@@ -1615,6 +1632,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                             let old = x.hub.ui.focus;
                             x.hub.ui.press(&x.fonts, mx, my, n, msg == WM_LBUTTONDBLCLK);
                             you_focus_left(x, old);
+                            hubgym::focus_left(x, old);
                             hubup::focus_left(x, old);
                             hubup::press(x, mx, my);
                         }
@@ -1697,6 +1715,8 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                             hubnotes::cmd(x, &cmd);
                         } else if cmd.starts_with("scr_") {
                             hubscreen::cmd(x, &cmd);
+                        } else if cmd.starts_with("gym_") {
+                            hubgym::cmd(x, &cmd);
                         } else if cmd.starts_with("set_") && !cmd.starts_with("set_menu:") {
                             hubset::cmd(x, &cmd);
                         } else if cmd.starts_with("hub_ask:") || cmd.starts_with("home_") || matches!(cmd.as_str(),
@@ -1709,6 +1729,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     } else if hubset::click(x, mx, my) {
                     } else if hubcust::click(x, mx, my) {
                     } else if hubbook::click(x, mx, my) {
+                    } else if hubgym::click(x, mx, my) {
                     } else if x.hub.side.page.as_deref() == Some("home") {
                         home_music_click(x, mx, my);
                     } else if x.hub.side.page.as_deref() == Some("daily") {
@@ -1810,6 +1831,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     } else if vk == VK_RETURN && x.hub.side.page.as_deref() == Some("customize") && hubcust::key_return(x) {
                     } else if vk == VK_RETURN && hubbook::key_return(x) {
                     } else if vk == VK_RETURN && hubscreen::key_return(x) {
+                    } else if vk == VK_RETURN && hubgym::key_return(x) {
                     } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.a)) {
                         daily_cmd(x, "daily_card_add");
                     } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.fact)) {
@@ -1971,7 +1993,7 @@ fn palette_tick(x: &mut HubW, n: f64) -> bool {
 /// the pages this build can make
 fn page_built(p: &str) -> bool {
     matches!(p, "chat" | "home" | "timetable" | "deadlines" | "reminders" | "settings" | "customize" | "daily" | "you" | "notebook"
-             | "notes" | "screen")
+             | "notes" | "screen" | "exercise")
 }
 
 /// z20_reveal's find: the card titled so (else the first whose title holds it), scrolled to 12 px from the top,

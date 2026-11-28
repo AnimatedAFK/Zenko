@@ -38,6 +38,11 @@ pub struct Food {
     pub prot: f64,
 }
 
+/// FOODS[i]
+pub fn food_row(i: usize) -> Food {
+    foods()[i].clone()
+}
+
 fn foods() -> &'static Vec<Food> {
     static F: OnceLock<Vec<Food>> = OnceLock::new();
     F.get_or_init(|| {
@@ -149,7 +154,7 @@ pub fn fmt_float(v: f64) -> String {
     out
 }
 
-fn clean_num(s: &str) -> String {
+pub fn clean_num(s: &str) -> String {
     let s = frx!(r"(\d),(\d{3})(?!\d)").replace_all(s, "$1$2").into_owned();
     frx!(r"(\d),(\d{1,2})(?!\d)").replace_all(&s, "$1.$2").into_owned()
 }
@@ -262,7 +267,7 @@ pub fn food_estimate(text: &str) -> (Vec<(String, i64, f64)>, Vec<String>) {
 
 impl Companion {
     /// gym(): the Exercise tab's part of zenko_life.json, with its setdefaults
-    fn gym_do<R>(&mut self, f: impl FnOnce(&mut Value) -> R) -> R {
+    pub fn gym_do<R>(&mut self, f: impl FnOnce(&mut Value) -> R) -> R {
         self.life_do(|l| {
             if !l["gym"].is_object() {
                 l["gym"] = json!({});
@@ -286,7 +291,7 @@ impl Companion {
         })
     }
 
-    fn gym_trend_text(w: &[Value]) -> String {
+    pub fn gym_trend_text(w: &[Value]) -> String {
         if w.len() < 2 {
             return "Logged. Weigh in once or twice a week, same time of day, and I'll show your trend~".into();
         }

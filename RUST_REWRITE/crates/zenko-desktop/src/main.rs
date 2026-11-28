@@ -65,6 +65,11 @@ mod win {
     use crate::menu::{self, Item, check, cmd, info, later, radio, sub};
     use std::cell::RefCell;
     use std::time::Instant;
+
+    thread_local! {
+        /// what the open askstring popup is asking for ("notes", "gym_fix:<i>")
+        static ASK_KEY: RefCell<String> = const { RefCell::new(String::new()) };
+    }
     use windows_sys::Win32::Foundation::*;
     use windows_sys::Win32::Graphics::Gdi::*;
     use windows_sys::Win32::Media::Audio::*;
@@ -519,7 +524,15 @@ mod win {
                     // New folder's name
                     if o.cmd == "ok" {
                         let v = o.values.iter().find(|v| v.0 == "name").map(|v| v.1.clone()).unwrap_or_default();
-                        crate::hubw::notes_new_folder(&v);
+                        let key = ASK_KEY.with(|k| k.borrow().clone());
+                        match key.strip_prefix("gym_fix:").and_then(|i| i.parse::<usize>().ok()) {
+                            Some(i) => {
+                                if !v.is_empty() {
+                                    crate::hubw::gym_fix(i, &v);
+                                }
+                            }
+                            None => crate::hubw::notes_new_folder(&v),
+                        }
                     }
                     crate::uiwin::close("askstring");
                     continue;
@@ -674,8 +687,17 @@ mod win {
             let t = now(app);
             let win = (app.x, app.y);
             app.fox.z19_pose_start(t, k, true, win);
-        } else if c == "notes_folder_ask" {
-            // simpledialog.askstring(APP_NAME, "Name of the new folder:")
+        } else if c == "notes_folder_ask" || c.starts_with("ask_string\t") {
+            // simpledialog.askstring(title, prompt): the Notes page's new folder ("Name of the new folder:"), the
+            // Exercise page's food grams ("ask_string\t<what>\t<title>\t<prompt>")
+            let (key, prompt) = match c.strip_prefix("ask_string\t") {
+                Some(r) => {
+                    let p: Vec<&str> = r.splitn(3, '\t').collect();
+                    (p[0].to_string(), p.get(2).copied().unwrap_or("").to_string())
+                }
+                None => ("notes".to_string(), "Name of the new folder:".to_string()),
+            };
+            ASK_KEY.with(|k| *k.borrow_mut() = key);
             if !crate::uiwin::is_open("askstring") {
                 let th = theme(&app.fox.cfg);
                 let fu = crate::gdi::ui_font(&app.fox.cfg.s("app_font", ""));
@@ -683,7 +705,7 @@ mod win {
                 use zenko_desktop::ui::{Fill, Font, Pack, Side};
                 let f = u.round_frame(0, &th.card, &th.gold, 12, "round", 10, &th.ink);
                 u.pack(f, Pack::default().fill(Fill::Both).expand());
-                let l = u.label(f, "Name of the new folder:", &th.card, &th.ink, Font::new(&fu, 10, false));
+                let l = u.label(f, &prompt, &th.card, &th.ink, Font::new(&fu, 10, false));
                 u.pack(l, Pack::default().padx(14, 14).pady(12, 4));
                 let e = u.entry(f, 30, Font::new(&fu, 11, false), "", &th.field);
                 u.named(e, "name");

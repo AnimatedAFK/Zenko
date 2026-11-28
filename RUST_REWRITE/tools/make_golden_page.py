@@ -381,6 +381,70 @@ if len(sys.argv) > 1 and sys.argv[1] == "screen":
     SETUP["data"], SETUP["after"] = _data, _after
 
 
+if len(sys.argv) > 1 and sys.argv[1] == "gym":
+    # golden/hub_gym.json: the Exercise page (dusk banner, muscle map with its glow figures, which-day picker / training
+    # ticks / rest night, daily protein-water-sleep, weight line + profile, food today with its meters) in five states.
+    # The page's animations (foxfire flicker, star twinkle, the figures' glow frames) are left out: frame 0 only.
+    OUT = "hub_gym.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 15.5 * 3600          # Thursday 11 Dec 2025, 15:30
+    CASES = [("gym_pick", T0, {"theme": "snow"}, None, "exercise"),
+             ("gym_day1", T0, {"theme": "snow"}, None, "exercise"),
+             ("gym_day2_small", T0, {"theme": "midnight"}, (1120, 720), "exercise"),
+             ("gym_rest", T0, {"theme": "sakura"}, None, "exercise"),
+             ("gym_view_legs", T0, {"theme": "snow"}, None, "exercise")]
+
+    def _data(app, name):
+        day = lambda n: (_dt.date(2025, 12, 11) + _dt.timedelta(days=n)).isoformat()
+        G = app.gym()
+        if name == "gym_pick":
+            app.life_save()
+            return
+        G["next"] = {"gym_day1": 0, "gym_day2_small": 1, "gym_rest": 3, "gym_view_legs": 0}[name]
+        if name in ("gym_day1", "gym_view_legs"):
+            G["checks"][day(0) + "|0"] = ["Chest", "Biceps"]
+            G["checks"][day(0) + "|2"] = ["Quads", "Hamstrings", "Glutes", "Calves"]
+            G["log"] = [{"date": day(-9), "day": 1}, {"date": day(-2), "day": 2}]
+            G["weights"] = [{"date": day(-k), "kg": w} for k, w in ((40, 74.2), (30, 73.6), (20, 73.1), (12, 72.4),
+                                                                     (6, 72.6), (1, 71.9))]
+            G["profile"] = {"age": 17, "height": 172.0, "sex": "m"}
+            G["food"][day(0)] = [{"t": "2 eggs (100g)", "kcal": 143, "p": 12.6, "src": "table"},
+                                 {"t": "Toast with butter", "kcal": 180, "p": 4.0, "src": "table"},
+                                 {"t": "Paneer tikka (150g) · usda", "kcal": 412, "p": 27.35, "src": "web", "g": 150,
+                                  "k100": 274.7, "p100": 18.2, "match": "paneer"},
+                                 {"t": "A very long dish name that goes on and on with chutney and rice and more", "kcal": 655,
+                                  "p": 18.0, "src": "brain"}]
+            G["water"][day(0)] = 3
+            G["sleep"].update({day(0): 4, day(-1): 2, day(-3): 5, day(-9): 1})
+        elif name == "gym_day2_small":
+            G["log"] = [{"date": day(-1), "day": 0}]
+            G["water"][day(0)] = 8
+            G["sleep"][day(0)] = 1
+        elif name == "gym_rest":
+            G["weights"] = [{"date": day(-3), "kg": 80.0}]
+            G["profile"] = {"age": 17, "sex": "f"}
+            G["log"] = [{"date": day(-1), "day": 2}]
+            G["food"][day(0)] = [{"t": "Dal (1 bowl)", "kcal": 180, "p": 9.0, "src": "table"}]
+        app.life_save()
+
+    def _after(app, name):
+        after0 = app.root.after
+
+        def quiet(ms, fn=None, *a):           # (the page's looping animations: frame 0 only)
+            if ms in (230, 260, 420, 500):
+                return ""
+            return after0(ms, fn, *a) if fn else after0(ms)
+        app.root.after = quiet
+        if name == "gym_view_legs":
+            app.gym_view = 2
+        app.gym_render()
+        app.root.after = after0
+        for _ in range(6):
+            app.root.update()
+            time.sleep(0.03)
+    SETUP["data"], SETUP["after"] = _data, _after
+
+
 if len(sys.argv) > 1 and sys.argv[1] == "you":
     # golden/hub_you.json: the About you page, empty and filled in (Text boxes, checkbuttons, what she learned)
     OUT = "hub_you.json"
