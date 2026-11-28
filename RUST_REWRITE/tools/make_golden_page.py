@@ -845,6 +845,123 @@ if len(sys.argv) > 1 and sys.argv[1] == "bookact":
         return {"w": 0, "h": 0, "kids": []}
     SETUP["data"], SETUP["after"], SETUP["tree"] = _data, _after, _tree
 
+if len(sys.argv) > 1 and sys.argv[1] == "notes":
+    # golden/hub_notes.json: the Notes page (scratchpad with its preview, the notebooks list with one subject open, the
+    # page view), then used: a folder and a page picked in the list, the scratchpad filed, the filing undone, a new
+    # page; after each step the list's rows and colours, the title, the page, the status, the preview, the scratchpad
+    # and the files in the notebooks folder.
+    OUT = "hub_notes.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 1.5 * 3600 + 754.25
+    CASES = [("notes", T0, {"theme": "snow"}, None, "notes"), ("notes_small", T0, {"theme": "midnight"}, (1120, 720), "notes")]
+    STEPS = []
+    SCRATCH = ("Bonjour, je m'appelle Anoop.\nLe passé composé uses avoir or être.\nMitosis has four phases.\n"
+               "The cell membrane is a phospholipid bilayer.\n\nmoles = mass / molar mass")
+
+    def _data(app, name):
+        Z.nb_ensure(app.life)
+        bio = os.path.join(Z.NB_DIR, "Biology HL")
+        os.makedirs(os.path.join(bio, "Cells"), exist_ok=True)
+        with open(os.path.join(bio, "Cells", "membranes.md"), "w", encoding="utf-8") as f:
+            f.write("# Membranes\n\nPhospholipid bilayer, fluid mosaic.")
+        with open(os.path.join(bio, "Genetics.txt"), "w", encoding="utf-8") as f:
+            f.write("DNA, genes, alleles.")
+        with open(os.path.join(bio, "diagram.png"), "wb") as f:
+            f.write(b"x")
+        os.makedirs(os.path.join(Z.NB_DIR, "Imported", "reMarkable"), exist_ok=True)
+        with open(os.path.join(Z.NB_DIR, "Imported", "reMarkable", "Quick.md"), "w", encoding="utf-8") as f:
+            f.write("hi")
+        os.makedirs(os.path.join(Z.NB_DIR, "Zeta extra"), exist_ok=True)
+        with open(Z.NB_SCRATCH, "w", encoding="utf-8") as f:
+            f.write(SCRATCH)
+        app.cfg["nb_open"] = [bio]
+        app.life["nb_last"] = {"when": "2025-12-10T09:05", "to": ["Bio", "Chem", "Bio"]}
+        app.life_save()
+
+    def _files():
+        out = []
+        for dp, dn, fs in os.walk(Z.NB_DIR):
+            dn.sort()
+            for fn in sorted(fs):
+                p = os.path.join(dp, fn)
+                with open(p, "rb") as f:
+                    out.append([os.path.relpath(p, Z.NB_DIR), f.read().decode("utf-8", "replace")])
+        return out
+
+    MEAS = []
+
+    def _state(app, step):
+        ui = app._nb_ui
+        lb = ui["tree"]
+        for k in ("status", "preview", "page_title"):
+            MEAS.append((ui[k].cget("font"), ui[k].cget("text")))
+        for k in ("view", "scratch"):
+            MEAS.append(("ch:" + str(ui[k].cget("font")), ui[k].get("1.0", "end-1c") + Z.Zenko21.__dict__.get("_x", "")))
+        return {"step": step, "rows": list(lb.get(0, "end")),
+                "fg": [lb.itemcget(i, "fg") for i in range(lb.size())], "sel": list(lb.curselection()),
+                "title": ui["page_title"].cget("text"), "view": ui["view"].get("1.0", "end-1c"),
+                "view_state": str(ui["view"].cget("state")), "status": ui["status"].cget("text"),
+                "preview": ui["preview"].cget("text"), "scratch": ui["scratch"].get("1.0", "end-1c"), "files": _files(),
+                "nb_open": sorted(os.path.relpath(p, Z.NB_DIR) for p in ui["open"]),
+                "life_nb_last": json.loads(json.dumps(app.life.get("nb_last"), default=str))}
+
+    def _after(app, name):
+        STEPS.clear()
+        if name != "notes":
+            return
+        ui = app._nb_ui
+        STEPS.append(_state(app, ["start"]))
+
+        def pick(label):
+            rows = [os.path.basename(r[1]) for r in ui["rows"]]
+            i = rows.index(label)
+            ui["tree"].selection_clear(0, "end")
+            ui["tree"].selection_set(i)
+            app.nb_tree_click()
+            for _ in range(3):
+                app.root.update()
+        for lab in ["Cells", "membranes.md", "diagram.png", "Imported", "reMarkable", "Biology HL", "Biology HL"]:
+            pick(lab)
+            STEPS.append(_state(app, ["pick", lab]))
+        app.nb_flush(quiet=False)
+        app.root.update()
+        STEPS.append(_state(app, ["flush"]))
+        app.nb_undo()
+        app.root.update()
+        STEPS.append(_state(app, ["undo"]))
+        pick("Chemistry HL")
+        app.nb_new_page()
+        app.root.update()
+        STEPS.append(_state(app, ["new_page"]))
+        ui["view"].insert("end", "Acids donate protons.")
+        ui["view"].edit_modified(True)
+        app.nb_page_save()
+        STEPS.append(_state(app, ["page_save"]))
+
+    def _tree(app, images, fonts):
+        EXTRA[0] = {"steps": list(STEPS), "state": _state(app, ["final"]), "nb_dir": Z.NB_DIR}
+        h = app.hub
+        tr = walk(h["pages"]["notes"], h["win"], set(), images, fonts)
+        intro = ("Pick a notebook on the left to open it.\n\nEverything you file from the Scratchpad lands in that subject\u2019s "
+                 "\u201cQuick notes\u201d. Import a folder (like your reMarkable export) and its folders show up here too: a folder "
+                 "called Bio, Chem, French... goes straight into that subject.")
+        MEAS.append(("ch:" + str(h["pages"]["notes"].nametowidget(app._nb_ui["view"]).cget("font")), intro))
+        for fnt, txt in MEAS:                    # (the labels' words at every step, for laying them out)
+            if fnt.startswith("ch:"):
+                f = tkfont.Font(font=fnt[3:])
+                ent = fonts.setdefault(fnt[3:], {"ascent": f.metrics("ascent"), "descent": f.metrics("descent"), "actual": f.actual(), "w": {}})
+                for ch in set(txt):
+                    ent.setdefault("ch", {})[ch] = f.measure(ch)
+                continue
+            f = tkfont.Font(font=fnt)
+            ent = fonts.setdefault(fnt, {"ascent": f.metrics("ascent"), "descent": f.metrics("descent"), "actual": f.actual(), "w": {}})
+            ent["w"][txt] = f.measure(txt)
+            for piece in wrap_pieces(txt):
+                ent["w"][piece] = f.measure(piece)
+        MEAS.clear()
+        return tr
+    SETUP["data"], SETUP["after"], SETUP["tree"] = _data, _after, _tree
+
 EXTRA = [{}]
 NAME = [""]
 out = []

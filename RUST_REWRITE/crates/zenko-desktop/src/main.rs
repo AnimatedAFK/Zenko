@@ -101,6 +101,8 @@ mod win {
         next_slow: f64,
         next_wx: f64,
         next_batt: f64,
+        /// nb_watch_tick: the kept notes folders brought in again (20 s after start, then every 15 minutes)
+        next_nbwatch: f64,
         eating: Option<zenko_desktop::lockin::Eat>,
         next_top: f64,
         /// hub_tick / z19_hub_loop: the hub's sidebar news, once a second
@@ -513,6 +515,15 @@ mod win {
             }
             for o in crate::uiwin::OUT.with(|q| std::mem::take(&mut *q.borrow_mut())) {
                 app.fox.events.push(Ev::Ui("tap".into())); // PixelButton._release: ui_sound("tap")
+                if o.win == "askstring" {
+                    // New folder's name
+                    if o.cmd == "ok" {
+                        let v = o.values.iter().find(|v| v.0 == "name").map(|v| v.1.clone()).unwrap_or_default();
+                        crate::hubw::notes_new_folder(&v);
+                    }
+                    crate::uiwin::close("askstring");
+                    continue;
+                }
                 if o.win == "checkin" {
                     if let Some(m) = o.cmd.strip_prefix("mood:") {
                         let note = o.values.iter().find(|v| v.0 == "note").map(|v| v.1.clone()).unwrap_or_default();
@@ -572,6 +583,25 @@ mod win {
             }
             if crate::bgm::FAILED.swap(false, std::sync::atomic::Ordering::Relaxed) {
                 app.fox.say("Uu~ Windows wouldn't play the background music. (It still works for her other sounds.)", 8.0);
+            }
+            if t >= app.next_nbwatch {
+                app.next_nbwatch = t + 15.0 * 60.0;
+                let dirs: Vec<String> = app.fox.cfg.raw["nb_watch"].as_array().map(|a| a.iter()
+                    .filter_map(|v| v.as_str().map(String::from)).collect()).unwrap_or_default();
+                for d in dirs {
+                    let p = std::path::PathBuf::from(&d);
+                    if !p.is_dir() {
+                        continue;
+                    }
+                    if crate::hubw::is_open() {
+                        crate::hubw::notes_import(&p, true);
+                    } else {
+                        let life = app.fox.life_now();
+                        std::thread::spawn(move || {
+                            zenko_desktop::notes::nb_import(&p, &life);
+                        });
+                    }
+                }
             }
             if t >= app.next_batt {
                 app.next_batt = t + 30.0; // battery_tick
@@ -644,6 +674,41 @@ mod win {
             let t = now(app);
             let win = (app.x, app.y);
             app.fox.z19_pose_start(t, k, true, win);
+        } else if c == "notes_folder_ask" {
+            // simpledialog.askstring(APP_NAME, "Name of the new folder:")
+            if !crate::uiwin::is_open("askstring") {
+                let th = theme(&app.fox.cfg);
+                let fu = crate::gdi::ui_font(&app.fox.cfg.s("app_font", ""));
+                let mut u = zenko_desktop::ui::Ui::new(&th.card);
+                use zenko_desktop::ui::{Fill, Font, Pack, Side};
+                let f = u.round_frame(0, &th.card, &th.gold, 12, "round", 10, &th.ink);
+                u.pack(f, Pack::default().fill(Fill::Both).expand());
+                let l = u.label(f, "Name of the new folder:", &th.card, &th.ink, Font::new(&fu, 10, false));
+                u.pack(l, Pack::default().padx(14, 14).pady(12, 4));
+                let e = u.entry(f, 30, Font::new(&fu, 11, false), "", &th.field);
+                u.named(e, "name");
+                u.pack(e, Pack::default().fill(Fill::X).padx(14, 14).pady(0, 8));
+                u.focus = Some(e);
+                let r = u.frame(f, &th.card);
+                u.pack(r, Pack::default().pady(0, 12));
+                let b = u.button(r, "OK", "ok", &th.acc, &th.onacc, &fu, 9, 14, 1, true);
+                u.pack(b, Pack::default().side(Side::Left).padx(4, 4));
+                let b = u.button(r, "Cancel", "cancel", &th.field, &th.ink, &fu, 9, 10, 1, true);
+                u.pack(b, Pack::default().side(Side::Left).padx(4, 4));
+                let scr = unsafe { (GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) };
+                crate::uiwin::open_popup("askstring", u, th, app.dpi, |w, h| ((scr.0 - w) / 2, (scr.1 - h) / 2));
+            }
+        } else if c == "notes_import_ask" {
+            crate::hubw::notes_import_ask();
+        } else if let Some(d) = c.strip_prefix("notes_watch_ask\t") {
+            let text = format!("Keep bringing in new notes from this folder?\n\n{d}\n\nEach time Zenko starts (and every 15 \
+                                minutes) new or changed files there are copied into your notebooks the same way. Handy for the \
+                                folder your reMarkable exports to.");
+            let w = |s: &str| s.encode_utf16().chain(std::iter::once(0)).collect::<Vec<u16>>();
+            let (tw, cw) = (w(&text), w("Zenko"));
+            if unsafe { MessageBoxW(std::ptr::null_mut(), tw.as_ptr(), cw.as_ptr(), MB_YESNO | MB_ICONQUESTION) } == IDYES {
+                crate::hubw::notes_watch_add(d);
+            }
         } else if c == "speak_test" {
             // speak_test: the voice says hello with the chosen voice and speed
             let c = &app.fox.cfg;
@@ -1167,6 +1232,7 @@ mod win {
                     next_slow: 1006.0,
                     next_wx: 1009.0,
                     next_batt: 1001.5,
+                    next_nbwatch: 1020.0,
                     eating: None,
                     next_top: 1002.5,
                     next_hub: 1001.0,
@@ -1200,6 +1266,8 @@ mod win {
                 TranslateMessage(&msg);
                 DispatchMessageW(&msg);
             }
+            // quit: the hub's Notes page saved and the scratchpad filed quietly (nb_page_save, nb_flush(quiet=True))
+            crate::hubw::quit();
         }
     }
 }

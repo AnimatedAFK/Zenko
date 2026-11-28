@@ -215,6 +215,11 @@ pub enum Kind {
     /// tk.Scale(orient horizontal): with a -label and -showvalue drawn above the trough in `font` / `fg`
     Scale { from: f64, to: f64, val: f64, length: i32, width: i32, slen: i32, trough: String, cmd: String, label: String,
             show: bool, font: Font, fg: String },
+    /// a tk.Listbox (relief flat, selectborderwidth 0, activestyle none): its rows with their own -fg (itemconfig),
+    /// the selection, the top row (yview), -width in characters and -height in rows; a click selects and asks for
+    /// `cmd:<row>` (a double click `cmd_open:<row>`)
+    List { items: Vec<(String, Option<String>)>, font: Font, fg: String, selbg: String, selfg: String, sel: Option<usize>,
+           top: usize, chars: i32, lines: i32, cmd: String },
 }
 
 #[derive(Clone, Debug)]
@@ -295,6 +300,7 @@ pub struct Ui {
     pub focus: Option<usize>,
     pub active: bool,
     pressed: Option<usize>,
+    dbl: bool,
     dragging: bool,
     pack_n: u64,
 }
@@ -457,6 +463,59 @@ impl Ui {
     /// width in characters); padx / pady are Tk's 4p / 3p and the indicator 4 mm + 2 x 1.7 mm on a screen of
     /// `cm10` pixels per 10 cm
     #[allow(clippy::too_many_arguments)]
+    /// tk.Listbox(parent, font, bg, fg, relief flat, highlightthickness 1, highlightbackground ring, selectbackground,
+    /// selectforeground, activestyle none, exportselection 0, width chars)
+    #[allow(clippy::too_many_arguments)]
+    pub fn listbox(&mut self, parent: usize, chars: i32, font: Font, bg: &str, fg: &str, ring: &str, selbg: &str, selfg: &str,
+                   cmd: &str) -> usize {
+        let id = self.add(Some(parent), Kind::List { items: vec![], font, fg: fg.into(), selbg: selbg.into(), selfg: selfg.into(),
+                                                     sel: None, top: 0, chars, lines: 10, cmd: cmd.into() }, bg);
+        (self.ws[id].bd, self.ws[id].hl, self.ws[id].hlc) = (1, 1, ring.into());
+        id
+    }
+
+    /// a listbox's rows that fit whole, its row height
+    pub fn list_rows(&self, fonts: &dyn Fonts, id: usize) -> (usize, i32) {
+        let w = &self.ws[id];
+        let Kind::List { font, .. } = &w.kind else { return (0, 1) };
+        let lh = fonts.linespace(font) + 1;
+        (((w.h - 2 * (w.bd + w.hl)) / lh).max(1) as usize, lh)
+    }
+
+    /// yview scroll n units, kept inside the rows
+    pub fn list_scroll(&mut self, fonts: &dyn Fonts, id: usize, n: i32) -> bool {
+        let (full, _) = self.list_rows(fonts, id);
+        let Kind::List { items, top, .. } = &mut self.ws[id].kind else { return false };
+        let max = items.len().saturating_sub(full) as i32;
+        let t = (*top as i32 + n).clamp(0, max.max(0)) as usize;
+        let ch = t != *top;
+        *top = t;
+        ch
+    }
+
+    /// see(i): the row scrolled into view
+    pub fn list_see(&mut self, fonts: &dyn Fonts, id: usize, i: usize) {
+        let (full, _) = self.list_rows(fonts, id);
+        if let Kind::List { top, items, .. } = &mut self.ws[id].kind {
+            if i < *top {
+                *top = i;
+            } else if i >= *top + full {
+                *top = (i + 1).saturating_sub(full).min(items.len().saturating_sub(full));
+            }
+        }
+    }
+
+    /// yview(): the first and last fractions shown
+    pub fn list_yview(&self, fonts: &dyn Fonts, id: usize) -> (f64, f64) {
+        let (full, _) = self.list_rows(fonts, id);
+        let Kind::List { items, top, .. } = &self.ws[id].kind else { return (0.0, 1.0) };
+        if items.is_empty() {
+            return (0.0, 1.0);
+        }
+        let n = items.len() as f64;
+        (*top as f64 / n, ((*top + full) as f64 / n).min(1.0))
+    }
+
     pub fn menubutton(&mut self, parent: usize, text: &str, cmd: &str, font: Font, bg: &str, fg: &str, ring: &str,
                       chars: i32, cm10: i32) -> usize {
         let pt = |p: f64| (p * cm10 as f64 / 100.0 * 25.4 / 72.0 + 0.5) as i32;
@@ -649,6 +708,11 @@ impl Ui {
                 (width + 2 * inset, ls + 2 * inset)
             }
             Kind::Canvas { .. } => (w.opt_w + 2 * (w.bd + w.hl), w.opt_h + 2 * (w.bd + w.hl)),
+            Kind::List { font, chars, lines, .. } => {
+                // tkListbox.c ListboxComputeGeometry: -width "0"s, -height rows of linespace + 1, the inset around
+                let inset = w.bd + w.hl;
+                (chars * fonts.width(font, "0") + 2 * inset, lines * (fonts.linespace(font) + 1) + 2 * inset)
+            }
             Kind::Text { t, .. } => t.req_size(fonts),
             Kind::Menu { text, font, ind, .. } => {
                 // tkUnixMenubu.c TkpComputeMenubuttonGeometry: -width "0"s (else the text), one line, the indicator,
@@ -1360,6 +1424,35 @@ impl Ui {
                 }
                 out.push(Draw::Clip(Some(me)));
             }
+            Kind::List { items, font, fg, selbg, selfg, sel, top, .. } => {
+                // DisplayListbox: each row from the inset down, its text at inset + selectborderwidth; the selected row
+                // filled in selectbackground across the inside
+                let inset = w.bd + w.hl;
+                if w.hl > 0 && !w.hlc.is_empty() {
+                    let ring = if self.active && self.focus == Some(id) { t.gold.clone() } else { w.hlc.clone() };
+                    for (rx, ry, rw, rh) in [(ax, ay, w.w, w.hl), (ax, ay + w.h - w.hl, w.w, w.hl), (ax, ay, w.hl, w.h),
+                                             (ax + w.w - w.hl, ay, w.hl, w.h)] {
+                        out.push(Draw::Rect { x: rx, y: ry, w: rw, h: rh, color: ring.clone() });
+                    }
+                }
+                let lh = fonts.linespace(font) + 1;
+                let inner = (x1.max(ax + inset), y1.max(ay + inset), (x2.min(ax + w.w - inset) - x1.max(ax + inset)).max(0),
+                             (y2.min(ay + w.h - inset) - y1.max(ay + inset)).max(0));
+                out.push(Draw::Clip(Some(inner)));
+                for (k, (txt, col)) in items.iter().enumerate().skip(*top) {
+                    let y = ay + inset + (k - *top) as i32 * lh;
+                    if y >= ay + w.h - inset {
+                        break;
+                    }
+                    let on = *sel == Some(k);
+                    if on {
+                        out.push(Draw::Rect { x: ax + inset, y, w: w.w - 2 * inset, h: lh, color: selbg.clone() });
+                    }
+                    let c = if on { selfg.clone() } else { col.clone().unwrap_or_else(|| fg.clone()) };
+                    out.push(Draw::Text { x: ax + inset, y, text: txt.clone(), font: font.clone(), color: c });
+                }
+                out.push(Draw::Clip(Some(me)));
+            }
             Kind::Canvas { tk: Some(cv), .. } => {
                 out.push(Draw::Tk { x: ax, y: ay, ops: crate::canvasdraw::render(cv, fonts) });
             }
@@ -1558,6 +1651,20 @@ impl Ui {
                 self.pressed = Some(i);
             }
             Kind::Check { .. } => self.pressed = Some(i),
+            Kind::List { .. } => {
+                let (_, ay) = self.abs(i);
+                let inset = self.ws[i].bd + self.ws[i].hl;
+                let (_, lh) = self.list_rows(fonts, i);
+                self.focus = Some(i);
+                if let Kind::List { items, sel, top, .. } = &mut self.ws[i].kind {
+                    let k = *top + ((y - ay - inset).max(0) / lh) as usize;
+                    if k < items.len() {
+                        *sel = Some(k);
+                        self.pressed = Some(i);
+                        self.dbl = double;
+                    }
+                }
+            }
             Kind::Text { t, .. } if t.edit.is_some() => {
                 self.focus = Some(i);
                 if let Kind::Text { t, .. } = &mut self.ws[i].kind {
@@ -1604,6 +1711,10 @@ impl Ui {
             }
         }
         let inside = ax <= x && x < ax + ww && ay <= y && y < ay + wh;
+        if let Kind::List { sel: Some(k), cmd, .. } = &self.ws[i].kind
+            && !cmd.is_empty() {
+            return Some(if self.dbl { format!("{cmd}_open:{k}") } else { format!("{cmd}:{k}") });
+        }
         if let Kind::Check { on, radio, cmd, .. } = &mut self.ws[i].kind
             && inside && !cmd.is_empty() {
             // (state="disabled" checkbuttons have no command and don't change)
