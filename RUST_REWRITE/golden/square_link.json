@@ -1,0 +1,608 @@
+{
+"steps": [
+{
+"raw": "{\"id\": \"a1\", \"time\": 1765990000, \"event\": \"open\"}",
+"msgs": [],
+"changed": 0,
+"reports": {}
+},
+{
+"raw": "{\"id\": \"a2\", \"time\": 1765990001, \"event\": \"message\", \"message\": \"{\\\"z\\\": 1, \\\"u\\\": \\\"u1\\\", \\\"n\\\": \\\"momiji\\\", \\\"t\\\": \\\"hello   there\\\\nfriend\\\"}\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+}
+],
+"changed": 1,
+"reports": {}
+},
+{
+"raw": "{\"id\": \"a3\", \"time\": 1765990002, \"event\": \"message\", \"message\": \"{\\\"z\\\": 1, \\\"u\\\": \\\"u2\\\", \\\"n\\\": \\\"x\\\", \\\"t\\\": \\\"visit www.example.com or mail me a@b.co\\\"}\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+}
+],
+"changed": 2,
+"reports": {}
+},
+{
+"raw": "{\"id\": \"a3\", \"time\": 1765990003, \"event\": \"message\", \"message\": \"{\\\"z\\\": 1, \\\"u\\\": \\\"u2\\\", \\\"n\\\": \\\"dup\\\", \\\"t\\\": \\\"again\\\"}\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+}
+],
+"changed": 2,
+"reports": {}
+},
+{
+"raw": "{\"id\": \"a4\", \"time\": 1765990004, \"event\": \"message\", \"message\": \"{\\\"z\\\": 2, \\\"u\\\": \\\"u3\\\", \\\"n\\\": \\\"old\\\", \\\"t\\\": \\\"wrong version\\\"}\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+}
+],
+"changed": 2,
+"reports": {}
+},
+{
+"raw": "{\"id\": \"a5\", \"event\": \"message\", \"message\": \"{\\\"z\\\": 1, \\\"u\\\": \\\"u3\\\", \\\"n\\\": \\\"Yuki-chan!!\\\", \\\"t\\\": \\\"what the fuck, shitty day\\\", \\\"a\\\": {\\\"y\\\": 13, \\\"m\\\": 1, \\\"h\\\": -2}}\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+},
+{
+"id": "a5",
+"uid": "u3",
+"name": "Yuki-chan",
+"text": "what the f***, shitty day",
+"ts": 1766000000.0,
+"look": {
+"y": 3,
+"m": true,
+"h": 4
+}
+}
+],
+"changed": 3,
+"reports": {}
+},
+{
+"raw": "{\"id\": \"a6\", \"time\": \"1765990006\", \"event\": \"message\", \"message\": \"{\\\"z\\\": 1, \\\"u\\\": \\\"u4\\\", \\\"n\\\": \\\"tanuki_7\\\", \\\"t\\\": \\\"   \\\"}\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+},
+{
+"id": "a5",
+"uid": "u3",
+"name": "Yuki-chan",
+"text": "what the f***, shitty day",
+"ts": 1766000000.0,
+"look": {
+"y": 3,
+"m": true,
+"h": 4
+}
+}
+],
+"changed": 3,
+"reports": {}
+},
+{
+"raw": "{\"id\": \"a7\", \"time\": 1765990007, \"event\": \"message\", \"message\": \"{\\\"z\\\": 1, \\\"rep\\\": \\\"a2\\\", \\\"by\\\": \\\"u9\\\"}\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+},
+{
+"id": "a5",
+"uid": "u3",
+"name": "Yuki-chan",
+"text": "what the f***, shitty day",
+"ts": 1766000000.0,
+"look": {
+"y": 3,
+"m": true,
+"h": 4
+}
+}
+],
+"changed": 4,
+"reports": {
+"a2": [
+"u9"
+]
+}
+},
+{
+"raw": "{\"id\": \"a8\", \"time\": 1765990008, \"event\": \"message\", \"message\": \"{\\\"z\\\": 1, \\\"rep\\\": \\\"a2\\\", \\\"by\\\": \\\"u8\\\"}\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+},
+{
+"id": "a5",
+"uid": "u3",
+"name": "Yuki-chan",
+"text": "what the f***, shitty day",
+"ts": 1766000000.0,
+"look": {
+"y": 3,
+"m": true,
+"h": 4
+}
+}
+],
+"changed": 5,
+"reports": {
+"a2": [
+"u8",
+"u9"
+]
+}
+},
+{
+"raw": "{\"id\": \"a9\", \"time\": 1765990009, \"event\": \"message\", \"message\": \"{\\\"z\\\": 1, \\\"rep\\\": \\\"a2\\\", \\\"by\\\": \\\"u8\\\"}\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+},
+{
+"id": "a5",
+"uid": "u3",
+"name": "Yuki-chan",
+"text": "what the f***, shitty day",
+"ts": 1766000000.0,
+"look": {
+"y": 3,
+"m": true,
+"h": 4
+}
+}
+],
+"changed": 6,
+"reports": {
+"a2": [
+"u8",
+"u9"
+]
+}
+},
+{
+"raw": "not json at all",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+},
+{
+"id": "a5",
+"uid": "u3",
+"name": "Yuki-chan",
+"text": "what the f***, shitty day",
+"ts": 1766000000.0,
+"look": {
+"y": 3,
+"m": true,
+"h": 4
+}
+}
+],
+"changed": 6,
+"reports": {
+"a2": [
+"u8",
+"u9"
+]
+}
+},
+{
+"raw": "{\"id\": \"b1\", \"time\": 1765990010, \"event\": \"message\", \"message\": \"plain text\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+},
+{
+"id": "a5",
+"uid": "u3",
+"name": "Yuki-chan",
+"text": "what the f***, shitty day",
+"ts": 1766000000.0,
+"look": {
+"y": 3,
+"m": true,
+"h": 4
+}
+}
+],
+"changed": 6,
+"reports": {
+"a2": [
+"u8",
+"u9"
+]
+}
+},
+{
+"raw": "{\"id\": \"b2\", \"time\": 1765990011, \"event\": \"message\", \"message\": \"{\\\"z\\\": 1, \\\"u\\\": \\\"u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5\\\", \\\"n\\\": \\\"Kitsune\\\", \\\"t\\\": \\\"call +1 (555) 123-4567 ok\\\", \\\"a\\\": {\\\"y\\\": \\\"2\\\", \\\"m\\\": 0, \\\"h\\\": 3}}\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+},
+{
+"id": "a5",
+"uid": "u3",
+"name": "Yuki-chan",
+"text": "what the f***, shitty day",
+"ts": 1766000000.0,
+"look": {
+"y": 3,
+"m": true,
+"h": 4
+}
+},
+{
+"id": "b2",
+"uid": "u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5",
+"name": "Kitsune",
+"text": "call [removed] ok",
+"ts": 1765990011.0,
+"look": {
+"y": 2,
+"m": false,
+"h": 3
+}
+}
+],
+"changed": 7,
+"reports": {
+"a2": [
+"u8",
+"u9"
+]
+}
+},
+{
+"raw": "{\"id\": \"b3\", \"time\": 1765990012, \"event\": \"message\", \"message\": \"{\\\"z\\\": 1, \\\"rep\\\": \\\"a3\\\", \\\"by\\\": \\\"u1\\\"}\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+},
+{
+"id": "a5",
+"uid": "u3",
+"name": "Yuki-chan",
+"text": "what the f***, shitty day",
+"ts": 1766000000.0,
+"look": {
+"y": 3,
+"m": true,
+"h": 4
+}
+},
+{
+"id": "b2",
+"uid": "u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5",
+"name": "Kitsune",
+"text": "call [removed] ok",
+"ts": 1765990011.0,
+"look": {
+"y": 2,
+"m": false,
+"h": 3
+}
+}
+],
+"changed": 8,
+"reports": {
+"a2": [
+"u8",
+"u9"
+],
+"a3": [
+"u1"
+]
+}
+},
+{
+"raw": "{\"id\": \"b4\", \"time\": 1765990013, \"event\": \"message\", \"message\": \"{\\\"z\\\": 1, \\\"u\\\": \\\"u6\\\", \\\"n\\\": \\\"\\\\u00dcn\\\\u00efcode\\\", \\\"t\\\": \\\"caf\\\\u00e9 \\\\u2615 add me on snap: foxy99\\\", \\\"a\\\": \\\"nope\\\"}\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+},
+{
+"id": "a5",
+"uid": "u3",
+"name": "Yuki-chan",
+"text": "what the f***, shitty day",
+"ts": 1766000000.0,
+"look": {
+"y": 3,
+"m": true,
+"h": 4
+}
+},
+{
+"id": "b2",
+"uid": "u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5",
+"name": "Kitsune",
+"text": "call [removed] ok",
+"ts": 1765990011.0,
+"look": {
+"y": 2,
+"m": false,
+"h": 3
+}
+},
+{
+"id": "b4",
+"uid": "u6",
+"name": "ncode",
+"text": "caf\u00e9 \u2615 add me on [removed]",
+"ts": 1765990013.0
+}
+],
+"changed": 9,
+"reports": {
+"a2": [
+"u8",
+"u9"
+],
+"a3": [
+"u1"
+]
+}
+},
+{
+"raw": "{\"id\": \"b5\", \"time\": 1765990014, \"event\": \"message\", \"message\": \"{\\\"z\\\": 1, \\\"rep\\\": \\\"a2\\\", \\\"by\\\": \\\"u7\\\"}\"}",
+"msgs": [
+{
+"id": "a2",
+"uid": "u1",
+"name": "momiji",
+"text": "hello there friend",
+"ts": 1765990001.0
+},
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+},
+{
+"id": "a5",
+"uid": "u3",
+"name": "Yuki-chan",
+"text": "what the f***, shitty day",
+"ts": 1766000000.0,
+"look": {
+"y": 3,
+"m": true,
+"h": 4
+}
+},
+{
+"id": "b2",
+"uid": "u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5",
+"name": "Kitsune",
+"text": "call [removed] ok",
+"ts": 1765990011.0,
+"look": {
+"y": 2,
+"m": false,
+"h": 3
+}
+},
+{
+"id": "b4",
+"uid": "u6",
+"name": "ncode",
+"text": "caf\u00e9 \u2615 add me on [removed]",
+"ts": 1765990013.0
+}
+],
+"changed": 10,
+"reports": {
+"a2": [
+"u7",
+"u8",
+"u9"
+],
+"a3": [
+"u1"
+]
+}
+}
+],
+"visible": [
+{
+"id": "a3",
+"uid": "u2",
+"name": "fox",
+"text": "visit [removed] or mail me [removed]",
+"ts": 1765990002.0
+},
+{
+"id": "b2",
+"uid": "u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5u5",
+"name": "Kitsune",
+"text": "call [removed] ok",
+"ts": 1765990011.0,
+"look": {
+"y": 2,
+"m": false,
+"h": 3
+}
+},
+{
+"id": "b4",
+"uid": "u6",
+"name": "ncode",
+"text": "caf\u00e9 \u2615 add me on [removed]",
+"ts": 1765990013.0
+}
+],
+"posts": [
+[
+"https://ntfy.sh/zenko_town_square_v1_7f3c1a",
+"{\"z\": 1, \"u\": \"me1\", \"n\": \"Kitsune\", \"t\": \"hi\"}"
+],
+[
+"https://ntfy.sh/zenko_town_square_v1_7f3c1a",
+"{\"z\": 1, \"u\": \"me1\", \"n\": \"Kitsune\", \"t\": \"kon kon \\u00e9\\u2603\", \"a\": {\"y\": 4, \"m\": true, \"h\": 0}}"
+],
+[
+"https://ntfy.sh/zenko_town_square_v1_7f3c1a_reports",
+"{\"z\": 1, \"u\": \"me1\", \"rep\": \"a3\", \"by\": \"me1\"}"
+]
+]
+}

@@ -1,0 +1,327 @@
+{
+"rules": [
+{
+"site": "YouTube",
+"words": "bio, cell, khan",
+"do": "keep"
+},
+{
+"site": "Reddit",
+"words": "",
+"do": "close"
+},
+{
+"site": "Any site or app",
+"words": "chess",
+"do": "close"
+},
+{
+"site": "X / Twitter",
+"words": "",
+"do": "close",
+"on": false
+}
+],
+"cases": [
+{
+"title": "Mitosis and Meiosis explained - IB Biology - YouTube - Google Chrome",
+"sv": "bio",
+"cls": [
+"bio",
+6,
+0
+],
+"rule": "keep",
+"rule_i": 0,
+"key": "mitosis and meiosis explained - ib biology - youtube"
+},
+{
+"title": "(3) Le Chatelier's principle | Equilibrium | Chemistry - YouTube - Microsoft​ Edge",
+"sv": "chem",
+"cls": [
+"chem",
+6,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "le chatelier's principle | equilibrium | chemistry - youtube - microso"
+},
+{
+"title": "funny cat memes compilation - YouTube - Google Chrome",
+"sv": null,
+"cls": [
+null,
+0,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "funny cat memes compilation - youtube"
+},
+{
+"title": "YouTube - Google Chrome",
+"sv": null,
+"cls": [
+null,
+0,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "youtube"
+},
+{
+"title": "Home - YouTube",
+"sv": null,
+"cls": [
+null,
+0,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "home - youtube"
+},
+{
+"title": "Minecraft let's play episode 4 - YouTube",
+"sv": null,
+"cls": [
+"english",
+1,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "minecraft let's play episode # - youtube"
+},
+{
+"title": "Integration by parts - worked example - YouTube - Mozilla Firefox",
+"sv": "math",
+"cls": [
+"math",
+1,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "integration by parts - worked example - youtube"
+},
+{
+"title": "Passé composé vs imparfait | French lesson - YouTube",
+"sv": "french",
+"cls": [
+"french",
+6,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "passé composé vs imparfait | french lesson - youtube"
+},
+{
+"title": "Hamlet analysis - Act 1 - YouTube - Brave",
+"sv": "english",
+"cls": [
+"english",
+1,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "hamlet analysis - act # - youtube"
+},
+{
+"title": "Milgram obedience study - IB Psychology - YouTube",
+"sv": "psych",
+"cls": [
+"psych",
+10,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "milgram obedience study - ib psychology - youtube"
+},
+{
+"title": "lofi hip hop radio - beats to relax/study to - YouTube",
+"sv": null,
+"cls": [
+null,
+0,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "lofi hip hop radio - beats to relax/study to - youtube"
+},
+{
+"title": "Krebs cycles in 5 minutes - YouTube",
+"sv": "bio",
+"cls": [
+"bio",
+1,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "krebs cycles in # minutes - youtube"
+},
+{
+"title": "The heart - YouTube",
+"sv": null,
+"cls": [
+"bio",
+1,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "the heart - youtube"
+},
+{
+"title": "heart and blood explained - YouTube",
+"sv": "bio",
+"cls": [
+"bio",
+2,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "heart and blood explained - youtube"
+},
+{
+"title": "Taylor Swift - Anti-Hero (Official Music Video) - YouTube",
+"sv": null,
+"cls": [
+null,
+0,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "taylor swift - anti-hero (official music video) - youtube"
+},
+{
+"title": "Cells cells cells lesson - YouTube",
+"sv": "bio",
+"cls": [
+"bio",
+1,
+0
+],
+"rule": "keep",
+"rule_i": 0,
+"key": "cells cells cells lesson - youtube"
+},
+{
+"title": "Organic chemistry tutor: SN1 vs SN2 - YouTube",
+"sv": "chem",
+"cls": [
+"chem",
+5,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "organic chemistry tutor: sn# vs sn# - youtube"
+},
+{
+"title": "dna's structure - YouTube",
+"sv": "bio",
+"cls": [
+"bio",
+1,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "dna's structure - youtube"
+},
+{
+"title": "x-ray of the lungs - YouTube",
+"sv": null,
+"cls": [
+null,
+0,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "x-ray of the lungs - youtube"
+},
+{
+"title": "Reddit - Dive into anything - Google Chrome",
+"sv": null,
+"cls": [
+null,
+0,
+0
+],
+"rule": "close",
+"rule_i": 1,
+"key": "reddit - dive into anything"
+},
+{
+"title": "Netflix",
+"sv": null,
+"cls": [
+null,
+0,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "netflix"
+},
+{
+"title": "Untitled document - Google Docs - Google Chrome",
+"sv": null,
+"cls": [
+null,
+0,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "untitled document - google docs"
+},
+{
+"title": "Chess.com - Play Chess Online",
+"sv": null,
+"cls": [
+"english",
+1,
+0
+],
+"rule": "close",
+"rule_i": 2,
+"key": "chess.com - play chess online"
+},
+{
+"title": "Home / X",
+"sv": null,
+"cls": [
+null,
+0,
+0
+],
+"rule": null,
+"rule_i": -1,
+"key": "home / x"
+},
+{
+"title": "khan academy cell biology - YouTube",
+"sv": "bio",
+"cls": [
+"bio",
+5,
+0
+],
+"rule": "keep",
+"rule_i": 0,
+"key": "khan academy cell biology - youtube"
+}
+]
+}

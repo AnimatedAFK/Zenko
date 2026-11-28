@@ -1,0 +1,3107 @@
+{
+"md": [
+{
+"text": "Hi! Type 'help' to see what I can do.",
+"segs": [
+[
+"Hi! Type 'help' to see what I can do.",
+[
+"fox"
+]
+]
+],
+"plain": "Hi! Type 'help' to see what I can do."
+},
+{
+"text": "## Osmosis\nOsmosis is the **net movement** of *water molecules* across a **partially permeable membrane**.\n- Water moves down its gradient\n- Solutes cannot cross\n  - nested point here\n\t- tab nested\n      - deep\n        - deeper\n1. First\n2) Second\na. letter item\n> A quote with **bold** inside\n>no space quote\nUse `inline code` and ``double `tick` code`` and a [link](https://example.com/a?b=1) plus H~2~O and x^2^ too.\n```python\ndef f(x):\n    return x * 2\n```\n| a | b | long header |\n|:--|--:|---|\n| 1 | **2** | `c` |\n| only one |\nend",
+"segs": [
+[
+"Osmosis",
+[
+"fox",
+"md_h2"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"Osmosis is the ",
+[
+"fox"
+]
+],
+[
+"net movement",
+[
+"fox",
+"md_b"
+]
+],
+[
+" of ",
+[
+"fox"
+]
+],
+[
+"water molecules",
+[
+"fox",
+"md_i"
+]
+],
+[
+" across a ",
+[
+"fox"
+]
+],
+[
+"partially permeable membrane",
+[
+"fox",
+"md_b"
+]
+],
+[
+".",
+[
+"fox"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"• ",
+[
+"fox",
+"md_li0",
+"md_bullet"
+]
+],
+[
+"Water moves down its gradient",
+[
+"fox",
+"md_li0"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"• ",
+[
+"fox",
+"md_li0",
+"md_bullet"
+]
+],
+[
+"Solutes cannot cross",
+[
+"fox",
+"md_li0"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"◦ ",
+[
+"fox",
+"md_li1",
+"md_bullet"
+]
+],
+[
+"nested point here",
+[
+"fox",
+"md_li1"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"▪ ",
+[
+"fox",
+"md_li2",
+"md_bullet"
+]
+],
+[
+"tab nested",
+[
+"fox",
+"md_li2"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"▫ ",
+[
+"fox",
+"md_li3",
+"md_bullet"
+]
+],
+[
+"deep",
+[
+"fox",
+"md_li3"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"▫ ",
+[
+"fox",
+"md_li3",
+"md_bullet"
+]
+],
+[
+"deeper",
+[
+"fox",
+"md_li3"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"1. ",
+[
+"fox",
+"md_li0",
+"md_num"
+]
+],
+[
+"First",
+[
+"fox",
+"md_li0"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"2) ",
+[
+"fox",
+"md_li0",
+"md_num"
+]
+],
+[
+"Second",
+[
+"fox",
+"md_li0"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"a. ",
+[
+"fox",
+"md_li0",
+"md_num"
+]
+],
+[
+"letter item",
+[
+"fox",
+"md_li0"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"▎ ",
+[
+"fox",
+"md_quote"
+]
+],
+[
+"A quote with ",
+[
+"fox",
+"md_quote"
+]
+],
+[
+"bold",
+[
+"fox",
+"md_quote",
+"md_b"
+]
+],
+[
+" inside",
+[
+"fox",
+"md_quote"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"▎ ",
+[
+"fox",
+"md_quote"
+]
+],
+[
+"no space quote",
+[
+"fox",
+"md_quote"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"Use ",
+[
+"fox"
+]
+],
+[
+"inline code",
+[
+"fox",
+"md_code"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"double `tick` code",
+[
+"fox",
+"md_code"
+]
+],
+[
+" and a ",
+[
+"fox"
+]
+],
+[
+"link",
+[
+"fox",
+"md_link",
+"url:https://example.com/a?b=1"
+]
+],
+[
+" plus H~2~O and x",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox",
+"md_sup"
+]
+],
+[
+"^ too.",
+[
+"fox"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"def f(x):\n    return x * 2\n",
+[
+"fox",
+"md_pre"
+]
+],
+[
+"  a         │  b  │  long header\n",
+[
+"fox",
+"md_th"
+]
+],
+[
+"  ──────────┼─────┼─────────────\n",
+[
+"fox",
+"md_table"
+]
+],
+[
+"  1         │  2  │  c          \n",
+[
+"fox",
+"md_table"
+]
+],
+[
+"  only one  │     │             \n",
+[
+"fox",
+"md_table"
+]
+],
+[
+"end",
+[
+"fox"
+]
+]
+],
+"plain": "Osmosis\nOsmosis is the net movement of water molecules across a partially permeable membrane.\n• Water moves down its gradient\n• Solutes cannot cross\n◦ nested point here\n▪ tab nested\n▫ deep\n▫ deeper\n1. First\n2) Second\na. letter item\n▎ A quote with bold inside\n▎ no space quote\nUse inline code and double `tick` code and a link plus H~2~O and x²^ too.\ndef f(x):\n    return x * 2\n  a         │  b  │  long header\n  ──────────┼─────┼─────────────\n  1         │  2  │  c          \n  only one  │     │             \nend"
+},
+{
+"text": "The value is $x^2 + \\frac{1}{2}$, and ~~wrong~~ right: ***both*** work.\n### Small heading ###\n---\n* * *\n___\nDone~",
+"segs": [
+[
+"The value is ",
+[
+"fox"
+]
+],
+[
+"x",
+[
+"fox",
+"md_math"
+]
+],
+[
+"2",
+[
+"fox",
+"md_math",
+"md_sup"
+]
+],
+[
+" + ",
+[
+"fox",
+"md_math"
+]
+],
+[
+"1",
+[
+"fox",
+"md_math"
+]
+],
+[
+"/",
+[
+"fox",
+"md_math"
+]
+],
+[
+"2",
+[
+"fox",
+"md_math"
+]
+],
+[
+", and ",
+[
+"fox"
+]
+],
+[
+"wrong",
+[
+"fox",
+"md_s"
+]
+],
+[
+" right: ",
+[
+"fox"
+]
+],
+[
+"both",
+[
+"fox",
+"md_bi"
+]
+],
+[
+" work.",
+[
+"fox"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"Small heading",
+[
+"fox",
+"md_h3"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"──────────────────────────────\n",
+[
+"fox",
+"md_hr"
+]
+],
+[
+"──────────────────────────────\n",
+[
+"fox",
+"md_hr"
+]
+],
+[
+"──────────────────────────────\n",
+[
+"fox",
+"md_hr"
+]
+],
+[
+"Done~",
+[
+"fox"
+]
+]
+],
+"plain": "The value is x² + 1/2, and wrong right: both work.\nSmall heading\n──────────────────────────────\n──────────────────────────────\n──────────────────────────────\nDone~"
+},
+{
+"text": "$$\n\\int_0^1 x^2\\,dx = \\frac{1}{3}\n$$\nand $$E = mc^2$$ inline, \\(a+b\\) and \\[c^{2}\\] forms.",
+"segs": [
+[
+"    ",
+[
+"fox"
+]
+],
+[
+"∫",
+[
+"fox",
+"md_math"
+]
+],
+[
+"0",
+[
+"fox",
+"md_math",
+"md_sub"
+]
+],
+[
+"1",
+[
+"fox",
+"md_math",
+"md_sup"
+]
+],
+[
+" x",
+[
+"fox",
+"md_math"
+]
+],
+[
+"2",
+[
+"fox",
+"md_math",
+"md_sup"
+]
+],
+[
+" dx = ",
+[
+"fox",
+"md_math"
+]
+],
+[
+"1",
+[
+"fox",
+"md_math"
+]
+],
+[
+"/",
+[
+"fox",
+"md_math"
+]
+],
+[
+"3",
+[
+"fox",
+"md_math"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"and ",
+[
+"fox"
+]
+],
+[
+"E = mc",
+[
+"fox",
+"md_math"
+]
+],
+[
+"2",
+[
+"fox",
+"md_math",
+"md_sup"
+]
+],
+[
+" inline, ",
+[
+"fox"
+]
+],
+[
+"a+b",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"c",
+[
+"fox",
+"md_math"
+]
+],
+[
+"2",
+[
+"fox",
+"md_math",
+"md_sup"
+]
+],
+[
+" forms.",
+[
+"fox"
+]
+]
+],
+"plain": "    ∫₀¹ x² dx = 1/3\nand E = mc² inline, a+b and c² forms."
+},
+{
+"text": "$$ \\sum_{n=1}^{\\infty} \\frac{1}{n^2} = \\frac{\\pi^2}{6}",
+"segs": [
+[
+"    ",
+[
+"fox"
+]
+],
+[
+"Σ",
+[
+"fox",
+"md_math"
+]
+],
+[
+"n=1",
+[
+"fox",
+"md_math",
+"md_sub"
+]
+],
+[
+"∞",
+[
+"fox",
+"md_math",
+"md_sup"
+]
+],
+[
+" ",
+[
+"fox",
+"md_math"
+]
+],
+[
+"1",
+[
+"fox",
+"md_math"
+]
+],
+[
+"/",
+[
+"fox",
+"md_math"
+]
+],
+[
+"(n",
+[
+"fox",
+"md_math"
+]
+],
+[
+"2",
+[
+"fox",
+"md_math",
+"md_sup"
+]
+],
+[
+")",
+[
+"fox",
+"md_math"
+]
+],
+[
+" = ",
+[
+"fox",
+"md_math"
+]
+],
+[
+"(π",
+[
+"fox",
+"md_math"
+]
+],
+[
+"2",
+[
+"fox",
+"md_math",
+"md_sup"
+]
+],
+[
+")",
+[
+"fox",
+"md_math"
+]
+],
+[
+"/",
+[
+"fox",
+"md_math"
+]
+],
+[
+"6",
+[
+"fox",
+"md_math"
+]
+]
+],
+"plain": "    Σn₌₁∞ 1/(n²) = (π²)/6"
+},
+{
+"text": "Chemistry: \\ce{H2SO4 + 2NaOH -> Na2SO4 + 2H2O} and \\ce{Fe^{3+}} and \\ce{CO3^2-} and \\ce{N2 + 3H2 <=> 2NH3}.",
+"segs": [
+[
+"Chemistry: ",
+[
+"fox"
+]
+],
+[
+"H",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox",
+"md_sub"
+]
+],
+[
+"SO",
+[
+"fox"
+]
+],
+[
+"4",
+[
+"fox",
+"md_sub"
+]
+],
+[
+" + ",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox"
+]
+],
+[
+"NaOH → Na",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox",
+"md_sub"
+]
+],
+[
+"SO",
+[
+"fox"
+]
+],
+[
+"4",
+[
+"fox",
+"md_sub"
+]
+],
+[
+" + ",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox"
+]
+],
+[
+"H",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox",
+"md_sub"
+]
+],
+[
+"O",
+[
+"fox"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"Fe",
+[
+"fox"
+]
+],
+[
+"3+",
+[
+"fox",
+"md_sup"
+]
+],
+[
+"} and ",
+[
+"fox"
+]
+],
+[
+"CO",
+[
+"fox"
+]
+],
+[
+"3",
+[
+"fox",
+"md_sub"
+]
+],
+[
+"2-",
+[
+"fox",
+"md_sup"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"N",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox",
+"md_sub"
+]
+],
+[
+" + ",
+[
+"fox"
+]
+],
+[
+"3",
+[
+"fox"
+]
+],
+[
+"H",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox",
+"md_sub"
+]
+],
+[
+" ⇌ ",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox"
+]
+],
+[
+"NH",
+[
+"fox"
+]
+],
+[
+"3",
+[
+"fox",
+"md_sub"
+]
+],
+[
+".",
+[
+"fox"
+]
+]
+],
+"plain": "Chemistry: H₂SO₄ + 2NaOH → Na₂SO₄ + 2H₂O and Fe³⁺} and CO₃²⁻ and N₂ + 3H₂ ⇌ 2NH₃."
+},
+{
+"text": "Bare LaTeX: \\frac{a+b}{c} and \\sqrt[3]{x} and \\sqrt{2} with \\alpha \\beta \\Delta H = -286 kJ",
+"segs": [
+[
+"Bare LaTeX: ",
+[
+"fox"
+]
+],
+[
+"(a+b)",
+[
+"fox"
+]
+],
+[
+"/",
+[
+"fox"
+]
+],
+[
+"c",
+[
+"fox"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"³",
+[
+"fox"
+]
+],
+[
+"√(",
+[
+"fox"
+]
+],
+[
+"x",
+[
+"fox"
+]
+],
+[
+")",
+[
+"fox"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"√(",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox"
+]
+],
+[
+")",
+[
+"fox"
+]
+],
+[
+" with α β ΔH = -286 kJ",
+[
+"fox"
+]
+]
+],
+"plain": "Bare LaTeX: (a+b)/c and ³√(x) and √(2) with α β ΔH = -286 kJ"
+},
+{
+"text": "Matrix $\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix}$ and cases $f(x) = \\begin{cases} x & x>0 \\\\ -x & x\\le 0 \\end{cases}$",
+"segs": [
+[
+"Matrix ",
+[
+"fox"
+]
+],
+[
+"(1, 2; 3, 4)",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and cases ",
+[
+"fox"
+]
+],
+[
+"f(x) =  x, x>0;  -x, x≤ 0 ",
+[
+"fox",
+"md_math"
+]
+]
+],
+"plain": "Matrix (1, 2; 3, 4) and cases f(x) =  x, x>0;  -x, x≤ 0 "
+},
+{
+"text": "Binomial $\\binom{n}{k}$, colour $\\color{red}{x+1}$, text $\\text{if } x \\in \\mathbb{R}$, $\\vec{v}$ and $\\hat{x}$, $\\bar{x}$",
+"segs": [
+[
+"Binomial ",
+[
+"fox"
+]
+],
+[
+"(",
+[
+"fox",
+"md_math"
+]
+],
+[
+"n",
+[
+"fox",
+"md_math"
+]
+],
+[
+" C ",
+[
+"fox",
+"md_math"
+]
+],
+[
+"k",
+[
+"fox",
+"md_math"
+]
+],
+[
+")",
+[
+"fox",
+"md_math"
+]
+],
+[
+", colour ",
+[
+"fox"
+]
+],
+[
+"x+1",
+[
+"fox",
+"md_math"
+]
+],
+[
+", text ",
+[
+"fox"
+]
+],
+[
+"if ",
+[
+"fox",
+"md_math"
+]
+],
+[
+" x ∈ ℝ",
+[
+"fox",
+"md_math"
+]
+],
+[
+", ",
+[
+"fox"
+]
+],
+[
+"v⃗",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"x̂",
+[
+"fox",
+"md_math"
+]
+],
+[
+", ",
+[
+"fox"
+]
+],
+[
+"x̄",
+[
+"fox",
+"md_math"
+]
+]
+],
+"plain": "Binomial (n C k), colour x+1, text if  x ∈ ℝ, v⃗ and x̂, x̄"
+},
+{
+"text": "Angles: $30^\\circ$ and $x^o$ and $\\dot{x}$, $\\left( \\frac{1}{2} \\right)$, $\\left. x \\right|$ and $a \\, b \\; c \\! d$",
+"segs": [
+[
+"Angles: ",
+[
+"fox"
+]
+],
+[
+"30",
+[
+"fox",
+"md_math"
+]
+],
+[
+"°",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"x",
+[
+"fox",
+"md_math"
+]
+],
+[
+"°",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"ẋ",
+[
+"fox",
+"md_math"
+]
+],
+[
+", ",
+[
+"fox"
+]
+],
+[
+"( ",
+[
+"fox",
+"md_math"
+]
+],
+[
+"1",
+[
+"fox",
+"md_math"
+]
+],
+[
+"/",
+[
+"fox",
+"md_math"
+]
+],
+[
+"2",
+[
+"fox",
+"md_math"
+]
+],
+[
+" )",
+[
+"fox",
+"md_math"
+]
+],
+[
+", ",
+[
+"fox"
+]
+],
+[
+" x |",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"a   b   c   d",
+[
+"fox",
+"md_math"
+]
+]
+],
+"plain": "Angles: 30° and x° and ẋ, ( 1/2 ),  x | and a   b   c   d"
+},
+{
+"text": "Escapes: $\\{1,2\\}$ and $50\\%$ and $\\$5$ cost $5 and $10 later; price is $3.50 not math",
+"segs": [
+[
+"Escapes: ",
+[
+"fox"
+]
+],
+[
+"{1,2}",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"50%",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and \\$5 cost $5 and $10 later; price is $3.50 not math",
+[
+"fox"
+]
+]
+],
+"plain": "Escapes: {1,2} and 50% and \\$5 cost $5 and $10 later; price is $3.50 not math"
+},
+{
+"text": "Subs: x_{n+1} = x_n^2 and a_1 + CO_2 and e^{i\\pi} + 1 = 0 and 10^{-3} and 2^10 and k^+ ions and n^2",
+"segs": [
+[
+"Subs: x",
+[
+"fox"
+]
+],
+[
+"n+1",
+[
+"fox",
+"md_sub"
+]
+],
+[
+" = x_n",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox",
+"md_sup"
+]
+],
+[
+" and a_1 + CO_2 and e",
+[
+"fox"
+]
+],
+[
+"iπ",
+[
+"fox",
+"md_sup"
+]
+],
+[
+" + 1 = 0 and 10",
+[
+"fox"
+]
+],
+[
+"-3",
+[
+"fox",
+"md_sup"
+]
+],
+[
+" and 2",
+[
+"fox"
+]
+],
+[
+"10",
+[
+"fox",
+"md_sup"
+]
+],
+[
+" and k",
+[
+"fox"
+]
+],
+[
+"+",
+[
+"fox",
+"md_sup"
+]
+],
+[
+" ions and n",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox",
+"md_sup"
+]
+]
+],
+"plain": "Subs: xn₊₁ = x_n² and a_1 + CO_2 and eiπ + 1 = 0 and 10⁻³ and 2¹⁰ and k⁺ ions and n²"
+},
+{
+"text": "Stray marks: ****word**** and a lone ** here and *unclosed and __under__ and _it_ and snake_case_name ok",
+"segs": [
+[
+"Stray marks: ",
+[
+"fox"
+]
+],
+[
+"word",
+[
+"fox",
+"md_b"
+]
+],
+[
+" and a lone  here and *unclosed and ",
+[
+"fox"
+]
+],
+[
+"under",
+[
+"fox",
+"md_b"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"it",
+[
+"fox",
+"md_i"
+]
+],
+[
+" and snake_case_name ok",
+[
+"fox"
+]
+]
+],
+"plain": "Stray marks: word and a lone  here and *unclosed and under and it and snake_case_name ok"
+},
+{
+"text": "HTML: <sup>2</sup> and <sub>3</sub> and <b>bold</b> and <i>it</i> line<br>break<br/>again<br />end",
+"segs": [
+[
+"HTML: ",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox",
+"md_sup"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"3",
+[
+"fox",
+"md_sub"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"bold",
+[
+"fox",
+"md_b"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"it",
+[
+"fox",
+"md_i"
+]
+],
+[
+" line",
+[
+"fox"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"break",
+[
+"fox"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"again",
+[
+"fox"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"end",
+[
+"fox"
+]
+]
+],
+"plain": "HTML: ² and ₃ and bold and it line\nbreak\nagain\nend"
+},
+{
+"text": "JSON mangled: \frac{1}{2} and \times 3 and \theta and \rightarrow and \beta",
+"segs": [
+[
+"JSON mangled: ",
+[
+"fox"
+]
+],
+[
+"1",
+[
+"fox"
+]
+],
+[
+"/",
+[
+"fox"
+]
+],
+[
+"2",
+[
+"fox"
+]
+],
+[
+" and × 3 and θ and → and β",
+[
+"fox"
+]
+]
+],
+"plain": "JSON mangled: 1/2 and × 3 and θ and → and β"
+},
+{
+"text": "Nested: **bold with *italic* inside** and *italic with **bold** inside* and # not heading\n#also not\n####### seven",
+"segs": [
+[
+"Nested: ",
+[
+"fox"
+]
+],
+[
+"bold with ",
+[
+"fox",
+"md_b"
+]
+],
+[
+"italic",
+[
+"fox",
+"md_bi"
+]
+],
+[
+" inside",
+[
+"fox",
+"md_b"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"italic with ",
+[
+"fox",
+"md_i"
+]
+],
+[
+"bold",
+[
+"fox",
+"md_bi"
+]
+],
+[
+" inside",
+[
+"fox",
+"md_i"
+]
+],
+[
+" and # not heading",
+[
+"fox"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"#also not",
+[
+"fox"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"####### seven",
+[
+"fox"
+]
+]
+],
+"plain": "Nested: bold with italic inside and italic with bold inside and # not heading\n#also not\n####### seven"
+},
+{
+"text": "Table only\n| x | y |\n| - | - |\n| 1 | 2 |",
+"segs": [
+[
+"Table only",
+[
+"fox"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"  x  │  y\n",
+[
+"fox",
+"md_th"
+]
+],
+[
+"  ───┼───\n",
+[
+"fox",
+"md_table"
+]
+],
+[
+"  1  │  2\n",
+[
+"fox",
+"md_table"
+]
+]
+],
+"plain": "Table only\n  x  │  y\n  ───┼───\n  1  │  2\n"
+},
+{
+"text": "| unicode | ✓ |\n|---|---|\n| wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww | short |",
+"segs": [
+[
+"  unicode                                   │  ✓    \n",
+[
+"fox",
+"md_th"
+]
+],
+[
+"  ──────────────────────────────────────────┼───────\n",
+[
+"fox",
+"md_table"
+]
+],
+[
+"  wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww…  │  short\n",
+[
+"fox",
+"md_table"
+]
+]
+],
+"plain": "  unicode                                   │  ✓    \n  ──────────────────────────────────────────┼───────\n  wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww…  │  short\n"
+},
+{
+"text": "Code unclosed\n```\nprint(1)\nstill code",
+"segs": [
+[
+"Code unclosed",
+[
+"fox"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"print(1)\nstill code\n",
+[
+"fox",
+"md_pre"
+]
+]
+],
+"plain": "Code unclosed\nprint(1)\nstill code\n"
+},
+{
+"text": "trailing newlines\n\n\n",
+"segs": [
+[
+"trailing newlines",
+[
+"fox"
+]
+]
+],
+"plain": "trailing newlines"
+},
+{
+"text": "Text with \\\\ newline in math $a \\\\ b$ and \\begin{aligned} x &= 1 \\\\ y &= 2 \\end{aligned}",
+"segs": [
+[
+"Text with \\\\ newline in math ",
+[
+"fox"
+]
+],
+[
+"a \n b",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and  x  = 1 \n y  = 2 \n",
+[
+"fox"
+]
+]
+],
+"plain": "Text with \\\\ newline in math a \n b and  x  = 1 \n y  = 2 \n"
+},
+{
+"text": "Greek spacing: $\\Delta H$ and $\\Delta  T$ and $\\pi r^2$ and $\\lambda x$ and $\\sigma_x$",
+"segs": [
+[
+"Greek spacing: ",
+[
+"fox"
+]
+],
+[
+"ΔH",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"ΔT",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"πr",
+[
+"fox",
+"md_math"
+]
+],
+[
+"2",
+[
+"fox",
+"md_math",
+"md_sup"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"λx",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"σ",
+[
+"fox",
+"md_math"
+]
+],
+[
+"x",
+[
+"fox",
+"md_math",
+"md_sub"
+]
+]
+],
+"plain": "Greek spacing: ΔH and ΔT and πr² and λx and σx"
+},
+{
+"text": "Specials: $\\underbrace{x+y}$ $\\overrightarrow{AB}$ $\\tilde{a}$ $\\mathbf{v}$ $\\boxed{42}$ $\\hline$ $\\quad$ $\\to$ $\\unknowncmd$",
+"segs": [
+[
+"Specials: ",
+[
+"fox"
+]
+],
+[
+"x+y",
+[
+"fox",
+"md_math"
+]
+],
+[
+" ",
+[
+"fox"
+]
+],
+[
+"AB⃗",
+[
+"fox",
+"md_math"
+]
+],
+[
+" ",
+[
+"fox"
+]
+],
+[
+"ã",
+[
+"fox",
+"md_math"
+]
+],
+[
+" ",
+[
+"fox"
+]
+],
+[
+"v",
+[
+"fox",
+"md_math"
+]
+],
+[
+" ",
+[
+"fox"
+]
+],
+[
+"42",
+[
+"fox",
+"md_math"
+]
+],
+[
+" ",
+[
+"fox"
+]
+],
+[
+" ",
+[
+"fox"
+]
+],
+[
+"  ",
+[
+"fox",
+"md_math"
+]
+],
+[
+" ",
+[
+"fox"
+]
+],
+[
+"→",
+[
+"fox",
+"md_math"
+]
+],
+[
+" ",
+[
+"fox"
+]
+],
+[
+"unknowncmd",
+[
+"fox",
+"md_math"
+]
+]
+],
+"plain": "Specials: x+y AB⃗ ã v 42     → unknowncmd"
+},
+{
+"text": "Units \\pu{25 kJ mol^-1} and $\\ce{H2O}$ in math and $\\frac{dy}{dx}$ and $\\frac{\\sqrt{x}}{2}$ and $\\dfrac{a}{b+c}$",
+"segs": [
+[
+"Units ",
+[
+"fox"
+]
+],
+[
+"25",
+[
+"fox"
+]
+],
+[
+" kJ mol",
+[
+"fox"
+]
+],
+[
+"-",
+[
+"fox",
+"md_sup"
+]
+],
+[
+"1} and ",
+[
+"fox"
+]
+],
+[
+"H",
+[
+"fox",
+"md_math"
+]
+],
+[
+"2",
+[
+"fox",
+"md_math",
+"md_sub"
+]
+],
+[
+"O",
+[
+"fox",
+"md_math"
+]
+],
+[
+" in math and ",
+[
+"fox"
+]
+],
+[
+"dy",
+[
+"fox",
+"md_math"
+]
+],
+[
+"/",
+[
+"fox",
+"md_math"
+]
+],
+[
+"dx",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"(",
+[
+"fox",
+"md_math"
+]
+],
+[
+"√(",
+[
+"fox",
+"md_math"
+]
+],
+[
+"x",
+[
+"fox",
+"md_math"
+]
+],
+[
+")",
+[
+"fox",
+"md_math"
+]
+],
+[
+")",
+[
+"fox",
+"md_math"
+]
+],
+[
+"/",
+[
+"fox",
+"md_math"
+]
+],
+[
+"2",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"a",
+[
+"fox",
+"md_math"
+]
+],
+[
+"/",
+[
+"fox",
+"md_math"
+]
+],
+[
+"(b+c)",
+[
+"fox",
+"md_math"
+]
+]
+],
+"plain": "Units 25 kJ mol⁻1} and H₂O in math and dy/dx and (√(x))/2 and a/(b+c)"
+},
+{
+"text": "Emoji 🦊 and 日本語 **太字** and *イタリック*",
+"segs": [
+[
+"Emoji 🦊 and 日本語 ",
+[
+"fox"
+]
+],
+[
+"太字",
+[
+"fox",
+"md_b"
+]
+],
+[
+" and ",
+[
+"fox"
+]
+],
+[
+"イタリック",
+[
+"fox",
+"md_i"
+]
+]
+],
+"plain": "Emoji 🦊 and 日本語 太字 and イタリック"
+},
+{
+"text": "  indented paragraph\n   * star bullet\n+ plus bullet\n• bullet char",
+"segs": [
+[
+"  indented paragraph",
+[
+"fox"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"◦ ",
+[
+"fox",
+"md_li1",
+"md_bullet"
+]
+],
+[
+"star bullet",
+[
+"fox",
+"md_li1"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"• ",
+[
+"fox",
+"md_li0",
+"md_bullet"
+]
+],
+[
+"plus bullet",
+[
+"fox",
+"md_li0"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"• ",
+[
+"fox",
+"md_li0",
+"md_bullet"
+]
+],
+[
+"bullet char",
+[
+"fox",
+"md_li0"
+]
+]
+],
+"plain": "  indented paragraph\n◦ star bullet\n• plus bullet\n• bullet char"
+},
+{
+"text": "10. ten\n  3) nested three\nb) bee",
+"segs": [
+[
+"10. ",
+[
+"fox",
+"md_li0",
+"md_num"
+]
+],
+[
+"ten",
+[
+"fox",
+"md_li0"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"3) ",
+[
+"fox",
+"md_li1",
+"md_num"
+]
+],
+[
+"nested three",
+[
+"fox",
+"md_li1"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"b) ",
+[
+"fox",
+"md_li0",
+"md_num"
+]
+],
+[
+"bee",
+[
+"fox",
+"md_li0"
+]
+]
+],
+"plain": "10. ten\n3) nested three\nb) bee"
+},
+{
+"text": "Edge $ x$ and $x $ and $$ and $5$ and a$b$c and \\$ escaped",
+"segs": [
+[
+"Edge  x and x  and  and ",
+[
+"fox"
+]
+],
+[
+"5",
+[
+"fox",
+"md_math"
+]
+],
+[
+" and abc and \\$ escaped",
+[
+"fox"
+]
+]
+],
+"plain": "Edge  x and x  and  and 5 and abc and \\$ escaped"
+},
+{
+"text": "Links [one](http://a.b) [two](https://c.d/e_f) [bad](ftp://x) [](https://empty)",
+"segs": [
+[
+"Links ",
+[
+"fox"
+]
+],
+[
+"one",
+[
+"fox",
+"md_link",
+"url:http://a.b"
+]
+],
+[
+" ",
+[
+"fox"
+]
+],
+[
+"two",
+[
+"fox",
+"md_link",
+"url:https://c.d/e_f"
+]
+],
+[
+" [bad](ftp://x) [](https://empty)",
+[
+"fox"
+]
+]
+],
+"plain": "Links one two [bad](ftp://x) [](https://empty)"
+},
+{
+"text": "## Heading with **bold** and $x^2$\nPara ~~strike *it*~~ end",
+"segs": [
+[
+"Heading with ",
+[
+"fox",
+"md_h2"
+]
+],
+[
+"bold",
+[
+"fox",
+"md_h2"
+]
+],
+[
+" and ",
+[
+"fox",
+"md_h2"
+]
+],
+[
+"x",
+[
+"fox",
+"md_h2",
+"md_math"
+]
+],
+[
+"2",
+[
+"fox",
+"md_h2",
+"md_math",
+"md_sup"
+]
+],
+[
+"\n",
+[
+"fox"
+]
+],
+[
+"Para ",
+[
+"fox"
+]
+],
+[
+"strike ",
+[
+"fox",
+"md_s"
+]
+],
+[
+"it",
+[
+"fox",
+"md_s",
+"md_i"
+]
+],
+[
+" end",
+[
+"fox"
+]
+]
+],
+"plain": "Heading with bold and x²\nPara strike it end"
+}
+],
+"tex": [
+{
+"text": "x^2",
+"segs": [
+[
+"x",
+[
+"md_math"
+]
+],
+[
+"2",
+[
+"md_math",
+"md_sup"
+]
+]
+]
+},
+{
+"text": "\\frac{a}{b}",
+"segs": [
+[
+"a",
+[
+"md_math"
+]
+],
+[
+"/",
+[
+"md_math"
+]
+],
+[
+"b",
+[
+"md_math"
+]
+]
+]
+},
+{
+"text": "H_2O",
+"segs": [
+[
+"H",
+[
+"md_math"
+]
+],
+[
+"2",
+[
+"md_math",
+"md_sub"
+]
+],
+[
+"O",
+[
+"md_math"
+]
+]
+]
+},
+{
+"text": "\\sqrt[n]{x+1}",
+"segs": [
+[
+"ⁿ",
+[
+"md_math"
+]
+],
+[
+"√(",
+[
+"md_math"
+]
+],
+[
+"x+1",
+[
+"md_math"
+]
+],
+[
+")",
+[
+"md_math"
+]
+]
+]
+},
+{
+"text": "\\begin{bmatrix}1&0\\\\0&1\\end{bmatrix}",
+"segs": [
+[
+"[1, 0; 0, 1]",
+[
+"md_math"
+]
+]
+]
+},
+{
+"text": "a\\\\b",
+"segs": [
+[
+"a\nb",
+[
+"md_math"
+]
+]
+]
+},
+{
+"text": "\\Delta x",
+"segs": [
+[
+"Δx",
+[
+"md_math"
+]
+]
+]
+},
+{
+"text": "\\ce{Cu^{2+}}",
+"segs": [
+[
+"Cu",
+[
+"md_math"
+]
+],
+[
+"2+",
+[
+"md_math",
+"md_sup"
+]
+]
+]
+},
+{
+"text": "\\binom{5}{2}",
+"segs": [
+[
+"(",
+[
+"md_math"
+]
+],
+[
+"5",
+[
+"md_math"
+]
+],
+[
+" C ",
+[
+"md_math"
+]
+],
+[
+"2",
+[
+"md_math"
+]
+],
+[
+")",
+[
+"md_math"
+]
+]
+]
+},
+{
+"text": "{x}^{\\circ}",
+"segs": [
+[
+"x",
+[
+"md_math"
+]
+],
+[
+"°",
+[
+"md_math"
+]
+]
+]
+},
+{
+"text": "\\textcolor{blue}{z}",
+"segs": [
+[
+"z",
+[
+"md_math"
+]
+]
+]
+},
+{
+"text": "\\phantom{x}y",
+"segs": [
+[
+"y",
+[
+"md_math"
+]
+]
+]
+},
+{
+"text": "\\left\\{ x \\right\\}",
+"segs": [
+[
+"{ x }",
+[
+"md_math"
+]
+]
+]
+}
+],
+"chem": [
+{
+"text": "H2SO4",
+"segs": [
+[
+"H",
+[]
+],
+[
+"2",
+[
+"md_sub"
+]
+],
+[
+"SO",
+[]
+],
+[
+"4",
+[
+"md_sub"
+]
+]
+]
+},
+{
+"text": "Fe^{3+}",
+"segs": [
+[
+"Fe",
+[]
+],
+[
+"3+",
+[
+"md_sup"
+]
+]
+]
+},
+{
+"text": "CO3^2-",
+"segs": [
+[
+"CO",
+[]
+],
+[
+"3",
+[
+"md_sub"
+]
+],
+[
+"2-",
+[
+"md_sup"
+]
+]
+]
+},
+{
+"text": "2H2 + O2 -> 2H2O",
+"segs": [
+[
+"2",
+[]
+],
+[
+"H",
+[]
+],
+[
+"2",
+[
+"md_sub"
+]
+],
+[
+" + O",
+[]
+],
+[
+"2",
+[
+"md_sub"
+]
+],
+[
+" → ",
+[]
+],
+[
+"2",
+[]
+],
+[
+"H",
+[]
+],
+[
+"2",
+[
+"md_sub"
+]
+],
+[
+"O",
+[]
+]
+]
+},
+{
+"text": "A <-> B",
+"segs": [
+[
+"A ⇌ B",
+[]
+]
+]
+},
+{
+"text": "Ca(OH)2",
+"segs": [
+[
+"Ca(OH)",
+[]
+],
+[
+"2",
+[
+"md_sub"
+]
+]
+]
+},
+{
+"text": "[Cu(NH3)4]^2+",
+"segs": [
+[
+"[Cu(NH",
+[]
+],
+[
+"3",
+[
+"md_sub"
+]
+],
+[
+")",
+[]
+],
+[
+"4",
+[
+"md_sub"
+]
+],
+[
+"]",
+[]
+],
+[
+"2+",
+[
+"md_sup"
+]
+]
+]
+},
+{
+"text": "C6H12O6",
+"segs": [
+[
+"C",
+[]
+],
+[
+"6",
+[
+"md_sub"
+]
+],
+[
+"H",
+[]
+],
+[
+"12",
+[
+"md_sub"
+]
+],
+[
+"O",
+[]
+],
+[
+"6",
+[
+"md_sub"
+]
+]
+]
+},
+{
+"text": "e^-",
+"segs": [
+[
+"e",
+[]
+],
+[
+"-",
+[
+"md_sup"
+]
+]
+]
+}
+]
+}

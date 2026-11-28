@@ -1,0 +1,5524 @@
+[
+{
+"q": "help",
+"now": 1765407607.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"help"
+],
+[
+"line",
+"Fox",
+"I understand:\n  time left          - how long is left\n  timetable          - open today's timetable\n  next               - what's next on the timetable\n  add 4pm study renal 45  - add to today (add 'daily' to repeat)\n  start reading 30   - start a focus session\n  pause / resume / stop\n  stats              - minutes focused today\n  break              - start a break  (end break to stop it)\n  motivate me / tip / joke / who are you\n  weather [in Paris]  - live weather + forecast (also: home city Paris, temp unit F)\n  time in Tokyo / news [topic] / convert 100 usd to xcd\n  search black holes  - I search the web, read the top pages and summarise them\n  ...or just ask anything (who is ..., how do ..., why ...) - if I don't know, I look it up\n  when I say sched I mean timetable  - teach me your shorthand (I also pick it up myself)\n  what's my shorthand / what did you look up / forget my shorthand / forget everything\n  hold Right Ctrl and talk  - voice instead of typing (Mic button in chat too)\n  look at my screen [question] / hold F8 and ask  - the fox reads your screen and points\n  play lofi / play my study playlist / pause music / skip / volume 40 / what's playing\n  notes / summarise my notes on renal / quiz me on GI / ask notes: what is RPGN?\n  drop a file on me - I'll find the exam dates  ·  what's due / add exam renal 12 Dec 9am\n  open spotify / open word / open my deadlines  ·  play focus (your music presets)\n  battery\n  lock in [45] / unlock  - full focus: I pounce on and eat distracting windows (hold Esc 2 s to escape)\n  pomodoro 25/5 [x4] / focus for 40 min [on essay]\n  remind me in 20 min to stretch / remind me at 5pm to call mum / my reminders\n  how was my week  - weekly focus report\n  quiz me on photosynthesis  - flashcards from the web (hint / skip / stop quiz)\n  review flashcards / add flashcard Q = A / my flashcards  - cards that remember what you got wrong\n  my chemistry exam is in 2 days / maths test on Friday 9am  - I add it and plan study sessions\n  I'm free 4-7pm on weekdays / I'm free today 5-8  ·  study plan / countdown / I need 8 hours for chemistry\n  homework: <question>  - I explain it step by step (the Study books tab has a book + tutor for each subject)\n  eli12: <question>  ·  test me on photosynthesis  ·  flashcards from my notes  ·  review mistakes  ·  conjugate aller\n  I studied bio for 2 hours  ·  I'm studying chem  ·  what am I studying  ·  bio goal 5 hours a week\n  recap  ·  week report  ·  distraction report  ·  best focus time  ·  open notebook\n  delay 20 min / I need to talk to my parents for 30 min / undo delay  - 急 push the rest of today back\n  I got 34/40 on bio paper 1 / got a 6 in chem MYA / my grades  ·  vocab drill  ·  open my bio book  ·  bio fact\n  bedtime 22:30  - the sleep guard (wind-down + late-night nudges)\n  Ctrl+V a screenshot in chat (or the Image button) - I read it and help  ·  get my eyes  - download the free vision model\n  I ate 2 eggs and toast  ·  I weigh 68 kg  ·  what's my workout  - the Exercise tab\n  breathe / check in / my streak / badges / how are you / haiku\n  my favourite subject is biology / my birthday is 14 May / remember I play piano / what do you remember\n  background music on / off  ·  roaming off / seasons off / night mode off / go for a walk\n  calc 15% of 240 / define serendipity / translate good luck to Japanese\n  note: buy aburaage / my notes  ·  todo finish essay / done 1 / my todos\n  fortune (omikuji) / word of the day / sing\n  pet / belly rub / boop / tickle / feed inari sushi / yarn / hide and seek / high five / gift / dance / brush\n  outfit crown / outfits / coat golden / your name is Yuki  (or open the Customize page)\nTypos are fine. With the optional smart brain you can also use free wording."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "?",
+"now": 1765407614.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"?"
+],
+[
+"line",
+"Fox",
+"I understand:\n  time left          - how long is left\n  timetable          - open today's timetable\n  next               - what's next on the timetable\n  add 4pm study renal 45  - add to today (add 'daily' to repeat)\n  start reading 30   - start a focus session\n  pause / resume / stop\n  stats              - minutes focused today\n  break              - start a break  (end break to stop it)\n  motivate me / tip / joke / who are you\n  weather [in Paris]  - live weather + forecast (also: home city Paris, temp unit F)\n  time in Tokyo / news [topic] / convert 100 usd to xcd\n  search black holes  - I search the web, read the top pages and summarise them\n  ...or just ask anything (who is ..., how do ..., why ...) - if I don't know, I look it up\n  when I say sched I mean timetable  - teach me your shorthand (I also pick it up myself)\n  what's my shorthand / what did you look up / forget my shorthand / forget everything\n  hold Right Ctrl and talk  - voice instead of typing (Mic button in chat too)\n  look at my screen [question] / hold F8 and ask  - the fox reads your screen and points\n  play lofi / play my study playlist / pause music / skip / volume 40 / what's playing\n  notes / summarise my notes on renal / quiz me on GI / ask notes: what is RPGN?\n  drop a file on me - I'll find the exam dates  ·  what's due / add exam renal 12 Dec 9am\n  open spotify / open word / open my deadlines  ·  play focus (your music presets)\n  battery\n  lock in [45] / unlock  - full focus: I pounce on and eat distracting windows (hold Esc 2 s to escape)\n  pomodoro 25/5 [x4] / focus for 40 min [on essay]\n  remind me in 20 min to stretch / remind me at 5pm to call mum / my reminders\n  how was my week  - weekly focus report\n  quiz me on photosynthesis  - flashcards from the web (hint / skip / stop quiz)\n  review flashcards / add flashcard Q = A / my flashcards  - cards that remember what you got wrong\n  my chemistry exam is in 2 days / maths test on Friday 9am  - I add it and plan study sessions\n  I'm free 4-7pm on weekdays / I'm free today 5-8  ·  study plan / countdown / I need 8 hours for chemistry\n  homework: <question>  - I explain it step by step (the Study books tab has a book + tutor for each subject)\n  eli12: <question>  ·  test me on photosynthesis  ·  flashcards from my notes  ·  review mistakes  ·  conjugate aller\n  I studied bio for 2 hours  ·  I'm studying chem  ·  what am I studying  ·  bio goal 5 hours a week\n  recap  ·  week report  ·  distraction report  ·  best focus time  ·  open notebook\n  delay 20 min / I need to talk to my parents for 30 min / undo delay  - 急 push the rest of today back\n  I got 34/40 on bio paper 1 / got a 6 in chem MYA / my grades  ·  vocab drill  ·  open my bio book  ·  bio fact\n  bedtime 22:30  - the sleep guard (wind-down + late-night nudges)\n  Ctrl+V a screenshot in chat (or the Image button) - I read it and help  ·  get my eyes  - download the free vision model\n  I ate 2 eggs and toast  ·  I weigh 68 kg  ·  what's my workout  - the Exercise tab\n  breathe / check in / my streak / badges / how are you / haiku\n  my favourite subject is biology / my birthday is 14 May / remember I play piano / what do you remember\n  background music on / off  ·  roaming off / seasons off / night mode off / go for a walk\n  calc 15% of 240 / define serendipity / translate good luck to Japanese\n  note: buy aburaage / my notes  ·  todo finish essay / done 1 / my todos\n  fortune (omikuji) / word of the day / sing\n  pet / belly rub / boop / tickle / feed inari sushi / yarn / hide and seek / high five / gift / dance / brush\n  outfit crown / outfits / coat golden / your name is Yuki  (or open the Customize page)\nTypos are fine. With the optional smart brain you can also use free wording."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "commands",
+"now": 1765407621.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"commands"
+],
+[
+"line",
+"Fox",
+"I understand:\n  time left          - how long is left\n  timetable          - open today's timetable\n  next               - what's next on the timetable\n  add 4pm study renal 45  - add to today (add 'daily' to repeat)\n  start reading 30   - start a focus session\n  pause / resume / stop\n  stats              - minutes focused today\n  break              - start a break  (end break to stop it)\n  motivate me / tip / joke / who are you\n  weather [in Paris]  - live weather + forecast (also: home city Paris, temp unit F)\n  time in Tokyo / news [topic] / convert 100 usd to xcd\n  search black holes  - I search the web, read the top pages and summarise them\n  ...or just ask anything (who is ..., how do ..., why ...) - if I don't know, I look it up\n  when I say sched I mean timetable  - teach me your shorthand (I also pick it up myself)\n  what's my shorthand / what did you look up / forget my shorthand / forget everything\n  hold Right Ctrl and talk  - voice instead of typing (Mic button in chat too)\n  look at my screen [question] / hold F8 and ask  - the fox reads your screen and points\n  play lofi / play my study playlist / pause music / skip / volume 40 / what's playing\n  notes / summarise my notes on renal / quiz me on GI / ask notes: what is RPGN?\n  drop a file on me - I'll find the exam dates  ·  what's due / add exam renal 12 Dec 9am\n  open spotify / open word / open my deadlines  ·  play focus (your music presets)\n  battery\n  lock in [45] / unlock  - full focus: I pounce on and eat distracting windows (hold Esc 2 s to escape)\n  pomodoro 25/5 [x4] / focus for 40 min [on essay]\n  remind me in 20 min to stretch / remind me at 5pm to call mum / my reminders\n  how was my week  - weekly focus report\n  quiz me on photosynthesis  - flashcards from the web (hint / skip / stop quiz)\n  review flashcards / add flashcard Q = A / my flashcards  - cards that remember what you got wrong\n  my chemistry exam is in 2 days / maths test on Friday 9am  - I add it and plan study sessions\n  I'm free 4-7pm on weekdays / I'm free today 5-8  ·  study plan / countdown / I need 8 hours for chemistry\n  homework: <question>  - I explain it step by step (the Study books tab has a book + tutor for each subject)\n  eli12: <question>  ·  test me on photosynthesis  ·  flashcards from my notes  ·  review mistakes  ·  conjugate aller\n  I studied bio for 2 hours  ·  I'm studying chem  ·  what am I studying  ·  bio goal 5 hours a week\n  recap  ·  week report  ·  distraction report  ·  best focus time  ·  open notebook\n  delay 20 min / I need to talk to my parents for 30 min / undo delay  - 急 push the rest of today back\n  I got 34/40 on bio paper 1 / got a 6 in chem MYA / my grades  ·  vocab drill  ·  open my bio book  ·  bio fact\n  bedtime 22:30  - the sleep guard (wind-down + late-night nudges)\n  Ctrl+V a screenshot in chat (or the Image button) - I read it and help  ·  get my eyes  - download the free vision model\n  I ate 2 eggs and toast  ·  I weigh 68 kg  ·  what's my workout  - the Exercise tab\n  breathe / check in / my streak / badges / how are you / haiku\n  my favourite subject is biology / my birthday is 14 May / remember I play piano / what do you remember\n  background music on / off  ·  roaming off / seasons off / night mode off / go for a walk\n  calc 15% of 240 / define serendipity / translate good luck to Japanese\n  note: buy aburaage / my notes  ·  todo finish essay / done 1 / my todos\n  fortune (omikuji) / word of the day / sing\n  pet / belly rub / boop / tickle / feed inari sushi / yarn / hide and seek / high five / gift / dance / brush\n  outfit crown / outfits / coat golden / your name is Yuki  (or open the Customize page)\nTypos are fine. With the optional smart brain you can also use free wording."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "hlep",
+"now": 1765407628.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"hlep"
+],
+[
+"line",
+"Fox",
+"I understand:\n  time left          - how long is left\n  timetable          - open today's timetable\n  next               - what's next on the timetable\n  add 4pm study renal 45  - add to today (add 'daily' to repeat)\n  start reading 30   - start a focus session\n  pause / resume / stop\n  stats              - minutes focused today\n  break              - start a break  (end break to stop it)\n  motivate me / tip / joke / who are you\n  weather [in Paris]  - live weather + forecast (also: home city Paris, temp unit F)\n  time in Tokyo / news [topic] / convert 100 usd to xcd\n  search black holes  - I search the web, read the top pages and summarise them\n  ...or just ask anything (who is ..., how do ..., why ...) - if I don't know, I look it up\n  when I say sched I mean timetable  - teach me your shorthand (I also pick it up myself)\n  what's my shorthand / what did you look up / forget my shorthand / forget everything\n  hold Right Ctrl and talk  - voice instead of typing (Mic button in chat too)\n  look at my screen [question] / hold F8 and ask  - the fox reads your screen and points\n  play lofi / play my study playlist / pause music / skip / volume 40 / what's playing\n  notes / summarise my notes on renal / quiz me on GI / ask notes: what is RPGN?\n  drop a file on me - I'll find the exam dates  ·  what's due / add exam renal 12 Dec 9am\n  open spotify / open word / open my deadlines  ·  play focus (your music presets)\n  battery\n  lock in [45] / unlock  - full focus: I pounce on and eat distracting windows (hold Esc 2 s to escape)\n  pomodoro 25/5 [x4] / focus for 40 min [on essay]\n  remind me in 20 min to stretch / remind me at 5pm to call mum / my reminders\n  how was my week  - weekly focus report\n  quiz me on photosynthesis  - flashcards from the web (hint / skip / stop quiz)\n  review flashcards / add flashcard Q = A / my flashcards  - cards that remember what you got wrong\n  my chemistry exam is in 2 days / maths test on Friday 9am  - I add it and plan study sessions\n  I'm free 4-7pm on weekdays / I'm free today 5-8  ·  study plan / countdown / I need 8 hours for chemistry\n  homework: <question>  - I explain it step by step (the Study books tab has a book + tutor for each subject)\n  eli12: <question>  ·  test me on photosynthesis  ·  flashcards from my notes  ·  review mistakes  ·  conjugate aller\n  I studied bio for 2 hours  ·  I'm studying chem  ·  what am I studying  ·  bio goal 5 hours a week\n  recap  ·  week report  ·  distraction report  ·  best focus time  ·  open notebook\n  delay 20 min / I need to talk to my parents for 30 min / undo delay  - 急 push the rest of today back\n  I got 34/40 on bio paper 1 / got a 6 in chem MYA / my grades  ·  vocab drill  ·  open my bio book  ·  bio fact\n  bedtime 22:30  - the sleep guard (wind-down + late-night nudges)\n  Ctrl+V a screenshot in chat (or the Image button) - I read it and help  ·  get my eyes  - download the free vision model\n  I ate 2 eggs and toast  ·  I weigh 68 kg  ·  what's my workout  - the Exercise tab\n  breathe / check in / my streak / badges / how are you / haiku\n  my favourite subject is biology / my birthday is 14 May / remember I play piano / what do you remember\n  background music on / off  ·  roaming off / seasons off / night mode off / go for a walk\n  calc 15% of 240 / define serendipity / translate good luck to Japanese\n  note: buy aburaage / my notes  ·  todo finish essay / done 1 / my todos\n  fortune (omikuji) / word of the day / sing\n  pet / belly rub / boop / tickle / feed inari sushi / yarn / hide and seek / high five / gift / dance / brush\n  outfit crown / outfits / coat golden / your name is Yuki  (or open the Customize page)\nTypos are fine. With the optional smart brain you can also use free wording."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "Help me",
+"now": 1765407635.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"Help me"
+],
+[
+"llm",
+"Help me"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "teach me hi => hello there",
+"now": 1765407642.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"teach me hi => hello there"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Yatta, learned it! When you say 'hi' I'll answer that. (Say 'forget hi' to undo.)"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "hi",
+"now": 1765407649.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"hi"
+],
+[
+"line",
+"Fox",
+"Kon kon~ hello there"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "HI!",
+"now": 1765407656.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"HI!"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! hello there"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "forget hi",
+"now": 1765407663.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"forget hi"
+],
+[
+"line",
+"Fox",
+"Poof~ forgotten!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "forget hi",
+"now": 1765407670.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"forget hi"
+],
+[
+"line",
+"Fox",
+"Ne~? I hadn't learned 'hi'~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "when i say sched i mean timetable",
+"now": 1765407677.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"when i say sched i mean timetable"
+],
+[
+"line",
+"Fox",
+"Kon kon~ got it: 'sched' means 'timetable'. I'll understand that from now on~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "my shorthand",
+"now": 1765407684.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"my shorthand"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Your shorthand I've learned: sched = timetable"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "what shorthand",
+"now": 1765407691.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"what shorthand"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Your shorthand I've learned: sched = timetable"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "forget my shorthand",
+"now": 1765407698.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"forget my shorthand"
+],
+[
+"line",
+"Fox",
+"Okay~ I've forgotten your shorthand. Fresh start, kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "my shorthand",
+"now": 1765407705.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"my shorthand"
+],
+[
+"line",
+"Fox",
+"Ne~ I haven't learned any of your shorthand yet! I already know the usual ones (tmrw, rn, pls, hw...). Teach me more: when I say sched I mean timetable"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "what did you look up",
+"now": 1765407712.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"what did you look up"
+],
+[
+"line",
+"Fox",
+"Ne~ I haven't looked anything up yet. Ask me anything~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "what have you learned",
+"now": 1765407719.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"what have you learned"
+],
+[
+"line",
+"Fox",
+"Gomen ne~ Nothing yet. Do a few focus sessions and I'll start noticing your habits. You can also teach me: learn: good morning = Ohayo! Let's get to work."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "home city London",
+"now": 1765407726.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"home city London"
+],
+[
+"line",
+"Fox",
+"Waai~ Home city set to London. Now 'weather' will use it~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "unit f",
+"now": 1765407733.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"unit f"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Temperatures will be shown in °F~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "temperature unit c",
+"now": 1765407740.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"temperature unit c"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Temperatures will be shown in °C~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "time left",
+"now": 1765407747.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"time left"
+],
+[
+"line",
+"Fox",
+"Gomen ne~ No session running. Say 'start reading 25' or double-click me."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "start reading 25",
+"now": 1765407754.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"start reading 25"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Started 25 min on “Reading”. Go!"
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "time left",
+"now": 1765407761.0,
+"pre": 0.0,
+"out": [
+[
+"line",
+"You",
+"time left"
+],
+[
+"line",
+"Fox",
+"Sugoi! 25 min 00 s left on “Reading”~kon!"
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "how long",
+"now": 1765407768.0,
+"pre": 1.1688417990000062,
+"out": [
+[
+"line",
+"You",
+"how long"
+],
+[
+"line",
+"Fox",
+"Ehehe~ 24 min 58 s left on “Reading”."
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "pause",
+"now": 1765407775.0,
+"pre": 1.1688417990000062,
+"out": [
+[
+"line",
+"You",
+"pause"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Paused."
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": true
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "pause",
+"now": 1765407782.0,
+"pre": 1.1688417990000062,
+"out": [
+[
+"line",
+"You",
+"pause"
+],
+[
+"line",
+"Fox",
+"Kon! Paused~kon!"
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": true
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "resume",
+"now": 1765407789.0,
+"pre": 1.1688417990000062,
+"out": [
+[
+"line",
+"You",
+"resume"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Resumed~kon!"
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "start maths",
+"now": 1765407796.0,
+"pre": 1.1688417990000062,
+"out": [
+[
+"line",
+"You",
+"start maths"
+],
+[
+"line",
+"Fox",
+"Kon! A session is already running. Say 'stop' first."
+]
+],
+"session": {
+"task": "Reading",
+"planned": 1500.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "stop",
+"now": 1765407803.0,
+"pre": 1.1688417990000062,
+"out": [
+[
+"line",
+"You",
+"stop"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Session stopped."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "stop",
+"now": 1765407810.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"stop"
+],
+[
+"line",
+"Fox",
+"Auu... No session running."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "stats",
+"now": 1765407817.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"stats"
+],
+[
+"line",
+"Fox",
+"Today you've focused for 0 min~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "how am i doing",
+"now": 1765407824.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"how am i doing"
+],
+[
+"line",
+"Fox",
+"Sugoi! Today you've focused for 0 min~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "motivate me",
+"now": 1765407831.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"motivate me"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Sip of water? Then back to it! Kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "inspire me",
+"now": 1765407838.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"inspire me"
+],
+[
+"line",
+"Fox",
+"Ehehe~ future you will thank you for this."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "tips",
+"now": 1765407845.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"tips"
+],
+[
+"line",
+"Fox",
+"Kon! Pomodoro: 25 min focus, 5 min break. After four rounds take a longer break~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "focus tip",
+"now": 1765407852.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"focus tip"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Stuck? Set a 5-minute timer and promise to work only until it rings~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "tell me a joke",
+"now": 1765407859.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"tell me a joke"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! What do you call a fox that studies? A smarty fur-pants. Ehehe~ kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "funny",
+"now": 1765407866.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"funny"
+],
+[
+"line",
+"Fox",
+"Waai~ Why did the fox stop procrastinating? It ran out of excuses. Wait, no, it ran out of tabs. Kon kon~~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "take a break",
+"now": 1765407873.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"take a break"
+],
+[
+"line",
+"Fox",
+"Yatta! Break started: 5 min. I'll wake you when it's over~kon!"
+]
+],
+"session": null,
+"brk": {
+"planned": 300.0
+},
+"ema": [],
+"tt": []
+},
+{
+"q": "break time",
+"now": 1765407880.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"break time"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Break started: 5 min. I'll wake you when it's over~kon!"
+]
+],
+"session": null,
+"brk": {
+"planned": 300.0
+},
+"ema": [],
+"tt": []
+},
+{
+"q": "end break",
+"now": 1765407887.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"end break"
+],
+[
+"line",
+"Fox",
+"Sugoi! Break ended."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "back to work",
+"now": 1765407894.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"back to work"
+],
+[
+"line",
+"Fox",
+"Gomen ne~ No break running~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "i'm tired",
+"now": 1765407901.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"i'm tired"
+],
+[
+"line",
+"Fox",
+"Kon! Break time: stand up, stretch, look at something far away for 20 seconds, and drink some water."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "rest",
+"now": 1765407908.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"rest"
+],
+[
+"line",
+"Fox",
+"Ehehe~ *flops down* Ahh, comfy~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "who are you",
+"now": 1765407915.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"who are you"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! I'm Zenko, a zenko: one of the good foxes who serve Inari, the kami of rice and good fortune. I watch for distractions, run your timer, keep your timetable and cheer you on. Type 'help' for commands."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "what can you do",
+"now": 1765407922.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"what can you do"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! I'm Zenko, a zenko: one of the good foxes who serve Inari, the kami of rice and good fortune. I watch for distractions, run your timer, keep your timetable and cheer you on. Type 'help' for commands."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "tell me about the legend",
+"now": 1765407929.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"tell me about the legend"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Kitsune-bi is foxfire: little floating flames that foxes light. Mine guide you back to your work. Kon! Kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "zenko?",
+"now": 1765407936.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"zenko?"
+],
+[
+"line",
+"Fox",
+"Yatta! Zenko means 'good fox'. We're the kind foxes who serve Inari, the kami of rice and good fortune. Wild foxes (yako) play tricks; zenko help people."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "hello",
+"now": 1765407943.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"hello"
+],
+[
+"line",
+"Fox",
+"Waai~! Ready to focus? Type 'start studying 25' or open the timetable, ne~?"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "hey",
+"now": 1765407950.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"hey"
+],
+[
+"line",
+"Fox",
+"Kon! Ready to focus? Type 'start studying 25' or open the timetable, ne~?"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "good morning",
+"now": 1765407957.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"good morning"
+],
+[
+"line",
+"Fox",
+"Waai~! Ready to focus? Type 'start studying 25' or open the timetable, ne~?"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "yo",
+"now": 1765407964.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"yo"
+],
+[
+"line",
+"Fox",
+"Kon kon~! Ready to focus? Type 'start studying 25' or open the timetable, ne~?"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "thanks",
+"now": 1765407971.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"thanks"
+],
+[
+"line",
+"Fox",
+"Ehehe~ anytime! Now back to work~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "ty",
+"now": 1765407978.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"ty"
+],
+[
+"line",
+"Fox",
+"Kon kon~ happy to help! Back to it, ne?"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "thank you so much",
+"now": 1765407985.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"thank you so much"
+],
+[
+"line",
+"Fox",
+"Ehehe~ anytime! Now back to work~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "check in",
+"now": 1765407992.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"check in"
+],
+[
+"line",
+"Fox",
+"Yatta! How are you feeling today? Pick one~"
+],
+[
+"checkin",
+true
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "check-in",
+"now": 1765407999.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"check-in"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! How are you feeling today? Pick one~"
+],
+[
+"checkin",
+true
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "daily checkin",
+"now": 1765408006.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"daily checkin"
+],
+[
+"line",
+"Fox",
+"Sugoi! How are you feeling today? Pick one~"
+],
+[
+"checkin",
+true
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "mood journal",
+"now": 1765408013.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"mood journal"
+],
+[
+"line",
+"Fox",
+"Kon kon~ How are you feeling today? Pick one~"
+],
+[
+"checkin",
+true
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "how am i feeling today",
+"now": 1765408020.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"how am i feeling today"
+],
+[
+"line",
+"Fox",
+"Sugoi! How are you feeling today? Pick one~"
+],
+[
+"checkin",
+true
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "strat studying 30",
+"now": 1765408027.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"strat studying 30"
+],
+[
+"line",
+"Fox",
+"Kon! Started 30 min on “Studying”. Go~kon!"
+]
+],
+"session": {
+"task": "Studying",
+"planned": 1800.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "start 10",
+"now": 1765408034.0,
+"pre": 0.0,
+"out": [
+[
+"line",
+"You",
+"start 10"
+],
+[
+"line",
+"Fox",
+"Yatta! A session is already running. Say 'stop' first~kon!"
+]
+],
+"session": {
+"task": "Studying",
+"planned": 1800.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "stop",
+"now": 1765408041.0,
+"pre": 0.5115408149999894,
+"out": [
+[
+"line",
+"You",
+"stop"
+],
+[
+"line",
+"Fox",
+"Yatta! Session stopped."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "start",
+"now": 1765408048.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"start"
+],
+[
+"line",
+"Fox",
+"Waai~ Started 25 min on “Focus session”. Go!"
+]
+],
+"session": {
+"task": "Focus session",
+"planned": 1500.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "stop",
+"now": 1765408055.0,
+"pre": 0.0,
+"out": [
+[
+"line",
+"You",
+"stop"
+],
+[
+"line",
+"Fox",
+"Kon! Session stopped~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "Start Biology revision 45 min",
+"now": 1765408062.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"Start Biology revision 45 min"
+],
+[
+"line",
+"Fox",
+"Kon! Started 45 min on “Biology revision”. Go!"
+]
+],
+"session": {
+"task": "Biology revision",
+"planned": 2700.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "time left",
+"now": 1765408069.0,
+"pre": 0.25396907499998633,
+"out": [
+[
+"line",
+"You",
+"time left"
+],
+[
+"line",
+"Fox",
+"Sugoi! 44 min 59 s left on “Biology revision”."
+]
+],
+"session": {
+"task": "Biology revision",
+"planned": 2700.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "end",
+"now": 1765408076.0,
+"pre": 0.25396907499998633,
+"out": [
+[
+"line",
+"You",
+"end"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Session stopped~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "asdfgh qwerty",
+"now": 1765408083.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"asdfgh qwerty"
+],
+[
+"llm",
+"asdfgh qwerty"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "wat is the tim left",
+"now": 1765408090.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"wat is the tim left"
+],
+[
+"line",
+"Fox",
+"No session running. Say 'start reading 25' or double-click me."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "teach you bye = see you later~",
+"now": 1765408097.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"teach you bye = see you later~"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Yatta, learned it! When you say 'bye' I'll answer that. (Say 'forget bye' to undo.)"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "bye",
+"now": 1765408104.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"bye"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! see you later~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "byee",
+"now": 1765408111.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"byee"
+],
+[
+"llm",
+"byee"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "forget everything",
+"now": 1765408118.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"forget everything"
+],
+[
+"line",
+"Fox",
+"Poof~ forgotten~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "bye",
+"now": 1765408125.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"bye"
+],
+[
+"llm",
+"bye"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "remember gm -> good morning sunshine",
+"now": 1765408132.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remember gm -> good morning sunshine"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Yatta, learned it! When you say 'gm' I'll answer that. (Say 'forget gm' to undo.)"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "gm",
+"now": 1765408139.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"gm"
+],
+[
+"line",
+"Fox",
+"Kon! good morning sunshine"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "Gm!!",
+"now": 1765408146.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"Gm!!"
+],
+[
+"line",
+"Fox",
+"Kon kon~ good morning sunshine"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "start  history essay, 50",
+"now": 1765408153.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"start  history essay, 50"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Started 50 min on “History essay”. Go~kon!"
+]
+],
+"session": {
+"task": "History essay",
+"planned": 3000.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "pause",
+"now": 1765408160.0,
+"pre": 0.0,
+"out": [
+[
+"line",
+"You",
+"pause"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Paused~kon!"
+]
+],
+"session": {
+"task": "History essay",
+"planned": 3000.0,
+"paused": true
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "time left",
+"now": 1765408167.0,
+"pre": 0.0,
+"out": [
+[
+"line",
+"You",
+"time left"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! 50 min 00 s left on “History essay”."
+]
+],
+"session": {
+"task": "History essay",
+"planned": 3000.0,
+"paused": true
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "resume",
+"now": 1765408174.0,
+"pre": 0.0,
+"out": [
+[
+"line",
+"You",
+"resume"
+],
+[
+"line",
+"Fox",
+"Yatta! Resumed."
+]
+],
+"session": {
+"task": "History essay",
+"planned": 3000.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "quit session",
+"now": 1765408181.0,
+"pre": 1.0303373620000116,
+"out": [
+[
+"line",
+"You",
+"quit session"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Session stopped."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "motivate",
+"now": 1765408188.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"motivate"
+],
+[
+"line",
+"Fox",
+"Ehehe~ future you will thank you for this~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "i give up",
+"now": 1765408195.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"i give up"
+],
+[
+"line",
+"Fox",
+"Kon kon~ you're doing great. Keep going on “your work”!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "procrastinating again",
+"now": 1765408202.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"procrastinating again"
+],
+[
+"line",
+"Fox",
+"Kon! Two-minute rule: if it takes under two minutes, do it now~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "laugh",
+"now": 1765408209.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"laugh"
+],
+[
+"line",
+"Fox",
+"Ehehe~ What do you call a fox that studies? A smarty fur-pants. Kon kon~!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "need a break",
+"now": 1765408216.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"need a break"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Break started: 5 min. I'll wake you when it's over."
+]
+],
+"session": null,
+"brk": {
+"planned": 300.0
+},
+"ema": [],
+"tt": []
+},
+{
+"q": "break",
+"now": 1765408223.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"break"
+],
+[
+"line",
+"Fox",
+"Sugoi! Break started: 5 min. I'll wake you when it's over."
+]
+],
+"session": null,
+"brk": {
+"planned": 300.0
+},
+"ema": [],
+"tt": []
+},
+{
+"q": "stop break",
+"now": 1765408230.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"stop break"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Break ended."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "blorp me",
+"now": 1765408237.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"blorp me"
+],
+[
+"llm",
+"blorp me"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "motivate me",
+"now": 1765408244.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"motivate me"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Progress beats perfect, ne~?\n(Kon! Noted~ when you say 'blorp' you mean 'motivate'.)"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "blorp me",
+"now": 1765408251.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"blorp me"
+],
+[
+"line",
+"Fox",
+"Done is better than perfect! Yatta~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "what's my shorthand",
+"now": 1765408258.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"what's my shorthand"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Your shorthand I've learned: blorp = motivate"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "teach goodnight => sleep well, kon~",
+"now": 1765408265.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"teach goodnight => sleep well, kon~"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Yatta, learned it! When you say 'goodnight' I'll answer that. (Say 'forget goodnight' to undo.)"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "good night",
+"now": 1765408272.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"good night"
+],
+[
+"line",
+"Fox",
+"Kon kon~ sleep well, kon~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "goodnight!",
+"now": 1765408279.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"goodnight!"
+],
+[
+"line",
+"Fox",
+"Kon! sleep well, kon~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "wear a yukata",
+"now": 1765408286.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"wear a yukata"
+],
+[
+"line",
+"Fox",
+"Ehehe~ that one unlocks after 10 hours of study together. We're at 0.0!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "wear nothing",
+"now": 1765408293.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"wear nothing"
+],
+[
+"line",
+"Fox",
+"Sugoi! Just my fluffy fur, then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "put on your kimono",
+"now": 1765408300.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"put on your kimono"
+],
+[
+"line",
+"Fox",
+"Ehehe~ that one unlocks after 3 hours of study together. We're at 0.0~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "breathe",
+"now": 1765408307.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"breathe"
+],
+[
+"line",
+"Fox",
+"Kon kon~ It's okay. Breathe with me, I'm right here~"
+],
+[
+"breath",
+"478"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "i'm so stressed",
+"now": 1765408314.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"i'm so stressed"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Deep breath, ne~ Follow the circle with me~kon!"
+],
+[
+"breath",
+"478"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "forget my favourite color",
+"now": 1765408321.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"forget my favourite color"
+],
+[
+"line",
+"Fox",
+"Ne~? I hadn't learned 'my favourite color'."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "stretch",
+"now": 1765408328.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"stretch"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Nnnnh~ *stretches*"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "Hi Zenko, please stretch",
+"now": 1765408335.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"Hi Zenko, please stretch"
+],
+[
+"line",
+"Fox",
+"Yatta! Nnnnh~ *stretches*"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "sniff around",
+"now": 1765408342.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"sniff around"
+],
+[
+"line",
+"Fox",
+"Kon! *sniff sniff*"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "start 300",
+"now": 1765408349.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"start 300"
+],
+[
+"line",
+"Fox",
+"Yatta! Started 300 min on “Focus session”. Go~kon!"
+]
+],
+"session": {
+"task": "Focus session",
+"planned": 14400.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "time left",
+"now": 1765408356.0,
+"pre": 0.0,
+"out": [
+[
+"line",
+"You",
+"time left"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! 240 min 00 s left on “Focus session”~kon!"
+]
+],
+"session": {
+"task": "Focus session",
+"planned": 14400.0,
+"paused": false
+},
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "stop",
+"now": 1765408363.0,
+"pre": 0.0,
+"out": [
+[
+"line",
+"You",
+"stop"
+],
+[
+"line",
+"Fox",
+"Waai~ Session stopped."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "HELP",
+"now": 1765408370.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"HELP"
+],
+[
+"line",
+"Fox",
+"I understand:\n  time left          - how long is left\n  timetable          - open today's timetable\n  next               - what's next on the timetable\n  add 4pm study renal 45  - add to today (add 'daily' to repeat)\n  start reading 30   - start a focus session\n  pause / resume / stop\n  stats              - minutes focused today\n  break              - start a break  (end break to stop it)\n  motivate me / tip / joke / who are you\n  weather [in Paris]  - live weather + forecast (also: home city Paris, temp unit F)\n  time in Tokyo / news [topic] / convert 100 usd to xcd\n  search black holes  - I search the web, read the top pages and summarise them\n  ...or just ask anything (who is ..., how do ..., why ...) - if I don't know, I look it up\n  when I say sched I mean timetable  - teach me your shorthand (I also pick it up myself)\n  what's my shorthand / what did you look up / forget my shorthand / forget everything\n  hold Right Ctrl and talk  - voice instead of typing (Mic button in chat too)\n  look at my screen [question] / hold F8 and ask  - the fox reads your screen and points\n  play lofi / play my study playlist / pause music / skip / volume 40 / what's playing\n  notes / summarise my notes on renal / quiz me on GI / ask notes: what is RPGN?\n  drop a file on me - I'll find the exam dates  ·  what's due / add exam renal 12 Dec 9am\n  open spotify / open word / open my deadlines  ·  play focus (your music presets)\n  battery\n  lock in [45] / unlock  - full focus: I pounce on and eat distracting windows (hold Esc 2 s to escape)\n  pomodoro 25/5 [x4] / focus for 40 min [on essay]\n  remind me in 20 min to stretch / remind me at 5pm to call mum / my reminders\n  how was my week  - weekly focus report\n  quiz me on photosynthesis  - flashcards from the web (hint / skip / stop quiz)\n  review flashcards / add flashcard Q = A / my flashcards  - cards that remember what you got wrong\n  my chemistry exam is in 2 days / maths test on Friday 9am  - I add it and plan study sessions\n  I'm free 4-7pm on weekdays / I'm free today 5-8  ·  study plan / countdown / I need 8 hours for chemistry\n  homework: <question>  - I explain it step by step (the Study books tab has a book + tutor for each subject)\n  eli12: <question>  ·  test me on photosynthesis  ·  flashcards from my notes  ·  review mistakes  ·  conjugate aller\n  I studied bio for 2 hours  ·  I'm studying chem  ·  what am I studying  ·  bio goal 5 hours a week\n  recap  ·  week report  ·  distraction report  ·  best focus time  ·  open notebook\n  delay 20 min / I need to talk to my parents for 30 min / undo delay  - 急 push the rest of today back\n  I got 34/40 on bio paper 1 / got a 6 in chem MYA / my grades  ·  vocab drill  ·  open my bio book  ·  bio fact\n  bedtime 22:30  - the sleep guard (wind-down + late-night nudges)\n  Ctrl+V a screenshot in chat (or the Image button) - I read it and help  ·  get my eyes  - download the free vision model\n  I ate 2 eggs and toast  ·  I weigh 68 kg  ·  what's my workout  - the Exercise tab\n  breathe / check in / my streak / badges / how are you / haiku\n  my favourite subject is biology / my birthday is 14 May / remember I play piano / what do you remember\n  background music on / off  ·  roaming off / seasons off / night mode off / go for a walk\n  calc 15% of 240 / define serendipity / translate good luck to Japanese\n  note: buy aburaage / my notes  ·  todo finish essay / done 1 / my todos\n  fortune (omikuji) / word of the day / sing\n  pet / belly rub / boop / tickle / feed inari sushi / yarn / hide and seek / high five / gift / dance / brush\n  outfit crown / outfits / coat golden / your name is Yuki  (or open the Customize page)\nTypos are fine. With the optional smart brain you can also use free wording."
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "what do you know about me",
+"now": 1765408377.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"what do you know about me"
+],
+[
+"line",
+"Fox",
+"Things you taught me: 'gm'; 'goodnight'\nYour shorthand: blorp = motivate"
+]
+],
+"session": null,
+"brk": null,
+"ema": [],
+"tt": []
+},
+{
+"q": "remind me to call mum at 6pm",
+"now": 1765408384.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me to call mum at 6pm"
+],
+[
+"line",
+"Fox",
+"Waai~ Hung an ema: “Call mum” · Tomorrow 6:00 PM (in 19 h). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me to drink water every day at 10",
+"now": 1765408391.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me to drink water every day at 10"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Hung an ema: “Drink water” · Tomorrow 10:00 AM (in 11 h), every day. I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me in 20 min to stretch",
+"now": 1765408398.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me in 20 min to stretch"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Hung an ema: “Stretch” · Today 11:33 PM (in 20 min). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me tomorrow 7am take vitamins",
+"now": 1765408405.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me tomorrow 7am take vitamins"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Hung an ema: “Take vitamins” · Tomorrow 7:00 AM (in 7 h 47 min). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "don't let me forget to buy milk",
+"now": 1765408412.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"don't let me forget to buy milk"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Hung an ema: “Buy milk” (no time yet). Want me to say it at a time? Say 'move buy milk to 6pm'~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy milk",
+null,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me",
+"now": 1765408419.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me"
+],
+[
+"line",
+"Fox",
+"Ehehe~ What should I remind you about? e.g. 'remind me to call mum at 6pm'"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy milk",
+null,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "my reminders",
+"now": 1765408426.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"my reminders"
+],
+[
+"line",
+"Fox",
+"Your ema:\n1. Stretch  (Today 11:33 PM)\n2. Take vitamins  (Tomorrow 7:00 AM)\n3. Drink water  (Tomorrow 10:00 AM, every day)\n4. Call mum  (Tomorrow 6:00 PM)\n5. Buy milk  (anytime)"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765476000.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy milk",
+null,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "move call mum to 7pm",
+"now": 1765408433.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"move call mum to 7pm"
+],
+[
+"line",
+"Fox",
+"Waai~ Moved “Call mum” to Tomorrow 7:00 PM (in 20 h)~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy milk",
+null,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "move milk to tomorrow",
+"now": 1765408440.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"move milk to tomorrow"
+],
+[
+"line",
+"Fox",
+"Sugoi! Moved “Buy milk” to Tomorrow 8:00 AM (in 8 h 46 min)~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy milk",
+1765440000.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "rename milk to Buy oat milk",
+"now": 1765408447.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"rename milk to Buy oat milk"
+],
+[
+"line",
+"Fox",
+"Kon! Rewrote it: “Buy oat milk”~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+false,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "mark call mum as done",
+"now": 1765408454.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"mark call mum as done"
+],
+[
+"line",
+"Fox",
+"Yatta! “Call mum” is fulfilled~ ✓"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409598.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "snooze stretch for 15 min",
+"now": 1765408461.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"snooze stretch for 15 min"
+],
+[
+"line",
+"Fox",
+"Sugoi! Snoozed “Stretch” for 15m~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me on friday to submit the essay",
+"now": 1765408468.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me on friday to submit the essay"
+],
+[
+"line",
+"Fox",
+"Kon! Hung an ema: “Submit the essay” · Fri 8:00 AM (in 1 day). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me at 9 to read",
+"now": 1765408475.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me at 9 to read"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Hung an ema: “Read” · Tomorrow 9:00 AM (in 9 h 45 min). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "remind me after lunch to walk",
+"now": 1765408482.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me after lunch to walk"
+],
+[
+"line",
+"Fox",
+"Sugoi! Hung an ema: “Walk” · Tomorrow 1:30 PM (in 14 h). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "Remind me in half an hour to check the oven",
+"now": 1765408489.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"Remind me in half an hour to check the oven"
+],
+[
+"line",
+"Fox",
+"Yatta! Hung an ema: “Check the oven” · Today 11:44 PM (in 30 min). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+],
+[
+"Check the oven",
+1765410289.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "delete reminder 2",
+"now": 1765408496.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"delete reminder 2"
+],
+[
+"line",
+"Fox",
+"Yatta! Took down “Check the oven”."
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Call mum",
+1765479600.0,
+null,
+true,
+false
+],
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "clear fulfilled reminders",
+"now": 1765408503.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"clear fulfilled reminders"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Took down 1 fulfilled ema~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": []
+},
+{
+"q": "plan study bio at 5pm for 1 hour",
+"now": 1765408510.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"plan study bio at 5pm for 1 hour"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Added 17:00 – Study bio (60 min). It's on your timetable, and I'll say it out loud when it's time~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+]
+]
+},
+{
+"q": "i will revise chem at 7",
+"now": 1765408517.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"i will revise chem at 7"
+],
+[
+"line",
+"Fox",
+"Waai~ Added 19:00 – Revise chem (30 min). It's on your timetable, and I'll say it out loud when it's time~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+]
+]
+},
+{
+"q": "add 4pm study renal 45",
+"now": 1765408524.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"add 4pm study renal 45"
+],
+[
+"line",
+"Fox",
+"Added 16:00 – Study renal (45 min)."
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+]
+]
+},
+{
+"q": "add 8:30 history 20 daily",
+"now": 1765408531.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"add 8:30 history 20 daily"
+],
+[
+"line",
+"Fox",
+"Kon! Kon! Added 08:30 – History 20 (30 min), every day~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+]
+]
+},
+{
+"q": "add tomorrow 6pm piano",
+"now": 1765408538.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"add tomorrow 6pm piano"
+],
+[
+"line",
+"Fox",
+"Yatta! Added 18:00 – Piano (30 min) for tomorrow~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "add math",
+"now": 1765408545.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"add math"
+],
+[
+"llm",
+"add math"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "add 5pm",
+"now": 1765408552.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"add 5pm"
+],
+[
+"line",
+"Fox",
+"Kon kon~ What's the task? e.g. add 4pm study renal 45\n(Kon! Noted~ when you say 'math' you mean '5pm'.)"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "timetable",
+"now": 1765408559.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"timetable"
+],
+[
+"line",
+"Fox",
+"Today:\n08:30  History 20 (30 min)\n16:00  Study renal (45 min)\n17:00  Study bio (60 min)\n19:00  Revise chem (30 min)"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "what's next",
+"now": 1765408566.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"what's next"
+],
+[
+"line",
+"Fox",
+"Auu... Nothing left on today's timetable. Add something: add 4pm study 45"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "next",
+"now": 1765408573.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"next"
+],
+[
+"line",
+"Fox",
+"Kon... Nothing left on today's timetable. Add something: add 4pm study 45"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "any reminders",
+"now": 1765408580.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"any reminders"
+],
+[
+"line",
+"Fox",
+"Your ema:\n1. Stretch  (Today 11:29 PM)\n2. Take vitamins  (Tomorrow 7:00 AM)\n3. Buy oat milk  (Tomorrow 8:00 AM)\n4. Read  (Tomorrow 9:00 AM)\n5. Drink water  (Tomorrow 10:00 AM, every day)\n6. Walk  (Tomorrow 1:30 PM)\n7. Submit the essay  (Fri 8:00 AM)"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "the oven reminder is done",
+"now": 1765408587.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"the oven reminder is done"
+],
+[
+"llm",
+"the oven reminder is done"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+false,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+false,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+false,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+false,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+false,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+false,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "clear all reminders",
+"now": 1765408594.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"clear all reminders"
+],
+[
+"line",
+"Fox",
+"Kon! Okay, I moved all 7 reminders to the fulfilled row (tap one there to bring it back)~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "what are my reminders",
+"now": 1765408601.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"what are my reminders"
+],
+[
+"line",
+"Fox",
+"Kon kon~ Your ema rack is empty~ Say 'remind me to call mum at 6pm', or write one on the Reminders page~kon!"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "remind me in 5 min to stand up",
+"now": 1765408608.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me in 5 min to stand up"
+],
+[
+"line",
+"Fox",
+"Waai~ Hung an ema: “Stand up” · Today 11:21 PM (in 5 min). I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+],
+[
+"Stand up",
+1765408908.0,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "remind me to drink tea every day at 8am",
+"now": 1765408615.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me to drink tea every day at 8am"
+],
+[
+"line",
+"Fox",
+"Ehehe~ Hung an ema: “Drink tea” · Tomorrow 8:00 AM (in 8 h 43 min), every day. I'll say it out loud then~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+],
+[
+"Stand up",
+1765408908.0,
+null,
+false,
+false
+],
+[
+"Drink tea",
+1765440000.0,
+"daily",
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"q": "remind me to water plants",
+"now": 1765408622.0,
+"pre": null,
+"out": [
+[
+"line",
+"You",
+"remind me to water plants"
+],
+[
+"line",
+"Fox",
+"Yatta! Hung an ema: “Water plants” (no time yet). Want me to say it at a time? Say 'move water plants to 6pm'~"
+]
+],
+"session": null,
+"brk": null,
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+],
+[
+"Stand up",
+1765408908.0,
+null,
+false,
+false
+],
+[
+"Drink tea",
+1765440000.0,
+"daily",
+false,
+false
+],
+[
+"Water plants",
+null,
+null,
+false,
+false
+]
+],
+"tt": [
+[
+"17:00",
+60,
+"Study bio",
+false,
+"2025-12-10"
+],
+[
+"19:00",
+30,
+"Revise chem",
+false,
+"2025-12-10"
+],
+[
+"16:00",
+45,
+"Study renal",
+false,
+"2025-12-10"
+],
+[
+"08:30",
+30,
+"History 20",
+true,
+"2025-12-10"
+],
+[
+"18:00",
+30,
+"Piano",
+false,
+"2025-12-11"
+]
+]
+},
+{
+"tick": [
+{
+"now": 1765441022.0,
+"out": [
+[
+"line",
+"Fox",
+"Kon kon! Reminder: Drink tea"
+]
+],
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+],
+[
+"Stand up",
+1765408908.0,
+null,
+false,
+true
+],
+[
+"Drink tea",
+1765526400.0,
+"daily",
+false,
+false
+],
+[
+"Water plants",
+null,
+null,
+false,
+false
+]
+]
+},
+{
+"now": 1765473422.0,
+"out": [],
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+],
+[
+"Stand up",
+1765408908.0,
+null,
+false,
+true
+],
+[
+"Drink tea",
+1765526400.0,
+"daily",
+false,
+false
+],
+[
+"Water plants",
+null,
+null,
+false,
+false
+]
+]
+},
+{
+"now": 1765505822.0,
+"out": [],
+"ema": [
+[
+"Drink water",
+1765447200.0,
+"daily",
+true,
+false
+],
+[
+"Stretch",
+1765409361.0,
+null,
+true,
+false
+],
+[
+"Take vitamins",
+1765436400.0,
+null,
+true,
+false
+],
+[
+"Buy oat milk",
+1765440000.0,
+null,
+true,
+false
+],
+[
+"Submit the essay",
+1765526400.0,
+null,
+true,
+false
+],
+[
+"Read",
+1765443600.0,
+null,
+true,
+false
+],
+[
+"Walk",
+1765459800.0,
+null,
+true,
+false
+],
+[
+"Stand up",
+1765408908.0,
+null,
+false,
+true
+],
+[
+"Drink tea",
+1765526400.0,
+"daily",
+false,
+false
+],
+[
+"Water plants",
+null,
+null,
+false,
+false
+]
+]
+}
+]
+}
+]

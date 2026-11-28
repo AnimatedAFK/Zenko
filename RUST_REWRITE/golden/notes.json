@@ -1,0 +1,2948 @@
+{
+"split": [
+{
+"life": 0,
+"text": "Bonjour, je m'appelle Anoop et j'habite à Mumbai.\nLe passé composé uses avoir or être.\nMitosis has four phases: prophase, metaphase, anaphase, telophase.\nThe cell membrane is a phospholipid bilayer.",
+"parts": [
+[
+"french",
+"Bonjour, je m'appelle Anoop et j'habite à Mumbai.\nLe passé composé uses avoir or être."
+],
+[
+"bio",
+"Mitosis has four phases: prophase, metaphase, anaphase, telophase.\nThe cell membrane is a phospholipid bilayer."
+]
+]
+},
+{
+"life": 0,
+"text": "Chem\nmoles = mass / molar mass\nAvogadro's number is 6.02 x 10^23\n\nMath\ndy/dx of sin x is cos x\nintegrate 3x^2 + 2",
+"parts": [
+[
+"chem",
+"Chem\nmoles = mass / molar mass"
+],
+[
+"math",
+"Avogadro's number is 6.02 x 10^23\n\nMath\ndy/dx of sin x is cos x\nintegrate 3x^2 + 2"
+]
+]
+},
+{
+"life": 0,
+"text": "random thought about lunch\nbuy milk\n\nphotosynthesis happens in the chloroplast\nlight dependent reactions make ATP",
+"parts": [
+[
+"bio",
+"random thought about lunch\nbuy milk\n\nphotosynthesis happens in the chloroplast\nlight dependent reactions make ATP"
+]
+]
+},
+{
+"life": 0,
+"text": "psych: the bystander effect and conformity\nAsch's line study\nmilgram obedience\nenglish paper 1 tips\nanalyse the tone of the extract",
+"parts": [
+[
+"psych",
+"psych: the bystander effect and conformity\nAsch's line study\nmilgram obedience"
+],
+[
+"english",
+"english paper 1 tips\nanalyse the tone of the extract"
+]
+]
+},
+{
+"life": 0,
+"text": "la maison est grande\nnous allons au cinéma\nenzymes lower activation energy\ndenaturation at high temperature",
+"parts": [
+[
+"french",
+"la maison est grande\nnous allons au cinéma\nenzymes lower activation energy\ndenaturation at high temperature"
+]
+]
+},
+{
+"life": 0,
+"text": "",
+"parts": []
+},
+{
+"life": 0,
+"text": "   \n\n",
+"parts": []
+},
+{
+"life": 0,
+"text": "no subject here at all\njust words",
+"parts": [
+[
+null,
+"no subject here at all\njust words"
+]
+]
+},
+{
+"life": 0,
+"text": "Bio HL\nDNA replication is semi-conservative\nhelicase unzips\nFrench\nles verbes irréguliers\naller, être, avoir",
+"parts": [
+[
+"bio",
+"Bio HL\nDNA replication is semi-conservative\nhelicase unzips"
+],
+[
+"french",
+"French\nles verbes irréguliers\naller, être, avoir"
+]
+]
+},
+{
+"life": 0,
+"text": "equilibrium constant Kc\nLe Chatelier's principle\nshift to the right\nlog(x) + ln(y) = 2",
+"parts": [
+[
+"chem",
+"equilibrium constant Kc\nLe Chatelier's principle\nshift to the right"
+],
+[
+"math",
+"log(x) + ln(y) = 2"
+]
+]
+},
+{
+"life": 0,
+"text": "chat\nmerci beaucoup\nmanger",
+"parts": [
+[
+null,
+"chat\nmerci beaucoup\nmanger"
+]
+]
+},
+{
+"life": 1,
+"text": "Bonjour, je m'appelle Anoop et j'habite à Mumbai.\nLe passé composé uses avoir or être.\nMitosis has four phases: prophase, metaphase, anaphase, telophase.\nThe cell membrane is a phospholipid bilayer.",
+"parts": [
+[
+"french",
+"Bonjour, je m'appelle Anoop et j'habite à Mumbai.\nLe passé composé uses avoir or être."
+],
+[
+"bio",
+"Mitosis has four phases: prophase, metaphase, anaphase, telophase.\nThe cell membrane is a phospholipid bilayer."
+]
+]
+},
+{
+"life": 1,
+"text": "Chem\nmoles = mass / molar mass\nAvogadro's number is 6.02 x 10^23\n\nMath\ndy/dx of sin x is cos x\nintegrate 3x^2 + 2",
+"parts": [
+[
+"chem",
+"Chem\nmoles = mass / molar mass"
+],
+[
+"math",
+"Avogadro's number is 6.02 x 10^23\n\nMath\ndy/dx of sin x is cos x\nintegrate 3x^2 + 2"
+]
+]
+},
+{
+"life": 1,
+"text": "random thought about lunch\nbuy milk\n\nphotosynthesis happens in the chloroplast\nlight dependent reactions make ATP",
+"parts": [
+[
+"bio",
+"random thought about lunch\nbuy milk\n\nphotosynthesis happens in the chloroplast\nlight dependent reactions make ATP"
+]
+]
+},
+{
+"life": 1,
+"text": "psych: the bystander effect and conformity\nAsch's line study\nmilgram obedience\nenglish paper 1 tips\nanalyse the tone of the extract",
+"parts": [
+[
+"psych",
+"psych: the bystander effect and conformity\nAsch's line study\nmilgram obedience"
+],
+[
+"english",
+"english paper 1 tips\nanalyse the tone of the extract"
+]
+]
+},
+{
+"life": 1,
+"text": "la maison est grande\nnous allons au cinéma\nenzymes lower activation energy\ndenaturation at high temperature",
+"parts": [
+[
+"french",
+"la maison est grande\nnous allons au cinéma\nenzymes lower activation energy\ndenaturation at high temperature"
+]
+]
+},
+{
+"life": 1,
+"text": "",
+"parts": []
+},
+{
+"life": 1,
+"text": "   \n\n",
+"parts": []
+},
+{
+"life": 1,
+"text": "no subject here at all\njust words",
+"parts": [
+[
+null,
+"no subject here at all\njust words"
+]
+]
+},
+{
+"life": 1,
+"text": "Bio HL\nDNA replication is semi-conservative\nhelicase unzips\nFrench\nles verbes irréguliers\naller, être, avoir",
+"parts": [
+[
+"bio",
+"Bio HL\nDNA replication is semi-conservative\nhelicase unzips"
+],
+[
+"french",
+"French\nles verbes irréguliers\naller, être, avoir"
+]
+]
+},
+{
+"life": 1,
+"text": "equilibrium constant Kc\nLe Chatelier's principle\nshift to the right\nlog(x) + ln(y) = 2",
+"parts": [
+[
+"chem",
+"equilibrium constant Kc\nLe Chatelier's principle\nshift to the right"
+],
+[
+"math",
+"log(x) + ln(y) = 2"
+]
+]
+},
+{
+"life": 1,
+"text": "chat\nmerci beaucoup\nmanger",
+"parts": [
+[
+null,
+"chat\nmerci beaucoup\nmanger"
+]
+]
+},
+{
+"life": 2,
+"text": "Bonjour, je m'appelle Anoop et j'habite à Mumbai.\nLe passé composé uses avoir or être.\nMitosis has four phases: prophase, metaphase, anaphase, telophase.\nThe cell membrane is a phospholipid bilayer.",
+"parts": [
+[
+"french",
+"Bonjour, je m'appelle Anoop et j'habite à Mumbai.\nLe passé composé uses avoir or être."
+],
+[
+"bio",
+"Mitosis has four phases: prophase, metaphase, anaphase, telophase.\nThe cell membrane is a phospholipid bilayer."
+]
+]
+},
+{
+"life": 2,
+"text": "Chem\nmoles = mass / molar mass\nAvogadro's number is 6.02 x 10^23\n\nMath\ndy/dx of sin x is cos x\nintegrate 3x^2 + 2",
+"parts": [
+[
+"chem",
+"Chem\nmoles = mass / molar mass"
+],
+[
+"math",
+"Avogadro's number is 6.02 x 10^23\n\nMath\ndy/dx of sin x is cos x\nintegrate 3x^2 + 2"
+]
+]
+},
+{
+"life": 2,
+"text": "random thought about lunch\nbuy milk\n\nphotosynthesis happens in the chloroplast\nlight dependent reactions make ATP",
+"parts": [
+[
+"bio",
+"random thought about lunch\nbuy milk\n\nphotosynthesis happens in the chloroplast\nlight dependent reactions make ATP"
+]
+]
+},
+{
+"life": 2,
+"text": "psych: the bystander effect and conformity\nAsch's line study\nmilgram obedience\nenglish paper 1 tips\nanalyse the tone of the extract",
+"parts": [
+[
+"psych",
+"psych: the bystander effect and conformity\nAsch's line study\nmilgram obedience"
+],
+[
+"english",
+"english paper 1 tips\nanalyse the tone of the extract"
+]
+]
+},
+{
+"life": 2,
+"text": "la maison est grande\nnous allons au cinéma\nenzymes lower activation energy\ndenaturation at high temperature",
+"parts": [
+[
+"french",
+"la maison est grande\nnous allons au cinéma\nenzymes lower activation energy\ndenaturation at high temperature"
+]
+]
+},
+{
+"life": 2,
+"text": "",
+"parts": []
+},
+{
+"life": 2,
+"text": "   \n\n",
+"parts": []
+},
+{
+"life": 2,
+"text": "no subject here at all\njust words",
+"parts": [
+[
+null,
+"no subject here at all\njust words"
+]
+]
+},
+{
+"life": 2,
+"text": "Bio HL\nDNA replication is semi-conservative\nhelicase unzips\nFrench\nles verbes irréguliers\naller, être, avoir",
+"parts": [
+[
+"bio",
+"Bio HL\nDNA replication is semi-conservative\nhelicase unzips"
+],
+[
+"french",
+"French\nles verbes irréguliers\naller, être, avoir"
+]
+]
+},
+{
+"life": 2,
+"text": "equilibrium constant Kc\nLe Chatelier's principle\nshift to the right\nlog(x) + ln(y) = 2",
+"parts": [
+[
+"chem",
+"equilibrium constant Kc\nLe Chatelier's principle\nshift to the right"
+],
+[
+"math",
+"log(x) + ln(y) = 2"
+]
+]
+},
+{
+"life": 2,
+"text": "chat\nmerci beaucoup\nmanger",
+"parts": [
+[
+null,
+"chat\nmerci beaucoup\nmanger"
+]
+]
+}
+],
+"scores": [
+{
+"life": 0,
+"line": "Bonjour, je m'appelle Anoop et j'habite à Mumbai.",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 4,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "Le passé composé uses avoir or être.",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 6,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "Mitosis has four phases: prophase, metaphase, anaphase, telophase.",
+"sc": {
+"bio": 1,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "The cell membrane is a phospholipid bilayer.",
+"sc": {
+"bio": 2,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "Chem",
+"sc": {
+"bio": 0,
+"chem": 4,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": true,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "moles = mass / molar mass",
+"sc": {
+"bio": 0,
+"chem": 1,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "Avogadro's number is 6.02 x 10^23",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "Math",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 4,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": true,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "dy/dx of sin x is cos x",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "integrate 3x^2 + 2",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "random thought about lunch",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "buy milk",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "photosynthesis happens in the chloroplast",
+"sc": {
+"bio": 2,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "light dependent reactions make ATP",
+"sc": {
+"bio": 1,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "psych: the bystander effect and conformity",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 5,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": true,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "Asch's line study",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 1,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "milgram obedience",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 2,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "english paper 1 tips",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 5
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": true
+}
+},
+{
+"life": 0,
+"line": "analyse the tone of the extract",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 1
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "la maison est grande",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 3,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "nous allons au cinéma",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 3,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "enzymes lower activation energy",
+"sc": {
+"bio": 1,
+"chem": 1,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "denaturation at high temperature",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "no subject here at all",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "just words",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "Bio HL",
+"sc": {
+"bio": 4,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": true,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "DNA replication is semi-conservative",
+"sc": {
+"bio": 1,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "helicase unzips",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "French",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 4,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": true,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "les verbes irréguliers",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 4,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "aller, être, avoir",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 5,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "equilibrium constant Kc",
+"sc": {
+"bio": 0,
+"chem": 1,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "Le Chatelier's principle",
+"sc": {
+"bio": 0,
+"chem": 1,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "shift to the right",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "log(x) + ln(y) = 2",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "chat",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "merci beaucoup",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 0,
+"line": "manger",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "Bonjour, je m'appelle Anoop et j'habite à Mumbai.",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 4,
+"psych": 0,
+"english": 2
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "Le passé composé uses avoir or être.",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 6,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "Mitosis has four phases: prophase, metaphase, anaphase, telophase.",
+"sc": {
+"bio": 1,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "The cell membrane is a phospholipid bilayer.",
+"sc": {
+"bio": 2,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "Chem",
+"sc": {
+"bio": 0,
+"chem": 4,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": true,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "moles = mass / molar mass",
+"sc": {
+"bio": 0,
+"chem": 1,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "Avogadro's number is 6.02 x 10^23",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "Math",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 4,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": true,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "dy/dx of sin x is cos x",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "integrate 3x^2 + 2",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "random thought about lunch",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "buy milk",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "photosynthesis happens in the chloroplast",
+"sc": {
+"bio": 2,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "light dependent reactions make ATP",
+"sc": {
+"bio": 1,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "psych: the bystander effect and conformity",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 5,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": true,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "Asch's line study",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 1,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "milgram obedience",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 2,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "english paper 1 tips",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 5
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": true
+}
+},
+{
+"life": 1,
+"line": "analyse the tone of the extract",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 1
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "la maison est grande",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 3,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "nous allons au cinéma",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 3,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "enzymes lower activation energy",
+"sc": {
+"bio": 1,
+"chem": 1,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "denaturation at high temperature",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "no subject here at all",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "just words",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "Bio HL",
+"sc": {
+"bio": 4,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": true,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "DNA replication is semi-conservative",
+"sc": {
+"bio": 1,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "helicase unzips",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "French",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 4,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": true,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "les verbes irréguliers",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 4,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "aller, être, avoir",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 5,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "equilibrium constant Kc",
+"sc": {
+"bio": 0,
+"chem": 1,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "Le Chatelier's principle",
+"sc": {
+"bio": 0,
+"chem": 1,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "shift to the right",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "log(x) + ln(y) = 2",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "chat",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "merci beaucoup",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 1,
+"line": "manger",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "Bonjour, je m'appelle Anoop et j'habite à Mumbai.",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 4,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "Le passé composé uses avoir or être.",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 6,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "Mitosis has four phases: prophase, metaphase, anaphase, telophase.",
+"sc": {
+"bio": 1,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "The cell membrane is a phospholipid bilayer.",
+"sc": {
+"bio": 2,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "Chem",
+"sc": {
+"bio": 0,
+"chem": 4,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": true,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "moles = mass / molar mass",
+"sc": {
+"bio": 0,
+"chem": 1,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "Avogadro's number is 6.02 x 10^23",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "Math",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 4,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": true,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "dy/dx of sin x is cos x",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "integrate 3x^2 + 2",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "random thought about lunch",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "buy milk",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "photosynthesis happens in the chloroplast",
+"sc": {
+"bio": 2,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "light dependent reactions make ATP",
+"sc": {
+"bio": 1,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "psych: the bystander effect and conformity",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 5,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": true,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "Asch's line study",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 1,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "milgram obedience",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 2,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "english paper 1 tips",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 5
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": true
+}
+},
+{
+"life": 2,
+"line": "analyse the tone of the extract",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 1
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "la maison est grande",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 3,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "nous allons au cinéma",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 3,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "enzymes lower activation energy",
+"sc": {
+"bio": 1,
+"chem": 1,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "denaturation at high temperature",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "no subject here at all",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "just words",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "Bio HL",
+"sc": {
+"bio": 4,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": true,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "DNA replication is semi-conservative",
+"sc": {
+"bio": 1,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "helicase unzips",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "French",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 4,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": true,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "les verbes irréguliers",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 4,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "aller, être, avoir",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 5,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "equilibrium constant Kc",
+"sc": {
+"bio": 0,
+"chem": 1,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "Le Chatelier's principle",
+"sc": {
+"bio": 0,
+"chem": 1,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "shift to the right",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "log(x) + ln(y) = 2",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 2,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "chat",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "merci beaucoup",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+},
+{
+"life": 2,
+"line": "manger",
+"sc": {
+"bio": 0,
+"chem": 0,
+"math": 0,
+"french": 0,
+"psych": 0,
+"english": 0
+},
+"alias": {
+"bio": false,
+"chem": false,
+"math": false,
+"french": false,
+"psych": false,
+"english": false
+}
+}
+],
+"safe": [
+[
+"Bio",
+"Bio"
+],
+[
+"  my: notes? ",
+"my- notes-"
+],
+[
+"...",
+"Untitled"
+],
+[
+"a/b\\c|d",
+"a-b-c-d"
+],
+[
+"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+],
+[
+"",
+"Untitled"
+],
+[
+"IB Chemistry",
+"IB Chemistry"
+],
+[
+"French_notes",
+"French_notes"
+],
+[
+"maths-hw",
+"maths-hw"
+],
+[
+"psych.SL",
+"psych.SL"
+],
+[
+"Eng Lit",
+"Eng Lit"
+],
+[
+"Random",
+"Random"
+]
+],
+"match": [
+[
+"Bio",
+"bio",
+"bio"
+],
+[
+"  my: notes? ",
+null,
+null
+],
+[
+"...",
+null,
+null
+],
+[
+"a/b\\c|d",
+null,
+null
+],
+[
+"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+null,
+null
+],
+[
+"",
+null,
+null
+],
+[
+"IB Chemistry",
+"chem",
+"chem"
+],
+[
+"French_notes",
+"french",
+"french"
+],
+[
+"maths-hw",
+"math",
+"math"
+],
+[
+"psych.SL",
+"psych",
+"psych"
+],
+[
+"Eng Lit",
+"english",
+"english"
+],
+[
+"Random",
+null,
+null
+]
+],
+"french": [
+[
+"bonjour",
+true
+],
+[
+"chat",
+false
+],
+[
+"la maison",
+true
+],
+[
+"the house",
+false
+],
+[
+"manger",
+true
+],
+[
+"hello world",
+false
+],
+[
+"aller",
+true
+],
+[
+"je suis là",
+true
+],
+[
+"maison",
+false
+],
+[
+"le chien est noir",
+true
+],
+[
+"dog",
+false
+],
+[
+"house",
+false
+],
+[
+"travailler",
+false
+],
+[
+"école",
+true
+]
+],
+"vocab": [
+[
+"bonjour",
+[]
+],
+[
+"chat",
+[]
+],
+[
+"la maison",
+[]
+],
+[
+"the house",
+[]
+],
+[
+"manger",
+[
+[
+"manger sainement",
+"to eat healthily",
+"Identités"
+]
+]
+],
+[
+"hello world",
+[]
+],
+[
+"aller",
+[]
+],
+[
+"je suis là",
+[]
+],
+[
+"maison",
+[]
+],
+[
+"le chien est noir",
+[]
+],
+[
+"dog",
+[]
+],
+[
+"house",
+[]
+],
+[
+"travailler",
+[]
+],
+[
+"école",
+[]
+]
+],
+"plan": [
+{
+"top": "Export",
+"plan": [
+[
+"Export/Bio/cells.md",
+"Biology HL/cells.md"
+],
+[
+"Export/Bio/sub/dna.txt",
+"Biology HL/sub/dna.txt"
+],
+[
+"Export/Chemistry notes/acids.md",
+"Chemistry HL/acids.md"
+],
+[
+"Export/French.md",
+"French ab initio SL/French.md"
+],
+[
+"Export/Maths/calc/limits.md",
+"Math AA SL/calc/limits.md"
+],
+[
+"Export/misc/todo.txt",
+"Imported/Export/misc/todo.txt"
+],
+[
+"Export/photo.png",
+"Imported/Export/photo.png"
+],
+[
+"Export/readme.txt",
+"Imported/Export/readme.txt"
+]
+]
+},
+{
+"top": "Export/Bio",
+"plan": [
+[
+"Export/Bio/cells.md",
+"Biology HL/cells.md"
+],
+[
+"Export/Bio/sub/dna.txt",
+"Biology HL/sub/dna.txt"
+]
+]
+}
+],
+"lives": [
+{},
+{
+"subj_words": {
+"glycolysis": "bio",
+"stoichiometry": "chem",
+"mumbai": "english"
+}
+},
+{
+"subject_names": {
+"bio": "Biology (HL)",
+"psych": "Psychology/SL"
+}
+}
+]
+}

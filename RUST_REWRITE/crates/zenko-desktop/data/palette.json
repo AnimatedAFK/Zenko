@@ -1,0 +1,67 @@
+{
+"PAGE_WORDS": {
+"home": "start dashboard today overview focus session",
+"timetable": "schedule timetable plan day classes lessons",
+"deadlines": "upcoming exams deadlines homework due countdown study planner clock",
+"reminders": "reminders ema remind me alerts notes shrine",
+"notebook": "study books subjects tutor flashcards practice grades notebook ia ee tok bookshelf",
+"daily": "daily mood water sleep journal wellbeing badges",
+"exercise": "exercise gym workout weight calories food muscles training",
+"garden": "zen garden breathing calm relax grounding sleep anxious",
+"map": "world map japan journey places travel",
+"screen": "screen time apps sites usage youtube hours",
+"chat": "chat talk ask questions",
+"notes": "notes remarkable handwriting",
+"you": "you profile stats habits learned memory",
+"customize": "customize coat colours look outfit wardrobe fox eyes foxfire voice sidebar accent theme",
+"settings": "settings preferences options",
+"square": "town square global chat online friends message everyone community talk"
+},
+"BOOKS": [
+[
+"bio",
+"Biology HL",
+"bio seibutsu Biology HL bio biology biol ib bio bio hl subject notes practice tutor"
+],
+[
+"chem",
+"Chemistry HL",
+"chem kagaku Chemistry HL chem chemistry chm ib chem chem hl subject notes practice tutor"
+],
+[
+"math",
+"Math AA SL",
+"math suugaku Math AA SL math maths mathematics math aa maths aa aa sl analysis and approaches subject notes practice tutor"
+],
+[
+"french",
+"French ab initio SL",
+"french futsugo French ab initio SL french français francais ab initio ab-initio fr ab subject notes practice tutor"
+],
+[
+"psych",
+"Psychology SL",
+"psych shinri Psychology SL psych psychology psyc ib psych psych sl subject notes practice tutor"
+],
+[
+"english",
+"English Lang & Lit HL",
+"english eigo English Lang & Lit HL english lang lit langlit lang & lit lang and lit language and literature eng lit english hl subject notes practice tutor"
+],
+[
+"diary",
+"Study diary",
+"diary nikki Study diary subject notes practice tutor"
+],
+[
+"grades",
+"Grades",
+"grades seiseki Grades subject notes practice tutor"
+],
+[
+"bible",
+"Bible",
+"bible seisho Bible subject notes practice tutor"
+]
+]
+}
