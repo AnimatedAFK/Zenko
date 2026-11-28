@@ -8,7 +8,8 @@ pixels of every picture. The page inside the stage is left out (each page has it
 Run: xvfb-run -a -s "-screen 0 1920x1080x24" /usr/bin/python3.12 tools/make_golden_hubwin.py"""
 import sys
 sys.dont_write_bytecode = True
-import json, os, tempfile, types
+import json
+import random, os, tempfile, types
 os.environ["TZ"] = "UTC"
 import time  # noqa: E402
 time.tzset()
@@ -659,6 +660,52 @@ if len(sys.argv) > 1 and sys.argv[1] == "shelf":
                     "petals": [p[:4] for p in app.nb["fx"]["petals"]],
                     "books": [[b[0], b[1], b[2], b[3], app.book_meta(b[0])["col"]] for b in Z.BOOKS],
                     "practice": Z.BOOK_PRACTICE}
+        h = app.hub
+        return walk(h["pages"]["notebook"], h["win"], set(), images, fonts)
+    SETUP["data"], SETUP["after"], SETUP["tree"] = _data, _after, _tree
+
+if len(sys.argv) > 1 and sys.argv[1] == "book":
+    # golden/hub_book.json: open books on the Study books page: a subject's (Zenko at her blackboard, the practice
+    # card, the tutor brain, the right page's tutor, sources, topics and history) for each subject, the study diary
+    # and the grades book; a small midnight window too. random is seeded just before the book is made, so the
+    # practice pages (a fact, a generated problem, a word, a prompt, a quiz) can be made the same way in Rust.
+    OUT = "hub_book.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 1.5 * 3600 + 754.25
+    CASES = [("book_bio", T0, {"theme": "snow"}, None, "notebook"),
+             ("book_chem", T0, {"theme": "snow"}, None, "notebook"),
+             ("book_math_small", T0, {"theme": "midnight"}, (1120, 720), "notebook"),
+             ("book_french", T0, {"theme": "snow"}, None, "notebook"),
+             ("book_psych", T0, {"theme": "snow"}, None, "notebook"),
+             ("book_english", T0, {"theme": "snow"}, None, "notebook"),
+             ("book_diary", T0, {"theme": "snow"}, None, "notebook"),
+             ("book_grades", T0, {"theme": "snow"}, None, "notebook")]
+    BEFORE = {}
+
+    def _data(app, name):
+        app.nb_sid = "shelf"
+        app.life["slog"] = {"2025-12-09": {"bio": 5400, "chem": 600}, "2025-12-11": {"math": 1500, "bio": 300}}
+        app.life["grades"] = [{"id": "g1", "sid": "bio", "kind": "Mock", "name": "Cells", "score": 34.0, "out_of": 40.0,
+                               "grade": 6, "day": "2025-11-20"},
+                              {"id": "g2", "sid": "math", "kind": "Quiz", "name": "", "score": 18.0, "out_of": 25.0,
+                               "grade": None, "day": "2025-12-02"}] if name == "book_grades" else []
+        app.life["nb_hist"] = {"bio": [{"t": T0 - 3600, "q": "What is osmosis?", "a": "Osmosis is the **net movement** of water."}]} \
+            if name == "book_bio" else {}
+        app.life_save()
+
+    def _after(app, name):
+        key = name.split("_")[1]
+        BEFORE["life"] = json.loads(json.dumps(app.life, default=str))
+        BEFORE["cfg"] = json.loads(json.dumps(app.cfg, default=str))
+        random.seed(77)
+        app.book_open(key, anim=False)
+        for _ in range(16):
+            app.root.update()
+            time.sleep(0.05)
+
+    def _tree(app, images, fonts):
+        EXTRA[0] = {"mincho": Z._mincho_font(app.root), "serif_font": Z._serif_font(app.root), "life_before": BEFORE["life"],
+                    "cfg_before": BEFORE["cfg"], "jp_font": Z._jp_font(app.root), "book": app.nb_sid}
         h = app.hub
         return walk(h["pages"]["notebook"], h["win"], set(), images, fonts)
     SETUP["data"], SETUP["after"], SETUP["tree"] = _data, _after, _tree

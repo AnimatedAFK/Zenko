@@ -51,6 +51,7 @@ fn cls(k: &Kind, id: usize) -> &'static str {
         Kind::Check { radio: true, .. } => "Radiobutton",
         Kind::Check { .. } => "Checkbutton",
         Kind::Menu { .. } => "Menubutton",
+        Kind::Scale { .. } => "Scale",
     }
 }
 
