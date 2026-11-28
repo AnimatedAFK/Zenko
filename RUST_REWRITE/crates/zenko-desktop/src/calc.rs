@@ -96,7 +96,7 @@ fn ldexp(x: f64, e: i64) -> f64 {
 }
 
 /// int / int, correctly rounded like Python's long_true_divide.
-fn int_truediv(a: &BigInt, b: &BigInt) -> R<f64> {
+pub(crate) fn int_truediv(a: &BigInt, b: &BigInt) -> R<f64> {
     if b.is_zero() {
         return Err(ZeroDiv);
     }
@@ -176,7 +176,7 @@ fn float_mod(vx: f64, wx: f64) -> R<f64> {
 }
 
 /// CPython float_pow
-fn float_pow(iv: f64, iw: f64) -> R<Num> {
+pub(crate) fn float_pow(iv: f64, iw: f64) -> R<Num> {
     if iw == 0.0 {
         return Ok(Num::Float(1.0));
     }
@@ -231,12 +231,12 @@ fn float_pow(iv: f64, iw: f64) -> R<Num> {
     Ok(Num::Float(if neg { -r } else { r }))
 }
 
-fn c_mul(a: (f64, f64), b: (f64, f64)) -> (f64, f64) {
+pub(crate) fn c_mul(a: (f64, f64), b: (f64, f64)) -> (f64, f64) {
     (a.0 * b.0 - a.1 * b.1, a.0 * b.1 + a.1 * b.0)
 }
 
 /// CPython _Py_c_quot
-fn c_quot(a: (f64, f64), b: (f64, f64)) -> R<(f64, f64)> {
+pub(crate) fn c_quot(a: (f64, f64), b: (f64, f64)) -> R<(f64, f64)> {
     let (ar, ai, br, bi) = (a.0, a.1, b.0, b.1);
     let abs_br = br.abs();
     let abs_bi = bi.abs();
@@ -256,7 +256,7 @@ fn c_quot(a: (f64, f64), b: (f64, f64)) -> R<(f64, f64)> {
     }
 }
 
-fn c_powu(x: (f64, f64), n: i64) -> (f64, f64) {
+pub(crate) fn c_powu(x: (f64, f64), n: i64) -> (f64, f64) {
     let mut r = (1.0, 0.0);
     let mut p = x;
     let mut mask: i64 = 1;
@@ -292,7 +292,7 @@ fn c_pow(a: (f64, f64), b: (f64, f64)) -> R<(f64, f64)> {
 }
 
 /// complex_pow
-fn c_pow_any(a: (f64, f64), b: (f64, f64)) -> R<(f64, f64)> {
+pub(crate) fn c_pow_any(a: (f64, f64), b: (f64, f64)) -> R<(f64, f64)> {
     let p = if b.1 == 0.0 && b.0 == b.0.floor() && b.0.abs() <= 100.0 {
         let n = b.0 as i64;
         if n > 0 { c_powu(a, n) } else { c_quot((1.0, 0.0), c_powu(a, -n))? }
@@ -481,14 +481,14 @@ fn call(name: &str, v: &Num) -> R<Num> {
 
 // ---- the parser: Python's expression grammar (what ast.parse would accept, as far as maths goes) ----
 #[derive(Debug, Clone, PartialEq)]
-enum Tok {
+pub(crate) enum Tok {
     Num(Num),
     Imag,
     Name(String),
     Op(&'static str),
 }
 
-fn lex(s: &str) -> R<Vec<Tok>> {
+pub(crate) fn lex(s: &str) -> R<Vec<Tok>> {
     let c: Vec<char> = s.chars().collect();
     let mut out = vec![];
     let mut i = 0;
@@ -596,8 +596,8 @@ fn lex(s: &str) -> R<Vec<Tok>> {
             continue;
         }
         let rest: String = c[i..c.len().min(i + 3)].iter().collect();
-        const OPS: [&str; 30] = ["**=", "//=", ">>=", "<<=", "...", "**", "//", "<=", ">=", "==", "!=", "->", ":=", "<<", ">>",
-                                 "+", "-", "*", "/", "%", "(", ")", ",", "<", ">", "&", "|", "^", "~", "@"];
+        const OPS: [&str; 31] = ["**=", "//=", ">>=", "<<=", "...", "**", "//", "<=", ">=", "==", "!=", "->", ":=", "<<", ">>",
+                                 "+", "-", "*", "/", "%", "(", ")", ",", "<", ">", "&", "|", "^", "~", "@", "="];
         let op = OPS.iter().find(|o| rest.starts_with(**o));
         match op {
             Some(o) => {

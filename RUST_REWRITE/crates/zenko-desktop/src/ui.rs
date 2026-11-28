@@ -201,7 +201,9 @@ pub enum Kind {
             left: bool, strike: bool, under: bool },
     /// zenko.py PixelButton (a canvas): its own colour, font (bold), padding, hover / press state and command
     Button { text: String, font: Font, color: String, fg: String, padx: i32, pady: i32, enabled: bool,
-             shape: &'static str, hover: bool, down: bool, cmd: String },
+             shape: &'static str, hover: bool, down: bool, cmd: String,
+             /// PixelButton keeps the size it measured until zk_rescale: config(text=...) only repaints
+             sized: Option<String> },
     Entry { font: Font, chars: i32, e: EntryText },
     Canvas { items: Vec<Item>, card: Option<Card>, tk: Option<Box<crate::tkcanvas::Canvas>> },
     /// a tk.Checkbutton / tk.Radiobutton with its indicator: `select` is selectcolor, `cmd` what a click does
@@ -468,7 +470,7 @@ impl Ui {
         let pbg = self.fill_of(parent);
         self.add(Some(parent), Kind::Button { text: text.into(), font: Font::new(family, size, true), color: color.into(),
                                               fg: fg.into(), padx, pady, enabled, shape: "pill", hover: false,
-                                              down: false, cmd: cmd.into() }, &pbg)
+                                              down: false, cmd: cmd.into(), sized: None }, &pbg)
     }
 
     /// zenko.py tt_entry: relief flat, borderwidth 1, highlightthickness 1
@@ -713,7 +715,8 @@ impl Ui {
                     (tw + 2 * w.padx + space + 2 * ib, h + 2 * ib)
                 }
             }
-            Kind::Button { text, font, padx, pady, .. } => {
+            Kind::Button { text, font, padx, pady, sized, .. } => {
+                let text = sized.as_ref().unwrap_or(text);
                 (fonts.width(font, text) + 2 * padx + 10, fonts.linespace(font) + 2 * pady + 6)
             }
             Kind::Entry { font, chars, e } => {

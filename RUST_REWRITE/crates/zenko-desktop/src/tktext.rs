@@ -183,6 +183,59 @@ impl Text {
         }
     }
 
+    /// tag add `name` over every character that has tag `having` (a tag's .first .. .last when it is one run of
+    /// text, as a verse's is)
+    pub fn tag_add_over(&mut self, name: &str, having: &str) {
+        let Some(h) = self.tags.iter().position(|t| t.name == having) else { return };
+        let i = self.tag_index(name);
+        for line in &mut self.lines {
+            for r in line.iter_mut() {
+                if r.tags.contains(&h) && !r.tags.contains(&i) {
+                    r.tags.push(i);
+                    r.tags.sort();
+                }
+            }
+        }
+    }
+
+    /// tag remove `name` 1.0 end
+    pub fn tag_remove_all(&mut self, name: &str) {
+        let Some(i) = self.tags.iter().position(|t| t.name == name) else { return };
+        for line in &mut self.lines {
+            for r in line.iter_mut() {
+                r.tags.retain(|&k| k != i);
+            }
+        }
+    }
+
+    /// the first index that has the tag (tag.first)
+    pub fn tag_first(&self, name: &str) -> Option<(usize, usize)> {
+        let i = self.tags.iter().position(|t| t.name == name)?;
+        for (ln, line) in self.lines.iter().enumerate() {
+            let mut ch = 0;
+            for r in line {
+                if r.tags.contains(&i) {
+                    return Some((ln + 1, ch));
+                }
+                ch += r.n;
+            }
+        }
+        None
+    }
+
+    /// the names of the tags on the character at an index
+    pub fn tags_at(&self, (line, ch): (usize, usize)) -> Vec<String> {
+        let Some(l) = self.lines.get(line.wrapping_sub(1)) else { return vec![] };
+        let mut at = 0;
+        for r in l {
+            if ch < at + r.n {
+                return r.tags.iter().map(|&k| self.tags[k].name.clone()).collect();
+            }
+            at += r.n;
+        }
+        vec![]
+    }
+
     pub fn delete_all(&mut self) {
         self.lines = vec![vec![nl_run()]];
         self.top = (1, 0);

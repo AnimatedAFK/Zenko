@@ -196,7 +196,14 @@ pub fn zk_fonts(ui: &mut Ui, fonts: &dyn Fonts, root: usize, zk_f: f64) {
         if w.f0 == 0 {
             w.f0 = font.size;
         }
-        font.size = zk_size(zk_f, w.f0);
+        let n = zk_size(zk_f, w.f0);
+        let changed = font.size != n;
+        font.size = n;
+        if let Kind::Button { sized, .. } = &mut w.kind {
+            if changed {
+                *sized = None;
+            }
+        }
     }
 }
 

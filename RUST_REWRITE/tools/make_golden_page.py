@@ -1355,6 +1355,155 @@ if len(sys.argv) > 1 and sys.argv[1] == "square":
 EXTRA = [{}]
 NAME = [""]
 out = []
+if len(sys.argv) > 1 and sys.argv[1] == "tools":
+    # golden/tool_windows.json: the four study-tool windows (zenko17's ZkToolWindow family) exactly as zenko.py builds
+    # them: the periodic table (categories, and electronegativity with Fe found, a formula and a hover), the French
+    # dictionary (fresh with a history row, a looked-up word with the translator answering, a sentence offline), the
+    # CG50 calculator (its keypad once, then the screen's canvas after each group of key presses through every mode) and
+    # the Bible (John 3:16 from the saved chapter with its Greek word cards and a word's lexicon entry, and Psalm 119
+    # offline). Background jobs run inline; the network is cut off; the calculator's cursor blink is held on.
+    OUT = "tool_windows.json"
+    time.time = lambda: NOW[0]
+    CASES = [("pt_cat", 1765488600.0, {"theme": "snow"}, None, "home"),
+             ("pt_en", 1765450800.0, {"theme": "midnight"}, None, "home"),
+             ("fr_start", 1765476000.0, {"theme": "sakura"}, None, "home"),
+             ("fr_look", 1765488600.0, {"theme": "snow"}, None, "home"),
+             ("fr_off", 1765450800.0, {"theme": "midnight"}, None, "home"),
+             ("cg", 1765488600.0, {"theme": "snow"}, None, "home"),
+             ("bible_jn", 1765488600.0, {"theme": "snow"}, None, "home"),
+             ("bible_ps", 1765450800.0, {"theme": "midnight"}, None, "home")]
+    if os.environ.get("ZK_ONLY"):
+        CASES, OUT = [c for c in CASES if c[0] == os.environ["ZK_ONLY"]], "/tmp/claude-0/dbg_tools.json"
+
+    def _offline(*a, **k):
+        raise Z.WebError("offline")
+    Z.http_json = _offline
+    Z._download = _offline
+    TR = {}
+
+    def _translate(q, tgt, src):
+        if TR.get("off"):
+            raise Z.WebError("offline")
+        return ("to eat" if tgt == "en" else "manger", src, "MyMemory")
+    Z.translate_text = _translate
+    CG_STEPS = [[], ["1", "ADD", "2", "EXE"], ["SHIFT", "EXP", "DIV", "4", "EXE"], ["SD"], ["2", "SQ", "SUB", "1", "EXE"],
+                ["1", "DIV", "0", "EXE"], ["ADD", "3"], ["AC", "SHIFT", "SQ", "8", "RP", "SHIFT", "DOT"], ["EXE"],
+                ["ALPHA"], ["XT"], ["MENU"], ["3"], ["SIN", "XT", "RP"], ["EXE", "XT", "SQ", "SUB", "1"], ["UP"], ["F3"],
+                ["F6"], ["F6"], ["RIGHT", "RIGHT"], ["F1"], ["F1"], ["F2"], ["F5"], ["ADD"], ["EXIT", "EXIT"], ["F4"], ["F2"],
+                ["F1"], ["1", "EXE", "NEG", "3", "EXE", "2"], ["F1"], ["EXIT", "EXIT", "F1", "F2"],
+                ["2", "EXE", "1", "EXE", "5", "EXE", "1", "EXE", "SUB", "1", "EXE"], ["F1"], ["EXIT", "EXIT", "F3"],
+                ["XT", "SQ", "SHIFT", "DOT", "2"], ["EXE"], ["DOWN", "DOWN"], ["EXIT", "EXIT", "EXIT", "F5"],
+                ["1", "EXE", "2", "EXE", "3", "EXE", "4", "EXE", "UP"], ["EXE", "LEFT"], ["F1"], ["EXIT", "RIGHT", "F2"],
+                ["EXIT", "F3"], ["F4"], ["EXIT", "F6"], ["F1"], ["NEG", "1", "DOWN", "1", "F1"], ["EXIT", "EXIT", "F3"],
+                ["DOWN", "3", "EXE", "EXE", "0", "DOT", "3", "F1"], ["EXIT", "EXIT", "MENU"], ["2"], ["EXIT", "SHIFT", "MENU"],
+                ["SIN", "3", "0", "EXE"], ["UP"]]
+
+    def _data(app, name):
+        app.bg = lambda fn, done=None: (lambda r: done(*r) if done else None)(_run(fn))
+        TR["off"] = name == "fr_off"
+        if name == "fr_start":
+            app.life["fr_hist"] = ["bonjour", "le chat", "I would like a coffee please, thank you", "manger"]
+        if name == "bible_jn":
+            app.life["bible_pos"] = [42, 3, 16, "NKJV"]
+            app.life["bible_notes"] = {"Jhn.3.16": "God's love is for the whole world."}
+            d = os.path.join(Z.BIBLE_DIR, "text", "NKJV", "Jhn")
+            os.makedirs(d, exist_ok=True)
+            with open(os.path.join(d, "3.json"), "w", encoding="utf-8") as f:
+                json.dump({"verses": [[14, "And as Moses lifted up the serpent in the wilderness, even so must the Son of Man be lifted up,"],
+                                      [15, "that whoever believes in Him should not perish but have eternal life."],
+                                      [16, "For God so loved the world that He gave His only begotten Son, that whoever believes in Him should not perish but have everlasting life."],
+                                      [17, "For God did not send His Son into the world to condemn the world, but that the world through Him might be saved."]]}, f)
+            od = os.path.join(Z.BIBLE_DIR, "orig")
+            os.makedirs(os.path.join(od, "Jhn"), exist_ok=True)
+            with open(os.path.join(od, "format.txt"), "w") as f:
+                f.write(Z._ORIG_FORMAT)
+            ws = []
+            for ln in ["Jhn.3.16#01=NKO\tΟὕτως (Houtōs)\tthus\tG3779=ADV\tοὕτω=thus", "Jhn.3.16#02=NKO\tγὰρ (gar)\tfor\tG1063=CONJ\tγάρ=for",
+                       "Jhn.3.16#03=NKO\tἠγάπησεν (ēgapēsen)\tloved\tG0025=V-AAI-3S\tἀγαπάω=to love",
+                       "Jhn.3.16#04=NKO\tὁ (ho)\t-\tG3588=T-NSM\tὁ=the", "Jhn.3.16#05=NKO\tΘεὸς (Theos)\tGod\tG2316=N-NSM\tθεός=God",
+                       "Jhn.3.16#06=NKO\tτὸν (ton)\tthe\tG3588=T-ASM\tὁ=the", "Jhn.3.16#07=NKO\tκόσμον (kosmon)\tworld\tG2889=N-ASM\tκόσμος=world",
+                       "Jhn.3.16#08=K\tαὐτοῦ (autou)\this\tG0846=P-GSM\tαὐτός=he"]:
+                ws.append(Z.step_parse_line(ln)[3])
+            with open(os.path.join(od, "Jhn", "3.json"), "w", encoding="utf-8") as f:
+                json.dump({"v": {"16": ws}}, f, ensure_ascii=False)
+        if name == "cg":
+            app.life["cg"] = {"deg": True, "mem": {"A": 2.0}, "ans": 0.0, "hist": [], "ys": ["", "", ""], "L1": [], "L2": []}
+
+    def _run(fn):
+        try:
+            return fn(), None
+        except Exception as e:
+            return None, e
+
+    def _pump(app, n=6):
+        for _ in range(n):
+            app.root.update()
+            time.sleep(0.03)
+
+    def _final(app, name):
+        kind = name.split("_")[0]
+        opener = {"pt": app.open_ptable, "fr": app.open_french_dict, "cg": app.open_calc, "bible": app.open_bible}[kind]
+        opener()
+        W = app._z17_wins[{"pt": "ptable", "fr": "french", "cg": "casio", "bible": "bible"}[kind]]
+        _pump(app, 10)
+        ex = {"geo": W.win.geometry(), "screen": [W.win.winfo_screenwidth(), W.win.winfo_screenheight()],
+              "serif2": Z._serif_font(app.root), "mincho": Z._mincho_font(app.root)}
+        if name == "pt_en":
+            W.toggle_mode()
+            W.find_v.set("fe")
+            W.find()
+            W.mm_v.set("Ca(OH)2")
+            W.molar()
+            _pump(app)
+            W.set_hover(Z.PT_BY_SYM["Na"])
+            _pump(app)
+        if name == "fr_look":
+            W.q.set("manger")
+            W.look()
+            _pump(app)
+        if name == "fr_off":
+            W.q.set("I would like a coffee")
+            W.dir.set("en")
+            W.look()
+            _pump(app)
+        if kind == "cg":
+            W.win.after = lambda *a, **k: ""
+            W.tick = lambda: None
+            steps = []
+            for keys in CG_STEPS:
+                for k in keys:
+                    W.press(k)
+                W.blink = True
+                W.draw()
+                rec = walk(W.cv, W.cv, set(), {}, FONTS_X)
+                steps.append({"keys": keys, "items": rec["items"], "mode": W.mode, "hist": json.loads(json.dumps(W.hist)),
+                              "ans": W.ans, "inp": list(W.inp), "cur": W.cur, "exact": W.exact, "deg": W.deg,
+                              "life_cg": json.loads(json.dumps(app.life.get("cg"), default=str))})
+            ex["steps"] = steps
+        if kind == "bible":
+            ex["heb"], ex["grk"] = W.heb, W.grk
+            _pump(app, 8)
+            if name == "bible_jn":
+                W.flow_now()
+                _pump(app)
+                W.word(2)
+                _pump(app, 8)
+            ex["read"] = text_rec(W.read, FONTS_X)
+        ex["texts"] = []
+        for t in app.zk_walk(W.win):
+            if t.winfo_class() == "Text":
+                ex["texts"].append(text_rec(t, FONTS_X))
+        EXTRA[0] = ex
+        LASTWIN[0] = W
+
+    def _tree(app, images, fonts):
+        fonts.update(FONTS_X)
+        FONTS_X.clear()
+        W = LASTWIN[0]
+        return walk(W.win, W.win, set(), images, fonts)
+    FONTS_X, LASTWIN = {}, [None]
+    SETUP["data"], SETUP["final"], SETUP["tree"] = _data, _final, _tree
+
 for name, t, cfg, size, page in CASES:
     NAME[0] = name
     NOW[0] = t
