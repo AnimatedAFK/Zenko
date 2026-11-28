@@ -698,6 +698,18 @@ impl Text {
         Some([dx + dlx, d.y, d.length - dlx, h, d.baseline])
     }
 
+    /// index("@x,y") as far as the line goes: the logical line of the display line under y (the first or last shown
+    /// one when y is above or below them); the char is the display line's first
+    pub fn index_at(&self, _f: &dyn Fonts, _x: i32, y: i32) -> (usize, usize) {
+        let mut best = None;
+        for d in &self.dlines {
+            if best.is_none() || d.y <= y {
+                best = Some((d.line, d.ch));
+            }
+        }
+        best.unwrap_or((1, 0))
+    }
+
     /// bbox of one character
     pub fn bbox(&self, f: &dyn Fonts, idx: (usize, usize)) -> Option<[i32; 4]> {
         let (dx, _, dmax_x, max_y) = self.dinfo(f);

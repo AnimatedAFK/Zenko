@@ -1281,6 +1281,77 @@ if len(sys.argv) > 1 and sys.argv[1] == "map":
                     "mincho": Z._mincho_font(app.root) or Z._jp_font(app.root) or Z.FONT_UI, "serif2": Z._serif_font(app.root)}
     SETUP["data"], SETUP["final"] = _data, _final
 
+if len(sys.argv) > 1 and sys.argv[1] == "square":
+    # golden/hub_square.json: the Town square (status row, the festival street with its crowd and named people, the
+    # message board, the entry row) offline on a winter night, live on Christmas Eve at dusk with messages and a speech
+    # bubble in a small midnight window, and on Holi morning. No network: the square link is a stand-in fed by hand.
+    # The street's own 90 ms loop is stopped; it is built and stepped once by hand with its random stream seeded.
+    OUT = "hub_square.json"
+    time.time = lambda: NOW[0]
+    CASES = [("square_off", 1765486800.0, {"theme": "snow"}, None, "square"),
+             ("square_live", 1766593800.0, {"theme": "midnight"}, (1120, 720), "square"),
+             ("square_holi", 1772618400.0, {"theme": "sakura"}, None, "square")]
+    if os.environ.get("ZK_ONLY"):
+        CASES, OUT = [c for c in CASES if c[0] == os.environ["ZK_ONLY"]], "/tmp/claude-0/dbg_square.json"
+    Z.SquareLink.start = lambda self: None
+    UID = "0123456789abcdef"
+
+    def _data(app, name):
+        Z._Z23_SPRITES.clear()
+        app.cfg.update(square_uid=UID, square_name="Kitsune", z23_yukata=4, z23_mask=(name == "square_holi"))
+        if name != "square_off":
+            app.cfg.update(square_on=True, square_rules_ok=True)
+            sq = Z.SquareLink23(Z.SQUARE_SERVER, Z.SQUARE_TOPIC)
+            sq.state = "live"
+            t = NOW[0]
+            if name == "square_live":
+                for i, (uid, n, txt, ago, a) in enumerate([
+                        ("aaaa1111bbbb2222", "momiji", "Good luck on the chem paper everyone~", 7200, {"y": 1, "m": False, "h": 2}),
+                        ("cccc3333dddd4444", "tanuki_7", "Has anyone done the bio IA yet? I am stuck on the method", 3000, None),
+                        (UID, "Kitsune", "Merry Christmas eve! Studying with Zenko tonight", 1500, {"y": 4, "m": False, "h": 0}),
+                        ("aaaa1111bbbb2222", "momiji", "Same here. Two past papers and then cake", 600, {"y": 1, "m": True, "h": 2}),
+                        ("eeee5555ffff6666", "Yuki", "Kon kon from Sapporo, it is snowing a lot", 120, {"y": 8, "m": False, "h": 5})]):
+                    m = {"id": "m%d" % i, "uid": uid, "name": n, "text": txt, "ts": t - ago}
+                    if a:
+                        m["look"] = a
+                    sq.msgs.append(m)
+                sq.changed = 5
+            app._sq = sq
+        app.save_config() if hasattr(app, "save_config") else Z.save_config(app.cfg)
+
+    def _final(app, name):
+        after0 = app.root.after
+
+        def quiet(ms, fn=None, *a):
+            if ms in (90, 250, 400, 800):
+                return ""
+            return after0(ms, fn, *a) if fn else after0(ms)
+        app.root.after = quiet
+        st = app._z23_fest
+        app._z23_fest = None                      # (its own loop stops at the next frame)
+        for _ in range(3):
+            app.root.update()
+        st.cv.after = lambda ms, fn=None, *a: ""
+        st.rnd, st.named, st.seen, st.people, st.parts, st.frame_n, st.aw = random.Random(7), {}, None, [], [], 0, 0
+        st.next_fw = 1e18
+        Z._Z23_SPRITES.clear()
+        st.build()
+        st.step()
+        app._sq_ui["shown"] = -1
+        for _ in range(3):
+            app.root.update()
+        app.zk_fit()
+        for _ in range(3):
+            app.root.update()
+        app.root.after = after0
+        EXTRA[0] = {"uid": UID, "street": [st.aw, st.ah, st.ev, st.mode], "jp2": Z._jp_font(app.root) or Z.FONT_UI,
+                    "seed": _dt.date.fromtimestamp(NOW[0]).toordinal(), "st_h": int(st.cv.cget("height")),
+                    "msgs": json.loads(json.dumps(app._sq.msgs if app._sq else [], default=str)),
+                    "next": list(map(str, Z.z23_fest_next() or ())), "people": [
+                        {k: p[k] for k in ("x", "dir", "lane", "speed", "f", "stop", "name", "uid", "y")}
+                        for p in st.people]}
+    SETUP["data"], SETUP["final"] = _data, _final
+
 EXTRA = [{}]
 NAME = [""]
 out = []

@@ -112,6 +112,11 @@ impl PyRandom {
         y
     }
 
+    /// `random.expovariate(lambd)` (3.12: -log(1 - random()) / lambd)
+    pub fn expovariate(&mut self, lambd: f64) -> f64 {
+        -(1.0 - self.random()).ln() / lambd
+    }
+
     /// `random.random()`
     pub fn random(&mut self) -> f64 {
         let a = (self.genrand() >> 5) as f64;

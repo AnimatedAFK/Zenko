@@ -284,6 +284,13 @@ impl W {
             _ => None,
         }
     }
+
+    pub fn tk_canvas_mut(&mut self) -> Option<&mut crate::tkcanvas::Canvas> {
+        match &mut self.kind {
+            Kind::Canvas { tk: Some(c), .. } => Some(c),
+            _ => None,
+        }
+    }
 }
 
 /// grid() options

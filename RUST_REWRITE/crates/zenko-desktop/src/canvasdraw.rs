@@ -185,6 +185,58 @@ pub fn text_bbox(it: &CItem, fonts: &dyn Fonts) -> [i32; 4] {
     [r(x + dx - 1.0), r(y + dy), r(x + dx + w as f64 + 1.0), r(y + dy + h as f64)]
 }
 
+/// an item's bbox as `cv.bbox(id)` gives it, for text and (round-joined) polygons and lines: tkCanvPoly.c
+/// ComputePolygonBbox includes every control point (smooth or not), grows by (width+1.5)/2 for the outline and one
+/// more pixel of fudge
+pub fn item_bbox(cv: &crate::tkcanvas::Canvas, id: u32, fonts: &dyn Fonts) -> Option<[i32; 4]> {
+    let it = cv.items.iter().find(|i| i.id == id)?;
+    if it.hidden {
+        return None;
+    }
+    match it.kind {
+        crate::tkcanvas::CKind::Text => Some(text_bbox(it, fonts)),
+        crate::tkcanvas::CKind::Poly | crate::tkcanvas::CKind::Line if it.coords.len() >= 2 => {
+            let c = &it.coords;
+            let (mut x1, mut y1) = (c[0] as i32, c[1] as i32);
+            let (mut x2, mut y2) = (x1, y1);
+            let n = c.len() / 2;
+            let closed = it.kind == crate::tkcanvas::CKind::Poly && (c[0] != c[2 * n - 2] || c[1] != c[2 * n - 1]);
+            let np = if closed { n + 1 } else { n };
+            let last = if it.kind == crate::tkcanvas::CKind::Poly { np - 1 } else { n };
+            for i in 1..last.min(n) {
+                let (px, py) = ((c[2 * i] + 0.5) as i32, (c[2 * i + 1] + 0.5) as i32);
+                x1 = x1.min(px);
+                x2 = x2.max(px);
+                y1 = y1.min(py);
+                y2 = y2.max(py);
+            }
+            if !it.outline.is_empty() || it.kind == crate::tkcanvas::CKind::Line {
+                let w = it.width.max(1.0);
+                let i = ((w + 1.5) / 2.0) as i32;
+                (x1, y1, x2, y2) = (x1 - i, y1 - i, x2 + i, y2 + i);
+            }
+            Some([x1 - 1, y1 - 1, x2 + 1, y2 + 1])
+        }
+        _ => None,
+    }
+}
+
+/// `cv.bbox(tag)`: the union of the boxes of the items with the tag (empty ones left out)
+pub fn tag_bbox(cv: &crate::tkcanvas::Canvas, tag: &str, fonts: &dyn Fonts) -> Option<[i32; 4]> {
+    let mut out: Option<[i32; 4]> = None;
+    for it in cv.items.iter().filter(|i| i.tags.iter().any(|t| t == tag) || i.id.to_string() == tag) {
+        let Some(b) = item_bbox(cv, it.id, fonts) else { continue };
+        if b[0] >= b[2] || b[1] >= b[3] {
+            continue;
+        }
+        out = Some(match out {
+            None => b,
+            Some(o) => [o[0].min(b[0]), o[1].min(b[1]), o[2].max(b[2]), o[3].max(b[3])],
+        });
+    }
+    out
+}
+
 /// tkCanvImg.c ComputeImageBbox: the top-left corner of an image item
 pub fn image_xy(it: &CItem) -> (i32, i32) {
     let half = |v: f64| (v + if v >= 0.0 { 0.5 } else { -0.5 }) as i32;
