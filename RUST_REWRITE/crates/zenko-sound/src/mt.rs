@@ -6,6 +6,7 @@ const M: usize = 397;
 pub struct PyRandom {
     mt: [u32; N],
     idx: usize,
+    gauss_next: Option<f64>,
 }
 
 impl PyRandom {
@@ -20,7 +21,7 @@ impl PyRandom {
         if key.is_empty() {
             key.push(0);
         }
-        let mut r = PyRandom { mt: [0; N], idx: N };
+        let mut r = PyRandom { mt: [0; N], idx: N, gauss_next: None };
         r.init_genrand(19650218);
         let mt = &mut r.mt;
         let (mut i, mut j) = (1usize, 0usize);
@@ -119,5 +120,19 @@ impl PyRandom {
     /// `random.uniform(a, b)`
     pub fn uniform(&mut self, a: f64, b: f64) -> f64 {
         a + (b - a) * self.random()
+    }
+
+    /// `random.gauss(mu, sigma)` (CPython 3.12: Box-Muller, keeps the second value for the next call)
+    pub fn gauss(&mut self, mu: f64, sigma: f64) -> f64 {
+        let z = match self.gauss_next.take() {
+            Some(z) => z,
+            None => {
+                let x2pi = self.random() * (2.0 * std::f64::consts::PI);
+                let g2rad = (-2.0 * (1.0 - self.random()).ln()).sqrt();
+                self.gauss_next = Some(x2pi.sin() * g2rad);
+                x2pi.cos() * g2rad
+            }
+        };
+        mu + z * sigma
     }
 }
