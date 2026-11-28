@@ -1120,7 +1120,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "garden":
         after0 = app.root.after
 
         def quiet(ms, fn=None, *a):
-            if ms == 50 or (ms == 60 and fn == app.garden_panel):   # (breath_start's second panel: made once below)
+            if ms in (50, 230) or (ms == 60 and fn == app.garden_panel):   # (no frames / foxfire flicker; breath_start's 2nd panel)
                 return ""
             return after0(ms, fn, *a) if fn else after0(ms)
         app.root.after = quiet

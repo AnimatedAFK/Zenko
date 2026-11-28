@@ -14,7 +14,7 @@ use crate::pagekit::{Faces, Scroller, WrapState, glow_bar, hub_card, hub_scrolle
 use crate::shelfpage::spaced;
 use crate::theme::Theme;
 use crate::tkcanvas::Photo;
-use crate::ui::{Anchor, Fill, Font, Fonts, Grid, Kind, Pack, Side, Ui};
+use crate::ui::{Anchor, Fill, Font, Fonts, Grid, Kind, Pack, Place, Side, Ui};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::f64::consts::PI;
@@ -317,6 +317,9 @@ pub struct GardenPage {
     f: Faces,
     pub d: GardenData,
     pub zk_f: f64,
+    /// the lacquer card over the picture (fish_card) and what it is: 1 the question, 2 a result with its buttons
+    pub fcard: Option<usize>,
+    pub fcard_kind: u8,
 }
 
 fn justify_left(ui: &mut Ui, l: usize, wl: i32) {
@@ -393,7 +396,8 @@ fn orb_px(r: f64, z: i64, phase: &str) -> Photo {
                 let q = (1.0 - (d - 1.0) / 0.5).powf(2.0) * 0.30;
                 a = if !crate::gardenart::dith(x, y, q * 2.6) { 0.0 } else { 0.22 };
             }
-            px.push([c.0, c.1, c.2, (255.0 * 1.0f64.min(a)) as u8]);
+            let al = (255.0 * 1.0f64.min(a)) as u8;
+            px.push(if al == 0 { [0, 0, 0, 0] } else { [c.0, c.1, c.2, al] });
         }
     }
     zoom_px(n, n, &px, z as usize)
@@ -425,7 +429,7 @@ impl GardenPage {
             flies: vec![], petals: vec![], petal_rate: 0.0, petal_col: ["", "", ""], swim: vec![], fish_img: HashMap::new(),
             orbs: HashMap::new(), decor_img: HashMap::new(), bitems: [0; 8], breath: None, fish: None, done_until: 0.0,
             anim_on: false, wrap: WrapState::default(), seig: None, th: th.clone(),
-            f: Faces { ui: f.ui.clone(), title: f.title.clone() }, d: d.clone(), zk_f: 1.0,
+            f: Faces { ui: f.ui.clone(), title: f.title.clone() }, d: d.clone(), zk_f: 1.0, fcard: None, fcard_kind: 0,
         };
         p.panel(ui, d);
         p
@@ -1646,3 +1650,188 @@ pub struct ZkSprite {
 }
 
 fn ui_hand_mark(_i: usize) {}
+
+// ---- fishing cards (Zenko22 fish_card / fish_ask / fish_answer / fish_show_catch / z22_after_buttons) ---------------
+
+/// fish_book_L(fid): how long the fish is drawn in the koi book and on its catch card
+pub fn fish_book_l(fid: &str) -> i64 {
+    match fish_by_id(fid).map(|f| &f[4]).and_then(|v| v.as_str()).unwrap_or("") {
+        "medaka" => 52,
+        "gold" => 76,
+        "oar" => 150,
+        "catfish" => 104,
+        _ => 96,
+    }
+}
+
+/// ("%.1f" % cm).rstrip("0").rstrip(".")
+pub fn cm_txt(cm: f64) -> String {
+    let s = format!("{cm:.1}");
+    s.trim_end_matches('0').trim_end_matches('.').to_string()
+}
+
+impl GardenPage {
+    fn title_face(&self) -> String {
+        if self.f.title.is_empty() { self.f.ui.clone() } else { self.f.title.clone() }
+    }
+
+    /// fish_card_close()
+    pub fn fish_card_close(&mut self, ui: &mut Ui) {
+        if let Some(o) = self.fcard.take() {
+            ui.destroy(o);
+        }
+        self.fcard_kind = 0;
+    }
+
+    /// fish_clear(): the line, bobber, ripples and the jumping fish go, and the card closes
+    pub fn fish_clear(&mut self, ui: &mut Ui) {
+        if let Some(fish) = self.fish.take() {
+            let cv = canvas_of(ui, self.cv);
+            for id in fish.items.iter().flatten() {
+                cv.delete(&id.to_string());
+            }
+            for rp in &fish.ripples {
+                cv.delete(&rp.0.to_string());
+            }
+            if let Some(j) = fish.jump {
+                cv.delete(&j.2.to_string());
+            }
+        }
+        self.fish_card_close(ui);
+    }
+
+    /// fish_card(build): a gold-edged card (padx/pady 2) with the card's colour inside (padx 18, pady 14), as a canvas
+    /// window at (W/2, H*0.46), anchor center. Returns (outer, inside).
+    fn lacquer_card(&mut self, ui: &mut Ui, kind: u8) -> (usize, usize) {
+        self.fish_card_close(ui);
+        let th = self.th.clone();
+        let outer = ui.frame(self.cv, &th.gold);
+        (ui.ws[outer].padx, ui.ws[outer].pady) = (2, 2);
+        let f = ui.frame(outer, &th.card);
+        (ui.ws[f].padx, ui.ws[f].pady) = (18, 14);
+        ui.pack(f, Pack::default().fill(Fill::Both).expand());
+        let (w, h) = self.cv_size(ui);
+        ui.ws[outer].place = Some(Place { x: (w as f64 / 2.0) as i32, y: (h as f64 * 0.46) as i32, center: true, ..Default::default() });
+        self.fcard = Some(outer);
+        self.fcard_kind = kind;
+        (outer, f)
+    }
+
+    /// fish_ask(): the question card. `sub` is the subject's name (or "Your flashcards").
+    pub fn fish_ask_card(&mut self, ui: &mut Ui, q: &Value, sub: &str) {
+        let (th, fu, tf) = (self.th.clone(), self.f.ui.clone(), self.title_face());
+        let ff = Faces { ui: fu.clone(), title: self.f.title.clone() };
+        let (_, f) = self.lacquer_card(ui, 1);
+        let bg = th.card.clone();
+        let top = ui.frame(f, &bg);
+        ui.pack(top, Pack::default().fill(Fill::X));
+        let l = ui.label(top, "Bite! \u{639b}\u{304b}\u{3063}\u{305f}", &bg, &th.gold, Font::new(&tf, 13, true));
+        ui.pack(l, Pack::default().side(Side::Left));
+        let diff = q["diff"].as_i64().unwrap_or(1).clamp(0, 3) as usize;
+        let stars = "\u{2605}".repeat(diff) + &"\u{2606}".repeat(3 - diff);
+        let l = ui.label(top, &format!("{sub}  {stars}"), &bg, &th.grey, Font::new(&fu, 9, false));
+        ui.pack(l, Pack::default().side(Side::Right));
+        let serif = self.d.serif.clone();
+        let l = ui.label(f, "Answer right to reel it in:", &bg, &th.grey, italic(&serif, 10));
+        ui.set_anchor(l, Anchor::W);
+        ui.pack(l, Pack::default().fill(Fill::X).pady(6, 2));
+        let l = label_w(ui, f, q["q"].as_str().unwrap_or(""), &bg, &th.ink, &fu, 12, true);
+        justify_left(ui, l, 380);
+        ui.pack(l, Pack::default().fill(Fill::X).pady(0, 10));
+        for (i, o) in q["opts"].as_array().cloned().unwrap_or_default().iter().enumerate() {
+            let b = tt_btn(ui, f, &format!("{}   {}", i + 1, crate::extra::clip(o.as_str().unwrap_or(""), 60)),
+                           &format!("gd_ans:{i}"), None, None, 10, 12, 3, &th, &ff);
+            ui.pack(b, Pack::default().fill(Fill::X).pady(2, 2));
+        }
+        let l = ui.label(f, "Keys 1-4 work too  \u{b7}  Esc lets it go", &bg, &th.grey, Font::new(&fu, 8, false));
+        ui.pack(l, Pack::default().pady(8, 0));
+    }
+
+    /// z22_after_buttons(f, bg): Cast again (only when a cast is left), Koi book, Done
+    fn after_buttons(&mut self, ui: &mut Ui, f: usize, can: bool) {
+        let th = self.th.clone();
+        let ff = Faces { ui: self.f.ui.clone(), title: self.f.title.clone() };
+        let r = ui.frame(f, &th.card);
+        ui.pack(r, Pack::default().pady(12, 0));
+        let b = ui.button(r, "Cast again", "gd_again", if can { &th.acc } else { &th.field }, if can { &th.onacc } else { &th.grey },
+                          &ff.ui, 10, 12, 2, can);
+        ui.pack(b, Pack::default().side(Side::Left).padx(4, 4));
+        let b = tt_btn(ui, r, "Koi book", "gd_book2", None, None, 10, 12, 2, &th, &ff);
+        ui.pack(b, Pack::default().side(Side::Left).padx(4, 4));
+        let b = tt_btn(ui, r, "Done", "gd_done", None, None, 10, 12, 2, &th, &ff);
+        ui.pack(b, Pack::default().side(Side::Left).padx(4, 4));
+    }
+
+    /// fish_answer's escape card: the question, its answer and (when it was saved) the flashcard note
+    pub fn fish_lost_card(&mut self, ui: &mut Ui, q: &Value, saved: bool, can: bool) {
+        let (th, fu, tf) = (self.th.clone(), self.f.ui.clone(), self.title_face());
+        let (_, f) = self.lacquer_card(ui, 2);
+        let bg = th.card.clone();
+        let l = ui.label(f, "It got away\u{2026} \u{9003}\u{3052}\u{305f}", &bg, &th.gold, Font::new(&tf, 13, true));
+        ui.pack(l, Pack::default());
+        let l = ui.label(f, q["q"].as_str().unwrap_or(""), &bg, &th.grey, Font::new(&fu, 9, false));
+        if let Kind::Label { wrap, .. } = &mut ui.ws[l].kind {
+            *wrap = 360;
+        }
+        ui.pack(l, Pack::default().pady(8, 2));
+        let l = ui.label(f, &format!("Answer: {}", q["a"].as_str().unwrap_or("")), &bg, &th.ink, Font::new(&fu, 11, true));
+        if let Kind::Label { wrap, .. } = &mut ui.ws[l].kind {
+            *wrap = 360;
+        }
+        ui.pack(l, Pack::default().pady(0, 4));
+        let l = ui.label(f, if saved { "I saved it to your flashcards so it comes back~" } else { "" }, &bg, &th.grey,
+                         Font::new(&fu, 9, false));
+        ui.pack(l, Pack::default());
+        self.after_buttons(ui, f, can);
+    }
+
+    /// fish_show_catch(fid, seed, cm, new): the fish's picture, names, rarity and size, its note and the buttons
+    pub fn fish_catch_card(&mut self, ui: &mut Ui, fid: &str, seed: i64, cm: f64, new: bool, can: bool) {
+        let (th, fu) = (self.th.clone(), self.f.ui.clone());
+        let fi = fish_by_id(fid).cloned().unwrap_or(Value::Null);
+        let g = gdata();
+        let l_ = fish_book_l(fid);
+        let img = self.fish_photo(fid, seed, l_, if l_ <= 110 { 2 } else { 1 }, 0.0, 1.0);
+        let (_, f) = self.lacquer_card(ui, 2);
+        let bg = th.card.clone();
+        if new {
+            let l = ui.label(f, "\u{2726} NEW for your koi book \u{2726}", &bg, &th.gold, Font::new(&fu, 9, true));
+            ui.pack(l, Pack::default());
+        }
+        let il = ui.image_label(f, img, &mixhex(&bg, "#0e1a3a", 0.5), 2);
+        (ui.ws[il].padx, ui.ws[il].pady) = (14, 10);
+        ui.pack(il, Pack::default().pady(6, 8));
+        let s = |v: &Value| v.as_str().unwrap_or("").to_string();
+        let l = ui.label(f, &s(&fi[1]), &bg, &mixhex(&th.gold, &th.ink, 0.25), Font::new(&self.d.jp, 20, false));
+        ui.pack(l, Pack::default());
+        let l = ui.label(f, &s(&fi[2]), &bg, &th.ink, Font::new(&self.d.serif, 13, false));
+        ui.pack(l, Pack::default());
+        let r = fi[3].as_i64().unwrap_or(1) as usize;
+        let l = ui.label(f, &format!("{}  \u{b7}  {} cm", s(&g["FISH_RARITY"][r]), cm_txt(cm)), &bg, &s(&g["FISH_RCOL"][r]),
+                         Font::new(&fu, 10, true));
+        ui.pack(l, Pack::default().pady(2, 4));
+        let l = ui.label(f, &s(&fi[8]), &bg, &th.grey, Font::new(&fu, 9, false));
+        if let Kind::Label { wrap, .. } = &mut ui.ws[l].kind {
+            *wrap = 340;
+        }
+        ui.pack(l, Pack::default());
+        self.after_buttons(ui, f, can);
+    }
+
+    /// fish_answer's leap: the caught fish jumps out of the water at the bobber
+    pub fn fish_jump(&mut self, ui: &mut Ui, fid: &str, seed: i64, t: f64, dx: f64) {
+        let Some(lay) = self.lay.clone() else { return };
+        let l = 12.max((lay.pond.2 * 0.5) as i64);
+        let img = self.fish_photo(fid, seed, l, self.z, 0.0, 1.0);
+        let cv = canvas_of(ui, self.cv);
+        cv.image(0.0, -100.0, img).tags(&["fx"]);
+        let id = cv.last_id();
+        if let Some(f) = self.fish.as_mut() {
+            f.jump = Some((t, dx, id));
+        }
+        let z = self.z as f64;
+        let Some(f) = self.fish.as_ref() else { return };
+        let (x, y) = ((lay.pond.0 + f.bx * lay.pond.2) * z, (lay.pond.1 + f.by * lay.pond.3) * z);
+        self.ripple(ui, x, y, false, 0.0, t);
+    }
+}

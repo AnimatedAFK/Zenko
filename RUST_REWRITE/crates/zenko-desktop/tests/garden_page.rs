@@ -67,7 +67,6 @@ fn garden_page_matches_zenko_py() {
         p.panel(&mut ui, &d);
         p.fit(&mut ui, &fonts, &th, &faces, zk, pw, ph);
         p.redraw(&mut ui);
-        p.flicker(&mut ui, t); // (the first 230 ms flicker ran before the recording)
         let acts = p.frame(&mut ui, t, &mut || 0.99);
         eprintln!("acts {acts:?}");
         assert_eq!(p.side_w as i64, c["side_w"].as_i64().unwrap(), "{name} side width");
