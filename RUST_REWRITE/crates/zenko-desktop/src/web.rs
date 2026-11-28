@@ -274,3 +274,27 @@ pub fn translate_text(text: &str, target: &str, source: &str) -> Result<(String,
     }
     Ok((out, String::new(), "MyMemory".into()))
 }
+
+/// urllib.parse.unquote_plus(s)
+pub fn unquote_plus(s: &str) -> String {
+    let b = s.as_bytes();
+    let mut o = Vec::with_capacity(b.len());
+    let mut i = 0;
+    while i < b.len() {
+        match b[i] {
+            b'+' => o.push(b' '),
+            b'%' if i + 2 < b.len() => {
+                match u8::from_str_radix(std::str::from_utf8(&b[i + 1..i + 3]).unwrap_or("zz"), 16) {
+                    Ok(v) => {
+                        o.push(v);
+                        i += 2;
+                    }
+                    Err(_) => o.push(b'%'),
+                }
+            }
+            c => o.push(c),
+        }
+        i += 1;
+    }
+    String::from_utf8_lossy(&o).into_owned()
+}

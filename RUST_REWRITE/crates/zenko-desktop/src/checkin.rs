@@ -127,8 +127,12 @@ impl Companion {
         }
     }
 
-    /// should_speak(text) without a voice conversation running
-    pub fn should_speak(&self, text: &str) -> bool {
+    /// should_speak(text) (zenko16: everything is read out during a voice conversation)
+    pub fn should_speak(&mut self, text: &str) -> bool {
+        if self.voice_conv && !text.is_empty() && !["(thinking...)", "Looking that up...", "Checking...", "On it..."]
+            .contains(&text.trim()) && !text.starts_with("(thinking") && !text.starts_with("Reading \u{201c}") {
+            return true;
+        }
         let mode = self.cfg.s("speak_mode", "voice");
         if mode == "off" || text.is_empty() {
             return false;
@@ -138,6 +142,13 @@ impl Companion {
         {
             return false;
         }
-        mode == "always"
+        if mode == "always" {
+            return true;
+        }
+        if self.voice_reply_until > crate::voice::mono() {
+            self.voice_reply_until = 0.0;
+            return true;
+        }
+        false
     }
 }

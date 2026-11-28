@@ -105,7 +105,7 @@ pub fn spotify_route(text: &str) -> Option<(String, Option<String>)> {
 
 impl Companion {
     /// spotify.connected(): a saved refresh token
-    fn spotify_connected(&self) -> bool {
+    pub fn spotify_connected(&self) -> bool {
         crate::read_json("spotify_token.json").get("refresh_token").and_then(|v| v.as_str()).is_some_and(|s| !s.is_empty())
     }
 

@@ -97,7 +97,7 @@ fn rewards_match_zenko_py() {
                         match e {
                             Ev::Say { text, secs, .. } => got.push(json!(["say", text, secs])),
                             Ev::Beep { kind, .. } => got.push(json!(["beep", kind])),
-                            Ev::Speak(text) => got.push(json!(["speak", text])),
+                            Ev::Speak(text) | Ev::SayAloud(text) => got.push(json!(["speak", text])),
                             _ => {}
                         }
                     }

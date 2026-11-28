@@ -38,12 +38,23 @@ mod koiwin;
 #[cfg(windows)]
 mod toolwins;
 #[cfg(windows)]
+mod voicehost;
+#[cfg(windows)]
+mod ears;
+#[cfg(windows)]
+mod spotifyhost;
+#[cfg(windows)]
+mod install;
+#[cfg(windows)]
 mod tkpaint;
 #[cfg(windows)]
 mod hubw;
 
 #[cfg(windows)]
 fn main() {
+    if !install::startup() {
+        return;
+    }
     win::run();
 }
 
@@ -118,6 +129,7 @@ mod win {
         next_top: f64,
         /// hub_tick / z19_hub_loop: the hub's sidebar news, once a second
         next_hub: f64,
+        vv_started: bool,
         hwnd: HWND,
     }
 
@@ -454,34 +466,48 @@ mod win {
         for e in evs {
             match e {
                 Ev::Say { text, secs, choices } => {
-                    if app.bubble.is_none() {
-                        app.bubble = Some(Bubble::new());
-                    }
-                    let (dpi, fam, root) = (app.dpi, app.family.clone(), (app.x, app.y));
-                    if let Some(b) = app.bubble.as_mut() {
-                        b.say(&app.fox, root, t, &text, secs, &choices, dpi, &fam);
+                    // zenko17.1: a line she says out loud waits for her voice (voicehost::poll shows it)
+                    for b in crate::voicehost::on_say(&app.fox.cfg, app.fox.voice_reply_until, text, secs, choices) {
+                        show_bubble(app, t, b);
                     }
                 }
                 Ev::Beep { kind, variety } => {
                     let r = app.fox.rand();
                     if let Some(p) = beep_file(&kind, variety, &mut app.variety, t, &sc, r) {
-                        play_file(p, 0.3); // give a matching speech bubble a moment to start
+                        crate::voicehost::play_beep(p); // after 0.3 s, unless she started talking
                     }
                 }
                 Ev::Ui(kind) => {
-                    if let Some(p) = ui_file(&kind, &sc) {
-                        play_file(p, 0.0);
+                    if !crate::voicehost::ui_quiet() {
+                        if let Some(p) = ui_file(&kind, &sc) {
+                            play_file(p, 0.0);
+                        }
                     }
                 }
                 Ev::Command(c) => run_command(app, &c),
                 Ev::Bgm(Some((track, vol))) => crate::bgm::play(&track, vol),
                 Ev::Bgm(None) => crate::bgm::stop(),
                 Ev::Media(k) => crate::bgm::media_key(&k),
-                Ev::Speak(text) => {
+                Ev::Speak(text) => crate::voicehost::speak(&mut app.fox, &text),
+                Ev::SayAloud(text) => {
                     let c = &app.fox.cfg;
                     crate::speak::say(&text, &c.s("tts_voice", ""), c.f("tts_speed", 0.0) as i64, c.f("tts_pitch", 0.0) as i64);
                 }
+                Ev::RemindVoice(text) => crate::voicehost::remind_voice(&app.fox, &text),
             }
+        }
+        if let Some(b) = crate::voicehost::poll() {
+            show_bubble(app, t, b);
+        }
+    }
+
+    fn show_bubble(app: &mut App, t: f64, b: crate::voicehost::Bub) {
+        if app.bubble.is_none() {
+            app.bubble = Some(Bubble::new());
+        }
+        let (dpi, fam, root) = (app.dpi, app.family.clone(), (app.x, app.y));
+        if let Some(bb) = app.bubble.as_mut() {
+            bb.say(&app.fox, root, t, &b.text, b.secs, &b.choices, dpi, &fam);
         }
     }
 
@@ -566,6 +592,16 @@ mod win {
             }
             crate::sqnet::boot(t, &app.fox.cfg);
             crate::toolwins::tick(&mut app.fox, t);
+            crate::voicehost::tick(&mut app.fox, t);
+            crate::ears::tick(&mut app.fox, t);
+            crate::spotifyhost::tick(&mut app.fox, t);
+            crate::install::tick(&mut app.fox, t);
+            let fishing = crate::hubw::fishing();
+            app.fox.zb_tick(t, idle_seconds(), fishing, &mut |b| crate::hubw::notes_append(b));
+            if !app.vv_started && t >= 1001.5 {
+                app.vv_started = true;
+                crate::voicehost::autostart(&app.fox, false, None);
+            }
             if t >= app.next_hub && crate::hubw::is_open() {
                 app.next_hub = t + 1.0;
                 crate::hubw::update(side_ctx(app), &hub_status(app));
@@ -771,6 +807,31 @@ mod win {
             open_dialog(app, t);
             return;
         }
+        if crate::spotifyhost::command(&mut app.fox, t, c) {
+            return;
+        }
+        if crate::install::command(&mut app.fox, c) {
+            return;
+        }
+        match c {
+            // the ears' bubble buttons (Set it up / Set them up) and Talk
+            "stt_setup" => return crate::ears::stt_setup(&mut app.fox, false),
+            "conv_start" => return crate::ears::conv_start(&mut app.fox, t),
+            "" => return,
+            _ => {}
+        }
+        if let Some(id) = c.strip_prefix("zb_save:") {
+            return app.fox.zb_save(id, &mut |b| crate::hubw::notes_append(b));
+        }
+        if let Some(q) = c.strip_prefix("hub_ask:") {
+            // hub_ask: to the chat page, and ask her
+            open_hub(app, Some("chat"));
+            let at = (app.x, app.y);
+            if let zenko_desktop::chat::Sent::Brain(_) = app.fox.chat_send(t, q, at) {
+                app.fox.brain_fallback(t);
+            }
+            return;
+        }
         let fox = &mut app.fox;
         if let Some(k) = c.strip_prefix("play:") {
             fox.interact(t, k, None);
@@ -886,7 +947,7 @@ mod win {
             zk_f: 1.0,
             hd: c.b("hd_art", true),
             pins: zenko_desktop::hubwin::side_pins(&zenko_desktop::read_json("zenko_life.json")),
-            linked: false,
+            linked: fox.zb.was_linked.unwrap_or(false),
             scene: String::new(),
         }
     }
@@ -1294,6 +1355,7 @@ mod win {
                     eating: None,
                     next_top: 1002.5,
                     next_hub: 1001.0,
+                    vv_started: false,
                     hwnd,
                 })
             });
@@ -1326,6 +1388,7 @@ mod win {
             }
             // quit: the hub's Notes page saved and the scratchpad filed quietly (nb_page_save, nb_flush(quiet=True))
             crate::hubw::quit();
+            crate::voicehost::stop_engine();
         }
     }
 }

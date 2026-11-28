@@ -93,6 +93,15 @@ pub const NAV_ALL: [(&str, &str); 16] = [("home", "Home"), ("timetable", "Timeta
     ("notes", "Notes"), ("you", "You"), ("customize", "Customize"), ("settings", "Settings")];
 
 impl CustPage {
+    /// Find VOICEVOX's tk.OptionMenu of her voices (bg FIELD, fg INK, highlightthickness 1 in LINE, (FONT_UI, 9),
+    /// width 26), packed left in the Find row with padx (8, 0)
+    pub fn vv_menu(&self, ui: &mut Ui, th: &Theme, font_ui: &str, sel: &str, cm10: i32) -> usize {
+        let row = self.labels.iter().find(|(k, _)| k == "vvrow").map(|x| x.1).unwrap_or(0);
+        let id = ui.menubutton(row, sel, "cz_btn:vv_menu", Font::new(font_ui, 9, false), &th.field, &th.ink, &th.line, 26, cm10);
+        ui.pack(id, Pack::default().side(Side::Left).padx(8, 0));
+        id
+    }
+
     pub fn build(ui: &mut Ui, pg: usize, th: &Theme, f: &Faces, cm10: i32, d: &CustData) -> CustPage {
         let title = ui.canvas(pg, &th.banner, cm10, 96);
         canvas_of(ui, title);
@@ -324,6 +333,7 @@ impl CustPage {
         b.ui.pack(vvrow, Pack::default().fill(Fill::X).padx(14, 14).pady(4, 2));
         let vst = b.note(c, "", &th.grey, 9, false, 330);
         self.labels.push(("vv_status".into(), vst));
+        self.labels.push(("vvrow".into(), vvrow));
         let x = b.btn(vvrow, "Find VOICEVOX", "cz_btn:vv_find", Some(&th.start), None, 9, 8, 1);
         b.ui.pack(x, Pack::default().side(Side::Left));
         let x = b.btn(vvrow, "Hear her", "cz_btn:voice_demo", Some(&th.field), None, 9, 8, 1);

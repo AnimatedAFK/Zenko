@@ -657,7 +657,7 @@ fn bible_out(a: &[&str], fox: &mut Companion) {
 }
 
 /// webbrowser.open(url)
-fn open_url(u: &str) {
+pub fn open_url(u: &str) {
     let w: Vec<u16> = u.encode_utf16().chain(std::iter::once(0)).collect();
     let verb: Vec<u16> = "open\0".encode_utf16().collect();
     unsafe {

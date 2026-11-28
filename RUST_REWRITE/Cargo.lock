@@ -468,6 +468,7 @@ version = "0.1.0"
 dependencies = [
  "fancy-regex",
  "gif",
+ "miniz_oxide",
  "num-bigint",
  "num-integer",
  "num-traits",

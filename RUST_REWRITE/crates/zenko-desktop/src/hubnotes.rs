@@ -143,6 +143,18 @@ pub(super) fn closing(x: &mut HubW) {
     flush(x, true);
 }
 
+/// zb_inbox_item with the Notes page built: the block goes at the scratchpad's end, and the draft is saved
+/// (ui["scratch"].insert("end", block); nb_draft_later())
+pub(super) fn append(x: &mut HubW, block: &str) -> bool {
+    let Some(p) = x.notes.as_ref() else { return false };
+    let sc = p.scratch;
+    x.hub.ui.text_mut(sc).insert_end(block, &[]);
+    x.notes_st.scratch = x.hub.ui.text_mut(sc).plain();
+    draft_save(x);
+    unsafe { windows_sys::Win32::Graphics::Gdi::InvalidateRect(x.hwnd, std::ptr::null(), 0) };
+    true
+}
+
 fn draft_save(x: &mut HubW) {
     x.notes_st.draft_at = None;
     if let Some(p) = x.notes.as_ref() {
@@ -367,8 +379,13 @@ pub(super) fn wheel(x: &mut HubW, mx: i32, my: i32, delta: i32) -> bool {
 
 /// filedialog.askdirectory: the folder to bring in
 pub(super) unsafe fn pick_folder(hwnd: HWND) -> Option<PathBuf> {
+    unsafe { pick_folder_titled(hwnd, "Pick the folder to bring into your notebooks") }
+}
+
+/// filedialog.askdirectory(title)
+pub(super) unsafe fn pick_folder_titled(hwnd: HWND, title: &str) -> Option<PathBuf> {
     use windows_sys::Win32::UI::Shell::*;
-    let title: Vec<u16> = "Pick the folder to bring into your notebooks\0".encode_utf16().collect();
+    let title: Vec<u16> = title.encode_utf16().chain(Some(0)).collect();
     let mut bi: BROWSEINFOW = unsafe { std::mem::zeroed() };
     bi.hwndOwner = hwnd;
     bi.lpszTitle = title.as_ptr();

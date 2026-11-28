@@ -219,6 +219,16 @@ fn with<R>(f: impl FnOnce(&mut HubW) -> R) -> Option<R> {
     HUB.with(|h| h.try_borrow_mut().ok().and_then(|mut v| v.as_mut().map(f)))
 }
 
+/// the Zenko Browser inbox: a note into the open Notes page's scratchpad (false when the page isn't built)
+pub fn notes_append(block: &str) -> bool {
+    with(|x| hubnotes::append(x, block)).unwrap_or(false)
+}
+
+/// self._z22_fish: a cast in progress on the Garden page
+pub fn fishing() -> bool {
+    with(|x| x.garden.as_ref().and_then(|p| p.fish.as_ref()).is_some_and(|f| f.phase != "done")).unwrap_or(false)
+}
+
 /// hub_show for the frame: the menu pill moves to the page (the pages themselves come with their own stages)
 fn show(x: &mut HubW, page: &str) {
     if x.hub.side.page.as_deref() == Some(page) {
@@ -684,7 +694,14 @@ fn home_music_click(x: &mut HubW, mx: i32, my: i32) -> bool {
         "next" => "next",
         _ => "playpause",
     };
-    crate::win::with_fox(|fox, _| fox.events.push(zenko_desktop::Ev::Media(key.into())));
+    // zenko.py: self.music(..., quiet=True) (nothing happens without a Spotify account)
+    let act = match key {
+        "playpause" if x.music_playing => "pause",
+        "playpause" => "play",
+        k => k,
+    };
+    let c = format!("spotify_quiet:{act}:");
+    crate::win::with_fox(move |fox, t| crate::spotifyhost::command(fox, t, &c));
     if k == "pp" {
         x.music_playing = !x.music_playing;
     }
@@ -759,6 +776,7 @@ fn page_frame(x: &mut HubW, page: &str) -> Option<usize> {
             let d = crate::win::with_fox(|fox, _| fox.home_data()).unwrap_or_default();
             let f = faces(x);
             x.home = Some(HomePage::build(&mut x.hub.ui, pg, &th, &f, cm10, &d));
+            crate::win::with_fox(|fox, _| crate::spotifyhost::refresh(fox));
             pg
         }
         "timetable" => {
@@ -1021,6 +1039,7 @@ fn chat_cmd(x: &mut HubW, cmd: &str) {
             zenko_desktop::update_config(&mut fox.cfg, |v| v["voice_muted"] = on.into());
             on
         }).unwrap_or(false);
+        crate::voicehost::set_muted(on);
         let th = x.hub.t.clone();
         if let Kind::Button { text, color, fg, .. } = &mut x.hub.ui.ws[mute].kind {
             *text = if on { "Unmute" } else { "Mute" }.into();
@@ -1028,10 +1047,43 @@ fn chat_cmd(x: &mut HubW, cmd: &str) {
             *fg = if on { th.onacc.clone() } else { th.ink.clone() };
         }
         relayout(x);
+    } else if cmd == "chat_mic" {
+        crate::win::with_fox(|fox, t| crate::ears::voice_toggle(fox, t));
+    } else if cmd == "chat_talk" {
+        crate::win::with_fox(|fox, t| crate::ears::conv_start(fox, t));
     } else if let Kind::Label { text, .. } = &mut x.hub.ui.ws[status].kind {
-        // Mic, Talk, Image and Screen need her voice and eyes, which come in a later stage of the port
+        // Image and Screen need her eyes (the vision brain), which come in stage 5b of the port
         *text = "That button isn't in the Rust preview yet.".into();
     }
+}
+
+/// voice_ui's look for the chat's Mic ("Listening") and Talk ("Stop talking") buttons
+pub fn chat_voice_look(listening: bool, conv: bool) {
+    with(|x| {
+        let Some(cp) = x.chat.as_ref() else { return };
+        let th = x.hub.t.clone();
+        let (mic, talk) = (cp.buttons.get(1).map(|b| b.0), cp.buttons.get(2).map(|b| b.0));
+        for (id, on, lab) in [(mic, listening, if listening { "Listening" } else { "Mic" }),
+                              (talk, conv, if conv { "Stop talking" } else { "Talk" })] {
+            let Some(id) = id else { continue };
+            if let Kind::Button { text, color, fg, .. } = &mut x.hub.ui.ws[id].kind {
+                *text = lab.into();
+                *color = if on { "#e5484d".into() } else { th.start.clone() };
+                *fg = if on { "#ffffff".into() } else { th.ink.clone() };
+            }
+        }
+        relayout(x);
+    });
+}
+
+/// chat_send(t, typed=False): a spoken question goes in like a typed one
+pub fn chat_send_voice(q: &str) {
+    let q = q.to_string();
+    crate::win::with_fox_at(move |fox, t, win| {
+        if let zenko_desktop::chat::Sent::Brain(_) = fox.chat_send(t, &q, win) {
+            fox.brain_fallback(t);
+        }
+    });
 }
 
 /// z17_wheel over the chat text (3 lines a notch, only while there's somewhere to go)
@@ -1506,6 +1558,7 @@ fn step(x: &mut HubW) -> bool {
     if x.slide.is_none() {
         hubrem::step(x, n);
         hubset::step(x);
+        home_music_apply(x);
         hubcust::step(x, n);
         hubbook::step(x, n);
     }
@@ -1783,7 +1836,10 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     hubup::release(x);
                     if let Some(cmd) = x.hub.ui.release(mx, my) {
                         out("sound:click");
-                        if cmd.starts_with("you_") {
+                        if cmd.starts_with("music_preset:") {
+                            let c = cmd.clone();
+                            crate::win::with_fox(move |fox, t| crate::spotifyhost::command(fox, t, &c));
+                        } else if cmd.starts_with("you_") {
                             you_cmd(x, &cmd);
                         } else if cmd.starts_with("daily_") || cmd == "open_hub:notebook" {
                             daily_cmd(x, &cmd);
@@ -2147,4 +2203,24 @@ fn reveal(x: &mut HubW, page: &str, title: &str, n: f64) {
 /// _mincho_font, _serif_font and _jp_font for the tool windows
 pub fn tool_fonts(font_ui: &str) -> (String, String, String) {
     hubbook::fonts_pub(font_ui)
+}
+
+/// music_refresh's answer on the Home page's card (and music_pp_show)
+fn home_music_apply(x: &mut HubW) {
+    let Some((t, sub, playing)) = crate::spotifyhost::HOME.lock().unwrap().take() else { return };
+    let Some(hp) = x.home.as_ref() else { return };
+    let (lab, sl) = hp.music;
+    for (id, v) in [(lab, t), (sl, sub)] {
+        if let Kind::Label { text, .. } = &mut x.hub.ui.ws[id].kind {
+            *text = v;
+        }
+    }
+    if let Some(p) = playing {
+        x.music_playing = p;
+        let img = if p { hp.icons.pause.0.clone() } else { hp.icons.play.0.clone() };
+        if let Kind::Label { image, .. } = &mut x.hub.ui.ws[hp.pp].kind {
+            *image = Some(img);
+        }
+    }
+    relayout(x);
 }

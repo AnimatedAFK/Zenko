@@ -727,6 +727,7 @@ impl Companion {
             }
         }
         self.brk = Some(Brk { planned: m as f64 * 60.0, elapsed: 0.0, resume });
+        self.music_session_hook("break");
         self.watch.active_run = 0.0;
         self.watch.alerted = false;
         self.watch.dist_run = 0.0;

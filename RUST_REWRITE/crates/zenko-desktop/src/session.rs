@@ -63,6 +63,7 @@ impl Companion {
         let line = format!("Let's go! {} min on \u{201c}{}\u{201d}. I'm watching.", minutes as i64, clip(task, 40));
         self.say(&line, 7.0);
         self.tails_n = (-1e9, 3);
+        self.music_session_hook("start");
         self.music_apply_soon(now);
     }
 
@@ -79,6 +80,7 @@ impl Companion {
         if completed && self.cfg.b("focus_glow", true) && self.hub_page.is_some() {
             self.glow_burst = Some(now); // z19 end_session: petals along the window frame
         }
+        self.music_session_hook("stop");
         self.music_apply_soon(now);
         let focused = (s.elapsed - s.dist - s.away).max(0.0);
         add_stats(focused);

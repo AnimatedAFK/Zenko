@@ -33,6 +33,10 @@ pub mod casio;
 pub mod web;
 pub mod biblefs;
 pub mod biblewin;
+pub mod voice;
+pub mod unzip;
+pub mod spotify;
+pub mod update;
 pub mod extra;
 pub mod lifechat;
 pub mod miscroutes;
@@ -68,6 +72,7 @@ pub mod chat;
 pub mod ema;
 pub mod plan;
 pub mod z22;
+pub mod zblink;
 pub mod routes17;
 pub mod gym;
 pub mod books;
@@ -97,8 +102,12 @@ pub use play::{Play, Pose, Prop};
 pub enum Ev {
     /// say(text, secs, choices): a speech bubble; choices = (label, command)
     Say { text: String, secs: f64, choices: Vec<(String, String)> },
-    /// remind_aloud: read this out with the Windows voice
+    /// speak(text): her reply read out (VOICEVOX or the Windows voice, as Settings > Talk says)
     Speak(String),
+    /// Speaker.say: read out with the Windows voice (remind_aloud in English)
+    SayAloud(String),
+    /// remind_aloud with VOICEVOX: said in Japanese in her voice ('kon kon~' clip if VOICEVOX can't)
+    RemindVoice(String),
     /// the background loop: Some((track, volume)) to play it, None to stop
     Bgm(Option<(String, i64)>),
     /// press a media key ("playpause" / "next" / "previous")
@@ -497,6 +506,8 @@ pub struct Companion {
     /// where roaming wants the window this frame (the window side moves it)
     pub win_move: Option<(i32, i32)>,
     pub lockin: Option<lockin::Lockin>,
+    /// the Zenko Browser link's timers and state (zblink.rs)
+    pub zb: zblink::Zb,
     pub lock_eating: bool,
     pub esc_t: f64,
     pub rewards: rewards::Rewards,
@@ -527,6 +538,10 @@ pub struct Companion {
     pub study: study::Study,
     /// how many lines chat_line has ever added (the chat page types the new ones)
     pub chat_n: u64,
+    /// voice_reply_until: a spoken question's answer is read out loud (monotonic seconds, voice::mono)
+    pub voice_reply_until: f64,
+    /// a voice conversation is running (Talk): every answer is read out
+    pub voice_conv: bool,
     /// the hub page on show while the hub window is open and not minimised (gym_look_on, the sidebar fox)
     pub hub_page: Option<String>,
     /// z19: a session was completed with the hub open: the petal burst starts at this time
@@ -580,6 +595,7 @@ impl Companion {
             env: life::Env::default(),
             win_move: None,
             lockin: None,
+            zb: Default::default(),
             lock_eating: false,
             esc_t: 0.0,
             rewards: Default::default(),
@@ -601,6 +617,8 @@ impl Companion {
             study: study::Study::new(now),
             brain: chat::Brain::new(now.to_bits()),
             chat_n: 0,
+            voice_reply_until: 0.0,
+            voice_conv: false,
             hub_page: None,
             glow_burst: None,
         };

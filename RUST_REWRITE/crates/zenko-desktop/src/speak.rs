@@ -1,6 +1,6 @@
 //! zenko.py Speaker + SapiVoice: Windows' built-in speech engine (SAPI ISpVoice through its raw vtable, like the
-//! ctypes code), on a background thread. Used by remind_aloud (timetable alerts). `piper:` voices need zenko.py's
-//! Python helper and aren't ported; they fall back to the default Windows voice.
+//! ctypes code), on a background thread, and `piper:` natural voices through zenko.py's PIPER_WORKER helper run with
+//! the PC's own Python (as zenko.py does even when it runs as Zenko.exe).
 
 use std::ffi::c_void;
 use std::sync::Mutex;
@@ -117,6 +117,58 @@ fn run(name: String, rate: i32, rx: std::sync::mpsc::Receiver<String>) {
     }
 }
 
+/// Speaker.status for a natural voice: loading | downloading | ready | failed
+pub static STATUS: Mutex<String> = Mutex::new(String::new());
+
+/// Speaker._start for 'piper:<id>': piper_worker.py <id> VOICE_DIR <length scale>, one line per thing to say
+fn run_piper(id: String, speed: i32, rx: std::sync::mpsc::Receiver<String>) {
+    use std::io::{BufRead, Write};
+    use std::os::windows::process::CommandExt;
+    let Some(py) = crate::ears::system_python() else {
+        *STATUS.lock().unwrap() = "failed".into();
+        return;
+    };
+    let path = zenko_desktop::voice::ext_dir("helpers").join("piper_worker.py");
+    let _ = std::fs::write(&path, zenko_desktop::voice::data()["PIPER_WORKER"].as_str().unwrap_or(""));
+    let vd = zenko_desktop::data_dir().join("voices");
+    let _ = std::fs::create_dir_all(&vd);
+    let ls = format!("{:.2}", 1.0 / (1.0 + 0.12 * speed as f64));
+    let log = std::fs::File::create(zenko_desktop::voice::ext_dir("helpers").join("voice_log.txt")).map(std::process::Stdio::from)
+        .unwrap_or_else(|_| std::process::Stdio::null());
+    let child = std::process::Command::new(py).arg(path).arg(id).arg(vd).arg(ls).stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped()).stderr(log).creation_flags(crate::voicehost::NO_WINDOW).spawn();
+    let Ok(mut child) = child else {
+        *STATUS.lock().unwrap() = "failed".into();
+        return;
+    };
+    *STATUS.lock().unwrap() = "loading".into();
+    let out = child.stdout.take();
+    std::thread::spawn(move || {
+        if let Some(o) = out {
+            for line in std::io::BufReader::new(o).lines().map_while(Result::ok) {
+                let st = match line.trim() {
+                    "DOWNLOADING" => "downloading",
+                    "READY" => "ready",
+                    _ => continue,
+                };
+                *STATUS.lock().unwrap() = st.into();
+            }
+        }
+        let mut g = STATUS.lock().unwrap();
+        if *g != "ready" {
+            *g = "failed".into();
+        }
+    });
+    let mut stdin = child.stdin.take();
+    for item in rx {
+        let ok = stdin.as_mut().map(|s| s.write_all(format!("{item}\n").as_bytes()).and_then(|_| s.flush()).is_ok()).unwrap_or(false);
+        if !ok {
+            break;
+        }
+    }
+    let _ = child.kill();
+}
+
 static SPK: Mutex<Option<((String, i32), Sender<String>)>> = Mutex::new(None);
 
 /// Speaker.say(text, voice, speed, pitch)
@@ -130,14 +182,20 @@ pub fn say(text: &str, voice: &str, speed: i64, pitch: i64) {
     let mut g = SPK.lock().unwrap();
     if g.as_ref().is_none_or(|(k, _)| *k != key) {
         let (tx, rx) = channel();
-        std::thread::spawn(move || run(name, speed * 2, rx));
+        if let Some(id) = voice.strip_prefix("piper:") {
+            let id = id.to_string();
+            std::thread::spawn(move || run_piper(id, speed, rx));
+        } else {
+            *STATUS.lock().unwrap() = "ready".into();
+            std::thread::spawn(move || run(name, speed * 2, rx));
+        }
         *g = Some((key, tx));
     }
     let url = regex::Regex::new(r"https?://\S+").unwrap();
     let nl = regex::Regex::new(r"[\r\n•]+").unwrap();
     let clean = url.replace_all(text, "");
     let clean: String = nl.replace_all(&clean, ". ").chars().take(600).collect();
-    let line = if pitch != 0 {
+    let line = if pitch != 0 && !voice.starts_with("piper:") {
         let esc = clean.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;");
         format!("<pitch absmiddle=\"{}\">{}</pitch>", pitch.clamp(0, 10), esc)
     } else {
@@ -146,7 +204,9 @@ pub fn say(text: &str, voice: &str, speed: i64, pitch: i64) {
     let line = line.trim().to_string();
     if !line.is_empty() {
         if let Some((_, tx)) = g.as_ref() {
-            let _ = tx.send(line);
+            if tx.send(line).is_err() {
+                *g = None; // the helper stopped: started again next time
+            }
         }
     }
 }

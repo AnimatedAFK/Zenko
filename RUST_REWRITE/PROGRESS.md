@@ -15,11 +15,35 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
 9. ~~4f: World map and Town square~~ (done)
 10. ~~5a: tool windows: periodic table, French dictionary, CG50 calculator, Bible~~ (done)
 11. 5b: brains and web: Ollama, online brain, web search + summaries, food lookup, screenshot reading (DEFERRED by the user on 2026-11-28: do it last, after 6)
-12. 5c: voice (VOICEVOX, voice chat, Piper) and the Spotify account
-13. 5d: installer, updater, crash logs, Zenko Browser link
+12. ~~5c: voice (VOICEVOX, voice chat, Piper) and the Spotify account~~ (done)
+13. ~~5d: installer, updater, crash logs, Zenko Browser link~~ (done)
 14. 6: testing on real Windows, speed, final side-by-side check
 
 ## Done
+- **Stage 5d:** installer, updater, crash logs and the Zenko Browser link.
+  - update.rs (lib): version_tuple/version_newer, write_lnk's [MS-SHLLINK] bytes, update_check (GitHub latest
+    release or latest.json), the exe check (MZ, 2 MB), update_download (sha256, 400 MB cap, .part), zk_log_error.
+  - install.rs (bin): the preview installs beside the Python Zenko as **ZenkoRust** (own folder in
+    LOCALAPPDATA\Programs\ZenkoRust, shortcut, uninstall key and Run value), updates only from a ZenkoRust.exe release
+    asset (never zenko.py / Zenko.exe), and shares zenko.py's single-instance mutex so the two never run together on
+    the same data folder. --uninstall, --portable, --updated (25 s wait), panic hook to error_log.txt, the 20 h
+    update check with Update now / Skip bubble, Settings' Check now / From a file / Install buttons.
+  - zblink.rs (lib): browser_inbox.json every 5 s (notes, picture clips, reminders, deadlines, summaries, cards,
+    fill-in-the-blank quizzes), zenko_link.json every 15 s and at once when a session/lock-in starts or stops (with
+    session and ema_plan, as Zenko23), the reading note, the sidebar's link light, and the built-in summariser
+    (summarise_offline/summarise_extract/_sentences/_terms/_stem, also needed by 5b's web summaries).
+    Bin: notes into the open Notes page's scratchpad, "Save to notes", "Quiz me" (hub_ask).
+  - Decisions: the first-run installer is a Yes/No/Cancel message box instead of zenko.py's Tk installer window
+    (same choices; Cancel sets install_skip). Summaries use the built-in summariser until 5b brings the online brain.
+  - Tests: update.rs (3), zblink.rs (2). Golden: make_golden_update.py, make_golden_zblink.py.
+- **Stage 5c:** voice and the Spotify account.
+  - voice.rs (lib): VOICEVOX finders, clip names, speaker list, STT status text; unzip.rs; spotify.rs (PKCE login on
+    127.0.0.1:8765, token refresh, api with 401 retry / NO_DEVICE / 403 / 429, now playing, presets, play_query).
+  - Bin: voicehost.rs (engine auto-start/stop, speech with bubble timing like zenko.py's, beeps hushed while she talks,
+    Customize demo/find/browse/menu), ears.rs (waveIn mic with VAD, whisper-cli or Windows speech, hotkey hold, talk
+    mode, whisper/piper installers), speak.rs Piper, spotifyhost.rs (connect/forget, now-playing poll and song
+    announcement, tablet and Home buttons, presets).
+  - Tests: voice.rs (5), spotify.rs (3); rewards.rs now accepts SayAloud. Golden: make_golden_voice.py.
 - **Stage 5a (85e4705 .. this one):** the four study-tool windows.
   - cgmath.rs: the CG50 maths (cg_eval grammar, exact fractions with limit_denominator, %g, roots, linear systems,
     the solver, stats, regression, normal/binomial distributions). ptable.rs: the elements and molar_mass.
@@ -200,7 +224,7 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
 - **Data files are written exactly like Python's.** Same files in %APPDATA%\FoxBuddy and the same JSON format, using read-modify-write of only our own keys.
 - **Quirks are copied too.** One example: zenko.py's window-edge nap never fires, so the port leaves it out.
 
-## Tests (all passing on 2026-11-28: 73 tests)
+## Tests (all passing on 2026-11-28: 86 tests)
 Run with `cargo test --release`. The golden files are made by the tools/ scripts.
 
 | Area | Checked against |
@@ -237,6 +261,8 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 | World map: 13 paintings (pixels) + the page in 3 cases (tree, every canvas item) | Real zenko.py, `tools/make_golden_map.py`, `tools/make_golden_page.py map` |
 | Town square: 24 streets, 60 people, calendar, filters; the page in 3 cases; the link on 16 stream lines + 3 posts | zenko.py, `tools/make_golden_square.py`, `make_golden_page.py square`, `make_golden_squarelink.py` |
 | Tool windows: periodic table (2), French dictionary (3), CG50 (55 key steps), Bible (2); CG maths, molar mass, Bible parsing, network/disk layer | Real zenko.py, `tools/make_golden_tools.py`, `make_golden_page.py tools` |
+| Updater: shortcut bytes, version compare, update_check answers, exe check, download; browser link: summariser, cloze/split cards, inbox end to end, link file | zenko.py, `tools/make_golden_update.py`, `make_golden_zblink.py` |
+| VOICEVOX finders/speakers, STT status, Spotify login/refresh/api with a pretend server | zenko.py, `tools/make_golden_voice.py` |
 | Version routes, Exercise, study books: 127 lines (replies, bubbles, what opens, IB tasks, rules, gym, timetable, grades, session, bedtime) | zenko.py with screen time/garden/stats/browser link set up, `tools/make_golden_routes.py` |
 
 ## Open problems
@@ -246,24 +272,26 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
   in this sandbox): its parsing is golden-tested, the WinHTTP stream needs a try on Windows.
 - Garden: fishing and breathing use Rust's random stream (zenko.py's is not reproducible either); breath_start doesn't hush
   VOICEVOX yet (5c). The garden cards' long labels aren't re-wrapped by zk_wrap (zenko.py's 140 ms after-map pass).
-- The sidebar's
-  "Browser" link dot and side scenes are off (zb_linked and z22_unlocked aren't ported). Only the smooth motion
+- The sidebar's side scenes are off (z22_unlocked isn't ported). Only the smooth motion
   level (45 ms) is used. The tkpaint StrokeInPieces path follows Tk core-8-6-branch; older 8.6 builds may differ.
-- Not ported yet: the Spotify account (tablet buttons use media keys, like zenko.py without an account), her VOICEVOX
-  read-aloud (she does her "kon kon~" clip instead, as zenko.py does when VOICEVOX is off), piper voices, plan_maybe (ema auto-planning), z18_init's one-time move
-  of old chat reminders onto the ema rack.
+- Voice, Spotify, the installer and updater are written but untested on Windows: the mic (waveIn), whisper/Piper
+  helpers, VOICEVOX's run.exe, the Spotify browser login, registry/shortcut writes and the self-replacing update all
+  need a real try. z18_init's one-time move of old chat reminders onto the ema rack isn't ported.
+- Zenko Browser link: the session key the browser sees is a hash of the session (zenko.py uses id()); the same
+  task restarted within 2 s keeps the key. A summary's "Reading..." bubble shows for 0.3 s (the built-in summariser
+  is instant here; zenko.py runs it on a thread).
 - All offline chat routes are ported except web_route/start_web (5b). Lines that need a brain or the web are sent as
   commands nobody handles yet: define:, translate:, quiz_start:, spotify:, ask_screen:, summarise_file:, nb_show:*,
   nb_start_test (4d/5b/5c). last_file is never set (attachments, 5b). Homework passes
   only subject_in (nb_sid isn't tracked until the Notebook page, 4d). plan_short {} comes from the Upcoming page's
   up_plan (4b); the extra test normalises it.
-- Not ported: update_tick (5d), the food lookup online (an unknown
+- Not ported: the food lookup online (an unknown
   food answers like a failed lookup), the Exercise tab's own early tick that fills today's food list.
   The smart brains (Ollama, online), web lookups, Mic/Talk/Image/Screen buttons and attachments are not ported.
 - The rewards test doesn't replay the 5 s follow-up badge check (in these cases it awards nothing in Python either).
 
 ## Next recommended task
-Stage 5c: voice (VOICEVOX, voice chat, Piper) and the Spotify account. 5b is deferred to the end.
+Stage 6: final checks (full test run, Windows build, audit of what's left), then 5b (brains and web) last.
 
 ## Gotchas
 - The repo root has a tracked `__pycache__/`. Never delete it, and run Python with bytecode writing turned off.

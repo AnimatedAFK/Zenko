@@ -40,6 +40,7 @@ pub(super) fn build(x: &mut HubW, pg: usize) {
     let d = data(x);
     let f = faces(x);
     x.set = Some(SetPage::build(&mut x.hub.ui, pg, &th, &f, cm10, &d));
+    crate::ears::check_engine();
     x.set_try = String::new();
 }
 
@@ -193,6 +194,7 @@ fn save_presets(x: &mut HubW) {
 /// every frame while the page shows: a box that lost the keyboard saves (<FocusOut>), the try-a-title result follows
 /// its box (<KeyRelease>), the chips follow the scroll
 pub(super) fn step(x: &mut HubW) {
+    stt_poll(x);
     if x.set.is_none() || x.hub.side.page.as_deref() != Some("settings") {
         return;
     }
@@ -310,6 +312,15 @@ pub(super) fn cmd(x: &mut HubW, c: &str) {
                 "speak_mode" => {
                     cfg_set(key, v);
                 }
+                "voice_engine" => {
+                    cfg_set(key, v);
+                    crate::ears::restart();
+                }
+                "stt_model" => {
+                    cfg_set(key, v);
+                    crate::ears::restart();
+                    stt_refresh(x);
+                }
                 _ => cfg_set(key, v),
             }
         }
@@ -398,11 +409,54 @@ fn button(x: &mut HubW, b: &str) {
             }
             rebuild(x);
         }
-        "speak_test" | "test_voice" => {
+        "spotify_connect" => {
+            let v = entry_text(x, "spotify_client_id").trim().to_string();
+            cfg_set("spotify_client_id", json!(v));
+            crate::win::with_fox(|fox, _| crate::spotifyhost::connect(fox));
+        }
+        "spotify_forget" => {
+            crate::win::with_fox(|fox, _| crate::spotifyhost::forget(fox));
+            set_label(x, "spotify", "Disconnected.", None);
+        }
+        "spotify_copy" => {
+            let w: Vec<u16> = zenko_desktop::spotify::REDIRECT.encode_utf16().collect();
+            crate::dialog::clipboard_set(&w);
+            set_label(x, "spotify", &format!("Copied: {}", zenko_desktop::spotify::REDIRECT), None);
+        }
+        "spotify_dashboard" => crate::toolwins::open_url("https://developer.spotify.com/dashboard"),
+        "install_whisper" => crate::ears::install_whisper(),
+        "install_piper" => crate::ears::install_piper(),
+        "test_voice" => {
+            crate::win::with_fox(|fox, t| crate::ears::voice_toggle_chat(fox, t));
+        }
+        "speak_test" => {
             crate::win::with_fox(|fox, _| fox.trace.push("speak_test".into()));
             out("run:speak_test");
         }
-        "update_check" => out("run:update_check"),
+        "update_check" => {
+            set_label(x, "update", "Checking...", None);
+            crate::win::with_fox(|fox, _| crate::install::check_now(fox, false, true));
+        }
+        "update_file" => {
+            let h = x.hwnd;
+            crate::win::with_fox(move |fox, _| crate::install::from_file(fox, h));
+        }
+        "install_app" => {
+            crate::win::with_fox(|fox, _| crate::install::from_app(fox));
+        }
+        "stt_setup" => {
+            crate::win::with_fox(|fox, _| crate::ears::stt_setup(fox, true));
+        }
+        "conv_start" => {
+            crate::win::with_fox(|fox, t| crate::ears::conv_start(fox, t));
+        }
+        "stt_dir" => {
+            if let Some(d) = unsafe { super::hubnotes::pick_folder_titled(x.hwnd, "Pick the folder with whisper-cli.exe and a ggml-*.bin model") } {
+                cfg_set("stt_dir", json!(d.to_string_lossy()));
+                crate::ears::restart();
+                stt_refresh(x);
+            }
+        }
         _ if b.starts_with("preset_use:") || b.starts_with("preset_play:") => {
             save_presets(x);
             out(&format!("run:{b}"));
@@ -570,4 +624,23 @@ pub(super) fn click(x: &mut HubW, mx: i32, my: i32) -> bool {
         return true;
     }
     false
+}
+
+/// talk_card's refresh(): the ears' status line
+fn stt_refresh(x: &mut HubW) {
+    let s = crate::win::with_fox(|fox, _| zenko_desktop::voice::stt_status(&fox.cfg.s("stt_model", "fast"), &fox.cfg.s("stt_dir", "")))
+        .unwrap_or_default();
+    set_label(x, "stt", &s, None);
+}
+
+/// the Set up download's progress on the Talk card
+pub(super) fn stt_poll(x: &mut HubW) {
+    let ms: Vec<(String, String)> = std::mem::take(&mut *crate::ears::SET_MSG.lock().unwrap());
+    if x.set.is_none() || ms.is_empty() {
+        return;
+    }
+    for (k, m) in ms {
+        set_label(x, &k, &m, None);
+    }
+    relayout(x);
 }

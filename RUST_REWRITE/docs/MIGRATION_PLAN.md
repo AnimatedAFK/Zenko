@@ -88,10 +88,10 @@ order is kept where it changes the result (tail outlines, eye cells).
 | Garden, zen garden, breathing, koi fishing | seasons, day/night, wilting, 32 fish, collection book | **done (4e)**: scene, koi and tones bit-exact; page, cards and koi book match zenko.py |
 | World map, journey, Town square | shrines to the Silk Road, quizzes, rewards, real-date festivals, ntfy chat street | **done (4f)**: paintings bit-exact, pages match zenko.py, the link's parsing golden-tested |
 | Screen time | per-app/site time, private windows skipped | **done (4e)** |
-| Voice | VOICEVOX auto-start + speech, chirps, offline voice chat, Piper, SAPI | |
+| Voice | VOICEVOX auto-start + speech, chirps, offline voice chat, Piper, SAPI | **written** (5c), untested on Windows |
 | Sounds and music | synthesised UI sounds, 3 background tracks | **done**: 279 sounds and the 3 loops byte-identical |
-| Installer and updater | self-install, Releases updater, crash logs | |
-| Browser link | Linked light, browser_inbox.json, focus with Zenko | |
+| Installer and updater | self-install, Releases updater, crash logs | **written** (5d; preview installs as ZenkoRust), untested on Windows |
+| Browser link | Linked light, browser_inbox.json, focus with Zenko | **done** (5d) |
 
 ## 4. How the port is checked (Phase 6)
 
@@ -133,7 +133,10 @@ order is kept where it changes the result (tail outlines, eye cells).
    Notebook/study Books, Notes, Screen time, Exercise and the Zen garden (breathing, grounding, koi fishing, the koi
    book window), each matching zenko.py's widget tree, canvas items and pictures in recorded cases.
    Stage 4f done: the World map and the Town square (festival street, chat board, ntfy link).
-   **Next:** 5c, voice and Spotify (5b brains/web deferred by the user to the end).
+   Stage 5a done: the periodic table, French dictionary, CG50 calculator and Bible windows.
+   Stage 5c done: VOICEVOX, voice chat, Piper and the Spotify account.
+   Stage 5d done: installer, updater, crash logs and the Zenko Browser link.
+   **Next:** 6, final checks; then 5b brains/web (deferred by the user to the end).
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.
 6. Speed (Phase 5): image cache and native code are already in; measure and tune at the end.
 

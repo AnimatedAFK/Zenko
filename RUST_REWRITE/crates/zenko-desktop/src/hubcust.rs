@@ -81,6 +81,7 @@ pub(super) fn step(x: &mut HubW, n: f64) {
         }
         x.cust_focus = f;
     }
+    cz_updates(x);
     if n >= x.cust_anim {
         x.cust_anim = n + 0.07;
         let d = data();
@@ -141,6 +142,9 @@ pub(super) fn cmd(x: &mut HubW, c: &str) {
         match key {
             "glasses_in_session" | "headphones_with_music" | "lockin_headband" | "foxfire" => look(),
             "nav_compact" => out("run:reopen:customize"),
+            "voicevox_autostart" => {
+                crate::win::with_fox(|fox, _| crate::voicehost::autostart(fox, false, None));
+            }
             "bubble_scale" => say(&format!("My bubble is {} now~", if on { "as big as me" } else { "always the same size" }), 4.0),
             _ => {}
         }
@@ -167,7 +171,10 @@ pub(super) fn cmd(x: &mut HubW, c: &str) {
             "voice_clips" | "chirp_pitch" => {
                 cfg_set(key, v);
                 look();
-                out("sound:hello");
+                crate::win::with_fox(|fox, _| crate::voicehost::voice_demo(fox));
+                if key == "voice_clips" {
+                    crate::win::with_fox(|fox, _| crate::voicehost::autostart(fox, false, None));
+                }
             }
             "tails" | "ear_style" | "blush_style" => {
                 cfg_set(key, v);
@@ -247,9 +254,41 @@ pub(super) fn cmd(x: &mut HubW, c: &str) {
                 out("run:reopen:customize");
             }
             "speak_test" => out("run:speak_test"),
-            "voice_demo" => out("sound:hello"),
+            "voice_demo" => {
+                crate::win::with_fox(|fox, _| crate::voicehost::voice_demo(fox));
+            }
+            "vv_find" => {
+                crate::win::with_fox(|fox, _| crate::voicehost::vv_find(fox));
+            }
+            "vv_browse" => {
+                if let Some(f) = crate::voicehost::vv_browse_pick(x.hwnd) {
+                    crate::win::with_fox(move |fox, _| crate::voicehost::vv_browse(fox, f));
+                }
+            }
+            "vv_menu" => {
+                // the tk.OptionMenu of VOICEVOX's voices
+                let Some((names, sel)) = crate::voicehost::CZ_MENU.lock().unwrap().clone() else { return };
+                let items: Vec<crate::menu::Item> = names.iter().map(|n| crate::menu::Item::Radio {
+                    label: n.clone(), cmd: format!("vv:{n}"), on: *n == sel }).collect();
+                let th = x.hub.t.clone();
+                let c = crate::menu::popup(x.hwnd, &items, &th);
+                if let Some(n) = c.strip_prefix("vv:") {
+                    let n = n.to_string();
+                    if let Some(m) = crate::voicehost::CZ_MENU.lock().unwrap().as_mut() {
+                        m.1 = n.clone();
+                    }
+                    if let Some(p) = x.cust.as_ref() {
+                        if let Some(&(_, id)) = p.labels.iter().find(|(k, _)| k == "vv_menu") {
+                            if let Kind::Menu { text, .. } = &mut x.hub.ui.ws[id].kind {
+                                *text = n.clone();
+                            }
+                        }
+                    }
+                    crate::win::with_fox(move |fox, _| crate::voicehost::vv_pick(fox, &n));
+                }
+            }
             _ => {
-                // (VOICEVOX's finder and the run.exe picker, and the Japanese voice search, aren't ported yet)
+                // (the Japanese voice search needs the brain: stage 5b)
                 let s = format!("cz_btn:{b}");
                 crate::win::with_fox(move |fox, _| fox.trace.push(s));
             }
@@ -320,4 +359,42 @@ pub(super) fn click(x: &mut HubW, mx: i32, my: i32) -> bool {
         return true;
     }
     false
+}
+
+/// the voice jobs' answers on the page: the status lines, the engine path, the voice_clips radio, and the
+/// voices' OptionMenu packed into the Find VOICEVOX row once VOICEVOX answered
+fn cz_updates(x: &mut HubW) {
+    let ups: Vec<(String, String)> = std::mem::take(&mut *crate::voicehost::CZ.lock().unwrap());
+    let menu = crate::voicehost::CZ_MENU.lock().unwrap().clone();
+    if x.cust.is_none() {
+        return;
+    }
+    let mut dirty = !ups.is_empty();
+    for (k, v) in ups {
+        if let Some(val) = k.strip_prefix("radio:") {
+            radio_group(x, &format!("cz_rad:{val}:"), &v);
+            continue;
+        }
+        let p = x.cust.as_ref().unwrap();
+        if let Some(&(_, id)) = p.labels.iter().find(|(kk, _)| *kk == k) {
+            if let Kind::Label { text, .. } = &mut x.hub.ui.ws[id].kind {
+                *text = v;
+            }
+        }
+    }
+    let p = x.cust.as_mut().unwrap();
+    if let Some((_, sel)) = menu {
+        if !p.labels.iter().any(|(k, _)| k == "vv_menu") {
+            let th = x.hub.t.clone();
+            let cm10 = (100.0 * x.dpi / 25.4 + 0.5) as i32;
+            let fu = x.hub.font_ui.clone();
+            let id = p.vv_menu(&mut x.hub.ui, &th, &fu, &sel, cm10);
+            let _ = &x.fonts;
+            p.labels.push(("vv_menu".into(), id));
+            dirty = true;
+        }
+    }
+    if dirty {
+        relayout(x);
+    }
 }

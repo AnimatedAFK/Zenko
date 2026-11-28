@@ -1,7 +1,7 @@
 //! Music (zenko.py): the background loops (music_apply / music_watch / BackgroundMusic; the window side plays them
 //! with MCI like zenko.py) and the music tablet in her paws while Spotify is open (player_poll, tablet_grid,
-//! draw_tablet, tablet_hit, tablet_press). The Spotify account connection isn't ported, so the tablet reads the
-//! Spotify window title and its buttons press the media keys, as zenko.py does without an account.
+//! draw_tablet, tablet_hit, tablet_press). With a Spotify account (spotify.rs) the tablet also reads music_poll's
+//! now-playing and its buttons drive Spotify; without one it reads the window title and presses the media keys.
 
 use crate::rewards::Later;
 use crate::{Companion, Ev, FONT35};
@@ -34,6 +34,8 @@ pub struct Music {
     pub song_memory: Option<(String, String)>,
     pub last_song: Option<(String, String)>,
     pub tab_flash: (String, f64),
+    /// music_now: what the Spotify account says is on (music_poll, every 7 s)
+    pub now: Option<crate::spotify::Now>,
 }
 
 fn font35(ch: char) -> Option<&'static [&'static str; 5]> {
@@ -69,15 +71,22 @@ impl Companion {
     /// player_poll, every 1.5 s: `win` = the Spotify window's state (spotify_window), None when it isn't open
     pub fn player_poll(&mut self, win: Option<Player>) {
         let mut p = None;
+        let api = self.music.now.clone().filter(|n| !n.title.is_empty());
         if let Some(w) = win {
             let mut q = w.clone();
             if !q.title.is_empty() {
                 self.music.song_memory = Some((q.title.clone(), q.artist.clone()));
+            } else if let Some(a) = &api {
+                q.title = a.title.clone();
+                q.artist = a.artist.clone();
+                q.playing = q.playing || a.playing;
             } else if let Some((t, a)) = &self.music.song_memory {
                 q.title = t.clone();
                 q.artist = a.clone();
             }
             p = Some(q);
+        } else if let Some(a) = &api {
+            p = Some(Player { playing: a.playing, title: a.title.clone(), artist: a.artist.clone() });
         }
         if let Some(q) = &mut p {
             if q.title.is_empty() {
@@ -276,7 +285,16 @@ impl Companion {
             return;
         }
         self.events.push(Ev::Beep { kind: "pet".into(), variety: false });
-        self.events.push(Ev::Media(name.to_string()));
+        if self.spotify_connected() {
+            let act = match name {
+                "previous" | "next" => name,
+                _ if p.playing => "pause",
+                _ => "play",
+            };
+            self.events.push(Ev::Command(format!("spotify_quiet:{act}:")));
+        } else {
+            self.events.push(Ev::Media(name.to_string()));
+        }
         if name == "playpause" {
             if let Some(q) = &mut self.music.player {
                 q.playing = !q.playing;
@@ -284,6 +302,21 @@ impl Companion {
         }
         if name == "next" || name == "previous" {
             self.later(now + 0.9, Later::ForgetSong);
+        }
+    }
+}
+
+impl Companion {
+    /// music_session_hook(event): the focus playlist with a session, paused for breaks / at the end (spotify_auto)
+    pub fn music_session_hook(&mut self, event: &str) {
+        if !self.cfg.b("spotify_auto", false) || !self.spotify_connected() {
+            return;
+        }
+        if event == "start" {
+            let pl = self.cfg.s("spotify_focus_playlist", "").trim().to_string();
+            self.events.push(Ev::Command(format!("spotify_quiet:play:{pl}")));
+        } else {
+            self.events.push(Ev::Command("spotify_quiet:pause:".into()));
         }
     }
 }

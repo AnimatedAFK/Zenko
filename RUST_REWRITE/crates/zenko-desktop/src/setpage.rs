@@ -1222,21 +1222,25 @@ impl crate::Companion {
         let exe_dir = std::env::current_exe().ok().and_then(|p| p.parent().map(|d| d.display().to_string()))
             .unwrap_or_default();
         let src = cfg.get("update_source").and_then(|v| v.as_str()).unwrap_or("").trim().to_string();
+        // is_installed(): running from %LOCALAPPDATA%\Programs\ZenkoRust (the preview's own folder, install.rs)
+        let inst = std::path::PathBuf::from(std::env::var_os("LOCALAPPDATA").unwrap_or_default()).join("Programs").join("ZenkoRust");
+        let installed = exe_dir.to_lowercase() == inst.display().to_string().to_lowercase();
         let exam = self.exam_days();
         let today = (crate::unix_now() + crate::local_offset_pub() as f64).div_euclid(86400.0) as i64;
         SetData {
             is_win: cfg!(windows),
             autostart: false,
-            spotify: false,
+            spotify: self.spotify_connected(),
             lockin: self.lockin.is_some(),
             zb_linked: self.zb_linked(),
             whisper: "Whisper isn't installed for the Python I can see, so Windows' built-in speech is used (less \
                       accurate). Press Install Whisper.".into(),
-            stt: format!("Not set up yet. Set up downloads about {} MB once (GitHub + Hugging Face).",
-                         5 + stt_mb(cfg.get("stt_model").and_then(|v| v.as_str()).unwrap_or("fast"))),
-            version: format!("You have {APP_VERSION}. Running from {exe_dir}."),
+            stt: crate::voice::stt_status(cfg.get("stt_model").and_then(|v| v.as_str()).unwrap_or("fast"),
+                                          cfg.get("stt_dir").and_then(|v| v.as_str()).unwrap_or("")),
+            version: if installed { format!("You have {APP_VERSION}. Installed for you in {}.", inst.display()) }
+                     else { format!("You have {APP_VERSION}. Running from {exe_dir}.") },
             live: None,
-            install: true,
+            install: installed,
             frozen: true,
             speed: String::new(),
             exam_iso: crate::plan::iso(today + exam),

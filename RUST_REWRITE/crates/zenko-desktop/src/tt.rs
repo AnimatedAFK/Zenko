@@ -210,13 +210,21 @@ impl Companion {
             "english" => {
                 let t = aloud_text(text);
                 if !t.is_empty() {
-                    self.events.push(Ev::Speak(t));
+                    self.events.push(Ev::SayAloud(t));
                 }
             }
             "off" => {}
             _ => {
-                if !aloud_text(text).is_empty() {
+                // zenko19: her VOICEVOX voice says it (in Japanese); without VOICEVOX her little 'kon kon~' clip
+                let t = aloud_text(text);
+                if t.is_empty() {
+                    return;
+                }
+                let vv = self.cfg.s("voice_clips", "synth") == "voicevox" || crate::voice::state().alive;
+                if !vv || self.cfg.b("voice_muted", false) {
                     self.events.push(Ev::Beep { kind: "hello".into(), variety: false });
+                } else {
+                    self.events.push(Ev::RemindVoice(t));
                 }
             }
         }

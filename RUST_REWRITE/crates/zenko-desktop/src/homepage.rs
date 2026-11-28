@@ -543,7 +543,7 @@ impl crate::Companion {
             brk: self.brk.as_ref().map(|b| (b.planned, b.elapsed)),
             focus_min: crate::slow::today_focus_minutes(), rows, focus, due, week,
             last_task: raw.get("last_task").and_then(|v| v.as_str()).unwrap_or("").into(), last_minutes, presets,
-            spotify: false, theme: raw.get("theme").and_then(|v| v.as_str()).unwrap_or("snow").into(),
+            spotify: self.spotify_connected(), theme: raw.get("theme").and_then(|v| v.as_str()).unwrap_or("snow").into(),
         }
     }
 }
