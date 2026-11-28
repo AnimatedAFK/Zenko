@@ -86,7 +86,7 @@ order is kept where it changes the result (tail outlines, eye cells).
 | Tool windows | periodic table, French dictionary, Casio CG50 calculator, Bible with Greek/Hebrew lexicon | |
 | Exercise | 3-day split, pixel muscle map, weight, calories, food lookup, gym look | **done (4e)** except the online food lookup (5b) |
 | Garden, zen garden, breathing, koi fishing | seasons, day/night, wilting, 32 fish, collection book | **done (4e)**: scene, koi and tones bit-exact; page, cards and koi book match zenko.py |
-| World map, journey, Town square | shrines to the Silk Road, quizzes, rewards, real-date festivals, ntfy chat street | |
+| World map, journey, Town square | shrines to the Silk Road, quizzes, rewards, real-date festivals, ntfy chat street | **done (4f)**: paintings bit-exact, pages match zenko.py, the link's parsing golden-tested |
 | Screen time | per-app/site time, private windows skipped | **done (4e)** |
 | Voice | VOICEVOX auto-start + speech, chirps, offline voice chat, Piper, SAPI | |
 | Sounds and music | synthesised UI sounds, 3 background tracks | **done**: 279 sounds and the 3 loops byte-identical |
@@ -132,7 +132,8 @@ order is kept where it changes the result (tail outlines, eye cells).
    Stages 4a-4e done: the hub pages Home, Daily, You, Timetable, Upcoming, Reminders, Settings, Customize (with Ctrl+K),
    Notebook/study Books, Notes, Screen time, Exercise and the Zen garden (breathing, grounding, koi fishing, the koi
    book window), each matching zenko.py's widget tree, canvas items and pictures in recorded cases.
-   **Next:** 4f, the World map and Town square pages.
+   Stage 4f done: the World map and the Town square (festival street, chat board, ntfy link).
+   **Next:** 5a, the tool windows.
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.
 6. Speed (Phase 5): image cache and native code are already in; measure and tune at the end.
 

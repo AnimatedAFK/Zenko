@@ -138,7 +138,25 @@ fn save_entry(x: &mut HubW, key: &str) {
             let n = v.trim().parse::<f64>().map(|n| (n as i64).clamp(1, 600)).unwrap_or(50);
             cfg_set(key, json!(n));
         }
-        "home_city" | "spotify_focus_playlist" | "vision_model" | "spotify_client_id" | "square_server" => {
+        "square_server" => {
+            // setsrv: a server that isn't http(s)://host[:port][/path] goes back to ntfy.sh; the square reconnects
+            let mut v = v.trim().trim_end_matches('/').to_string();
+            let ok = (|| {
+                let rest = v.strip_prefix("https://").or_else(|| v.strip_prefix("http://"))?;
+                let (hp, _) = rest.split_once('/').unwrap_or((rest, ""));
+                let (h, port) = hp.split_once(':').map(|(h, p)| (h, Some(p))).unwrap_or((hp, None));
+                let good = !h.is_empty() && h.chars().all(|c| c.is_alphanumeric() || c == '_' || c == '.' || c == '-')
+                    && port.is_none_or(|p| !p.is_empty() && p.bytes().all(|b| b.is_ascii_digit()));
+                good.then_some(())
+            })().is_some();
+            if !ok {
+                v = zenko_desktop::squarelink::SQUARE_SERVER.into();
+                entry_put(x, key, &v);
+            }
+            cfg_set(key, json!(v));
+            crate::win::with_fox(|fox, _| crate::sqnet::connect(&fox.cfg));
+        }
+        "home_city" | "spotify_focus_playlist" | "vision_model" | "spotify_client_id" => {
             cfg_set(key, json!(v.trim()));
         }
         "online_key" => {
@@ -254,6 +272,10 @@ pub(super) fn cmd(x: &mut HubW, c: &str) {
                     *on = false;
                 }
                 say("This preview leaves Start with Windows to your normal Zenko.", 4.0);
+            }
+            "square_on" => {
+                cfg_set(key, json!(on));
+                crate::win::with_fox(|fox, _| if on { crate::sqnet::connect(&fox.cfg) } else { crate::sqnet::disconnect() });
             }
             _ => {
                 cfg_set(key, json!(on));

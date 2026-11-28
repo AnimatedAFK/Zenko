@@ -30,6 +30,8 @@ mod bgm;
 #[cfg(windows)]
 mod net;
 #[cfg(windows)]
+mod sqnet;
+#[cfg(windows)]
 mod uiwin;
 #[cfg(windows)]
 mod koiwin;
@@ -557,6 +559,7 @@ mod win {
                     hub_run(app, c);
                 }
             }
+            crate::sqnet::boot(t, &app.fox.cfg);
             if t >= app.next_hub && crate::hubw::is_open() {
                 app.next_hub = t + 1.0;
                 crate::hubw::update(side_ctx(app), &hub_status(app));
@@ -795,6 +798,13 @@ mod win {
                 let task = it["task"].as_str().map(String::from).unwrap_or_else(|| it["task"].to_string());
                 fox.start_session_item(t, &task, it["mins"].as_f64().unwrap_or(30.0), Some(i));
             }
+        } else if c == "sq_rules_ok" {
+            if crate::hubw::is_open() {
+                crate::hubw::square_cmd(c);
+            } else {
+                update_config(&mut fox.cfg, |v| v["square_rules_ok"] = true.into());
+            }
+        } else if c == "sq_rules_no" {
         } else if fox.ema_ring_button(c) || fox.books_button(t, c) || fox.study_button(t, c) || fox.guard_button(t, c) {
         } else if let Some(id) = c.strip_prefix("ema_done:") {
             fox.ema_set_done(id);

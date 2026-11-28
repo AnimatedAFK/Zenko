@@ -3,7 +3,7 @@
 Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.md. Rules: RULES.md.
 402 of 1,798 zenko.py items ported by `python3 tools/audit_inventory.py` (its list was last updated at 3g; stages 4a-4e aren't in it yet).
 
-## Stages left to completion (7, as of 2026-11-28; 4e done)
+## Stages left to completion (6, as of 2026-11-28; 4f done)
 1. ~~3e: zenko8 study tracking + study_route~~ (done)
 2. ~~3f: the remaining chat routes~~ (done)
 3. ~~3g: desktop leftovers~~ (done; Ctrl K moved to 4c, since it searches the Settings/Customize cards)
@@ -12,7 +12,7 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
 6. ~~4c: Settings and Customize pages, plus the Ctrl K search palette (ZkPalette, z20_items)~~ (done)
 7. ~~4d: Study pages: Notebook, study Books, Notes~~ (done)
 8. ~~4e: Exercise, Garden (zen garden, fishing, koi book), Screen time pages~~ (done)
-9. 4f: World map and Town square
+9. ~~4f: World map and Town square~~ (done)
 10. 5a: tool windows: periodic table, French dictionary, CG50 calculator, Bible
 11. 5b: brains and web: Ollama, online brain, web search + summaries, food lookup, screenshot reading
 12. 5c: voice (VOICEVOX, voice chat, Piper) and the Spotify account
@@ -20,6 +20,22 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
 14. 6: testing on real Windows, speed, final side-by-side check
 
 ## Done
+- **Stage 4f (commits 905508c .. this one):** the World map and the Town square.
+  - mapart.rs / mappage.rs / hubmap.rs: the 13 region paintings bit-exact, the page (region bar, painting with pins,
+    torii, road, clouds, ring and mini Zenko, hover tip, passport stamps, journey rows, the gold-seal quiz) in 3 cases.
+    A right quiz answer adds the seal to life journey.quiz, plays the gift sound, says "Sugoi~!" and checks badges.
+  - squareart.rs: Z23 festival street paintings (24 streets), crowd looks and sprites (60 people), the festival
+    calendar, square_clean / square_name_ok / square_tag. squarepage.rs: Z23Street (crowd, named people, speech bubbles
+    that float above each other, lanterns, fireworks, ambient, bats, Holi puffs) and the page (status row, board,
+    entry, rules note), checked in 3 cases (offline winter night, live Christmas Eve dusk with 5 messages in a small
+    window, Holi morning). squarelink.rs: SquareLink23's take/visible/post (16 stream lines, reports, looks, posts).
+  - Bin: net.rs `request()` (WinHTTP, http/https, any method, body, streamed reading); sqnet.rs (the ntfy stream thread
+    with zenko.py's backoff, posts on threads, connect 15 s after start when square_on, look updates); hubsquare.rs
+    (800 ms paint, 90 ms street, Go online / rules bubble, Send with slow mode and the put-back on failure, report /
+    block / copy menu on a message, the street's yukata / mask / festival preview menu, stall clicks -> z23_stall in
+    squarelink.rs). Settings: the square_on check connects / disconnects, the server box is validated like setsrv.
+  - Quirks copied: hub_build_square paints before the page is mapped, so the board starts at the top; the board's
+    line numbers ignore the offline/quiet note's two lines (as zenko.py's ui["lines"] does).
 - **Stage 1:** crates/zenko-art is an exact port of the sprite engine.
 - **Stage 2a:** crates/zenko-sound, play reactions, speech bubble, right-click menu, basic sessions.
 - **Stage 2b (commits 471e7b1 and the lock-in commit after it):**
@@ -199,11 +215,15 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 | Focus glow + petal burst: every frame item in 10 cases | zenko.py's z19_glow on a recording canvas, `tools/make_golden_glow.py` |
 | Zen garden scene (12), koi art (192), breathing tones (12) | zenko.py's pixels / .wav bytes, `tools/make_golden_garden.py`, `make_golden_fish.py`, `make_golden_breath.py` |
 | Zen garden page: 6 cases (whole tree, every canvas item and picture, question + catch cards) and the koi book window: 3 cases | Real zenko.py under Xvfb, `tools/make_golden_page.py garden` / `koibook` |
+| World map: 13 paintings (pixels) + the page in 3 cases (tree, every canvas item) | Real zenko.py, `tools/make_golden_map.py`, `tools/make_golden_page.py map` |
+| Town square: 24 streets, 60 people, calendar, filters; the page in 3 cases; the link on 16 stream lines + 3 posts | zenko.py, `tools/make_golden_square.py`, `make_golden_page.py square`, `make_golden_squarelink.py` |
 | Version routes, Exercise, study books: 127 lines (replies, bubbles, what opens, IB tasks, rules, gym, timetable, grades, session, bedtime) | zenko.py with screen time/garden/stats/browser link set up, `tools/make_golden_routes.py` |
 
 ## Open problems
 - Nothing has run on real Windows yet (Wine is broken here). The bubble, menu, panel, dialog and pounce still need screenshots from the user.
-- "See the map" opens `hub:map`, but the World map and Town square pages are empty until 4f.
+- Town square: the street rebuilds at once on a resize (zenko.py waits 250 ms); the street's random stream and the
+  stalls' picks are Rust's own (zenko.py's are unseeded). The live ntfy link is untested here (no network to ntfy.sh
+  in this sandbox): its parsing is golden-tested, the WinHTTP stream needs a try on Windows.
 - Garden: fishing and breathing use Rust's random stream (zenko.py's is not reproducible either); breath_start doesn't hush
   VOICEVOX yet (5c). The garden cards' long labels aren't re-wrapped by zk_wrap (zenko.py's 140 ms after-map pass).
 - The sidebar's
@@ -223,7 +243,7 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 - The rewards test doesn't replay the 5 s follow-up badge check (in these cases it awards nothing in Python either).
 
 ## Next recommended task
-Stage 4f: World map (journeys, story cards, quizzes, passport, rewards) and Town square. Same method: a golden dump with tools/make_golden_page.py's walk(), then the Rust tree checked against it.
+Stage 5a: the tool windows (periodic table, French dictionary, CG50 calculator, Bible).
 
 ## Gotchas
 - The repo root has a tracked `__pycache__/`. Never delete it, and run Python with bytecode writing turned off.

@@ -42,6 +42,8 @@ mod hubgym;
 mod hubgarden;
 #[path = "hubmap.rs"]
 mod hubmap;
+#[path = "hubsquare.rs"]
+mod hubsquare;
 #[path = "paletwin.rs"]
 mod paletwin;
 use serde_json::Value;
@@ -157,6 +159,13 @@ struct HubW {
     gd_panel_at: f64,
     /// the World map page, its next 60 ms frame and the badge check after a gold seal
     map: Option<zenko_desktop::mappage::MapPage>,
+    /// the Town square page, its 800 ms paint and 90 ms street clocks, the festival previewed, the message a
+    /// right-click is about
+    square: Option<zenko_desktop::squarepage::SquarePage>,
+    sq_paint_at: f64,
+    sq_next: f64,
+    sq_preview: Option<String>,
+    sq_menu_msg: Option<zenko_desktop::squarepage::Msg>,
     mp_next: f64,
     mp_badge_at: f64,
     /// screen_ui["range"] (kept while the window is open) and the next minute render
@@ -835,6 +844,12 @@ fn page_frame(x: &mut HubW, page: &str) -> Option<usize> {
             x.daily_d = d;
             pg
         }
+        "square" => {
+            let th = x.hub.t.clone();
+            let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
+            hubsquare::build(x, pg);
+            pg
+        }
         "you" => {
             let th = x.hub.t.clone();
             let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
@@ -894,6 +909,7 @@ fn relayout(x: &mut HubW) {
     hubgym::fit(x, w, h);
     hubgarden::fit(x, w, h);
     hubmap::fit(x, w, h);
+    hubsquare::fit(x, w, h);
     if let Some(dp) = x.daily.as_mut() {
         let (th, f) = (x.hub.t.clone(), Faces { ui: x.hub.font_ui.clone(), title: String::new() });
         let d = x.daily_d.clone();
@@ -1215,7 +1231,7 @@ pub fn open(page: Option<&str>, init: HubInit) {
             size: (w, h), min, cursor: IDC_ARROW, faded: false,
             anim: zenko_desktop::hubanim::HubAnim::new(0.0, (x0 as u64) << 20 ^ 0x9e37_79b9),
             theme: init.theme.clone(), living: init.living, glow_next: 0.0, burst: None, particles: init.particles, minimized: false,
-            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, set: None, set_try: String::new(), set_focus: None, set_rule_do: String::new(), cust: None, cust_focus: None, cust_anim: 0.0, nb: None, notes: None, notes_st: Default::default(), screen: None, gym: None, garden: None, gd_menu: false, gd_pending: None, gd_catch: None, gd_badge_at: 0.0, gd_next: 0.0, gd_panel_at: 0.0, map: None, mp_next: 0.0, mp_badge_at: 0.0, screen_range: 1, screen_next: 0.0, opened_s: init.opened_s, reveal: None, flash: None, prebuild_at: 2.5, ask: None,
+            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, set: None, set_try: String::new(), set_focus: None, set_rule_do: String::new(), cust: None, cust_focus: None, cust_anim: 0.0, nb: None, notes: None, notes_st: Default::default(), screen: None, gym: None, garden: None, gd_menu: false, gd_pending: None, gd_catch: None, gd_badge_at: 0.0, gd_next: 0.0, gd_panel_at: 0.0, map: None, mp_next: 0.0, mp_badge_at: 0.0, square: None, sq_paint_at: 0.0, sq_next: 0.0, sq_preview: None, sq_menu_msg: None, screen_range: 1, screen_next: 0.0, opened_s: init.opened_s, reveal: None, flash: None, prebuild_at: 2.5, ask: None,
             chat_q: Default::default(), typing: None, sb_drag: None,
         }));
         with(|x| {
@@ -1275,6 +1291,11 @@ pub fn quit() {
 }
 
 /// the app's garden commands (chat, the menu): breath:k, grounding, fish_cast, koi_book
+/// a Town square bubble button (the rules' "I understand")
+pub fn square_cmd(c: &str) {
+    with(|x| hubsquare::cmd(x, c));
+}
+
 pub fn garden_cmd(c: &str) {
     with(|x| hubgarden::app_cmd(x, c));
 }
@@ -1494,6 +1515,8 @@ fn step(x: &mut HubW) -> bool {
     hubgarden::tick(x, n);
     hubgarden::step(x, n);
     hubmap::step(x, n);
+    hubsquare::posted(x);
+    hubsquare::step(x, n);
     // daily_refresh: what changed (a badge, a check-in, a card) shows while the page is open
     if x.hub.side.page.as_deref() == Some("daily") && x.slide.is_none() && n >= x.daily_next {
         x.daily_next = n + 1.0;
@@ -1653,7 +1676,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     hubup::motion(x, mx, my);
                     hubrem::motion(x, mx, my);
                     hubbook::motion(x, mx, my);
-                    if hubmap::motion(x, mx, my) && x.cursor == IDC_ARROW {
+                    if (hubmap::motion(x, mx, my) || hubsquare::motion(x, mx, my)) && x.cursor == IDC_ARROW {
                         x.cursor = IDC_HAND;
                     }
                     if x.cursor == IDC_ARROW && x.hub.part_at(mx, my) == "page" {
@@ -1695,6 +1718,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                             x.hub.ui.press(&x.fonts, mx, my, n, msg == WM_LBUTTONDBLCLK);
                             you_focus_left(x, old);
                             hubgym::focus_left(x, old);
+                            hubsquare::focus_left(x, old);
                             hubup::focus_left(x, old);
                             hubup::press(x, mx, my);
                         }
@@ -1783,6 +1807,8 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                             hubgarden::cmd(x, &cmd);
                         } else if cmd.starts_with("mp_") {
                             hubmap::cmd(x, &cmd);
+                        } else if cmd.starts_with("sq_") {
+                            hubsquare::cmd(x, &cmd);
                         } else if cmd.starts_with("set_") && !cmd.starts_with("set_menu:") {
                             hubset::cmd(x, &cmd);
                         } else if cmd.starts_with("hub_ask:") || cmd.starts_with("home_") || matches!(cmd.as_str(),
@@ -1798,6 +1824,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     } else if hubgym::click(x, mx, my) {
                     } else if hubgarden::click(x, mx, my) {
                     } else if hubmap::click(x, mx, my) {
+                    } else if hubsquare::click(x, mx, my) {
                     } else if x.hub.side.page.as_deref() == Some("home") {
                         home_music_click(x, mx, my);
                     } else if x.hub.side.page.as_deref() == Some("daily") {
@@ -1859,6 +1886,15 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                 close();
                 0
             }
+            WM_RBUTTONUP => {
+                // the Town square's menus: report / block / copy a message, or the festival street's
+                let (mx, my) = pt();
+                if let Some(which) = with(|x| hubsquare::rclick_at(x, mx, my)).flatten() {
+                    hubsquare::popup(hwnd, which);
+                    redraw();
+                }
+                0
+            }
             WM_ACTIVATE => {
                 let on = (wp & 0xffff) != 0;
                 with(|x| x.hub.ui.active = on);
@@ -1905,6 +1941,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     } else if vk == VK_RETURN && hubbook::key_return(x) {
                     } else if vk == VK_RETURN && hubscreen::key_return(x) {
                     } else if vk == VK_RETURN && hubgym::key_return(x) {
+                    } else if vk == VK_RETURN && x.hub.side.page.as_deref() == Some("square") && hubsquare::key_return(x) {
                     } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.a)) {
                         daily_cmd(x, "daily_card_add");
                     } else if vk == VK_RETURN && x.daily.as_ref().is_some_and(|d| x.hub.ui.focus == Some(d.fact)) {

@@ -871,7 +871,7 @@ pub struct SquarePage {
     pub wrap: WrapState,
     seig: Option<(String, Rc<Photo>)>,
     th: Theme,
-    f: Faces,
+    _f: Faces,
     pub d: SquareData,
     pub zk_f: f64,
 }
@@ -948,7 +948,7 @@ impl SquarePage {
         ui.pack_before(street.cv, board, Pack::default().fill(Fill::X).pady(10, 0));
         let mut p = SquarePage { pg, title, wrap_f, dot, st, ne, tag, go, board, txt, sb, me, cnt, send, street: Some(street), shown: -1,
                                  lines: vec![], last: 0.0, wrap: WrapState::default(), seig: None, th: th.clone(),
-                                 f: Faces { ui: f.ui.clone(), title: f.title.clone() }, d: d.clone(), zk_f: 1.0 };
+                                 _f: Faces { ui: f.ui.clone(), title: f.title.clone() }, d: d.clone(), zk_f: 1.0 };
         let _ = &mut p;
         p
     }
