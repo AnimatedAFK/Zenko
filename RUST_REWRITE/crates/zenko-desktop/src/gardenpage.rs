@@ -62,6 +62,17 @@ pub struct GardenData {
     pub ground_i: i64,
 }
 
+impl Default for GardenData {
+    fn default() -> Self {
+        GardenData {
+            garden: Value::Null, fishing: Value::Null, cards: vec![], cfg: Value::Null, lockin: false, today: 0, hour: 12,
+            minute: 0, month: 1, sky: true, seasons: true, weather: None, wx_code: None, hours: 0.0, got: vec![],
+            pal: Palette::empty(), look: zenko_art::sit::Look::default(), tails: 1, hd: true, jp: String::new(),
+            jpg: String::new(), serif: String::new(), ground_i: -1,
+        }
+    }
+}
+
 impl GardenData {
     fn iso(&self) -> String {
         crate::plan::iso(self.today)
@@ -860,6 +871,11 @@ impl GardenPage {
             }
         }
         self.draw(ui);
+    }
+
+    /// ui["key"] = None: the painting is made again at the next draw
+    pub fn forget(&mut self) {
+        self.key = None;
     }
 
     /// the painting made afresh (garden_refresh(rebuild=True) / the key forgotten)

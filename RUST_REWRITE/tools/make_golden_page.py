@@ -1150,6 +1150,49 @@ if len(sys.argv) > 1 and sys.argv[1] == "garden":
                     "cv_wh": [ui["cv"].winfo_width(), ui["cv"].winfo_height()]}
     SETUP["data"], SETUP["after"], SETUP["final"] = _data, _after, _final
 
+if len(sys.argv) > 1 and sys.argv[1] == "koibook":
+    # golden/koi_book.json: the koi book window (its tile grid of every fish, caught or a dark silhouette, and the
+    # detail panel) with nothing caught, with two kinds caught (one in the pond), and with an uncaught fish's hint picked
+    OUT = "koi_book.json"
+    time.time = lambda: NOW[0]
+    CASES = [("koi_empty", 1765488600.0, {"theme": "snow"}, None, "garden"),
+             ("koi_some", 1765450800.0, {"theme": "sakura"}, None, "garden"),
+             ("koi_hint", 1765476000.0, {"theme": "midnight"}, None, "garden")]
+
+    def _data(app, name):
+        day = lambda n: (_dt.date.fromtimestamp(NOW[0]) + _dt.timedelta(days=n)).isoformat()
+        F = app.fishing()
+        app.garden_anim = lambda: None
+        if name != "koi_empty":
+            F.update(pond=[["sanke", 77]], book={"sanke": {"n": 2, "best": 40.5, "first": day(-2), "seed": 77},
+                                                 "ogon": {"n": 1, "best": 33.0, "first": day(-1), "seed": 5}})
+        app.life_save()
+
+    def _final(app, name):
+        app.koi_book()
+        b = app._z22_book
+        for _ in range(8):
+            app.root.update()
+            time.sleep(0.03)
+        if name == "koi_hint":
+            cv = [k for k in b.winfo_children()[1].winfo_children()[0].winfo_children() if k.winfo_class() == "Canvas"][0]
+            i = [f[0] for f in Z.FISH].index(PICK[0])
+            x1, y1, x2, y2 = cv.bbox("t%d" % i)
+            cv.event_generate("<Motion>", x=(x1 + x2) // 2, y=y1 + 6)
+            cv.event_generate("<Button-1>", x=(x1 + x2) // 2, y=y1 + 6)
+            for _ in range(6):
+                app.root.update()
+                time.sleep(0.03)
+        EXTRA[0] = {"book_geo": b.geometry(), "screen": [b.winfo_screenwidth(), b.winfo_screenheight()], "pick": PICK[0],
+                    "mincho": Z._mincho_font(app.root) or Z._jp_font(app.root) or Z.FONT_UI, "serif2": Z._serif_font(app.root)}
+
+    def _tree(app, images, fonts):
+        b = app._z22_book
+        return walk(b, b, set(), images, fonts)
+    # an uncaught fish with a hint of every kind it can have (night, a lantern, a place)
+    PICK = [next(f[0] for f in Z.FISH if f[6].get("place") or f[6].get("lantern"))]
+    SETUP["data"], SETUP["final"], SETUP["tree"] = _data, _final, _tree
+
 EXTRA = [{}]
 NAME = [""]
 out = []

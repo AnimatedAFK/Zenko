@@ -290,7 +290,7 @@ pub struct Rewards {
     pub next_tick: Option<f64>,
 }
 
-pub(crate) fn garden_stage(xp: f64) -> usize {
+pub fn garden_stage(xp: f64) -> usize {
     let mut i = 0;
     for (k, st) in arr(&rdata()["GARDEN_STAGES"]).iter().enumerate() {
         if xp >= st[0].as_f64().unwrap_or(0.0) {
@@ -301,7 +301,7 @@ pub(crate) fn garden_stage(xp: f64) -> usize {
 }
 
 /// garden_health: one day off is a free rest day, after that each skipped day costs a quarter
-pub(crate) fn garden_health(g: &Value) -> f64 {
+pub fn garden_health(g: &Value) -> f64 {
     let h = g["health"].as_f64().unwrap_or(1.0);
     let Some(last) = arr(&g["active"]).last().and_then(|v| v.as_str()) else { return h };
     let Some(ld) = parse_iso(last) else { return h };

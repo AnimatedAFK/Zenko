@@ -36,6 +36,7 @@ pub mod gympage;
 pub mod gardenart;
 pub mod fishart;
 pub mod gardenpage;
+pub mod koibook;
 pub mod dailypage;
 pub mod ttpage;
 pub mod uppage;
