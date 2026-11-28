@@ -137,6 +137,8 @@ pub struct Place {
     pub ne: bool,
     /// anchor="n": (x, y) is the widget's top middle (tkPlace.c: x -= width / 2)
     pub n: bool,
+    /// a canvas window item's anchor="center" (tkCanvWind.c: x -= width / 2, y -= height / 2)
+    pub center: bool,
 }
 
 /// One canvas item, in canvas coordinates (already rounded the way Tk rounds them)
@@ -944,7 +946,7 @@ impl Ui {
             let x1 = pl.x as f64 + mx + pl.relx * mw;
             let mut x = rnd(x1);
             let y1 = pl.y as f64 + my + pl.rely * mh;
-            let y = rnd(y1);
+            let mut y = rnd(y1);
             let width = if pl.w.is_some() || pl.relw.is_some() {
                 pl.w.unwrap_or(0) + pl.relw.map(|r| rnd(x1 + r * mw) - x).unwrap_or(0)
             } else {
@@ -959,6 +961,9 @@ impl Ui {
                 x -= width;
             } else if pl.n {
                 x -= width / 2;
+            } else if pl.center {
+                x -= width / 2;
+                y -= height / 2;
             }
             let w = &mut self.ws[k];
             if width <= 0 || height <= 0 {

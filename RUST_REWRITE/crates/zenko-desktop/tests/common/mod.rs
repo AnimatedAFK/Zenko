@@ -87,6 +87,9 @@ pub fn check_items(at: &str, cv: &Canvas, want: &[Value], images: &Value, fonts:
         let bb: Vec<i32> = wi["bbox"].as_array().unwrap().iter().map(|v| v.as_i64().unwrap() as i32).collect();
         assert_eq!(it.hidden, s("state") == "hidden", "{at} state");
         match it.kind {
+            CKind::Image if s("image").is_empty() => {
+                assert!(it.image.is_none(), "{at} should have no picture");
+            }
             CKind::Image => {
                 assert_eq!(it.anchor, s("anchor"), "{at}");
                 let rows = images[s("image")].as_array().unwrap();

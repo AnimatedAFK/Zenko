@@ -527,3 +527,81 @@ pub fn sound_file_name(kind: &str, vol: i32, pitch: f64) -> String {
     let tag = if kind.contains("v_") { format!("k1p{}", (pitch * 100.0) as i64) } else { "k1".to_string() };
     format!("{}_v{}_{}.wav", kind.replace('+', "_"), vol, tag)
 }
+
+/// `_breath_tone(kind, secs, vol)`: a soft, wordless breathing cue as a 16-bit mono .wav (22050 Hz): in = a warm pad
+/// swelling up with a hush of air, out = the pad sinking and fading, hold/rest = one quiet singing-bowl tone, top = a
+/// tiny bright lift.
+pub fn breath_tone(kind: &str, secs: f64, vol: i32) -> Vec<u8> {
+    use std::f64::consts::PI;
+    let rate = 22050usize;
+    let rf = rate as f64;
+    let n = (rf * secs) as usize;
+    let mut buf = vec![0.0f64; n];
+    let mut rnd = mt::PyRandom::new((17 + kind.chars().count() as i64 * 31 + (secs * 10.0) as i64) as u64);
+    let mut lp = 0.0f64;
+    let chord = [196.0, 246.94, 293.66, 392.0];
+    if matches!(kind, "in" | "out" | "top") {
+        for (i, b) in buf.iter_mut().enumerate() {
+            let t = i as f64 / rf;
+            let p = t / secs;
+            let (mut env, mut glide);
+            if kind == "out" {
+                env = (1.0 - p).powf(1.6) * 1.0f64.min(t / 0.25);
+                glide = 1.0 - 0.012 * p;
+            } else {
+                env = (0.5 - 0.5 * (PI * 1.0f64.min(p * 1.05)).cos()) * 1.0f64.min((secs - t) / 0.30);
+                glide = 1.0 + 0.012 * p;
+            }
+            if kind == "top" {
+                env *= 0.7;
+                glide *= 1.5;
+            }
+            let mut v = 0.0;
+            for (k, f) in chord.iter().enumerate() {
+                v += (2.0 * PI * f * glide * t + k as f64).sin() * if k == 0 { 0.55 } else { 0.30 };
+                v += 0.08 * (2.0 * PI * f * 2.003 * glide * t).sin();
+            }
+            lp += 0.035 * (rnd.uniform(-1.0, 1.0) - lp);
+            v = v * 0.22 + lp * 2.4 * if kind == "in" { 0.55 } else { 0.75 };
+            *b = v * env;
+        }
+    } else {
+        let f0 = if kind == "hold" { 329.63 } else { 293.66 };
+        for (i, b) in buf.iter_mut().enumerate() {
+            let t = i as f64 / rf;
+            let env = (-t * 0.9).exp() * 1.0f64.min(t / 0.01) * 1.0f64.min((secs - t) / 0.4);
+            let v = ((2.0 * PI * f0 * t).sin() * 0.6 + (2.0 * PI * f0 * 2.76 * t).sin() * 0.22 * (-t * 2.0).exp()
+                + (2.0 * PI * f0 * 5.40 * t).sin() * 0.08 * (-t * 4.0).exp()) * (1.0 + 0.04 * (2.0 * PI * 4.2 * t).sin());
+            *b = v * env * 0.55;
+        }
+    }
+    let peak = buf.iter().fold(0.0f64, |m, v| m.max(v.abs()));
+    let g = (0.20 + 0.12 * vol.clamp(1, 3) as f64) / 1e-6f64.max(peak);
+    let mut data = Vec::with_capacity(n * 2);
+    for v in &buf {
+        let s = (v * g * 32767.0).clamp(-32767.0, 32767.0) as i64 as i16;
+        data.extend_from_slice(&s.to_le_bytes());
+    }
+    let mut w = Vec::with_capacity(44 + data.len());
+    w.extend_from_slice(b"RIFF");
+    w.extend_from_slice(&(36 + data.len() as u32).to_le_bytes());
+    w.extend_from_slice(b"WAVEfmt ");
+    for v in [16u32] {
+        w.extend_from_slice(&v.to_le_bytes());
+    }
+    w.extend_from_slice(&1u16.to_le_bytes());
+    w.extend_from_slice(&1u16.to_le_bytes());
+    w.extend_from_slice(&(rate as u32).to_le_bytes());
+    w.extend_from_slice(&(rate as u32 * 2).to_le_bytes());
+    w.extend_from_slice(&2u16.to_le_bytes());
+    w.extend_from_slice(&16u16.to_le_bytes());
+    w.extend_from_slice(b"data");
+    w.extend_from_slice(&(data.len() as u32).to_le_bytes());
+    w.extend_from_slice(&data);
+    w
+}
+
+/// breath_sound_path's file name
+pub fn breath_file_name(kind: &str, secs: f64, vol: i32) -> String {
+    format!("breath2_{}_{}_v{}.wav", kind, (secs * 10.0).round_ties_even() as i64, vol)
+}

@@ -1075,6 +1075,81 @@ if len(sys.argv) > 1 and sys.argv[1] == "notes":
         return tr
     SETUP["data"], SETUP["after"], SETUP["tree"] = _data, _after, _tree
 
+if len(sys.argv) > 1 and sys.argv[1] == "garden":
+    # golden/hub_garden.json: the Zen garden (the painting with Zenko, lanterns, fireflies, pond koi, decor; the side
+    # panel) in four states. Its 50 ms animation is held still and run for exactly one frame at a fixed clock (after the
+    # page has its final size), with random.random() fixed so no petal falls.
+    OUT = "hub_garden.json"
+    time.time = lambda: NOW[0]
+    _mono = [5000.0]
+    _mono0 = time.monotonic
+    CASES = [("garden_bonsai", 1765488600.0, {"theme": "snow"}, None, "garden"),
+             ("garden_seed_small", 1765440000.0 + 8 * 3600, {"theme": "midnight"}, (1120, 720), "garden"),
+             ("garden_bloom_breath", 1765450800.0, {"theme": "sakura", "breath_minutes": 5}, None, "garden"),
+             ("garden_sacred_fish", 1765476000.0, {"theme": "snow", "fish_gold": True, "garden_decor": ["deer", "momiji"]},
+              None, "garden")]
+
+    def _data(app, name):
+        day = lambda n: (_dt.date.fromtimestamp(NOW[0]) + _dt.timedelta(days=n)).isoformat()
+        G, F = app.garden(), app.fishing()
+        app.garden_anim = lambda: None                 # (held still until the final frame)
+        if name == "garden_bonsai":
+            G.update(xp=400.0, health=0.8, seed=4321, active=[day(-3), day(-2)],
+                     log=[{"d": day(-3), "t": "09:10", "m": 50, "k": "lockin"}, {"d": day(-2), "t": "16:45", "m": 30, "k": "focus"},
+                          {"d": day(-2), "t": "20:05", "m": 25, "k": "lockin"}],
+                     calm=[{"d": day(0), "t": "08:00", "k": "box", "m": 3.2}, {"d": day(-2), "t": "22:00", "k": "478", "m": 1.5}])
+            F.update(bait=7.4, gold=0, pond=[["sanke", 77], ["ogon", 5], ["medaka", 9]], right=4, asked=6, depth=2, src="cards",
+                     book={"sanke": {"n": 2, "best": 40.5, "first": day(-2), "seed": 77}, "ogon": {"n": 1, "best": 33.0, "first": day(-1), "seed": 5}})
+        elif name == "garden_bloom_breath":
+            G.update(xp=1500.0, health=1.0, seed=99, active=[day(-1), day(0)], grove=[{"done": day(-40)}, {"done": day(-9)}],
+                     log=[{"d": day(0), "t": "10:00", "m": 40, "k": "lockin"}])
+            app._ground_i = 2
+        elif name == "garden_sacred_fish":
+            G.update(xp=2000.0, health=1.0, seed=2024, active=[day(0)], grove=[{"done": day(-90)}] * 3,
+                     log=[{"d": day(0), "t": "07:30", "m": 90, "k": "lockin"}])
+            app.journey()["lock_min"] = 60 * 140
+            F.update(bait=0.0, gold=3, free_day=day(0), free_used=3, pond=[["ryugu", 3], ["kitsunebi", 8], ["namazu", 4],
+                     ["ryukin", 2], ["kohaku", 6], ["tsuki", 1], ["higoi", 5]], subj="chem")
+        app.life_save()
+        app.save_config() if hasattr(app, "save_config") else Z.save_config(app.cfg)
+
+    def _after(app, name):
+        pass
+
+    def _final(app, name):
+        after0 = app.root.after
+
+        def quiet(ms, fn=None, *a):
+            if ms == 50 or (ms == 60 and fn == app.garden_panel):   # (breath_start's second panel: made once below)
+                return ""
+            return after0(ms, fn, *a) if fn else after0(ms)
+        app.root.after = quiet
+        del app.garden_anim
+        time.monotonic, rr0 = (lambda: _mono[0]), random.random
+        random.random = lambda: 0.99
+        ui = app.garden_ui
+        if name == "garden_bloom_breath":
+            app.breath_start("box")
+            app.breath["t0"] = _mono[0] - 5.5
+        if name == "garden_sacred_fish":
+            app._z22_fish = {"phase": "wait", "t": _mono[0] - 1.0, "bx": 0.2, "by": -0.1, "depth": 3, "gold": True,
+                             "q": {"q": "?", "a": "a", "opts": ["a"], "card": None, "subj": "chem", "diff": 3},
+                             "items": {}, "ripples": [], "bite_at": 1e9}
+        app.garden_panel()
+        for _ in range(4):
+            app.root.update()
+        ui["key"], ui["anim_on"] = None, False
+        app.garden_draw()
+        for _ in range(3):
+            app.root.update()
+        app.root.after = after0
+        time.monotonic, random.random = _mono0, rr0
+        EXTRA[0] = {"tails": app.tail_count(), "pal": {k: v for k, v in app.pal.items() if isinstance(k, str)},
+                    "hd": bool(Z.HD_ART["on"]), "breath": json.loads(json.dumps(getattr(app, "breath", None), default=str)),
+                    "ground_i": int(getattr(app, "_ground_i", -1)), "side_w": int(ui["side"].cget("width")),
+                    "cv_wh": [ui["cv"].winfo_width(), ui["cv"].winfo_height()]}
+    SETUP["data"], SETUP["after"], SETUP["final"] = _data, _after, _final
+
 EXTRA = [{}]
 NAME = [""]
 out = []
@@ -1112,6 +1187,8 @@ for name, t, cfg, size, page in CASES:
         app.zk_fit()                       # the settled page: widgets rebuilt by a refresh get their fitted fonts too
         for _ in range(3):
             app.root.update()
+    if "final" in SETUP:
+        SETUP["final"](app, name)
     if name == "chat_typed":
         # her reply typed out by _chat_pump, a few letters every 14 ms
         app.chat_line("Fox", LONG_LOG[3][1])
@@ -1162,6 +1239,7 @@ for name, t, cfg, size, page in CASES:
                 "z19_hours": app.z19_hours() if hasattr(app, "z19_hours") else 0,
                 "journey": json.loads(json.dumps(app.journey_state(), default=str)) if hasattr(app, "journey_state") else [],
                 "tree": tree, "texts": texts, "images": images, "fonts": fonts, **EXTRA[0]})
+    EXTRA[0] = {}
     try:
         app.hub_close()
         app.root.destroy()

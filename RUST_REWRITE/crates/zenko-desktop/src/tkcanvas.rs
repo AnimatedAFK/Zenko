@@ -194,6 +194,10 @@ impl Canvas {
         it.image = Some(img);
         it
     }
+    /// create_image(x, y) with no picture yet
+    pub fn image_none(&mut self, x: f64, y: f64) -> &mut CItem {
+        self.add(CKind::Image, vec![x, y])
+    }
     pub fn last_id(&self) -> u32 {
         self.next
     }

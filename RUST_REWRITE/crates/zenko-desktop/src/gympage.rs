@@ -297,31 +297,7 @@ impl GymPage {
     // ---- meters ----
     /// gym_foxfire(parent, frac, n, size): a row of foxfire flames, lit toward the goal (gold once it's reached)
     fn foxfire(&mut self, ui: &mut Ui, parent: usize, frac: f64, n: i64, size: f64, now: f64) -> usize {
-        let bg = self.th.card.clone();
-        let (w, h) = (size + 4.0, size + 8.0);
-        let id = ui.canvas(parent, &bg, (n as f64 * w) as i32, h as i32);
-        let cv = canvas_of(ui, id);
-        let lit = frac.max(0.0) * n as f64;
-        let over = frac >= 1.0;
-        let (outer, inner) = if over { ("#ffc23d", "#fff5cc") } else { ("#5b72ff", "#dbe6ff") };
-        let mut flames = vec![];
-        for k in 0..n {
-            let (cx, b) = (k as f64 * w + w / 2.0, h - 2.0);
-            let amt = (lit - k as f64).clamp(0.0, 1.0);
-            let fh = if amt > 0.0 { size * (0.55 + 0.45 * amt) } else { size * 0.75 };
-            let fw = size * 0.62;
-            if amt <= 0.0 {
-                cv.poly(flame(cx, b, fh, fw, 0.0)).fill("").outline(&mixhex("#7a86c8", &bg, 0.55)).smooth().width(1.0);
-                continue;
-            }
-            if over || amt >= 1.0 {
-                cv.oval(cx - fw, b - fh * 0.9, cx + fw, b + 1.0).fill(&mixhex(outer, &bg, 0.82)).outline("");
-            }
-            cv.poly(flame(cx, b, fh, fw, 0.0)).fill(&mixhex(outer, &bg, 0.5 * (1.0 - amt))).outline("").smooth();
-            let o = cv.last_id();
-            cv.poly(flame(cx, b, fh * 0.55, fw * 0.5, 0.0)).fill(inner).outline("").smooth();
-            flames.push((o, cx, b, fh, fw));
-        }
+        let (id, flames) = foxfire_w(ui, &self.th, parent, frac, n, size);
         if !flames.is_empty() {
             self.anims.push((Anim::Flick { cv: id, flames }, now + 0.23, 1));
         }
@@ -1038,7 +1014,39 @@ online (USDA, Open Food Facts). Tap an item to fix the grams." };
 }
 
 /// a flame's six points (gym_foxfire's pts)
-fn flame(cx: f64, b: f64, fh: f64, fw: f64, lean: f64) -> Vec<f64> {
+/// gym_foxfire(parent, frac, n, size): a row of n foxfire flames lit up to frac (the canvas, and each lit flame's
+/// outer polygon with its place for the flicker)
+pub fn foxfire_w(ui: &mut Ui, th: &Theme, parent: usize, frac: f64, n: i64, size: f64) -> (usize, Vec<(u32, f64, f64, f64, f64)>) {
+    let bg = th.card.clone();
+    let (w, h) = (size + 4.0, size + 8.0);
+    let id = ui.canvas(parent, &bg, (n as f64 * w) as i32, h as i32);
+    let cv = canvas_of(ui, id);
+    let lit = frac.max(0.0) * n as f64;
+    let over = frac >= 1.0;
+    let (outer, inner) = if over { ("#ffc23d", "#fff5cc") } else { ("#5b72ff", "#dbe6ff") };
+    let mut flames = vec![];
+    for k in 0..n {
+        let (cx, b) = (k as f64 * w + w / 2.0, h - 2.0);
+        let amt = (lit - k as f64).clamp(0.0, 1.0);
+        let fh = if amt > 0.0 { size * (0.55 + 0.45 * amt) } else { size * 0.75 };
+        let fw = size * 0.62;
+        if amt <= 0.0 {
+            cv.poly(flame(cx, b, fh, fw, 0.0)).fill("").outline(&mixhex("#7a86c8", &bg, 0.55)).smooth().width(1.0);
+            continue;
+        }
+        if over || amt >= 1.0 {
+            cv.oval(cx - fw, b - fh * 0.9, cx + fw, b + 1.0).fill(&mixhex(outer, &bg, 0.82)).outline("");
+        }
+        cv.poly(flame(cx, b, fh, fw, 0.0)).fill(&mixhex(outer, &bg, 0.5 * (1.0 - amt))).outline("").smooth();
+        let o = cv.last_id();
+        cv.poly(flame(cx, b, fh * 0.55, fw * 0.5, 0.0)).fill(inner).outline("").smooth();
+        flames.push((o, cx, b, fh, fw));
+    }
+    (id, flames)
+}
+
+/// one foxfire flame's outline, leaning a little
+pub fn flame(cx: f64, b: f64, fh: f64, fw: f64, lean: f64) -> Vec<f64> {
     vec![cx + lean * fw, b - fh, cx + fw * 0.5, b - fh * 0.45, cx + fw * 0.45, b - fh * 0.12, cx, b, cx - fw * 0.45,
          b - fh * 0.12, cx - fw * 0.5, b - fh * 0.45]
 }
