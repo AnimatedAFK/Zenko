@@ -60,6 +60,7 @@ pub mod pydifflib;
 pub mod palette;
 pub mod shelfpage;
 pub mod bookgen;
+pub mod bookpage;
 pub mod mdtext;
 pub mod mdtex_data;
 pub mod icon;

@@ -319,7 +319,7 @@ impl Companion {
     }
 
     /// today_study_minutes(day): tracked study (or the focus timer's minutes today, whichever is more)
-    fn today_study_minutes(&self, life: &Value, day: Option<i64>) -> f64 {
+    pub(crate) fn today_study_minutes(&self, life: &Value, day: Option<i64>) -> f64 {
         let d = iso(day.unwrap_or_else(|| day_n(nl())));
         let tracked = life["slog"][d.as_str()].as_object().map_or(0.0, |o| o.values().map(num).sum::<f64>()) / 60.0;
         let focus = if day.is_none() { crate::slow::today_focus_minutes() as f64 } else { 0.0 };
@@ -327,7 +327,7 @@ impl Companion {
     }
 
     /// late_minutes(n): [(day, minutes studied after bedtime that night)] for the last n nights
-    fn late_minutes(&self, life: &Value, n: i64) -> Vec<(i64, f64)> {
+    pub(crate) fn late_minutes(&self, life: &Value, n: i64) -> Vec<(i64, f64)> {
         let (bh, bm) = self.hm("bedtime", "23:00");
         let (wh, _) = self.hm("wake_time", "06:00");
         let hl = &life["hourlog"];

@@ -831,3 +831,10 @@ impl crate::Companion {
                   hd: self.cfg.b("hd_art", true), fox }
     }
 }
+
+/// rbox for the other pages
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn rbox_pub(cv: &mut Canvas, x1: f64, y1: f64, x2: f64, y2: f64, r: i32, fill: &str, outline: &str, tags: &[&str],
+                       shape: &str) -> u32 {
+    rbox(cv, x1, y1, x2, y2, r, fill, outline, tags, shape)
+}

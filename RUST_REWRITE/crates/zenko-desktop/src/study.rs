@@ -393,7 +393,7 @@ impl Companion {
         read_json("zenko_life.json")
     }
 
-    fn nl(&self) -> f64 {
+    pub(crate) fn nl(&self) -> f64 {
         naive(unix_now())
     }
 
@@ -914,7 +914,7 @@ impl Companion {
     }
 
     /// exam_progress(d): (minutes studied, minutes needed)
-    fn exam_progress(&self, d: &Value) -> (f64, f64) {
+    pub(crate) fn exam_progress(&self, d: &Value) -> (f64, f64) {
         let life = self.life_now();
         let id = d["id"].as_str().unwrap_or("");
         let hrs = life["plan_hours"].get(id).map(|v| num(v, 3.0))
