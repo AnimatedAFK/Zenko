@@ -1215,6 +1215,72 @@ if len(sys.argv) > 1 and sys.argv[1] == "koibook":
     PICK = [next(f[0] for f in Z.FISH if f[6].get("place") or f[6].get("lantern"))]
     SETUP["data"], SETUP["final"], SETUP["tree"] = _data, _final, _tree
 
+if len(sys.argv) > 1 and sys.argv[1] == "map":
+    # golden/hub_map.json: the World map (the painting, pins, road, labels, Zenko, clouds; the region bar; the side
+    # panel with story, quiz, passport and journey) for Japan with a hover tip, Kyoto in a small window, and Korea locked.
+    # map_anim runs once at a fixed clock; the 140 ms redraw and 50 ms panel rebuild are made by hand.
+    OUT = "hub_map.json"
+    time.time = lambda: NOW[0]
+    _mono = [5000.0]
+    _mono0 = time.monotonic
+    CASES = [("map_japan", 1765488600.0, {"theme": "snow"}, None, "map"),
+             ("map_kyoto", 1765450800.0, {"theme": "midnight"}, (1120, 720), "map"),
+             ("map_korea", 1765476000.0, {"theme": "sakura"}, None, "map")]
+    HRS = {"map_japan": 31.5, "map_kyoto": 107.25, "map_korea": 120.0}
+    QUIZ = {"map_japan": ["inari", "nara"], "map_kyoto": ["tofukuji", "kiyomizu"], "map_korea": []}
+    if os.environ.get("ZK_ONLY"):
+        CASES, OUT = [c for c in CASES if c[0] == os.environ["ZK_ONLY"]], "/tmp/claude-0/dbg_map.json"
+
+    def _data(app, name):
+        day = (_dt.date.fromtimestamp(NOW[0])).isoformat()
+        with open(os.path.join(Z.DATA_DIR, "stats.json"), "w") as f:
+            json.dump({day: HRS[name] * 3600}, f)
+        J = app.journey()
+        J["lock_min"] = 0
+        J["quiz"] = list(QUIZ[name])
+        app.life_save()
+        app._tails_n = (-1e9, 3)          # (her tail count is cached for 20 s from before the stats were written)
+
+    def _final(app, name):
+        after0 = app.root.after
+
+        def quiet(ms, fn=None, *a):
+            if ms in (50, 60, 140):
+                return ""
+            return after0(ms, fn, *a) if fn else after0(ms)
+        app.root.after = quiet
+        time.monotonic = lambda: _mono[0]
+        ui = app.map_ui
+        if name == "map_korea":
+            app.z22_region("korea")
+        app.map_panel()
+        for _ in range(4):
+            app.root.update()
+        ui["key"], ui["anim_on"] = None, False
+        app.map_draw()
+        app.map_panel()
+        for _ in range(3):
+            app.root.update()
+        if name == "map_japan":
+            app.map_hover("nara")
+        if os.environ.get("ZK_ONLY"):
+            print("DBG sliding", getattr(app, "_z21_sliding", None), flush=True)
+        app.zk_fit()
+        for _ in range(3):
+            app.root.update()
+        if os.environ.get("ZK_ONLY"):
+            for w in app.zk_walk(ui["panel"]):
+                if w.winfo_class() == "Label" and len(str(w.cget("text"))) > 20:
+                    print("DBG", repr(str(w.cget("text"))[:30]), w.winfo_reqwidth(), w.winfo_width(), w.cget("wraplength"), flush=True)
+        app.root.after = after0
+        time.monotonic = _mono0
+        EXTRA[0] = {"tails": app.tail_count(), "pal": {k: v for k, v in app.pal.items() if isinstance(k, str)},
+                    "hd": bool(Z.HD_ART["on"]), "side_w": int(ui["side"].cget("width")), "sel": ui["sel"],
+                    "region": ui["region"], "season": Z.z22_season_now(), "z": ui["z"],
+                    "cv_wh": [ui["cv"].winfo_width(), ui["cv"].winfo_height()],
+                    "mincho": Z._mincho_font(app.root) or Z._jp_font(app.root) or Z.FONT_UI, "serif2": Z._serif_font(app.root)}
+    SETUP["data"], SETUP["final"] = _data, _final
+
 EXTRA = [{}]
 NAME = [""]
 out = []

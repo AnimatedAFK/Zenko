@@ -40,6 +40,8 @@ mod hubscreen;
 mod hubgym;
 #[path = "hubgarden.rs"]
 mod hubgarden;
+#[path = "hubmap.rs"]
+mod hubmap;
 #[path = "paletwin.rs"]
 mod paletwin;
 use serde_json::Value;
@@ -153,6 +155,10 @@ struct HubW {
     gd_badge_at: f64,
     gd_next: f64,
     gd_panel_at: f64,
+    /// the World map page, its next 60 ms frame and the badge check after a gold seal
+    map: Option<zenko_desktop::mappage::MapPage>,
+    mp_next: f64,
+    mp_badge_at: f64,
     /// screen_ui["range"] (kept while the window is open) and the next minute render
     screen_range: i64,
     screen_next: f64,
@@ -712,6 +718,9 @@ fn after_show(x: &mut HubW, page: &str) {
     if page == "garden" && x.garden.is_some() {
         hubgarden::shown(x);
     }
+    if page == "map" && x.map.is_some() {
+        hubmap::shown(x);
+    }
     if page == "chat" {
         if let Some(cp) = &x.chat {
             x.hub.ui.focus = Some(cp.entry);
@@ -798,6 +807,12 @@ fn page_frame(x: &mut HubW, page: &str) -> Option<usize> {
             hubgarden::build(x, pg);
             pg
         }
+        "map" => {
+            let th = x.hub.t.clone();
+            let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
+            hubmap::build(x, pg);
+            pg
+        }
         "screen" => {
             let th = x.hub.t.clone();
             let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
@@ -878,6 +893,7 @@ fn relayout(x: &mut HubW) {
     hubscreen::fit(x, w, h);
     hubgym::fit(x, w, h);
     hubgarden::fit(x, w, h);
+    hubmap::fit(x, w, h);
     if let Some(dp) = x.daily.as_mut() {
         let (th, f) = (x.hub.t.clone(), Faces { ui: x.hub.font_ui.clone(), title: String::new() });
         let d = x.daily_d.clone();
@@ -1018,6 +1034,7 @@ fn page_sc(x: &HubW, page: Option<&str>) -> Option<zenko_desktop::pagekit::Scrol
         Some("screen") => x.screen.as_ref().map(|p| p.sc.clone()),
         Some("exercise") => x.gym.as_ref().map(|p| p.sc.clone()),
         Some("garden") => x.garden.as_ref().map(|p| p.sc.clone()),
+        Some("map") => x.map.as_ref().map(|p| p.sc.clone()),
         _ => None,
     }
 }
@@ -1198,7 +1215,7 @@ pub fn open(page: Option<&str>, init: HubInit) {
             size: (w, h), min, cursor: IDC_ARROW, faded: false,
             anim: zenko_desktop::hubanim::HubAnim::new(0.0, (x0 as u64) << 20 ^ 0x9e37_79b9),
             theme: init.theme.clone(), living: init.living, glow_next: 0.0, burst: None, particles: init.particles, minimized: false,
-            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, set: None, set_try: String::new(), set_focus: None, set_rule_do: String::new(), cust: None, cust_focus: None, cust_anim: 0.0, nb: None, notes: None, notes_st: Default::default(), screen: None, gym: None, garden: None, gd_menu: false, gd_pending: None, gd_catch: None, gd_badge_at: 0.0, gd_next: 0.0, gd_panel_at: 0.0, screen_range: 1, screen_next: 0.0, opened_s: init.opened_s, reveal: None, flash: None, prebuild_at: 2.5, ask: None,
+            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, set: None, set_try: String::new(), set_focus: None, set_rule_do: String::new(), cust: None, cust_focus: None, cust_anim: 0.0, nb: None, notes: None, notes_st: Default::default(), screen: None, gym: None, garden: None, gd_menu: false, gd_pending: None, gd_catch: None, gd_badge_at: 0.0, gd_next: 0.0, gd_panel_at: 0.0, map: None, mp_next: 0.0, mp_badge_at: 0.0, screen_range: 1, screen_next: 0.0, opened_s: init.opened_s, reveal: None, flash: None, prebuild_at: 2.5, ask: None,
             chat_q: Default::default(), typing: None, sb_drag: None,
         }));
         with(|x| {
@@ -1476,6 +1493,7 @@ fn step(x: &mut HubW) -> bool {
     hubgym::step(x, n);
     hubgarden::tick(x, n);
     hubgarden::step(x, n);
+    hubmap::step(x, n);
     // daily_refresh: what changed (a badge, a check-in, a card) shows while the page is open
     if x.hub.side.page.as_deref() == Some("daily") && x.slide.is_none() && n >= x.daily_next {
         x.daily_next = n + 1.0;
@@ -1635,6 +1653,9 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     hubup::motion(x, mx, my);
                     hubrem::motion(x, mx, my);
                     hubbook::motion(x, mx, my);
+                    if hubmap::motion(x, mx, my) && x.cursor == IDC_ARROW {
+                        x.cursor = IDC_HAND;
+                    }
                     if x.cursor == IDC_ARROW && x.hub.part_at(mx, my) == "page" {
                         x.cursor = match x.hub.ui.cursor_at(mx, my) {
                             zenko_desktop::ui::Cursor::Hand => IDC_HAND,
@@ -1652,6 +1673,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                 with(|x| {
                     if x.rs.is_none() && x.drag.is_none() {
                         hover(x, -100, -100);
+                        hubmap::motion(x, -100, -100);
                         x.hub.ui.leave();
                     }
                 });
@@ -1759,6 +1781,8 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                             hubgym::cmd(x, &cmd);
                         } else if cmd.starts_with("gd_") {
                             hubgarden::cmd(x, &cmd);
+                        } else if cmd.starts_with("mp_") {
+                            hubmap::cmd(x, &cmd);
                         } else if cmd.starts_with("set_") && !cmd.starts_with("set_menu:") {
                             hubset::cmd(x, &cmd);
                         } else if cmd.starts_with("hub_ask:") || cmd.starts_with("home_") || matches!(cmd.as_str(),
@@ -1773,6 +1797,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     } else if hubbook::click(x, mx, my) {
                     } else if hubgym::click(x, mx, my) {
                     } else if hubgarden::click(x, mx, my) {
+                    } else if hubmap::click(x, mx, my) {
                     } else if x.hub.side.page.as_deref() == Some("home") {
                         home_music_click(x, mx, my);
                     } else if x.hub.side.page.as_deref() == Some("daily") {
