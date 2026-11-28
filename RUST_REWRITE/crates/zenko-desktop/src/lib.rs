@@ -77,6 +77,7 @@ pub mod sound;
 pub mod theme;
 pub mod mapart;
 pub mod mappage;
+pub mod squareart;
 pub use play::{Play, Pose, Prop};
 
 /// Things the desktop fox asks the window side to do (the bubble, sounds, menu commands).
