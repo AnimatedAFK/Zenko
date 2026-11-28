@@ -33,6 +33,8 @@ pub struct Req<'a> {
     pub headers: &'a str,
     pub body: &'a [u8],
     pub timeout_ms: i32,
+    /// set to the answer's Content-Length (0 when it has none)
+    pub len: Option<&'a std::cell::Cell<u64>>,
 }
 
 /// sends `r` through WinHTTP and hands each piece of the answer to `chunk` as it arrives (false stops reading);
@@ -73,6 +75,13 @@ pub fn request(r: &Req, chunk: &mut dyn FnMut(&[u8]) -> bool) -> Result<u32, Str
                     let mut sz = 4u32;
                     WinHttpQueryHeaders(q, WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER, std::ptr::null(),
                                         &mut status as *mut u32 as *mut _, &mut sz, std::ptr::null_mut());
+                    if let Some(l) = r.len {
+                        let mut n = 0u32;
+                        let mut sz = 4u32;
+                        let ok = WinHttpQueryHeaders(q, WINHTTP_QUERY_CONTENT_LENGTH | WINHTTP_QUERY_FLAG_NUMBER, std::ptr::null(),
+                                                     &mut n as *mut u32 as *mut _, &mut sz, std::ptr::null_mut());
+                        l.set(if ok != 0 { n as u64 } else { 0 });
+                    }
                     if status >= 400 {
                         res = Err(format!("HTTP Error {status}"));
                     } else {
@@ -133,4 +142,14 @@ pub fn weather_poll(city: String) {
             *CODE.lock().unwrap() = Some(code);
         }
     });
+}
+
+/// web.rs's requests (the Bible, the translator, downloads) go through WinHTTP
+pub fn register() {
+    zenko_desktop::web::set_fetch(std::sync::Arc::new(|r: &zenko_desktop::web::Req, chunk: &mut dyn FnMut(&[u8], u64) -> bool| {
+        let len = std::cell::Cell::new(0u64);
+        request(&Req { url: &r.url, method: &r.method, ua: &r.ua, headers: &r.headers, body: &r.body, timeout_ms: r.timeout_ms,
+                       len: Some(&len) },
+                &mut |b| chunk(b, len.get()))
+    }));
 }

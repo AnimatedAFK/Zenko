@@ -13,13 +13,32 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
 7. ~~4d: Study pages: Notebook, study Books, Notes~~ (done)
 8. ~~4e: Exercise, Garden (zen garden, fishing, koi book), Screen time pages~~ (done)
 9. ~~4f: World map and Town square~~ (done)
-10. 5a: tool windows: periodic table, French dictionary, CG50 calculator, Bible
-11. 5b: brains and web: Ollama, online brain, web search + summaries, food lookup, screenshot reading
+10. ~~5a: tool windows: periodic table, French dictionary, CG50 calculator, Bible~~ (done)
+11. 5b: brains and web: Ollama, online brain, web search + summaries, food lookup, screenshot reading (DEFERRED by the user on 2026-11-28: do it last, after 6)
 12. 5c: voice (VOICEVOX, voice chat, Piper) and the Spotify account
 13. 5d: installer, updater, crash logs, Zenko Browser link
 14. 6: testing on real Windows, speed, final side-by-side check
 
 ## Done
+- **Stage 5a (85e4705 .. this one):** the four study-tool windows.
+  - cgmath.rs: the CG50 maths (cg_eval grammar, exact fractions with limit_denominator, %g, roots, linear systems,
+    the solver, stats, regression, normal/binomial distributions). ptable.rs: the elements and molar_mass.
+    bible.rs: book data, html_unescape, step_parse_line, bundled lexicons (data/lexicon.json), morph_text.
+  - toolwin.rs (ZkToolWindow look and geometry), ptwin.rs, frwin.rs, casio.rs (every key mode, keyboard, blink,
+    life cg with Python's list aliasing), biblewin.rs (header nav, paned page with verse tags, flowing word cards,
+    lexicon entry, explain/note helpers).
+  - web.rs: http_get/http_json/_download/quote/translate_text with zenko.py's WebError texts and a SHA-256; the
+    request goes through a fetcher the bin registers (WinHTTP, now with Content-Length) so the lib stays testable.
+    biblefs.rs: bible_chapter (bolls, bible-api, KJV fallback, disk cache), STEPBible index/sections split into
+    chapter files, the format check, step_have_all/download_all, bible_original, the lexicon.
+  - Bin: toolwins.rs hosts all four (one each; open_ptable / open_french_dict / open_calc / open_bible[:ref] from
+    chat, Books and Ctrl K), threads for the translator and Bible jobs, the 530 ms calculator blink, life pt_last /
+    fr_hist / cg / bible_pos / bible_notes, the Bible's book and translation menus, note and study windows.
+    uiwin.rs gained down/motion/leave/char events, minsize, hwnd_of and origin.
+  - Tests: tool_maths.rs (4), tool_windows.rs (pt 2 cases, fr 3, cg 55 key steps, bible 2: tree, text lines),
+    biblefs.rs (network + disk with a mock fetcher). Golden: make_golden_tools.py, make_golden_page.py tools.
+  - Deferred to 5b: the brain answers (Ask about the element, Explain the grammar / Examples, Explain this verse);
+    they show zenko.py's "no brain" message for now. Bible study notes already cached in life still show.
 - **Stage 4f (commits 905508c .. this one):** the World map and the Town square.
   - mapart.rs / mappage.rs / hubmap.rs: the 13 region paintings bit-exact, the page (region bar, painting with pins,
     torii, road, clouds, ring and mini Zenko, hover tip, passport stamps, journey rows, the gold-seal quiz) in 3 cases.
@@ -181,7 +200,7 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
 - **Data files are written exactly like Python's.** Same files in %APPDATA%\FoxBuddy and the same JSON format, using read-modify-write of only our own keys.
 - **Quirks are copied too.** One example: zenko.py's window-edge nap never fires, so the port leaves it out.
 
-## Tests (all passing on 2026-11-28: 62 tests in 59 groups)
+## Tests (all passing on 2026-11-28: 73 tests)
 Run with `cargo test --release`. The golden files are made by the tools/ scripts.
 
 | Area | Checked against |
@@ -217,6 +236,7 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 | Zen garden page: 6 cases (whole tree, every canvas item and picture, question + catch cards) and the koi book window: 3 cases | Real zenko.py under Xvfb, `tools/make_golden_page.py garden` / `koibook` |
 | World map: 13 paintings (pixels) + the page in 3 cases (tree, every canvas item) | Real zenko.py, `tools/make_golden_map.py`, `tools/make_golden_page.py map` |
 | Town square: 24 streets, 60 people, calendar, filters; the page in 3 cases; the link on 16 stream lines + 3 posts | zenko.py, `tools/make_golden_square.py`, `make_golden_page.py square`, `make_golden_squarelink.py` |
+| Tool windows: periodic table (2), French dictionary (3), CG50 (55 key steps), Bible (2); CG maths, molar mass, Bible parsing, network/disk layer | Real zenko.py, `tools/make_golden_tools.py`, `make_golden_page.py tools` |
 | Version routes, Exercise, study books: 127 lines (replies, bubbles, what opens, IB tasks, rules, gym, timetable, grades, session, bedtime) | zenko.py with screen time/garden/stats/browser link set up, `tools/make_golden_routes.py` |
 
 ## Open problems
@@ -234,7 +254,7 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
   of old chat reminders onto the ema rack.
 - All offline chat routes are ported except web_route/start_web (5b). Lines that need a brain or the web are sent as
   commands nobody handles yet: define:, translate:, quiz_start:, spotify:, ask_screen:, summarise_file:, nb_show:*,
-  nb_start_test (4d/5b/5c). open_app_hook is None (5a). last_file is never set (attachments, 5b). Homework passes
+  nb_start_test (4d/5b/5c). last_file is never set (attachments, 5b). Homework passes
   only subject_in (nb_sid isn't tracked until the Notebook page, 4d). plan_short {} comes from the Upcoming page's
   up_plan (4b); the extra test normalises it.
 - Not ported: update_tick (5d), the food lookup online (an unknown
@@ -243,7 +263,7 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 - The rewards test doesn't replay the 5 s follow-up badge check (in these cases it awards nothing in Python either).
 
 ## Next recommended task
-Stage 5a: the tool windows (periodic table, French dictionary, CG50 calculator, Bible).
+Stage 5c: voice (VOICEVOX, voice chat, Piper) and the Spotify account. 5b is deferred to the end.
 
 ## Gotchas
 - The repo root has a tracked `__pycache__/`. Never delete it, and run Python with bytecode writing turned off.

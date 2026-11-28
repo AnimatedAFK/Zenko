@@ -192,6 +192,9 @@ pub struct EntryText {
     pub show: Option<char>,
     /// a plain tk.Entry (relief flat, bd 0, no ring) on the widget's bg: its (fg, insertbackground)
     pub flat: Option<(String, String)>,
+    /// -foreground other than the theme's ink, and justify="center"
+    pub fg: Option<String>,
+    pub center: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -1427,7 +1430,16 @@ impl Ui {
                 let ty = y + (ht + asc - desc) / 2 - asc;
                 let shown: Vec<u16> = match e.show { Some(c) => vec![c as u16; e.text.len()], None => e.text.clone() };
                 let xo = |i: usize| fonts.width(font, &String::from_utf16_lossy(&shown[..i.min(shown.len())]));
-                let tx = x + ib - xo(e.left);
+                let mut tx = x + ib - xo(e.left);
+                if e.center {
+                    // TkEntry DisplayEntry: justify center shifts the text into the middle while it fits
+                    let room = wd - 2 * ib;
+                    let tw = xo(shown.len());
+                    if tw < room {
+                        tx = x + ib + (room - tw) / 2;
+                    }
+                }
+                let ink = e.fg.clone().unwrap_or(ink);
                 let inner = (x1.max(x + 2), y1.max(y + 2), (x2.min(x + wd - 2) - x1.max(x + 2)).max(0),
                              (y2.min(y + ht - 2) - y1.max(y + 2)).max(0));
                 out.push(Draw::Clip(Some(inner)));

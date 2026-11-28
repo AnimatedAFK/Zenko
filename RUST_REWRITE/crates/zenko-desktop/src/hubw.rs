@@ -2143,3 +2143,8 @@ fn reveal(x: &mut HubW, page: &str, title: &str, n: f64) {
         x.flash = Some((card, items.len(), n));
     }
 }
+
+/// _mincho_font, _serif_font and _jp_font for the tool windows
+pub fn tool_fonts(font_ui: &str) -> (String, String, String) {
+    hubbook::fonts_pub(font_ui)
+}

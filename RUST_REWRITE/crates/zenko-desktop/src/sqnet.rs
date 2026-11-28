@@ -160,7 +160,7 @@ pub fn post(uid: String, name: String, text: String, rep: Option<String>, done: 
     std::thread::spawn(move || {
         let ua = ua();
         let r = request(&Req { url: &url, method: "POST", ua: &ua, headers: "Content-Type: text/plain", body: body.as_bytes(),
-                               timeout_ms: 15000 }, &mut |_| true);
+                               timeout_ms: 15000, len: None }, &mut |_| true);
         done(r.err());
     });
 }

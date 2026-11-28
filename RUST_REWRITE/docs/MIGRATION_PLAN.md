@@ -83,7 +83,7 @@ order is kept where it changes the result (tail outlines, eye cells).
 | Timetable, Upcoming, Japanese clock, planner, reminders rack | free hours, half-hour slots, plan/replan, countdowns, emas that auto-plan, PDF export | **done (4b)**: pages match zenko.py, golden-tested |
 | Chat + brain | commands, shorthand learning, her voice, Ollama local models, online brain (Gemini) with IB-terms recheck, web search + summaries, Markdown/LaTeX, screenshot reading | **offline router about half done** (core, version routes, Exercise, books); brains/web to do |
 | Study | Notebook tutor, Notes scratchpad + folder import, Books + practice, IA/EE/TOK, grades, flashcards/SRS, pop quizzes | **pages done (4d)**; the Notebook tutor's brain is 5b |
-| Tool windows | periodic table, French dictionary, Casio CG50 calculator, Bible with Greek/Hebrew lexicon | |
+| Tool windows | periodic table, French dictionary, Casio CG50 calculator, Bible with Greek/Hebrew lexicon | **done (5a)**; their brain answers are 5b |
 | Exercise | 3-day split, pixel muscle map, weight, calories, food lookup, gym look | **done (4e)** except the online food lookup (5b) |
 | Garden, zen garden, breathing, koi fishing | seasons, day/night, wilting, 32 fish, collection book | **done (4e)**: scene, koi and tones bit-exact; page, cards and koi book match zenko.py |
 | World map, journey, Town square | shrines to the Silk Road, quizzes, rewards, real-date festivals, ntfy chat street | **done (4f)**: paintings bit-exact, pages match zenko.py, the link's parsing golden-tested |
@@ -133,7 +133,7 @@ order is kept where it changes the result (tail outlines, eye cells).
    Notebook/study Books, Notes, Screen time, Exercise and the Zen garden (breathing, grounding, koi fishing, the koi
    book window), each matching zenko.py's widget tree, canvas items and pictures in recorded cases.
    Stage 4f done: the World map and the Town square (festival street, chat board, ntfy link).
-   **Next:** 5a, the tool windows.
+   **Next:** 5c, voice and Spotify (5b brains/web deferred by the user to the end).
 5. Brain, web, voice, music, tool windows, games, Town square, updater/installer.
 6. Speed (Phase 5): image cache and native code are already in; measure and tune at the end.
 

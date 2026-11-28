@@ -196,3 +196,77 @@ fn casio_window_matches_zenko_py() {
     }
     assert!(fails.is_empty(), "{fails:?}");
 }
+
+#[test]
+fn bible_window_matches_zenko_py() {
+    use zenko_desktop::biblewin::{BibleFonts, BibleWin, SIZE, chapter_job, orig_job, word_job};
+    let _g = zenko_desktop::web::test_lock();
+    // the network is cut off; the data folder is a fresh one with what the golden run saved
+    zenko_desktop::web::set_fetch(std::sync::Arc::new(|_r, _c| Err("<urlopen error offline>".to_string())));
+    let mut fails = vec![];
+    for c in cases().iter().filter(|c| c["name"].as_str().unwrap().starts_with("bible_")) {
+        let name = c["name"].as_str().unwrap();
+        eprintln!("case {name}");
+        let dir = std::env::temp_dir().join(format!("zk_bible_{name}_{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        unsafe { std::env::set_var("APPDATA", &dir) };
+        zenko_desktop::biblefs::reset();
+        let bd = dir.join("FoxBuddy").join("bible");
+        let mut pos = Value::Null;
+        let mut notes = serde_json::Map::new();
+        if name == "bible_jn" {
+            pos = serde_json::json!([42, 3, 16, "NKJV"]);
+            notes.insert("Jhn.3.16".into(), "God's love is for the whole world.".into());
+            std::fs::create_dir_all(bd.join("text/NKJV/Jhn")).unwrap();
+            std::fs::write(bd.join("text/NKJV/Jhn/3.json"), serde_json::json!({"verses": [
+                [14, "And as Moses lifted up the serpent in the wilderness, even so must the Son of Man be lifted up,"],
+                [15, "that whoever believes in Him should not perish but have eternal life."],
+                [16, "For God so loved the world that He gave His only begotten Son, that whoever believes in Him should not perish but have everlasting life."],
+                [17, "For God did not send His Son into the world to condemn the world, but that the world through Him might be saved."]]}).to_string()).unwrap();
+            std::fs::create_dir_all(bd.join("orig/Jhn")).unwrap();
+            std::fs::write(bd.join("orig/format.txt"), "2").unwrap();
+            let ws: Vec<Value> = ["Jhn.3.16#01=NKO\tΟὕτως (Houtōs)\tthus\tG3779=ADV\tοὕτω=thus", "Jhn.3.16#02=NKO\tγὰρ (gar)\tfor\tG1063=CONJ\tγάρ=for",
+                "Jhn.3.16#03=NKO\tἠγάπησεν (ēgapēsen)\tloved\tG0025=V-AAI-3S\tἀγαπάω=to love",
+                "Jhn.3.16#04=NKO\tὁ (ho)\t-\tG3588=T-NSM\tὁ=the", "Jhn.3.16#05=NKO\tΘεὸς (Theos)\tGod\tG2316=N-NSM\tθεός=God",
+                "Jhn.3.16#06=NKO\tτὸν (ton)\tthe\tG3588=T-ASM\tὁ=the", "Jhn.3.16#07=NKO\tκόσμον (kosmon)\tworld\tG2889=N-ASM\tκόσμος=world",
+                "Jhn.3.16#08=K\tαὐτοῦ (autou)\this\tG0846=P-GSM\tαὐτός=he"]
+                .iter().map(|l| zenko_desktop::bible::step_parse_line(l).unwrap().3).collect();
+            std::fs::write(bd.join("orig/Jhn/3.json"), serde_json::json!({"v": {"16": ws}}).to_string()).unwrap();
+        }
+        // (the book button's text isn't measured by the recorder: its width is the button's less its padding)
+        let mut c2 = c.clone();
+        let mb = &c["tree"]["kids"][0]["kids"][2]["kids"][0];
+        let key = mb["opts"]["font"].as_str().unwrap().replace("{Segoe UI}", "{Inter}");
+        let tw = mb["w"].as_i64().unwrap() - 2 * 10 - 2;
+        let e = c2["fonts"].as_object_mut().unwrap().entry(key).or_insert_with(|| serde_json::json!({"w": {}}));
+        e["w"][mb["opts"]["text"].as_str().unwrap()] = tw.into();
+        let c = &c2;
+        let (th, f, fonts, mut ui) = setup(c);
+        let (w, h) = geo(c, SIZE);
+        let bf = BibleFonts { heb: c["heb"].as_str().unwrap().into(), grk: c["grk"].as_str().unwrap().into() };
+        let mut b = BibleWin::build(&mut ui, &th, &f, &bf, &pos, 393);
+        let want = b.load_chapter(&mut ui);
+        ui.layout_at(&fonts, w, h);
+        let ow = b.chapter_done(&mut ui, &fonts, &want, chapter_job(&want), &notes).unwrap();
+        let mut r = orig_job(&ow, None);
+        if name == "bible_ps" {
+            // (the recorder swapped _download for one that raises WebError("offline"))
+            assert!(r.as_ref().unwrap_err().starts_with("The download of the original-language text didn't finish (URLError)."), "{r:?}");
+            r = Err("offline".into());
+        }
+        b.orig_done(&mut ui, &ow, r, &notes);
+        // (the first flow's note label is gone by the time zenko.py was recorded: only the word's entry is measured)
+        if name == "bible_jn" {
+            let (lang, s) = b.word(&mut ui, 2).unwrap();
+            b.word_done(&mut ui, 2, word_job(&lang, &s));
+        }
+        b.fit(&mut ui, &fonts, w, h);
+        assert_eq!(b.pos_value(), c["life_all"]["bible_pos"], "{name} position");
+        if !tree_ok(&ui, c, &mut fails) {
+            continue;
+        }
+        check_text(name, &ui, b.read, &c["read"], &fonts);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+    assert!(fails.is_empty(), "{fails:?}");
+}

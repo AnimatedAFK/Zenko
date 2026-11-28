@@ -36,6 +36,8 @@ mod uiwin;
 #[cfg(windows)]
 mod koiwin;
 #[cfg(windows)]
+mod toolwins;
+#[cfg(windows)]
 mod tkpaint;
 #[cfg(windows)]
 mod hubw;
@@ -526,6 +528,9 @@ mod win {
                 if crate::koiwin::out(&o) {
                     continue;
                 }
+                if crate::toolwins::out(&o, &mut app.fox, t) {
+                    continue;
+                }
                 app.fox.events.push(Ev::Ui("tap".into())); // PixelButton._release: ui_sound("tap")
                 if o.win == "askstring" {
                     // New folder's name
@@ -560,6 +565,7 @@ mod win {
                 }
             }
             crate::sqnet::boot(t, &app.fox.cfg);
+            crate::toolwins::tick(&mut app.fox, t);
             if t >= app.next_hub && crate::hubw::is_open() {
                 app.next_hub = t + 1.0;
                 crate::hubw::update(side_ctx(app), &hub_status(app));
@@ -666,7 +672,8 @@ mod win {
     /// what the hub's Settings page asks of the app: the fox's size and colours (as the menu does), the font (the hub
     /// opens again with it), a voice test
     fn hub_run(app: &mut App, c: &str) {
-        if c.starts_with("size:") {
+        if c.starts_with("size:") || matches!(c, "ptable" | "calc" | "open_bible" | "french_dict" | "open_ptable" | "open_calc"
+                                                   | "open_french_dict" | "french" | "bible") {
             run_command(app, c);
         } else if c.starts_with("theme:") {
             // set_theme: the window opens again on the page it was on
@@ -752,6 +759,14 @@ mod win {
 
     fn run_command(app: &mut App, c: &str) {
         let t = now(app);
+        {
+            // the study tools' windows (open_ptable / open_french_dict / open_calc / open_bible[:ref])
+            let th = theme(&app.fox.cfg);
+            let fu = crate::gdi::ui_font(&app.fox.cfg.s("app_font", ""));
+            if crate::toolwins::open(c, &mut app.fox, &th, &fu, app.dpi) {
+                return;
+            }
+        }
         if c == "focus" {
             open_dialog(app, t);
             return;
@@ -1208,6 +1223,7 @@ mod win {
             let dpi = GetDpiForSystem() as f64;
             let u = (dpi / 96.0).max(1.0);
             crate::gdi::load_fonts();
+            crate::net::register();
             let t0 = Instant::now();
             let cfg = Cfg::load();
             let family = if cfg.s("bubble_font", "app") == "app" {

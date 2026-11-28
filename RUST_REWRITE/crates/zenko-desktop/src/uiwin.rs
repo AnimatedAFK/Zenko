@@ -77,6 +77,8 @@ pub struct UiWin {
     t0: std::time::Instant,
     /// a normal titled, resizable window (a Toplevel) rather than a borderless popup
     framed: bool,
+    /// w.minsize(): the client area's smallest size
+    min: (i32, i32),
 }
 
 /// a button press: which window, its command, and the text of every named entry
@@ -144,7 +146,7 @@ pub fn open_popup(name: &str, mut ui: Ui, t: Theme, dpi: f64, place: impl FnOnce
         let hwnd = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TOOLWINDOW, cls.as_ptr(), cls.as_ptr(), WS_POPUP,
                                    x, y, w, h, std::ptr::null_mut(), std::ptr::null_mut(), hinst, std::ptr::null());
         SetLayeredWindowAttributes(hwnd, gdi::KEY, 0, LWA_COLORKEY);
-        WINS.with(|v| v.borrow_mut().push(UiWin { name: name.into(), hwnd, ui, fonts, t, t0: std::time::Instant::now(), framed: false }));
+        WINS.with(|v| v.borrow_mut().push(UiWin { name: name.into(), hwnd, ui, fonts, t, t0: std::time::Instant::now(), framed: false, min: (0, 0) }));
         ShowWindow(hwnd, SW_SHOWNOACTIVATE);
         SetTimer(hwnd, 1, 100, None);
     }
@@ -181,7 +183,7 @@ pub fn open_window(name: &str, title: &str, ui: Ui, t: Theme, dpi: f64, x: i32, 
                                    std::ptr::null());
         let mut ui = ui;
         ui.layout_at(&fonts, w, h);
-        WINS.with(|v| v.borrow_mut().push(UiWin { name: name.into(), hwnd, ui, fonts, t, t0: std::time::Instant::now(), framed: true }));
+        WINS.with(|v| v.borrow_mut().push(UiWin { name: name.into(), hwnd, ui, fonts, t, t0: std::time::Instant::now(), framed: true, min: (0, 0) }));
         ShowWindow(hwnd, SW_SHOW);
         SetForegroundWindow(hwnd);
         SetTimer(hwnd, 1, 100, None);
@@ -201,6 +203,32 @@ pub fn with_ui<R>(name: &str, f: impl FnOnce(&mut Ui, &dyn Fonts) -> R) -> Optio
         unsafe { InvalidateRect(hwnd, std::ptr::null(), 0) };
     }
     r
+}
+
+/// a window's handle (null when it isn't open)
+pub fn hwnd_of(name: &str) -> HWND {
+    WINS.with(|v| v.try_borrow().ok().and_then(|v| v.iter().find(|x| x.name == name).map(|x| x.hwnd)))
+        .unwrap_or(std::ptr::null_mut())
+}
+
+/// winfo_rootx / winfo_rooty: where a window's client area is on the screen
+pub fn origin(name: &str) -> (i32, i32) {
+    let h = hwnd_of(name);
+    let mut p = POINT { x: 0, y: 0 };
+    if !h.is_null() {
+        unsafe { ClientToScreen(h, &mut p) };
+    }
+    (p.x, p.y)
+}
+
+/// w.minsize(w, h) for a framed window's client area
+pub fn set_min(name: &str, w: i32, h: i32) {
+    WINS.with(|v| {
+        if let Ok(mut v) = v.try_borrow_mut()
+            && let Some(x) = v.iter_mut().find(|x| x.name == name) {
+            x.min = (w, h);
+        }
+    });
 }
 
 /// bring a window to the front (deiconify + lift)
@@ -292,6 +320,17 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                 0
             }
             WM_ERASEBKGND => 1,
+            WM_GETMINMAXINFO => {
+                let mut min = (0, 0);
+                with(hwnd, |x| min = x.min);
+                if min.0 > 0 {
+                    let mut r = RECT { left: 0, top: 0, right: min.0, bottom: min.1 };
+                    AdjustWindowRectEx(&mut r, WS_OVERLAPPEDWINDOW, 0, 0);
+                    let mm = &mut *(lp as *mut MINMAXINFO);
+                    mm.ptMinTrackSize = POINT { x: r.right - r.left, y: r.bottom - r.top };
+                }
+                0
+            }
             WM_TIMER => {
                 redraw();
                 0
@@ -354,11 +393,13 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     Cursor::Arrow => IDC_ARROW,
                 };
                 SetCursor(LoadCursorW(std::ptr::null_mut(), c));
+                out(hwnd, format!("motion:{mx}:{my}"));
                 redraw();
                 0
             }
             0x02A3 => {
                 with(hwnd, |x| x.ui.leave());
+                out(hwnd, "leave".into());
                 redraw();
                 0
             }
@@ -377,6 +418,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     let n = now(x);
                     x.ui.press(&x.fonts, mx, my, n, msg == WM_LBUTTONDBLCLK);
                 });
+                out(hwnd, format!("down:{mx}:{my}"));
                 redraw();
                 0
             }
@@ -428,6 +470,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
             WM_CHAR => {
                 let c = wp as u16;
                 if c >= 0x20 && c != 0x7f && GetKeyState(VK_CONTROL as i32) >= 0 {
+                    out(hwnd, format!("char:{}", char::from_u32(c as u32).unwrap_or(' ')));
                     with(hwnd, |x| {
                         let n = now(x);
                         x.ui.insert(&x.fonts, &[c], n);
