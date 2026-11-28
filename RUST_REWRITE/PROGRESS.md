@@ -17,7 +17,7 @@ Branch `claude/project-thread-cxqzjv` (PR #18). Full plan: docs/MIGRATION_PLAN.m
 11. 5b: brains and web: Ollama, online brain, web search + summaries, food lookup, screenshot reading (DEFERRED by the user on 2026-11-28: do it last, after 6)
 12. ~~5c: voice (VOICEVOX, voice chat, Piper) and the Spotify account~~ (done)
 13. ~~5d: installer, updater, crash logs, Zenko Browser link~~ (done)
-14. 6: testing on real Windows, speed, final side-by-side check
+14. 6: final checks. Done here: full test run (86 pass), clean Windows build, docs/LEFTOVERS.md (tools/leftovers.py). Still needs the user: running ZenkoRust.exe on real Windows and the side-by-side look check
 
 ## Done
 - **Stage 5d:** installer, updater, crash logs and the Zenko Browser link.
@@ -291,7 +291,7 @@ Run with `cargo test --release`. The golden files are made by the tools/ scripts
 - The rewards test doesn't replay the 5 s follow-up badge check (in these cases it awards nothing in Python either).
 
 ## Next recommended task
-Stage 6: final checks (full test run, Windows build, audit of what's left), then 5b (brains and web) last.
+5b (brains and web), then the non-5b leftovers in docs/LEFTOVERS.md (reMarkable link, timetable PDF export, dropped/attached files). Before that, the user should try ZenkoRust.exe on Windows: every Win32 part (bubble, menus, mic, VOICEVOX, Spotify login, installer, updater) is untested there.
 
 ## Gotchas
 - The repo root has a tracked `__pycache__/`. Never delete it, and run Python with bytecode writing turned off.
