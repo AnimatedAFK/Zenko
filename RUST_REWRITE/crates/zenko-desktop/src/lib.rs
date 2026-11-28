@@ -79,6 +79,7 @@ pub mod mapart;
 pub mod mappage;
 pub mod squareart;
 pub mod squarepage;
+pub mod squarelink;
 pub use play::{Play, Pose, Prop};
 
 /// Things the desktop fox asks the window side to do (the bubble, sounds, menu commands).
