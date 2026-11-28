@@ -75,6 +75,8 @@ pub struct UiWin {
     fonts: GdiFonts,
     t: Theme,
     t0: std::time::Instant,
+    /// a normal titled, resizable window (a Toplevel) rather than a borderless popup
+    framed: bool,
 }
 
 /// a button press: which window, its command, and the text of every named entry
@@ -142,9 +144,107 @@ pub fn open_popup(name: &str, mut ui: Ui, t: Theme, dpi: f64, place: impl FnOnce
         let hwnd = CreateWindowExW(WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TOOLWINDOW, cls.as_ptr(), cls.as_ptr(), WS_POPUP,
                                    x, y, w, h, std::ptr::null_mut(), std::ptr::null_mut(), hinst, std::ptr::null());
         SetLayeredWindowAttributes(hwnd, gdi::KEY, 0, LWA_COLORKEY);
-        WINS.with(|v| v.borrow_mut().push(UiWin { name: name.into(), hwnd, ui, fonts, t, t0: std::time::Instant::now() }));
+        WINS.with(|v| v.borrow_mut().push(UiWin { name: name.into(), hwnd, ui, fonts, t, t0: std::time::Instant::now(), framed: false }));
         ShowWindow(hwnd, SW_SHOWNOACTIVATE);
         SetTimer(hwnd, 1, 100, None);
+    }
+}
+
+/// open a titled, resizable window (tk.Toplevel with title and geometry "WxH+X+Y": the client area is w x h at x, y).
+/// Its clicks that no button takes, wheel turns, keys and size changes go to OUT as "click:x:y", "wheel:delta",
+/// "key:vk", "resize:w:h" and "closed", for the app to answer with `with_ui`.
+pub fn open_window(name: &str, title: &str, ui: Ui, t: Theme, dpi: f64, x: i32, y: i32, w: i32, h: i32) {
+    let fonts = GdiFonts::new(dpi);
+    unsafe {
+        let hinst = GetModuleHandleW(std::ptr::null());
+        let cls = gdi::wide("ZenkoRustTkWindow");
+        let wc = WNDCLASSEXW {
+            cbSize: std::mem::size_of::<WNDCLASSEXW>() as u32,
+            style: CS_DBLCLKS,
+            lpfnWndProc: Some(proc_),
+            cbClsExtra: 0,
+            cbWndExtra: 0,
+            hInstance: hinst,
+            hIcon: LoadIconW(hinst, 1 as _),
+            hCursor: LoadCursorW(std::ptr::null_mut(), IDC_ARROW),
+            hbrBackground: std::ptr::null_mut(),
+            lpszMenuName: std::ptr::null(),
+            lpszClassName: cls.as_ptr(),
+            hIconSm: std::ptr::null_mut(),
+        };
+        RegisterClassExW(&wc);
+        let mut r = RECT { left: x, top: y, right: x + w, bottom: y + h };
+        AdjustWindowRectEx(&mut r, WS_OVERLAPPEDWINDOW, 0, 0);
+        let tw = gdi::wide(title);
+        let hwnd = CreateWindowExW(0, cls.as_ptr(), tw.as_ptr(), WS_OVERLAPPEDWINDOW, x, y,
+                                   r.right - r.left, r.bottom - r.top, std::ptr::null_mut(), std::ptr::null_mut(), hinst,
+                                   std::ptr::null());
+        let mut ui = ui;
+        ui.layout_at(&fonts, w, h);
+        WINS.with(|v| v.borrow_mut().push(UiWin { name: name.into(), hwnd, ui, fonts, t, t0: std::time::Instant::now(), framed: true }));
+        ShowWindow(hwnd, SW_SHOW);
+        SetForegroundWindow(hwnd);
+        SetTimer(hwnd, 1, 100, None);
+    }
+}
+
+/// change a window's widgets (and lay it out again at its size), then repaint it
+pub fn with_ui<R>(name: &str, f: impl FnOnce(&mut Ui, &dyn Fonts) -> R) -> Option<R> {
+    let mut hwnd = std::ptr::null_mut();
+    let r = WINS.with(|w| {
+        let mut v = w.try_borrow_mut().ok()?;
+        let x = v.iter_mut().find(|x| x.name == name)?;
+        hwnd = x.hwnd;
+        Some(f(&mut x.ui, &x.fonts))
+    });
+    if !hwnd.is_null() {
+        unsafe { InvalidateRect(hwnd, std::ptr::null(), 0) };
+    }
+    r
+}
+
+/// bring a window to the front (deiconify + lift)
+pub fn raise(name: &str) {
+    WINS.with(|w| {
+        if let Ok(v) = w.try_borrow()
+            && let Some(x) = v.iter().find(|x| x.name == name) {
+            unsafe {
+                ShowWindow(x.hwnd, SW_RESTORE);
+                SetForegroundWindow(x.hwnd);
+            }
+        }
+    });
+}
+
+fn out(hwnd: HWND, cmd: String) {
+    let mut o = None;
+    with(hwnd, |x| {
+        if x.framed {
+            o = Some(UiOut { win: x.name.clone(), cmd, values: vec![] });
+        }
+    });
+    if let Some(o) = o {
+        OUT.with(|q| q.borrow_mut().push(o));
+    }
+}
+
+/// the display list painted: plain calls with GDI, a Tk canvas's own calls with tkpaint at its place
+unsafe fn paint_list(mdc: HDC, fonts: &GdiFonts, d: Vec<Draw>) {
+    unsafe {
+        let mut run: Vec<Draw> = vec![];
+        for item in d {
+            if let Draw::Tk { x: ox, y: oy, ops } = item {
+                gdi::draw(mdc, &to_ops(fonts, &run));
+                run.clear();
+                let mut old = POINT { x: 0, y: 0 };
+                SetViewportOrgEx(mdc, ox, oy, &mut old);
+                crate::tkpaint::paint(mdc, &ops, fonts);
+                SetViewportOrgEx(mdc, old.x, old.y, std::ptr::null_mut());
+            } else {
+                run.push(item);
+            }
+        }
+        gdi::draw(mdc, &to_ops(fonts, &run));
     }
 }
 
@@ -178,12 +278,11 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                 let dc = BeginPaint(hwnd, &mut ps);
                 with(hwnd, |x| {
                     let d = x.ui.draw(&x.fonts, &x.t, now(x));
-                    let ops = to_ops(&x.fonts, &d);
                     let (w, h) = (x.ui.ws[0].w, x.ui.ws[0].h);
                     let mdc = CreateCompatibleDC(dc);
                     let bmp = CreateCompatibleBitmap(dc, w, h);
                     let ob = SelectObject(mdc, bmp as _);
-                    gdi::draw(mdc, &ops);
+                    paint_list(mdc, &x.fonts, d);
                     BitBlt(dc, 0, 0, w, h, mdc, 0, 0, SRCCOPY);
                     SelectObject(mdc, ob);
                     DeleteObject(bmp as _);
@@ -204,6 +303,40 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                 0
             }
             WM_MOUSEACTIVATE => MA_ACTIVATE as isize,
+            WM_SIZE => {
+                let (w, h) = ((lp & 0xffff) as i32, ((lp >> 16) & 0xffff) as i32);
+                let mut framed = false;
+                with(hwnd, |x| {
+                    framed = x.framed;
+                    if x.framed && w > 0 && h > 0 {
+                        x.ui.layout_at(&x.fonts, w, h);
+                    }
+                });
+                if framed && w > 0 && h > 0 {
+                    out(hwnd, format!("resize:{w}:{h}"));
+                    redraw();
+                }
+                0
+            }
+            WM_MOUSEWHEEL => {
+                let delta = ((wp >> 16) & 0xffff) as i16 as i32;
+                out(hwnd, format!("wheel:{delta}"));
+                redraw();
+                0
+            }
+            WM_CLOSE => {
+                let mut framed = false;
+                with(hwnd, |x| framed = x.framed);
+                if framed {
+                    out(hwnd, "closed".into());
+                    let name = WINS.with(|w| w.try_borrow().ok().and_then(|v| v.iter().find(|x| x.hwnd == hwnd).map(|x| x.name.clone())));
+                    if let Some(n) = name {
+                        close(&n);
+                    }
+                    return 0;
+                }
+                DefWindowProcW(hwnd, msg, wp, lp)
+            }
             WM_MOUSEMOVE => {
                 let (mx, my) = pt();
                 let mut tme = TRACKMOUSEEVENT { cbSize: std::mem::size_of::<TRACKMOUSEEVENT>() as u32, dwFlags: TME_LEAVE,
@@ -254,6 +387,8 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                 with(hwnd, |x| {
                     if let Some(cmd) = x.ui.release(mx, my) {
                         out = Some(UiOut { win: x.name.clone(), cmd, values: values(&x.ui) });
+                    } else if x.framed {
+                        out = Some(UiOut { win: x.name.clone(), cmd: format!("click:{mx}:{my}"), values: vec![] });
                     }
                 });
                 if let Some(o) = out {
@@ -264,6 +399,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
             }
             WM_KEYDOWN => {
                 let vk = wp as u16;
+                out(hwnd, format!("key:{vk}"));
                 let shift = GetKeyState(VK_SHIFT as i32) < 0;
                 let ctrl = GetKeyState(VK_CONTROL as i32) < 0;
                 with(hwnd, |x| {

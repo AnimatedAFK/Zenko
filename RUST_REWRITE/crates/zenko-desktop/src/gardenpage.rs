@@ -905,6 +905,7 @@ impl GardenPage {
         let key = format!("{rw}|{rh}|{z}|{i}|{}|{}|{grove}|{seed}|{look:?}|{w}|{h}", (g * 10.0).round_ties_even(),
                           (hp * 100.0).round_ties_even());
         if self.key.as_deref() == Some(key.as_str()) {
+            self.anim_on = true;
             return;
         }
         let (mut r, lay) = garden_scene(rw, rh, i as i64, g, hp, grove, seed, &look);
@@ -1727,7 +1728,9 @@ impl GardenPage {
         (ui.ws[f].padx, ui.ws[f].pady) = (18, 14);
         ui.pack(f, Pack::default().fill(Fill::Both).expand());
         let (w, h) = self.cv_size(ui);
-        ui.ws[outer].place = Some(Place { x: (w as f64 / 2.0) as i32, y: (h as f64 * 0.46) as i32, center: true, ..Default::default() });
+        // (tkCanvWind.c: the item's point rounded half up, then x -= width / 2, y -= height / 2)
+        let (px, py) = ((w as f64 / 2.0 + 0.5).floor() as i32, (h as f64 * 0.46 + 0.5).floor() as i32);
+        ui.ws[outer].place = Some(Place { x: px, y: py, center: true, ..Default::default() });
         self.fcard = Some(outer);
         self.fcard_kind = kind;
         (outer, f)

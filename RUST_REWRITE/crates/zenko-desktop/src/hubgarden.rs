@@ -26,6 +26,7 @@ fn data(x: &HubW) -> GardenData {
         let today = secs.div_euclid(86400);
         let iso = zenko_desktop::plan::iso(today);
         let (hours, got) = zenko_desktop::rewards::journey_state(&life);
+        let tails = fox.tail_count(t);
         let c = &fox.cfg;
         GardenData {
             garden: life["garden"].clone(),
@@ -45,7 +46,7 @@ fn data(x: &HubW) -> GardenData {
             got,
             pal: fox.pal.clone(),
             look: fox.look_ref().clone(),
-            tails: fox.tail_count(t),
+            tails,
             hd: c.b("hd_art", true),
             jp: mincho.clone(),
             jpg: jpg.clone(),
@@ -57,8 +58,8 @@ fn data(x: &HubW) -> GardenData {
 
 pub(super) fn build(x: &mut HubW, pg: usize) {
     let (th, f) = (x.hub.t.clone(), faces(x));
-    let d = data(x);
-    x.garden = Some(GardenPage::build(&mut x.hub.ui, pg, &th, &f, cm10(x), &d));
+    let (d, c) = (data(x), cm10(x));
+    x.garden = Some(GardenPage::build(&mut x.hub.ui, pg, &th, &f, c, &d));
 }
 
 pub(super) fn fit(x: &mut HubW, w: i32, h: i32) {

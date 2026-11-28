@@ -60,6 +60,13 @@ fn garden_page_matches_zenko_py() {
             assert_eq!(b.total, gb["total"].as_f64().unwrap());
             p.breath = Some(b);
         }
+        let q = serde_json::json!({"q": "Which particle has a negative charge and almost no mass?", "a": "Electron",
+                                   "opts": ["Proton", "Electron", "Neutron", "Positron"], "card": null, "subj": "chem", "diff": 2});
+        let card = name == "garden_fish_ask" || name == "garden_fish_catch";
+        if card {
+            p.fish = Some(Fish { phase: "wait".into(), t: t - 1.0, bx: -0.2, by: 0.1, depth: 2, gold: false, q: q.clone(),
+                                 bite_at: 1e9, items: None, ripples: vec![], jump: None });
+        }
         if name == "garden_sacred_fish" {
             p.fish = Some(Fish { phase: "wait".into(), t: t - 1.0, bx: 0.2, by: -0.1, depth: 3, gold: true, q: Value::Null,
                                  bite_at: 1e9, items: None, ripples: vec![], jump: None });
@@ -69,6 +76,19 @@ fn garden_page_matches_zenko_py() {
         p.redraw(&mut ui);
         let acts = p.frame(&mut ui, t, &mut || 0.99);
         eprintln!("acts {acts:?}");
+        if card {
+            // fish_ask() at the bite / fish_show_catch("ogon", 5, 33.5, new) once it's caught
+            if name == "garden_fish_ask" {
+                p.fish.as_mut().unwrap().phase = "asking".into();
+                let sub = zenko_desktop::notes::subject_name("chem", &c["life_all"], false);
+                p.fish_ask_card(&mut ui, &q, &sub);
+            } else {
+                p.fish.as_mut().unwrap().phase = "caught".into();
+                p.fish_catch_card(&mut ui, "ogon", 5, 33.5, true, true);
+            }
+            p.panel(&mut ui, &d);
+            p.fit(&mut ui, &fonts, &th, &faces, zk, pw, ph);
+        }
         assert_eq!(p.side_w as i64, c["side_w"].as_i64().unwrap(), "{name} side width");
         let mut bad = vec![];
         cmp_tree(&ui, 0, tree, ox, oy, name, &mut bad);
@@ -88,7 +108,9 @@ fn garden_page_matches_zenko_py() {
         let mut n = 0;
         for (id, gn) in pairs {
             if let Some(cv) = ui.ws[id].tk_canvas() {
-                check_items(&format!("{name} canvas {n}"), cv, gn["items"].as_array().unwrap(), &imgs, &fonts);
+                // (the fishing card is a canvas window item: its place is checked with the widget tree)
+                let items: Vec<Value> = gn["items"].as_array().unwrap().iter().filter(|i| i["type"] != "window").cloned().collect();
+                check_items(&format!("{name} canvas {n}"), cv, &items, &imgs, &fonts);
                 n += 1;
             }
         }

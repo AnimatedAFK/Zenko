@@ -1087,7 +1087,9 @@ if len(sys.argv) > 1 and sys.argv[1] == "garden":
              ("garden_seed_small", 1765440000.0 + 8 * 3600, {"theme": "midnight"}, (1120, 720), "garden"),
              ("garden_bloom_breath", 1765450800.0, {"theme": "sakura", "breath_minutes": 5}, None, "garden"),
              ("garden_sacred_fish", 1765476000.0, {"theme": "snow", "fish_gold": True, "garden_decor": ["deer", "momiji"]},
-              None, "garden")]
+              None, "garden"),
+             ("garden_fish_ask", 1765476000.0, {"theme": "sakura"}, None, "garden"),
+             ("garden_fish_catch", 1765476000.0, {"theme": "midnight", "fish_gold": True}, (1120, 720), "garden")]
 
     def _data(app, name):
         day = lambda n: (_dt.date.fromtimestamp(NOW[0]) + _dt.timedelta(days=n)).isoformat()
@@ -1104,6 +1106,9 @@ if len(sys.argv) > 1 and sys.argv[1] == "garden":
             G.update(xp=1500.0, health=1.0, seed=99, active=[day(-1), day(0)], grove=[{"done": day(-40)}, {"done": day(-9)}],
                      log=[{"d": day(0), "t": "10:00", "m": 40, "k": "lockin"}])
             app._ground_i = 2
+        elif name in ("garden_fish_ask", "garden_fish_catch"):
+            G.update(xp=700.0, health=0.9, seed=31, active=[day(0)])
+            F.update(bait=2.0, gold=1, free_day=day(0), free_used=3, pond=[["kohaku", 6]])
         elif name == "garden_sacred_fish":
             G.update(xp=2000.0, health=1.0, seed=2024, active=[day(0)], grove=[{"done": day(-90)}] * 3,
                      log=[{"d": day(0), "t": "07:30", "m": 90, "k": "lockin"}])
@@ -1131,6 +1136,11 @@ if len(sys.argv) > 1 and sys.argv[1] == "garden":
         if name == "garden_bloom_breath":
             app.breath_start("box")
             app.breath["t0"] = _mono[0] - 5.5
+        if name in ("garden_fish_ask", "garden_fish_catch"):
+            app._z22_fish = {"phase": "wait", "t": _mono[0] - 1.0, "bx": -0.2, "by": 0.1, "depth": 2, "gold": False,
+                             "q": {"q": "Which particle has a negative charge and almost no mass?", "a": "Electron",
+                                   "opts": ["Proton", "Electron", "Neutron", "Positron"], "card": None, "subj": "chem",
+                                   "diff": 2}, "items": {}, "ripples": [], "bite_at": 1e9}
         if name == "garden_sacred_fish":
             app._z22_fish = {"phase": "wait", "t": _mono[0] - 1.0, "bx": 0.2, "by": -0.1, "depth": 3, "gold": True,
                              "q": {"q": "?", "a": "a", "opts": ["a"], "card": None, "subj": "chem", "diff": 3},
@@ -1140,6 +1150,18 @@ if len(sys.argv) > 1 and sys.argv[1] == "garden":
             app.root.update()
         ui["key"], ui["anim_on"] = None, False
         app.garden_draw()
+        for _ in range(3):
+            app.root.update()
+        if name == "garden_fish_ask":
+            app._z22_fish["phase"] = "bite"
+            app.fish_ask()
+        if name == "garden_fish_catch":
+            app._z22_fish["phase"] = "caught"
+            app.fish_show_catch("ogon", 5, 33.5, True)
+        if name in ("garden_fish_ask", "garden_fish_catch"):
+            for _ in range(4):
+                app.root.update()
+        app.zk_fit()        # (widgets a rebuilt panel made in here get their fitted fonts, as on the next fit)
         for _ in range(3):
             app.root.update()
         app.root.after = after0

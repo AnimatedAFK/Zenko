@@ -38,6 +38,8 @@ mod hubnotes;
 mod hubscreen;
 #[path = "hubgym.rs"]
 mod hubgym;
+#[path = "hubgarden.rs"]
+mod hubgarden;
 #[path = "paletwin.rs"]
 mod paletwin;
 use serde_json::Value;
@@ -142,6 +144,15 @@ struct HubW {
     notes_st: hubnotes::NotesState,
     screen: Option<zenko_desktop::screenpage::ScreenPage>,
     gym: Option<zenko_desktop::gympage::GymPage>,
+    /// the Zen garden page; its subject menu to pop, a command waiting for the picture, a catch's card (at, fish, seed,
+    /// cm, new) and the badge check after it, the next 50 ms frame, the panel 400 ms after Lock in
+    garden: Option<zenko_desktop::gardenpage::GardenPage>,
+    gd_menu: bool,
+    gd_pending: Option<String>,
+    gd_catch: Option<(f64, String, i64, f64, bool)>,
+    gd_badge_at: f64,
+    gd_next: f64,
+    gd_panel_at: f64,
     /// screen_ui["range"] (kept while the window is open) and the next minute render
     screen_range: i64,
     screen_next: f64,
@@ -698,6 +709,9 @@ fn after_show(x: &mut HubW, page: &str) {
         // hub_after_show: screen_render() once the page has slid in
         hubscreen::render(x);
     }
+    if page == "garden" && x.garden.is_some() {
+        hubgarden::shown(x);
+    }
     if page == "chat" {
         if let Some(cp) = &x.chat {
             x.hub.ui.focus = Some(cp.entry);
@@ -776,6 +790,12 @@ fn page_frame(x: &mut HubW, page: &str) -> Option<usize> {
             let th = x.hub.t.clone();
             let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
             hubgym::build(x, pg);
+            pg
+        }
+        "garden" => {
+            let th = x.hub.t.clone();
+            let pg = x.hub.ui.frame(x.hub.ids.stage, &th.paper);
+            hubgarden::build(x, pg);
             pg
         }
         "screen" => {
@@ -857,6 +877,7 @@ fn relayout(x: &mut HubW) {
     hubnotes::fit(x, w, h);
     hubscreen::fit(x, w, h);
     hubgym::fit(x, w, h);
+    hubgarden::fit(x, w, h);
     if let Some(dp) = x.daily.as_mut() {
         let (th, f) = (x.hub.t.clone(), Faces { ui: x.hub.font_ui.clone(), title: String::new() });
         let d = x.daily_d.clone();
@@ -996,6 +1017,7 @@ fn page_sc(x: &HubW, page: Option<&str>) -> Option<zenko_desktop::pagekit::Scrol
         Some("customize") => x.cust.as_ref().map(|p| p.sc.clone()),
         Some("screen") => x.screen.as_ref().map(|p| p.sc.clone()),
         Some("exercise") => x.gym.as_ref().map(|p| p.sc.clone()),
+        Some("garden") => x.garden.as_ref().map(|p| p.sc.clone()),
         _ => None,
     }
 }
@@ -1176,7 +1198,7 @@ pub fn open(page: Option<&str>, init: HubInit) {
             size: (w, h), min, cursor: IDC_ARROW, faded: false,
             anim: zenko_desktop::hubanim::HubAnim::new(0.0, (x0 as u64) << 20 ^ 0x9e37_79b9),
             theme: init.theme.clone(), living: init.living, glow_next: 0.0, burst: None, particles: init.particles, minimized: false,
-            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, set: None, set_try: String::new(), set_focus: None, set_rule_do: String::new(), cust: None, cust_focus: None, cust_anim: 0.0, nb: None, notes: None, notes_st: Default::default(), screen: None, gym: None, screen_range: 1, screen_next: 0.0, opened_s: init.opened_s, reveal: None, flash: None, prebuild_at: 2.5, ask: None,
+            slide_s: init.slide_s, dpi: init.dpi, pages: vec![], slide: None, chat: None, chat_seen: None, home: None, home_next: 0.0, home_intro: None, music_playing: false, you: None, daily: None, daily_d: DailyData::default(), daily_next: 0.0, tt: None, tt_d: TtData::default(), tt_next: 0.0, up: None, up_d: UpData::default(), up_next: 0.0, up_chk: 0.0, up_menu: None, rem: None, rem_d: Default::default(), rem_anim: 0.0, rem_chk: 0.0, set: None, set_try: String::new(), set_focus: None, set_rule_do: String::new(), cust: None, cust_focus: None, cust_anim: 0.0, nb: None, notes: None, notes_st: Default::default(), screen: None, gym: None, garden: None, gd_menu: false, gd_pending: None, gd_catch: None, gd_badge_at: 0.0, gd_next: 0.0, gd_panel_at: 0.0, screen_range: 1, screen_next: 0.0, opened_s: init.opened_s, reveal: None, flash: None, prebuild_at: 2.5, ask: None,
             chat_q: Default::default(), typing: None, sb_drag: None,
         }));
         with(|x| {
@@ -1233,6 +1255,22 @@ pub fn quit() {
     } else {
         hubnotes::quit_flush();
     }
+}
+
+/// the app's garden commands (chat, the menu): breath:k, grounding, fish_cast, koi_book
+pub fn garden_cmd(c: &str) {
+    with(|x| hubgarden::app_cmd(x, c));
+}
+
+/// the koi book changed who swims in the pond: the garden paints it again
+pub fn garden_pond_changed() {
+    with(|x| {
+        if let Some(p) = x.garden.as_mut() {
+            p.forget();
+        }
+        let (w, h) = x.size;
+        hubgarden::fit(x, w, h);
+    });
 }
 
 /// food_fix_grams' answer (from its little dialog)
@@ -1436,6 +1474,8 @@ fn step(x: &mut HubW) -> bool {
     hubnotes::step(x, n);
     hubscreen::step(x, n);
     hubgym::step(x, n);
+    hubgarden::tick(x, n);
+    hubgarden::step(x, n);
     // daily_refresh: what changed (a badge, a check-in, a card) shows while the page is open
     if x.hub.side.page.as_deref() == Some("daily") && x.slide.is_none() && n >= x.daily_next {
         x.daily_next = n + 1.0;
@@ -1717,6 +1757,8 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                             hubscreen::cmd(x, &cmd);
                         } else if cmd.starts_with("gym_") {
                             hubgym::cmd(x, &cmd);
+                        } else if cmd.starts_with("gd_") {
+                            hubgarden::cmd(x, &cmd);
                         } else if cmd.starts_with("set_") && !cmd.starts_with("set_menu:") {
                             hubset::cmd(x, &cmd);
                         } else if cmd.starts_with("hub_ask:") || cmd.starts_with("home_") || matches!(cmd.as_str(),
@@ -1730,6 +1772,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     } else if hubcust::click(x, mx, my) {
                     } else if hubbook::click(x, mx, my) {
                     } else if hubgym::click(x, mx, my) {
+                    } else if hubgarden::click(x, mx, my) {
                     } else if x.hub.side.page.as_deref() == Some("home") {
                         home_music_click(x, mx, my);
                     } else if x.hub.side.page.as_deref() == Some("daily") {
@@ -1756,6 +1799,10 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                     x.drag_moved = false;
                 });
                 // a question a button asked (messagebox.askyesno), once the click is done with
+                if with(|x| std::mem::take(&mut x.gd_menu)).unwrap_or(false) {
+                    hubgarden::subj_popup(hwnd);
+                    redraw();
+                }
                 if let Some((text, title, cmd)) = with(|x| x.ask.take()).flatten() {
                     let w = |s: &str| s.encode_utf16().chain(std::iter::once(0)).collect::<Vec<u16>>();
                     let (t, c) = (w(&text), w(&title));
@@ -1815,6 +1862,7 @@ unsafe extern "system" fn proc_(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) ->
                         palette_open(x);
                     } else if ctrl && (b'1' as u16..=b'9' as u16).contains(&vk) {
                         nav_jump(x, (vk - b'1' as u16) as usize);
+                    } else if !ctrl && hubgarden::key(x, vk) {
                     } else if vk == VK_RETURN && entry.is_some() && x.hub.ui.focus == entry {
                         chat_cmd(x, "chat_send");
                     } else if vk == VK_RETURN && home_task.is_some() && x.hub.ui.focus == home_task {
@@ -1936,10 +1984,7 @@ fn palette_do(x: &mut HubW, cmd: &str) {
         match d {
             "start" => out("run:cmd:focus"),
             "pause" | "stop" | "lockin" | "break" => out(&format!("run:cmd:{d}")),
-            "breath_box" | "breath_478" => {
-                show(x, "garden");
-                out(&format!("run:{d}"));
-            }
+            "breath_box" | "breath_478" => hubgarden::app_cmd(x, &format!("breath:{}", &d[7..])),
             _ => out(&format!("run:{d}")),
         }
     }

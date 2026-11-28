@@ -32,6 +32,8 @@ mod net;
 #[cfg(windows)]
 mod uiwin;
 #[cfg(windows)]
+mod koiwin;
+#[cfg(windows)]
 mod tkpaint;
 #[cfg(windows)]
 mod hubw;
@@ -519,6 +521,9 @@ mod win {
                 }
             }
             for o in crate::uiwin::OUT.with(|q| std::mem::take(&mut *q.borrow_mut())) {
+                if crate::koiwin::out(&o) {
+                    continue;
+                }
                 app.fox.events.push(Ev::Ui("tap".into())); // PixelButton._release: ui_sound("tap")
                 if o.win == "askstring" {
                     // New folder's name
@@ -795,6 +800,11 @@ mod win {
             fox.ema_set_done(id);
         } else if c == "music_apply" {
             fox.music_apply();
+        } else if c.starts_with("breath:") || matches!(c, "grounding" | "fish_cast" | "koi_book") {
+            // breath_start / the 5-4-3-2-1 steps / fish_cast / koi_book: on the Zen garden page
+            open_hub(app, Some("garden"));
+            crate::hubw::garden_cmd(c);
+            return;
         } else if c == "open_hub" || c.starts_with("open_hub:") || c.starts_with("hub:") {
             let page = c.strip_prefix("open_hub:").or_else(|| c.strip_prefix("hub:"));
             open_hub(app, page.filter(|p| *p != "None"));
