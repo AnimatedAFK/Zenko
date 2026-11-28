@@ -65,6 +65,8 @@ pub struct CItem {
     pub justify: &'static str,
     pub stipple: &'static str,
     pub underline: bool,
+    /// -dash: the dash list (empty: a solid line)
+    pub dash: Vec<u8>,
 }
 
 impl CItem {
@@ -117,6 +119,10 @@ impl CItem {
         self.stipple = st;
         self
     }
+    pub fn dash(&mut self, d: &[u8]) -> &mut CItem {
+        self.dash = d.to_vec();
+        self
+    }
     pub fn underline(&mut self) -> &mut CItem {
         self.underline = true;
         self
@@ -152,7 +158,7 @@ impl Canvas {
                                 width: 1.0, smooth: false, capstyle: "butt", joinstyle: join, hidden: false,
                                 anchor: "center", text: String::new(), font: None, wrap: 0.0, image: None,
                                 start: 0.0, extent: 90.0, style: "pieslice", justify: "left", stipple: "",
-                                underline: false });
+                                underline: false, dash: vec![] });
         self.items.last_mut().unwrap()
     }
     pub fn rect(&mut self, x1: f64, y1: f64, x2: f64, y2: f64) -> &mut CItem {

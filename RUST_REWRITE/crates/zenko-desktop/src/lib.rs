@@ -30,6 +30,7 @@ pub mod guard;
 pub mod pagekit;
 pub mod homepage;
 pub mod youpage;
+pub mod screenpage;
 pub mod dailypage;
 pub mod ttpage;
 pub mod uppage;

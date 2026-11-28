@@ -47,6 +47,10 @@ fn pick(names: &[&str], dflt: &str) -> String {
     names.iter().find(|n| crate::gdi::font_exists(n)).map(|n| n.to_string()).unwrap_or_else(|| dflt.to_string())
 }
 
+pub(super) fn fonts_pub(font_ui: &str) -> (String, String, String) {
+    fonts(font_ui)
+}
+
 /// _mincho_font, _serif_font and _jp_font (or FONT_UI)
 fn fonts(font_ui: &str) -> (String, String, String) {
     let jp = pick(&["Yu Gothic UI", "Yu Gothic", "Meiryo UI", "Meiryo", "MS Gothic", "Noto Sans CJK JP", "Noto Sans JP", "IPAGothic"], "");

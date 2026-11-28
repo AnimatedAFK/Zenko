@@ -15,8 +15,15 @@ const STROKE_PIECE: usize = 32;
 unsafe fn make_pen(p: &TkPen) -> HPEN {
     unsafe {
         let c = rgb(&p.color);
+        let style = match p.style {
+            1 => PS_DASH,
+            2 => PS_DOT,
+            3 => PS_DASHDOT,
+            4 => PS_DASHDOTDOT,
+            _ => PS_SOLID,
+        };
         if p.width < 2 {
-            return CreatePen(PS_SOLID, p.width, c);
+            return CreatePen(style, p.width, c);
         }
         let lb = LOGBRUSH { lbStyle: BS_SOLID, lbColor: c, lbHatch: 0 };
         let cap = match p.cap {
@@ -29,7 +36,7 @@ unsafe fn make_pen(p: &TkPen) -> HPEN {
             "round" => PS_JOIN_ROUND,
             _ => PS_JOIN_BEVEL,
         };
-        ExtCreatePen((PS_GEOMETRIC | PS_SOLID | cap | join) as u32, p.width as u32, &lb, 0, std::ptr::null())
+        ExtCreatePen((PS_GEOMETRIC | style | cap | join) as u32, p.width as u32, &lb, 0, std::ptr::null())
     }
 }
 
@@ -234,7 +241,12 @@ pub unsafe fn paint(dc: HDC, ops: &[TkOp], fonts: &GdiFonts) {
                     let op_ = SelectObject(dc, pn as _);
                     let n = p.len();
                     let closed = p[0].x == p[n - 1].x && p[0].y == p[n - 1].y;
-                    if n > MAX_STROKE_POINTS && pen.width >= 2 {
+                    if pen.style != 0 {
+                        // (a dashed pen: XDrawLines' plain Polyline, the gaps left see-through)
+                        let ob = SetBkMode(dc, TRANSPARENT as i32);
+                        Polyline(dc, p.as_ptr(), n as i32);
+                        SetBkMode(dc, ob);
+                    } else if n > MAX_STROKE_POINTS && pen.width >= 2 {
                         stroke_pieces(dc, &p, closed, pen);
                     } else {
                         BeginPath(dc);

@@ -448,7 +448,7 @@ impl Companion {
     // ---- zenko15 screen time --------------------------------------------------------------------------------------
 
     /// screen_exclude(): the words never recorded (the banking/password defaults until you change them)
-    fn screen_exclude(&mut self) -> Vec<String> {
+    pub fn screen_exclude(&mut self) -> Vec<String> {
         match self.cfg.raw.get("screen_exclude") {
             Some(Value::Array(a)) => a.iter().map(|v| v.as_str().map(String::from).unwrap_or_else(|| v.to_string())).collect(),
             _ => {

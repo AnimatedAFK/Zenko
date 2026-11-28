@@ -162,6 +162,10 @@ pub struct ScreenRange {
     pub sites: Vec<(String, f64)>,
     pub total: f64,
     pub top: Vec<(String, f64, &'static str)>,
+    /// seconds in each hour of the day (summed over the days)
+    pub hours: [f64; 24],
+    /// (iso date, its apps' total), oldest first
+    pub days: Vec<(String, f64)>,
 }
 
 fn add_to(v: &mut Vec<(String, f64)>, k: &str, x: f64) {
@@ -172,11 +176,25 @@ fn add_to(v: &mut Vec<(String, f64)>, k: &str, x: f64) {
 }
 
 pub fn screen_range(life: &Value, days: i64) -> ScreenRange {
+    screen_range_at(life, days, local_days())
+}
+
+/// screen_range(days) with today's day number given
+pub fn screen_range_at(life: &Value, days: i64, today: i64) -> ScreenRange {
     let s = &life["screen"]["days"];
-    let today = local_days();
     let (mut apps, mut sites) = (vec![], vec![]);
+    let mut hours = [0.0f64; 24];
+    let mut dl = vec![];
     for k in 0..days {
-        let d = &s[iso(today - k).as_str()];
+        let ds = iso(today - k);
+        let d = &s[ds.as_str()];
+        if let Some(h) = d["hours"].as_array().filter(|h| !h.is_empty()) {
+            for (i, v) in h.iter().take(24).enumerate() {
+                hours[i] += v.as_f64().unwrap_or(0.0);
+            }
+        }
+        dl.push((ds, zenko_sound::music::py_sum(d["apps"].as_object().map(|o| o.values().map(|v| v.as_f64().unwrap_or(0.0))
+            .collect::<Vec<_>>()).unwrap_or_default().into_iter())));
         if let Some(o) = d["apps"].as_object() {
             for (a, v) in o {
                 add_to(&mut apps, a, v.as_f64().unwrap_or(0.0));
@@ -197,7 +215,8 @@ pub fn screen_range(life: &Value, days: i64) -> ScreenRange {
         .map(|e| (e.0.clone(), e.1, "site")).collect();
     top.extend(apps.iter().filter(|e| !browsers.contains(&json!(e.0))).map(|e| (e.0.clone(), e.1, "app")));
     top.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
-    ScreenRange { apps, sites, total, top }
+    dl.reverse();
+    ScreenRange { apps, sites, total, top, hours, days: dl }
 }
 
 pub fn screen_summary(life: &Value) -> String {

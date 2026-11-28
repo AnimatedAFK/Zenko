@@ -16,6 +16,9 @@ pub struct TkPen {
     pub width: i32,
     pub cap: &'static str,
     pub join: &'static str,
+    /// SetUpGraphicsPort's pen style for a dash list: 0 solid, else PS_DASH (1), PS_DOT (2), PS_DASHDOT (3),
+    /// PS_DASHDOTDOT (4)
+    pub style: u32,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -108,7 +111,21 @@ pub fn bezier(p: &[f64], n: usize) -> Vec<(i32, i32)> {
 }
 
 fn pen(it: &CItem, color: &str) -> TkPen {
-    TkPen { color: color.into(), width: ((it.width + 0.5) as i32).max(0), cap: it.capstyle, join: it.joinstyle }
+    let width = ((it.width + 0.5) as i32).max(0);
+    // tkWinDraw.c SetUpGraphicsPort: gc->dashes holds the first bytes of the list, ended by a 0
+    let style = if it.dash.is_empty() {
+        0
+    } else {
+        let p = |i: usize| it.dash.get(i).copied().unwrap_or(0);
+        if p(1) != 0 && p(2) != 0 {
+            if p(3) == 0 || p(4) != 0 { 4 } else { 3 }
+        } else if p(0) as i32 > 4 * width {
+            1
+        } else {
+            2
+        }
+    };
+    TkPen { color: color.into(), width, cap: it.capstyle, join: it.joinstyle, style }
 }
 
 fn pts(c: &[f64]) -> Vec<(i32, i32)> {

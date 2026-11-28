@@ -272,6 +272,16 @@ pub struct W {
     pub pack_in: Option<usize>,
 }
 
+impl W {
+    /// a canvas widget's Tk canvas items (None for other widgets, or a canvas drawn the old way)
+    pub fn tk_canvas(&self) -> Option<&crate::tkcanvas::Canvas> {
+        match &self.kind {
+            Kind::Canvas { tk: Some(c), .. } => Some(c),
+            _ => None,
+        }
+    }
+}
+
 /// grid() options
 #[derive(Clone, Debug, Default)]
 pub struct Grid {

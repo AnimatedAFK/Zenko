@@ -157,6 +157,8 @@ pub fn check_items(at: &str, cv: &Canvas, want: &[Value], images: &Value, fonts:
                 }
                 if it.kind == CKind::Line {
                     assert_eq!(it.capstyle, s("capstyle"), "{at} capstyle");
+                    let d: Vec<String> = it.dash.iter().map(|v| v.to_string()).collect();
+                    assert_eq!(d.join(" "), s("dash"), "{at} dash");
                 }
                 if it.kind == CKind::Arc {
                     assert!((it.start - s("start").parse::<f64>().unwrap()).abs() < 1e-6, "{at} start {}", it.start);

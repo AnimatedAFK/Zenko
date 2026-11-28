@@ -332,6 +332,55 @@ if len(sys.argv) > 1 and sys.argv[1] == "home":
     SETUP["data"] = _data
 
 
+if len(sys.argv) > 1 and sys.argv[1] == "screen":
+    # golden/hub_screen.json: the Screen time page (range switch, pause, tiles, the by-hour / by-day chart, websites
+    # and apps lists, the privacy card with its switches and skipped words) for today, 7 and 30 days, paused, off, empty
+    OUT = "hub_screen.json"
+    time.time = lambda: NOW[0]
+    T0 = 1765440000.0 + 15.5 * 3600          # Thursday 11 Dec 2025, 15:30
+    CASES = [("screen_today", T0, {"theme": "snow"}, None, "screen"),
+             ("screen_week_small", T0, {"theme": "midnight", "screen_nudges": False}, (1120, 720), "screen"),
+             ("screen_month", T0, {"theme": "sakura", "screen_exclude": ["bank", "keepass", "my diary"]}, None, "screen"),
+             ("screen_paused", T0, {"theme": "snow"}, None, "screen"),
+             ("screen_off_empty", T0, {"theme": "snow", "screen_time": False}, None, "screen")]
+
+    def _data(app, name):
+        if name == "screen_off_empty":
+            return
+        day = lambda n: (_dt.date(2025, 12, 11) + _dt.timedelta(days=n)).isoformat()
+        rnd = random.Random(5)
+        names = ["Google Chrome", "VS Code", "Word", "Spotify", "Discord", "Microsoft Edge", "Notion", "Anki", "OneNote",
+                 "Excel", "PowerPoint", "Zoom"]
+        sites = ["YouTube", "Google Docs", "ManageBac", "Wikipedia", "Khan Academy", "Other websites", "New tab", "Reddit",
+                 "Quizlet", "Desmos", "Gmail", "Save My Exams with a very long site name"]
+        D = {}
+        for k in range(0, 40, 1 if name != "screen_today" else 3):
+            n_apps = 3 + (k * 7) % 9
+            apps = {a: float(rnd.randint(30, 5400)) + rnd.random() for a in names[:n_apps]}
+            st = {sv: float(rnd.randint(20, 3000)) for sv in sites[:2 + (k * 5) % 10]}
+            hrs = [0.0] * 24
+            for h in range(8, 23):
+                hrs[h] = float(rnd.randint(0, 3600))
+            D[day(-k)] = {"apps": apps, "sites": st, "hours": hrs}
+        if name == "screen_today":
+            D[day(0)]["apps"]["Google Chrome"] = 7200.5
+            D[day(0)]["hours"][15] = 1800.0
+        app.screen()["days"] = D
+        if name == "screen_paused":
+            app.screen()["paused_until"] = NOW[0] + 37 * 60 + 5
+        app.screen_ui = {"range": {"screen_week_small": 7, "screen_month": 30}.get(name, 1)}
+        app.life_save()
+
+    def _after(app, name):
+        # (the page as it settles: rendered, then zk_fit(fonts=True) 30 ms later; a slow first render can land after
+        # the harness's own fit)
+        app.screen_render()
+        for _ in range(8):
+            app.root.update()
+            time.sleep(0.05)
+    SETUP["data"], SETUP["after"] = _data, _after
+
+
 if len(sys.argv) > 1 and sys.argv[1] == "you":
     # golden/hub_you.json: the About you page, empty and filled in (Text boxes, checkbuttons, what she learned)
     OUT = "hub_you.json"
